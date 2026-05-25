@@ -1,0 +1,9 @@
+# OS
+.DS_Store
+
+# Build artifacts (regenerable via ./package.sh)
+dist/
+*.zip
+
+# Node (none committed; safety net for tooling)
+node_modules/

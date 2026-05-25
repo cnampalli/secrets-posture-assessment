@@ -1,0 +1,85 @@
+vendor_slug,vendor_name,target_id,target_type,coverage,maturity,evidence_url,evidence_quote,citation_keys,notes
+aembit,Aembit,NHI-001,NHI,NATIVE,4,https://docs.aembit.io/trust-and-credential-providers/,AWS STS / Azure Entra WIF / GCP WIF trust providers and credential issuance natively documented,aembit-trust-providers-2024;aembit-credential-providers-2024,Core attestation target; all major cloud IAM principals supported
+aembit,Aembit,NHI-002,NHI,NATIVE,4,https://docs.aembit.io/user-guide/access-policies/trust-providers/kubernetes-service-account-trust-provider,Supports attestation of Client Workloads in a Kubernetes environment — EKS AKS GKE self-hosted,aembit-trust-providers-2024,Namespace/pod/service-account match rules; OIDC endpoint token validation
+aembit,Aembit,NHI-003,NHI,NATIVE,3,https://docs.aembit.io/trust-and-credential-providers/,GitHub Actions OIDC and GitLab Job OIDC trust providers documented,aembit-trust-providers-2024,CI/CD workload attestation via OIDC; Terraform Cloud token also supported
+aembit,Aembit,NHI-004,NHI,GAP,0,https://docs.aembit.io,,aembit-arch-2024,No container image-pull credential management documented
+aembit,Aembit,NHI-005,NHI,NATIVE,3,https://aembit.io/case-study/snowflake-uses-aembit-to-secure-workload-access/,Aembit now handles the credentials required to access the Server Workload eliminating the need to manage them,aembit-snowflake-case-study-2024,PostgreSQL MySQL Snowflake Redis documented; JIT credential injection via Edge proxy
+aembit,Aembit,NHI-006,NHI,NATIVE,3,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,X.509-SVID and JWT-SVID credential providers documented as dedicated types with dynamic claims,aembit-credential-providers-2024,mTLS identity via X.509-SVID issuance; integrates with SPIRE-based deployments
+aembit,Aembit,NHI-007,NHI,NATIVE,3,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,OAuth 2.0 client credentials and Authorization Code credential providers; Atlassian GitLab Slack Google Workspace PagerDuty,aembit-credential-providers-2024,SaaS API key and OAuth client brokering; static API key replaced by JIT issuance
+aembit,Aembit,NHI-008,NHI,ADD-ON,2,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,GitLab account managed credential provider available,aembit-credential-providers-2024,GitLab managed only; GitHub PAT management not documented; SSH key management out of scope
+aembit,Aembit,NHI-009,NHI,NATIVE,3,https://docs.aembit.io/trust-and-credential-providers/,Terraform Cloud Identity Token trust provider; Terraform provider for policy-as-code available,aembit-trust-providers-2024,IaC apply-time credential injection; Ansible/Pulumi not specifically documented
+aembit,Aembit,NHI-010,NHI,GAP,0,https://docs.aembit.io,,aembit-arch-2024,No observability-agent-specific credential rotation; API key type available generically
+aembit,Aembit,NHI-011,NHI,GAP,1,https://docs.aembit.io,,aembit-arch-2024,No Kafka/RabbitMQ/Service Bus integration documented; generic HTTP possible
+aembit,Aembit,NHI-012,NHI,ADD-ON,2,https://aembit.io/blog/introducing-comprehensive-workload-identity-and-access-management-across-microsoft-environments/,Kerberos trust provider: cryptographically verify the identity of your Windows workloads joined to your domain,aembit-ms-environments-2025,Attests Windows/AD workloads; does not manage AD account passwords or gMSA lifecycle
+aembit,Aembit,NHI-013,NHI,ADD-ON,2,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,JWT and OAuth credential injection into HTTP(S) calls,aembit-credential-providers-2024,Generic JWT/OAuth upstream injection; no dedicated API-gateway connector
+aembit,Aembit,NHI-014,NHI,GAP,0,https://docs.aembit.io,,aembit-arch-2024,No UiPath/Blue Prism/Automation Anywhere integration documented
+aembit,Aembit,NHI-015,NHI,GAP,0,https://docs.aembit.io,,,Not in product scope
+aembit,Aembit,NHI-016,NHI,GAP,0,https://docs.aembit.io,,,Not in product scope
+aembit,Aembit,NHI-017,NHI,ADD-ON,2,https://aembit.io/blog/everyone-wants-spiffe-almost-no-one-can-afford-to-build-it-right/,We integrate with existing SPIRE implementations,aembit-spiffe-2025,Issues X.509-SVIDs; layers alongside SPIRE; does not manage SPIRE control-plane keys directly
+aembit,Aembit,NHI-018,NHI,GAP,0,https://docs.aembit.io,,,No TEE/enclave attestation integration documented
+aembit,Aembit,NHI-019,NHI,NATIVE,4,https://aembit.io/blog/aembit-iam-for-agentic-ai-is-now-generally-available/,Blended Identity gives every AI agent its own cryptographically verified identity bound to the human it represents,aembit-agentic-ai-ga-2026,MCP Identity Gateway GA April 2026; per-task token exchange; Starter/AI Teams/Enterprise pricing tiers
+aembit,Aembit,NHI-020,NHI,GAP,0,https://docs.aembit.io,,,No ML model registry integration documented
+aembit,Aembit,NHI-021,NHI,GAP,0,https://docs.aembit.io,,,Not in documented scope
+aembit,Aembit,NHI-022,NHI,GAP,0,https://docs.aembit.io,,,No RACF/ACF2/IBM-i integration documented
+aembit,Aembit,NHI-023,NHI,GAP,0,https://docs.aembit.io,,,No KMS/HSM key-management capability
+aembit,Aembit,NHI-024,NHI,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,NHI-025,NHI,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,NHI-026,NHI,GAP,0,https://docs.aembit.io,,,No backup-agent integration documented
+aembit,Aembit,NHI-027,NHI,NATIVE,3,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,OAuth 2.0 token-exchange patterns supported; MCP User-Based Access Token for human-in-loop agent flows,aembit-credential-providers-2024,On-behalf-of token patterns supported; human+agent blended identity model
+aembit,Aembit,NHI-028,NHI,ADD-ON,1,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,X.509-SVID and OAuth 2.0 credential issuance available,aembit-credential-providers-2024,mTLS certs technically possible; no FAPI 2.0 / CDR-specific workflow documented
+aembit,Aembit,NHI-029,NHI,GAP,0,https://docs.aembit.io,,,No shared-account detection or governance capability
+aembit,Aembit,NHI-030,NHI,GAP,0,https://docs.aembit.io,,,No OAuth-app inventory or discovery capability
+aembit,Aembit,NHI-031,NHI,GAP,0,https://docs.aembit.io,,,Aembit brokers outbound calls only; no inbound webhook verification
+aembit,Aembit,NHI-032,NHI,GAP,0,https://docs.aembit.io,,,No TACACS+/RADIUS/SNMPv3 integration documented
+aembit,Aembit,NHI-033,NHI,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,NHI-034,NHI,GAP,0,https://docs.aembit.io,,,No PQC/hybrid-cert capability documented
+aembit,Aembit,NHI-035,NHI,ADD-ON,2,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,Aembit can use HashiCorp Vault and AWS Secrets Manager as upstream credential sources,aembit-credential-providers-2024,Broker layer above Vault; Aembit's own service identity governance not self-managed
+aembit,Aembit,NHI-036,NHI,NATIVE,4,https://docs.aembit.io,Aembit verifies workload identity through cryptographic attestation with trust providers checking workload attributes,aembit-arch-2024;aembit-spiffe-2025,Core product capability; this NHI class was named after Aembit in the taxonomy; EPHEMERAL JIT model
+aembit,Aembit,NHI-037,NHI,GAP,0,https://docs.aembit.io,,,No NHI discovery orphan sweep or dormancy detection capability
+aembit,Aembit,UC-F-001,UC-F,GAP,0,https://docs.aembit.io,,,No repo scanning or pre-commit secret detection
+aembit,Aembit,UC-F-002,UC-F,GAP,0,https://docs.aembit.io,,,No historical secrets scanning capability
+aembit,Aembit,UC-F-003,UC-F,NATIVE,4,https://docs.aembit.io/trust-and-credential-providers/,AWS STS Azure Entra WIF GCP WIF trust providers and JIT short-lived credential issuance at runtime,aembit-trust-providers-2024;aembit-credential-providers-2024,Core WIAM capability; 100% secretless JIT model; no long-lived cloud keys needed
+aembit,Aembit,UC-F-004,UC-F,NATIVE,4,https://aembit.io/blog/everyone-wants-spiffe-almost-no-one-can-afford-to-build-it-right/,Aembit verifies workload identity through cryptographic attestation then issues short-lived scoped token at moment of access,aembit-spiffe-2025;aembit-arch-2024,SPIFFE JWT-SVID and X.509-SVID issuance; integrates with existing SPIRE; addresses SPIRE gaps (SaaS legacy AI)
+aembit,Aembit,UC-F-005,UC-F,NATIVE,3,https://aembit.io/case-study/snowflake-uses-aembit-to-secure-workload-access/,85% of credential issuance credential rotation and auditing followup eliminated,aembit-snowflake-case-study-2024,PostgreSQL MySQL Snowflake; JIT credential injection; no long-lived DB credentials
+aembit,Aembit,UC-F-006,UC-F,ADD-ON,2,https://docs.aembit.io,JIT brokering replaces rotation for managed targets; no bulk rotation for unmanaged legacy secrets,aembit-arch-2024,Replaces rotation concept for modern workloads; legacy long-tail needs separate tooling
+aembit,Aembit,UC-F-007,UC-F,NATIVE,3,https://aembit.io/blog/aembit-iam-for-agentic-ai-is-now-generally-available/,Least-privilege access revoke permissions immediately when needed every AI action attributable and auditable,aembit-agentic-ai-ga-2026,Policy-based revocation; short-lived tokens expire naturally; no long-lived tokens to recall
+aembit,Aembit,UC-F-008,UC-F,NATIVE,3,https://docs.aembit.io/user-guide/access-policies/trust-providers/kubernetes-service-account-trust-provider,Edge proxy injects credentials at request-time; K8s SA trust provider for pod attestation,aembit-trust-providers-2024,No plaintext secrets in K8s Secret objects or application containers
+aembit,Aembit,UC-F-009,UC-F,GAP,0,https://docs.aembit.io,,,No container registry image-pull credential management
+aembit,Aembit,UC-F-010,UC-F,NATIVE,3,https://docs.aembit.io/trust-and-credential-providers/,Terraform Cloud Identity Token trust provider; Terraform provider for policy-as-code deployment,aembit-trust-providers-2024,IaC credential injection at apply-time; secrets not persisted in state files
+aembit,Aembit,UC-F-011,UC-F,GAP,1,https://docs.aembit.io,,,API-key credential type available but no observability-agent-specific rotation pipeline documented
+aembit,Aembit,UC-F-012,UC-F,GAP,1,https://docs.aembit.io,,,No Kafka/RabbitMQ/Service Bus specific integration; generic JWT/OAuth possible
+aembit,Aembit,UC-F-013,UC-F,ADD-ON,2,https://aembit.io/blog/introducing-comprehensive-workload-identity-and-access-management-across-microsoft-environments/,Kerberos trust provider cryptographically verify the identity of Windows workloads joined to your domain,aembit-ms-environments-2025,Attests AD-joined workloads; does not manage AD passwords or gMSA lifecycle
+aembit,Aembit,UC-F-014,UC-F,ADD-ON,2,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,JWT and OAuth credential injection into HTTP upstream calls,aembit-credential-providers-2024,Generic upstream injection; no dedicated API-gateway connector
+aembit,Aembit,UC-F-015,UC-F,GAP,0,https://docs.aembit.io,,,No RPA orchestrator integration
+aembit,Aembit,UC-F-016,UC-F,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,UC-F-017,UC-F,GAP,0,https://docs.aembit.io,,,No TEE attestation-gated secret release documented
+aembit,Aembit,UC-F-018,UC-F,NATIVE,4,https://aembit.io/blog/aembit-iam-for-agentic-ai-is-now-generally-available/,MCP Identity Gateway authenticates agents enforces policy performs token exchange without exposing credentials to agent runtime,aembit-agentic-ai-ga-2026;aembit-agentic-ai-launch-2025,GA April 2026; Blended Identity + MCP Gateway; $300B investment firm production deployment cited
+aembit,Aembit,UC-F-019,UC-F,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,UC-F-020,UC-F,GAP,0,https://docs.aembit.io,,,No mainframe integration
+aembit,Aembit,UC-F-021,UC-F,GAP,0,https://docs.aembit.io,,,No backup-agent integration
+aembit,Aembit,UC-F-022,UC-F,GAP,0,https://docs.aembit.io,,,Outbound broker only; no inbound webhook verification
+aembit,Aembit,UC-F-023,UC-F,GAP,0,https://docs.aembit.io,,,No network device integration
+aembit,Aembit,UC-F-024,UC-F,ADD-ON,1,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,X.509-SVID and OAuth 2.0 credential issuance technically available,aembit-credential-providers-2024,No FAPI 2.0 / CDR-specific workflow; mTLS cert issuance generically possible
+aembit,Aembit,UC-F-025,UC-F,GAP,0,https://docs.aembit.io,,,No OAuth-app inventory or governance capability
+aembit,Aembit,UC-F-026,UC-F,ADD-ON,2,https://docs.aembit.io/user-guide/access-policies/credential-providers/oauth-authorization-code,Aembit can use HashiCorp Vault and AWS Secrets Manager as credential sources,aembit-credential-providers-2024,Vault used as upstream; Aembit's own identity hardening not self-documented
+aembit,Aembit,UC-F-027,UC-F,GAP,0,https://docs.aembit.io,,,No NHI discovery or dormancy sweep capability
+aembit,Aembit,UC-N-001,UC-N,GAP,0,https://docs.aembit.io,,,No secrets-scanning or sprawl-detection analytics
+aembit,Aembit,UC-N-002,UC-N,ADD-ON,2,https://docs.aembit.io,Workload activity tracking dashboard monitoring authorization event logging,aembit-arch-2024,Access audit logs provide activity evidence; no full NHI discovery/ownership inventory
+aembit,Aembit,UC-N-003,UC-N,ADD-ON,2,https://docs.aembit.io,Authorization event logging audit logs workload activity tracking,aembit-arch-2024,Credential issuance volume trackable; no rotation-coverage KPIs for unmanaged secrets
+aembit,Aembit,UC-N-004,UC-N,ADD-ON,2,https://docs.aembit.io,Structured audit logs and workload activity tracking available,aembit-arch-2024,SOC 2 Type II evidence available; no one-click APRA CPS 234 evidence pack builder
+aembit,Aembit,UC-N-005,UC-N,ADD-ON,2,https://aembit.io/blog/the-what-where-and-why-of-workload-identity-and-access-management/,Policy-based access governs what each workload can actually do — Zero Trust model,aembit-wiam-guide-2024,ZT policy model; no E8 maturity scorecard tooling; CPS 234 not mapped publicly
+aembit,Aembit,UC-N-006,UC-N,GAP,0,https://docs.aembit.io,,,No supply-chain risk scoring capability
+aembit,Aembit,UC-N-007,UC-N,GAP,1,https://aembit.io/blog/aembit-earns-soc-2-type-ii-recertification-for-ongoing-security-and-compliance/,SOC 2 Type II and ISO 27001 certifications held; US-hosted SaaS only,aembit-soc2-recert-2025;aembit-iso27001-2025,No AU/APAC region; no IRAP; control plane in US — material APRA CPS 234/230 gap
+aembit,Aembit,UC-N-008,UC-N,GAP,0,https://docs.aembit.io,,,No training platform
+aembit,Aembit,UC-N-009,UC-N,GAP,0,https://docs.aembit.io,,,No GRC-integrated exception register
+aembit,Aembit,UC-N-010,UC-N,GAP,0,https://docs.aembit.io,,,No PAM-style break-glass workflow
+aembit,Aembit,UC-N-011,UC-N,ADD-ON,2,https://docs.aembit.io,Authorization event logging and workload activity tracking support post-incident RCA,aembit-arch-2024,Structured audit logs; no SOAR integration or MITRE ATT&CK attribution documented
+aembit,Aembit,UC-N-012,UC-N,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,UC-N-013,UC-N,GAP,0,https://docs.aembit.io,,,No PQC capability
+aembit,Aembit,UC-N-014,UC-N,GAP,0,https://docs.aembit.io,,,Not a platform capability
+aembit,Aembit,UC-N-015,UC-N,GAP,0,https://docs.aembit.io,,,Not a platform capability
+aembit,Aembit,UC-N-016,UC-N,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,UC-N-017,UC-N,GAP,0,https://docs.aembit.io,,,No telemetry log-scrubbing or secret-leak audit capability
+aembit,Aembit,UC-N-018,UC-N,GAP,0,https://docs.aembit.io,,,Not in scope
+aembit,Aembit,UC-N-019,UC-N,NATIVE,3,https://aembit.io/blog/aembit-iam-for-agentic-ai-is-now-generally-available/,Blended Identity dual attribution in audit logs per-tool credential issuance volume anomalous access alerting,aembit-agentic-ai-ga-2026,Per-agent attribution; tool-credential issuance tracking; scope enforcement via Blended Identity
+aembit,Aembit,UC-N-020,UC-N,GAP,0,https://docs.aembit.io,,,Not in scope; no mainframe/legacy NHI coverage

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sketch 001 — Risk Posture One-Pager · XYZ Secrets-Management PRD</title>
+<link rel="stylesheet" href="../themes/default.css">
+<style>
+  body {
+    margin: 0; padding: 0; padding-top: 48px;
+    font-family: var(--font-sans);
+    background: var(--color-bg); color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+  h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: 600; }
+
+  /* Variant nav */
+  #variant-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9998;
+    background: var(--color-surface); border-bottom: 1px solid var(--color-border);
+    padding: 8px 16px; display: flex; gap: 8px; align-items: center;
+    box-shadow: var(--shadow-sm); font-family: var(--font-sans);
+  }
+  #variant-nav .label { font-size: var(--text-xs); color: var(--color-text-muted);
+    margin-right: 8px; font-family: var(--font-mono); }
+  .variant-tab {
+    padding: 5px 12px; border: 1px solid var(--color-border);
+    background: var(--color-surface); border-radius: var(--radius-sm);
+    font-size: var(--text-xs); cursor: pointer;
+    color: var(--color-text-muted);
+  }
+  .variant-tab.active {
+    background: var(--color-primary); color: var(--color-text-inverse);
+    border-color: var(--color-primary);
+  }
+  .variant-tab:hover { border-color: var(--color-primary); }
+
+  /* Variant container — A3 portrait-ish */
+  .variant { display: none; padding: 24px 32px; max-width: 1200px; margin: 0 auto; }
+  .variant.active { display: block; }
+
+  /* Reusable */
+  .doc-header { border-bottom: 2px solid var(--color-primary); padding-bottom: 12px;
+    margin-bottom: 20px; display: flex; justify-content: space-between; align-items: baseline; }
+  .doc-header .title { font-size: var(--text-xl); color: var(--color-primary); }
+  .doc-header .meta { font-size: var(--text-xs); color: var(--color-text-muted);
+    font-family: var(--font-mono); }
+  .section-title { font-size: var(--text-md); color: var(--color-primary);
+    margin: 18px 0 10px 0; padding-bottom: 4px;
+    border-bottom: 1px dotted var(--color-border-strong); }
+
+  /* KPI tiles */
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+  .kpi {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); padding: 14px 16px;
+    border-left: 4px solid var(--color-primary);
+  }
+  .kpi .num { font-size: var(--text-2xl); font-weight: 700; color: var(--color-text);
+    font-family: var(--font-display); line-height: 1; }
+  .kpi .label { font-size: var(--text-xxs); color: var(--color-text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em; margin-top: 4px;
+    font-family: var(--font-mono); }
+  .kpi.gap   { border-left-color: var(--rag-red); }
+  .kpi.amber { border-left-color: var(--rag-amber); }
+  .kpi.green { border-left-color: var(--rag-green); }
+
+  /* RAG bucket card */
+  .bucket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .bucket-card {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); padding: 14px 16px;
+  }
+  .bucket-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .bucket-name { font-size: var(--text-base); font-weight: 600; color: var(--color-text); }
+  .bucket-count { font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-mono); }
+  .nhi-chip-grid { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+  .nhi-chip {
+    font-size: var(--text-xxs); font-family: var(--font-mono);
+    padding: 2px 6px; border-radius: var(--radius-sm); color: white;
+    cursor: default;
+  }
+  .nhi-chip.GAP     { background: var(--rag-red); }
+  .nhi-chip.PARTIAL { background: var(--rag-amber); }
+  .nhi-chip.PENDING { background: var(--rag-grey); }
+  .nhi-chip.MET     { background: var(--rag-green); }
+  .nhi-chip.UNKNOWN { background: var(--rag-grey); opacity: 0.5; }
+
+  /* APRA strip */
+  .apra-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .apra-cell {
+    padding: 8px 10px; border-radius: var(--radius-sm);
+    font-size: var(--text-xxs); font-family: var(--font-mono);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-left: 3px solid var(--rag-grey);
+  }
+  .apra-cell.red    { border-left-color: var(--rag-red);   background: var(--rag-red-soft); }
+  .apra-cell.amber  { border-left-color: var(--rag-amber); background: var(--rag-amber-soft); }
+  .apra-cell.green  { border-left-color: var(--rag-green); background: var(--rag-green-soft); }
+  .apra-cell .code { font-weight: 700; color: var(--color-primary); }
+  .apra-cell .title { font-size: var(--text-xxs); color: var(--color-text-muted); margin-top: 2px;
+    line-height: 1.3; font-family: var(--font-sans); }
+
+  /* Variant B (narrative) */
+  .narrative {
+    text-align: center; padding: 30px 20px 20px;
+  }
+  .narrative .hook {
+    font-family: var(--font-display); font-size: var(--text-3xl);
+    color: var(--color-primary); line-height: 1.15; max-width: 740px; margin: 0 auto 12px;
+  }
+  .narrative .sub {
+    font-size: var(--text-base); color: var(--color-text-muted); max-width: 640px;
+    margin: 0 auto 24px;
+  }
+  .narrative .stat { color: var(--rag-red); font-weight: 700; }
+  .narrative .stat.green { color: var(--rag-green); }
+  .narrative .stat.amber { color: var(--rag-amber); }
+
+  /* Stacked bar (Variant B focal) */
+  .stack-bar { display: flex; height: 36px; width: 100%; border-radius: var(--radius-sm);
+    overflow: hidden; margin: 8px 0; background: var(--rag-grey-soft); }
+  .stack-seg { display: flex; align-items: center; justify-content: center;
+    color: white; font-size: var(--text-xs); font-weight: 600; font-family: var(--font-mono); }
+  .stack-seg.GAP     { background: var(--rag-red); }
+  .stack-seg.PARTIAL { background: var(--rag-amber); }
+  .stack-seg.PENDING { background: var(--rag-grey); }
+  .stack-seg.MET     { background: var(--rag-green); }
+  .stack-legend { display: flex; gap: 14px; justify-content: center; font-size: var(--text-xs);
+    color: var(--color-text-muted); margin-top: 6px; font-family: var(--font-mono); }
+  .stack-legend .sw { display: inline-block; width: 10px; height: 10px;
+    border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+  /* Variant C — risk register table */
+  .risk-table {
+    width: 100%; border-collapse: collapse; font-size: var(--text-xs);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+  }
+  .risk-table th {
+    background: var(--color-primary); color: white; padding: 6px 8px;
+    text-align: left; font-weight: 600; font-size: var(--text-xxs);
+    text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-mono);
+  }
+  .risk-table td {
+    padding: 5px 8px; border-bottom: 1px solid var(--color-border);
+    vertical-align: top; font-family: var(--font-sans);
+  }
+  .risk-table td.id { font-family: var(--font-mono); font-weight: 600; color: var(--color-primary); white-space: nowrap; }
+  .risk-table td.pri { font-family: var(--font-mono); font-weight: 700; text-align: center; }
+  .risk-table td.pri.P0 { color: var(--rag-red); }
+  .risk-table td.pri.P1 { color: var(--rag-amber); }
+  .risk-table td.pri.P2 { color: var(--color-text-muted); }
+  .risk-table td.state { font-family: var(--font-mono); font-weight: 700; }
+  .risk-table td.state.GAP     { color: var(--rag-red); }
+  .risk-table td.state.PARTIAL { color: var(--rag-amber); }
+  .risk-table td.state.PENDING { color: var(--rag-grey); }
+  .risk-table tr:hover td { background: var(--color-primary-soft); }
+
+  /* Sketch tools */
+  #sketch-tools {
+    position: fixed; bottom: 12px; right: 12px; z-index: 9999;
+    font-family: system-ui; font-size: 11px;
+    background: rgba(0,0,0,0.7); color: white; padding: 8px 12px;
+    border-radius: 8px; opacity: 0.4; transition: opacity 0.2s;
+  }
+  #sketch-tools:hover { opacity: 1; }
+  #sketch-tools button { background: transparent; border: 1px solid rgba(255,255,255,0.3);
+    color: white; padding: 2px 8px; margin-left: 4px; border-radius: 3px; cursor: pointer;
+    font-size: 11px; }
+  #sketch-tools button:hover { background: rgba(255,255,255,0.1); }
+
+  .footer-note { color: var(--color-text-faint); font-size: var(--text-xxs);
+    font-family: var(--font-mono); margin-top: 18px; text-align: right; }
+</style>
+</head>
+<body>
+
+<nav id="variant-nav">
+  <span class="label">SKETCH 001 — RISK POSTURE</span>
+  <button class="variant-tab active" data-variant="a">A · Classic dashboard</button>
+  <button class="variant-tab" data-variant="b">B · Narrative one-liner</button>
+  <button class="variant-tab" data-variant="c">C · Risk register</button>
+  <span style="flex:1"></span>
+  <span style="font-size:11px;color:var(--color-text-muted);font-family:var(--font-mono)">A3-portrait · print Ctrl/Cmd-P</span>
+</nav>
+
+<!-- =================================================================== -->
+<!-- VARIANT A — Classic Dashboard                                       -->
+<!-- =================================================================== -->
+<section class="variant active" id="variant-a">
+  <div class="doc-header">
+    <div>
+      <h1 class="title">XYZ Secrets-Management — Risk Posture Snapshot</h1>
+      <div style="font-size:12px;color:var(--color-text-muted);margin-top:4px">For Board / Executive review · PRD v0.1</div>
+    </div>
+    <div class="meta">2026-Q2 · CONFIDENTIAL · Draft</div>
+  </div>
+
+  <h2 class="section-title">Headline indicators</h2>
+  <div class="kpi-row" id="kpi-row-a"></div>
+
+  <h2 class="section-title">Coverage by non-human-identity bucket</h2>
+  <div class="bucket-grid" id="bucket-grid-a"></div>
+
+  <h2 class="section-title">APRA CPS-234 exposure (25 controls)</h2>
+  <div class="apra-grid" id="apra-grid-a"></div>
+
+  <div class="footer-note">Source: matrix/anz-current-state.csv · matrix/regulatory-trace.csv · matrix/identity-catalog.csv · generated by build.py</div>
+</section>
+
+<!-- =================================================================== -->
+<!-- VARIANT B — Narrative One-Liner                                     -->
+<!-- =================================================================== -->
+<section class="variant" id="variant-b">
+  <div class="doc-header">
+    <div>
+      <h1 class="title">XYZ Secrets-Management — Where we stand</h1>
+      <div style="font-size:12px;color:var(--color-text-muted);margin-top:4px">For Board / Executive review · PRD v0.1</div>
+    </div>
+    <div class="meta">2026-Q2 · CONFIDENTIAL · Draft</div>
+  </div>
+
+  <div class="narrative" id="narrative-b"></div>
+
+  <h2 class="section-title" style="text-align:center">All 47 controlled outcomes, by current state and priority</h2>
+  <div id="stack-b"></div>
+
+  <h2 class="section-title" style="text-align:center;margin-top:28px">APRA CPS-234 — what the regulator will ask about</h2>
+  <div id="apra-narrative-b"></div>
+
+  <div class="footer-note">Source: matrix/anz-current-state.csv · matrix/regulatory-trace.csv · matrix/identity-catalog.csv · generated by build.py</div>
+</section>
+
+<!-- =================================================================== -->
+<!-- VARIANT C — Risk Register Table                                     -->
+<!-- =================================================================== -->
+<section class="variant" id="variant-c">
+  <div class="doc-header">
+    <div>
+      <h1 class="title">XYZ Secrets-Management — Risk Register (PRD v0.1 baseline)</h1>
+      <div style="font-size:12px;color:var(--color-text-muted);margin-top:4px">For Risk Committee / Internal Audit</div>
+    </div>
+    <div class="meta">2026-Q2 · CONFIDENTIAL · Draft</div>
+  </div>
+
+  <h2 class="section-title">Open exposures by priority and state</h2>
+  <div id="risk-summary-c" style="margin-bottom:12px;font-size:var(--text-xs);color:var(--color-text-muted);font-family:var(--font-mono)"></div>
+
+  <table class="risk-table" id="risk-table-c">
+    <thead><tr>
+      <th style="width:80px">UC ID</th>
+      <th style="width:60px">Pri</th>
+      <th style="width:80px">State</th>
+      <th>Title</th>
+      <th style="width:140px">NHIs in scope</th>
+      <th style="width:120px">APRA back-map</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="footer-note">Source: matrix/use-cases.csv · matrix/anz-current-state.csv · matrix/regulatory-trace.csv · generated by build.py</div>
+</section>
+
+<!-- Sketch toolbar -->
+<div id="sketch-tools" class="no-print">
+  Sketch 001 ·
+  <button onclick="window.print()">Print to PDF</button>
+  <button onclick="document.body.classList.toggle('compact')">Toggle density</button>
+</div>
+
+<script>
+const DATA = {"headline": {"total_ucs": 47, "total_nhis": 37, "p0_total": 12, "p0_gap": 4, "gov_nhis": 13, "gap_nhis": 22, "pending_nhis": 2, "apra_total": 25, "apra_red": 14, "apra_amber": 11, "apra_green": 0}, "state_counts": {"GAP": 11, "PARTIAL": 16, "PENDING": 20}, "priority_counts": {"P0": 12, "P1": 26, "P2": 9}, "xtab": {"GAP": {"P0": 4, "P1": 6, "P2": 1}, "PARTIAL": {"P0": 6, "P1": 7, "P2": 3}, "PENDING": {"P1": 13, "P2": 5, "P0": 2}}, "buckets": {"COMMON": [{"nhi_id": "NHI-001", "short_name": "Cloud IAM principal", "lifecycle": "SHORT-LIVED", "gov_maturity": "MEDIUM", "worst_state": "GAP"}, {"nhi_id": "NHI-002", "short_name": "Kubernetes ServiceAccount", "lifecycle": "SHORT-LIVED", "gov_maturity": "MEDIUM", "worst_state": "GAP"}, {"nhi_id": "NHI-003", "short_name": "CI/CD pipeline identity", "lifecycle": "EPHEMERAL", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-004", "short_name": "Container image-pull credential", "lifecycle": "SHORT-LIVED", "gov_maturity": "MEDIUM", "worst_state": "GAP"}, {"nhi_id": "NHI-005", "short_name": "Database service account", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-006", "short_name": "Application TLS / mTLS workload identity", "lifecycle": "SHORT-LIVED", "gov_maturity": "MEDIUM", "worst_state": "GAP"}, {"nhi_id": "NHI-007", "short_name": "Third-party SaaS API key / OAuth client", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-008", "short_name": "Git platform credential", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-009", "short_name": "IaC / config-management agent", "lifecycle": "SHORT-LIVED", "gov_maturity": "MEDIUM", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-010", "short_name": "Monitoring / observability agent", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-011", "short_name": "Message broker / event-bus client", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-012", "short_name": "AD / LDAP service account", "lifecycle": "STATIC", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-013", "short_name": "API gateway upstream identity", "lifecycle": "SHORT-LIVED", "gov_maturity": "MEDIUM", "worst_state": "PENDING"}, {"nhi_id": "NHI-014", "short_name": "RPA bot identity", "lifecycle": "STATIC", "gov_maturity": "LOW", "worst_state": "GAP"}], "UNCOMMON": [{"nhi_id": "NHI-015", "short_name": "Code-signing identity", "lifecycle": "EPHEMERAL", "gov_maturity": "LOW", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-016", "short_name": "Build provenance / SLSA attestation identity", "lifecycle": "EPHEMERAL", "gov_maturity": "LOW", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-017", "short_name": "Service mesh control-plane identity", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-018", "short_name": "Confidential-computing attestation identity", "lifecycle": "EPHEMERAL", "gov_maturity": "LOW", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-019", "short_name": "AI agent / autonomous workflow identity", "lifecycle": "SHORT-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-020", "short_name": "Model artifact / registry identity", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-021", "short_name": "IoT / OT device identity", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-022", "short_name": "Mainframe / midrange service identity", "lifecycle": "STATIC", "gov_maturity": "MEDIUM", "worst_state": "GAP"}, {"nhi_id": "NHI-023", "short_name": "Database TDE / encryption master key identity", "lifecycle": "LONG-LIVED", "gov_maturity": "MEDIUM", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-024", "short_name": "HSM / KMS operator / break-glass identity", "lifecycle": "LONG-LIVED", "gov_maturity": "MEDIUM", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-025", "short_name": "Certificate authority operator identity", "lifecycle": "LONG-LIVED", "gov_maturity": "MEDIUM", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-026", "short_name": "Backup / DR agent identity", "lifecycle": "STATIC", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-027", "short_name": "BFF / on-behalf-of token holder", "lifecycle": "SHORT-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-028", "short_name": "Federated B2B / Open Banking client identity", "lifecycle": "LONG-LIVED", "gov_maturity": "MEDIUM", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-029", "short_name": "Service-account-as-human (shared functional ID)", "lifecycle": "STATIC", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-030", "short_name": "Browser / SaaS extension and OAuth-app identity", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-031", "short_name": "Webhook / inbound integration identity", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-032", "short_name": "Network / infrastructure device identity", "lifecycle": "STATIC", "gov_maturity": "LOW", "worst_state": "PENDING"}, {"nhi_id": "NHI-033", "short_name": "Print / spooler / branch-peripheral identity", "lifecycle": "STATIC", "gov_maturity": "LOW", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-034", "short_name": "Quantum-resistant / hybrid-PKI rotation identity", "lifecycle": "LONG-LIVED", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-035", "short_name": "Vault-internal / secrets-broker identity", "lifecycle": "LONG-LIVED", "gov_maturity": "MEDIUM", "worst_state": "PARTIAL"}, {"nhi_id": "NHI-036", "short_name": "Ephemeral workload via SPIFFE / Aembit / Clutch", "lifecycle": "EPHEMERAL", "gov_maturity": "LOW", "worst_state": "GAP"}, {"nhi_id": "NHI-037", "short_name": "Forgotten / orphaned legacy identity", "lifecycle": "STATIC", "gov_maturity": "LOW", "worst_state": "GAP"}]}, "bucket_state_counts": {"COMMON": {"GAP": 11, "PARTIAL": 2, "PENDING": 1}, "UNCOMMON": {"PARTIAL": 11, "GAP": 11, "PENDING": 1}}, "apra_exposure": [{"code": "CPS234-§13", "title": "Board accountability for information security", "uc_count": 4, "uc_ids": ["UC-N-004", "UC-N-005", "UC-N-011", "UC-N-015"], "worst_state": "GAP", "p0_count": 1, "states": {"PENDING": 3, "GAP": 1}}, {"code": "CPS234-§14", "title": "Clearly defined information-security roles", "uc_count": 5, "uc_ids": ["UC-N-002", "UC-N-004", "UC-N-009", "UC-N-014", "UC-N-015"], "worst_state": "GAP", "p0_count": 1, "states": {"GAP": 1, "PENDING": 3, "PARTIAL": 1}}, {"code": "CPS234-§15", "title": "Information-security capability commensurate with threats", "uc_count": 8, "uc_ids": ["UC-F-004", "UC-F-005", "UC-F-006", "UC-F-007", "UC-F-026", "UC-N-002", "UC-N-003", "UC-N-005"], "worst_state": "GAP", "p0_count": 6, "states": {"GAP": 3, "PARTIAL": 4, "PENDING": 1}}, {"code": "CPS234-§16", "title": "Assess third-party information-security capability", "uc_count": 4, "uc_ids": ["UC-N-006", "UC-N-007", "UC-F-024", "UC-F-025"], "worst_state": "PARTIAL", "p0_count": 0, "states": {"PARTIAL": 1, "PENDING": 3}}, {"code": "CPS234-§17", "title": "Active capability maintenance through change", "uc_count": 6, "uc_ids": ["UC-F-006", "UC-F-027", "UC-N-001", "UC-N-003", "UC-N-008", "UC-N-013"], "worst_state": "GAP", "p0_count": 3, "states": {"PARTIAL": 2, "GAP": 3, "PENDING": 1}}, {"code": "CPS234-§18", "title": "Information-security policy framework", "uc_count": 4, "uc_ids": ["UC-N-005", "UC-N-008", "UC-N-009", "UC-N-015"], "worst_state": "GAP", "p0_count": 0, "states": {"GAP": 2, "PARTIAL": 1, "PENDING": 1}}, {"code": "CPS234-§19", "title": "Policy framework — direction on responsibilities", "uc_count": 2, "uc_ids": ["UC-N-008", "UC-N-015"], "worst_state": "GAP", "p0_count": 0, "states": {"GAP": 1, "PENDING": 1}}, {"code": "CPS234-§20", "title": "Asset classification by criticality and sensitivity", "uc_count": 4, "uc_ids": ["UC-F-005", "UC-N-002", "UC-N-007", "UC-N-020"], "worst_state": "GAP", "p0_count": 2, "states": {"PARTIAL": 1, "GAP": 1, "PENDING": 2}}, {"code": "CPS234-§21", "title": "Implementation of information-security controls (umbrella)", "uc_count": 16, "uc_ids": ["UC-F-001", "UC-F-003", "UC-F-004", "UC-F-005", "UC-F-006", "UC-F-008", "UC-F-009", "UC-F-010", "UC-F-012", "UC-F-016", "UC-F-018", "UC-F-019", "UC-F-020", "UC-F-021", "UC-F-022", "UC-F-024"], "worst_state": "GAP", "p0_count": 5, "states": {"GAP": 4, "PARTIAL": 7, "PENDING": 5}}, {"code": "CPS234-§21(a)", "title": "Controls commensurate with vulnerabilities and threats", "uc_count": 5, "uc_ids": ["UC-F-001", "UC-F-002", "UC-F-007", "UC-F-022", "UC-N-011"], "worst_state": "GAP", "p0_count": 4, "states": {"GAP": 2, "PARTIAL": 1, "PENDING": 2}}, {"code": "CPS234-§21(b)", "title": "Controls commensurate with criticality and sensitivity", "uc_count": 5, "uc_ids": ["UC-F-005", "UC-F-017", "UC-F-021", "UC-N-007", "UC-N-018"], "worst_state": "PARTIAL", "p0_count": 2, "states": {"PARTIAL": 4, "PENDING": 1}}, {"code": "CPS234-§21(c)", "title": "Controls commensurate with life-cycle stage", "uc_count": 6, "uc_ids": ["UC-F-006", "UC-F-013", "UC-F-016", "UC-F-019", "UC-F-027", "UC-N-003"], "worst_state": "GAP", "p0_count": 2, "states": {"PARTIAL": 4, "GAP": 1, "PENDING": 1}}, {"code": "CPS234-§21(d)", "title": "Controls commensurate with incident consequences", "uc_count": 5, "uc_ids": ["UC-F-007", "UC-F-021", "UC-F-026", "UC-N-010", "UC-N-011"], "worst_state": "PARTIAL", "p0_count": 4, "states": {"PARTIAL": 4, "PENDING": 1}}, {"code": "CPS234-§22", "title": "Evaluate design of third-party controls", "uc_count": 5, "uc_ids": ["UC-N-006", "UC-N-007", "UC-N-014", "UC-F-024", "UC-F-025"], "worst_state": "PARTIAL", "p0_count": 0, "states": {"PARTIAL": 1, "PENDING": 4}}, {"code": "CPS234-§23", "title": "Detect and respond mechanisms", "uc_count": 7, "uc_ids": ["UC-F-001", "UC-F-002", "UC-F-007", "UC-N-001", "UC-N-011", "UC-N-017", "UC-N-019"], "worst_state": "GAP", "p0_count": 5, "states": {"GAP": 4, "PARTIAL": 1, "PENDING": 2}}, {"code": "CPS234-§24", "title": "Incident response plans for plausible incidents", "uc_count": 3, "uc_ids": ["UC-F-007", "UC-N-010", "UC-N-011"], "worst_state": "PARTIAL", "p0_count": 2, "states": {"PARTIAL": 2, "PENDING": 1}}, {"code": "CPS234-§26", "title": "Annual review and test of response plans", "uc_count": 3, "uc_ids": ["UC-N-010", "UC-N-011", "UC-F-007"], "worst_state": "PARTIAL", "p0_count": 2, "states": {"PARTIAL": 2, "PENDING": 1}}, {"code": "CPS234-§27", "title": "Systematic testing of control effectiveness", "uc_count": 6, "uc_ids": ["UC-N-003", "UC-N-005", "UC-N-010", "UC-F-006", "UC-F-021", "UC-F-026"], "worst_state": "GAP", "p0_count": 4, "states": {"PENDING": 1, "GAP": 1, "PARTIAL": 4}}, {"code": "CPS234-§27(d)", "title": "Testing commensurate with untrusted-environment exposure", "uc_count": 5, "uc_ids": ["UC-F-018", "UC-F-019", "UC-F-024", "UC-N-007", "UC-N-016"], "worst_state": "GAP", "p0_count": 0, "states": {"GAP": 1, "PARTIAL": 1, "PENDING": 3}}, {"code": "CPS234-§28", "title": "Assess sufficiency of third-party control testing", "uc_count": 3, "uc_ids": ["UC-N-006", "UC-N-007", "UC-N-014"], "worst_state": "PARTIAL", "p0_count": 0, "states": {"PARTIAL": 1, "PENDING": 2}}, {"code": "CPS234-§30", "title": "Independent specialist testers", "uc_count": 3, "uc_ids": ["UC-N-009", "UC-N-010", "UC-N-014"], "worst_state": "PARTIAL", "p0_count": 0, "states": {"PARTIAL": 2, "PENDING": 1}}, {"code": "CPS234-§32", "title": "Internal audit review of control effectiveness", "uc_count": 4, "uc_ids": ["UC-N-004", "UC-N-009", "UC-N-014", "UC-N-020"], "worst_state": "PARTIAL", "p0_count": 0, "states": {"PENDING": 3, "PARTIAL": 1}}, {"code": "CPS234-§34", "title": "Internal audit assessment of third-party assurance", "uc_count": 3, "uc_ids": ["UC-N-006", "UC-N-007", "UC-N-014"], "worst_state": "PARTIAL", "p0_count": 0, "states": {"PARTIAL": 1, "PENDING": 2}}, {"code": "CPS234-§35", "title": "72-hour APRA notification of material incident", "uc_count": 4, "uc_ids": ["UC-F-007", "UC-N-001", "UC-N-011", "UC-N-019"], "worst_state": "GAP", "p0_count": 3, "states": {"PARTIAL": 1, "GAP": 2, "PENDING": 1}}, {"code": "CPS234-§36", "title": "10-business-day notification of material control weakness", "uc_count": 3, "uc_ids": ["UC-N-009", "UC-N-011", "UC-N-020"], "worst_state": "PARTIAL", "p0_count": 1, "states": {"PARTIAL": 1, "PENDING": 2}}], "uc_rows": [{"uc_id": "UC-F-001", "priority": "P0", "state": "GAP", "title": "Prevent plaintext secrets in source repos", "nhis": "NHI-008;NHI-001;NHI-003;NHI-005;NHI-007;NHI-010", "apra": "CPS234-§28a;CPS234-§35b"}, {"uc_id": "UC-F-002", "priority": "P0", "state": "GAP", "title": "Detect and remediate secrets in history", "nhis": "NHI-008;NHI-001;NHI-005;NHI-007;NHI-010;NHI-037", "apra": "CPS234-§35c"}, {"uc_id": "UC-F-003", "priority": "P0", "state": "PARTIAL", "title": "JIT short-lived cloud credentials via OIDC", "nhis": "NHI-003;NHI-001", "apra": "CPS234-§22"}, {"uc_id": "UC-F-004", "priority": "P1", "state": "GAP", "title": "Workload-attested ephemeral identity (SPIFFE)", "nhis": "NHI-006;NHI-002;NHI-017;NHI-036", "apra": "CPS234-§22"}, {"uc_id": "UC-F-005", "priority": "P0", "state": "PARTIAL", "title": "Dynamic database credentials via broker leases", "nhis": "NHI-005;NHI-001;NHI-023", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-006", "priority": "P0", "state": "PARTIAL", "title": "Automated rotation of long-lived static secrets", "nhis": "NHI-005;NHI-007;NHI-010;NHI-011;NHI-012;NHI-014;NHI-022;NHI-029;NHI-031", "apra": "CPS234-§28c"}, {"uc_id": "UC-F-007", "priority": "P0", "state": "PARTIAL", "title": "Immediate revocation on identity compromise", "nhis": "NHI-001;NHI-003;NHI-007;NHI-008;NHI-019;NHI-027;NHI-035", "apra": "CPS234-§34"}, {"uc_id": "UC-F-008", "priority": "P1", "state": "GAP", "title": "K8s secret consumption without on-disk plaintext", "nhis": "NHI-002;NHI-004;NHI-006", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-009", "priority": "P1", "state": "PENDING", "title": "Per-workload image-pull credentials", "nhis": "NHI-004;NHI-002", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-010", "priority": "P1", "state": "PARTIAL", "title": "IaC apply-time secret injection", "nhis": "NHI-009;NHI-001;NHI-003", "apra": "CPS234-§22"}, {"uc_id": "UC-F-011", "priority": "P1", "state": "PENDING", "title": "Observability-agent token hygiene", "nhis": "NHI-010", "apra": "CPS234-§28b"}, {"uc_id": "UC-F-012", "priority": "P1", "state": "PENDING", "title": "Message-broker client identity hardening", "nhis": "NHI-011;NHI-001;NHI-006", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-013", "priority": "P1", "state": "PARTIAL", "title": "gMSA / Kerberos modernisation", "nhis": "NHI-012;NHI-029", "apra": "CPS234-§22"}, {"uc_id": "UC-F-014", "priority": "P2", "state": "PENDING", "title": "API-gateway upstream identity standardised", "nhis": "NHI-013;NHI-006", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-015", "priority": "P1", "state": "PENDING", "title": "RPA bot credential brokering", "nhis": "NHI-014;NHI-029;NHI-012", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-016", "priority": "P1", "state": "PARTIAL", "title": "Keyless code- and artifact-signing", "nhis": "NHI-015;NHI-016;NHI-024;NHI-034", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-017", "priority": "P2", "state": "PARTIAL", "title": "TEE attestation gates secret release", "nhis": "NHI-018;NHI-023", "apra": "CPS234-§28b"}, {"uc_id": "UC-F-018", "priority": "P1", "state": "GAP", "title": "AI-agent tool-credential brokering", "nhis": "NHI-019;NHI-007;NHI-020;NHI-027;NHI-036", "apra": "CPS234-§22"}, {"uc_id": "UC-F-019", "priority": "P2", "state": "PARTIAL", "title": "IoT/OT/branch-device identity enrolment", "nhis": "NHI-021;NHI-033;NHI-025", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-020", "priority": "P1", "state": "PENDING", "title": "Mainframe credential rotation pipeline", "nhis": "NHI-022;NHI-024;NHI-023", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-021", "priority": "P0", "state": "PARTIAL", "title": "Backup/DR agent identity de-privileging", "nhis": "NHI-026;NHI-012;NHI-029", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-022", "priority": "P2", "state": "PENDING", "title": "Webhook inbound identity verification", "nhis": "NHI-031;NHI-013", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-023", "priority": "P2", "state": "PENDING", "title": "Network-device credential modernisation", "nhis": "NHI-032;NHI-033", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-024", "priority": "P1", "state": "PENDING", "title": "Open-Banking FAPI 2.0 partner identity", "nhis": "NHI-028;NHI-027;NHI-025", "apra": "CPS234-§28a"}, {"uc_id": "UC-F-025", "priority": "P1", "state": "PENDING", "title": "OAuth-app marketplace governance", "nhis": "NHI-030;NHI-007;NHI-037", "apra": "CPS234-§22"}, {"uc_id": "UC-F-026", "priority": "P0", "state": "PARTIAL", "title": "Vault-internal identity hardening", "nhis": "NHI-035;NHI-024;NHI-001", "apra": "CPS234-§22"}, {"uc_id": "UC-F-027", "priority": "P1", "state": "GAP", "title": "Orphaned/dormant NHI cleanup pipeline", "nhis": "NHI-037;NHI-001;NHI-012;NHI-029", "apra": "CPS234-§22"}, {"uc_id": "UC-N-001", "priority": "P0", "state": "GAP", "title": "Real-time secret-sprawl KPI dashboard", "nhis": "NHI-008;NHI-007;NHI-005;NHI-003;NHI-010;NHI-037", "apra": "CPS234-§35"}, {"uc_id": "UC-N-002", "priority": "P0", "state": "GAP", "title": "NHI inventory and ownership attestation", "nhis": "NHI-001;NHI-002;NHI-003;NHI-005;NHI-007;NHI-008;NHI-012;NHI-014;NHI-019;NHI-022;", "apra": "CPS234-§15;CPS234-§22"}, {"uc_id": "UC-N-003", "priority": "P0", "state": "PENDING", "title": "Rotation coverage and freshness KPIs", "nhis": "NHI-005;NHI-006;NHI-010;NHI-011;NHI-012;NHI-022;NHI-024;NHI-025", "apra": "CPS234-§28c"}, {"uc_id": "UC-N-004", "priority": "P1", "state": "PENDING", "title": "Regulator audit evidence pack", "nhis": "NHI-005;NHI-008;NHI-009;NHI-022;NHI-028;NHI-035", "apra": "CPS234-§22;CPS234-§33;CPS234-§35"}, {"uc_id": "UC-N-005", "priority": "P1", "state": "GAP", "title": "E8 / ZT control-area scorecard", "nhis": "NHI-001;NHI-002;NHI-006;NHI-012;NHI-019;NHI-034", "apra": ""}, {"uc_id": "UC-N-006", "priority": "P1", "state": "PARTIAL", "title": "Vendor / SaaS supply-chain risk attestation", "nhis": "NHI-007;NHI-030;NHI-031;NHI-028;NHI-026;NHI-004", "apra": "CPS234-§14"}, {"uc_id": "UC-N-007", "priority": "P1", "state": "PENDING", "title": "Data-sovereignty and residency assurance", "nhis": "NHI-035;NHI-023;NHI-024;NHI-018", "apra": "CPS234-§22"}, {"uc_id": "UC-N-008", "priority": "P2", "state": "GAP", "title": "Engineer training and secure-coding adoption KPI", "nhis": "NHI-008;NHI-003;NHI-005;NHI-019", "apra": "CPS234-§17"}, {"uc_id": "UC-N-009", "priority": "P1", "state": "PARTIAL", "title": "Exception register and risk-acceptance governance", "nhis": "NHI-012;NHI-014;NHI-022;NHI-029;NHI-033;NHI-037", "apra": "CPS234-§15;CPS234-§22"}, {"uc_id": "UC-N-010", "priority": "P1", "state": "PARTIAL", "title": "Break-glass and quorum-operator governance", "nhis": "NHI-024;NHI-025;NHI-035;NHI-022;NHI-026;NHI-017", "apra": "CPS234-§22"}, {"uc_id": "UC-N-011", "priority": "P0", "state": "PENDING", "title": "Post-incident reporting and identity-driven RCA", "nhis": "NHI-001;NHI-003;NHI-007;NHI-008;NHI-019;NHI-026;NHI-037", "apra": "CPS234-§34;CPS234-§35"}, {"uc_id": "UC-N-012", "priority": "P1", "state": "PENDING", "title": "Supply-chain / SLSA provenance reporting", "nhis": "NHI-015;NHI-016;NHI-020;NHI-035", "apra": "CPS234-§28a;CPS234-§35"}, {"uc_id": "UC-N-013", "priority": "P1", "state": "PARTIAL", "title": "Crypto-agility and PQC readiness scorecard", "nhis": "NHI-034;NHI-023;NHI-024;NHI-025;NHI-006;NHI-021;NHI-028", "apra": "CPS234-§22;CPS234-§28b"}, {"uc_id": "UC-N-014", "priority": "P1", "state": "PENDING", "title": "Vendor evaluation matrix maintenance", "nhis": "NHI-001;NHI-002;NHI-005;NHI-006;NHI-015;NHI-019;NHI-022;NHI-026;NHI-034;NHI-035", "apra": "CPS234-§14"}, {"uc_id": "UC-N-015", "priority": "P2", "state": "PENDING", "title": "Stakeholder communications cadence", "nhis": "NHI-008;NHI-019;NHI-030;NHI-037", "apra": "CPS234-§17"}, {"uc_id": "UC-N-016", "priority": "P2", "state": "PENDING", "title": "IoT/OT/branch fleet posture reporting", "nhis": "NHI-021;NHI-033;NHI-032", "apra": "CPS234-§22"}, {"uc_id": "UC-N-017", "priority": "P1", "state": "PENDING", "title": "Observability secret-leak governance", "nhis": "NHI-010;NHI-011;NHI-013", "apra": "CPS234-§28b"}, {"uc_id": "UC-N-018", "priority": "P2", "state": "PARTIAL", "title": "TEE attestation assurance reporting", "nhis": "NHI-018;NHI-023", "apra": "CPS234-§28b"}, {"uc_id": "UC-N-019", "priority": "P1", "state": "GAP", "title": "AI-agent KPI suite", "nhis": "NHI-019;NHI-020;NHI-027;NHI-036", "apra": "CPS234-§22;CPS234-§35"}, {"uc_id": "UC-N-020", "priority": "P1", "state": "PENDING", "title": "Mainframe/legacy posture transparency", "nhis": "NHI-022;NHI-014;NHI-029;NHI-026;NHI-032", "apra": "CPS234-§22"}]};
+
+// ============================ variant switcher
+document.querySelectorAll('.variant-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.variant;
+    document.querySelectorAll('.variant-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.variant').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('variant-' + id).classList.add('active');
+  });
+});
+
+// ============================ Variant A
+(function renderA(){
+  const h = DATA.headline;
+  const kpi = document.getElementById('kpi-row-a');
+  const tiles = [
+    { num: h.total_ucs, label: 'Controlled outcomes (UCs)', cls: '' },
+    { num: h.p0_gap + ' / ' + h.p0_total, label: 'P0 outcomes with GAPs', cls: h.p0_gap > 0 ? 'gap' : 'green' },
+    { num: h.gap_nhis,  label: 'NHI types with GAP coverage', cls: 'gap' },
+    { num: h.pending_nhis, label: 'NHI types not yet assessed', cls: 'amber' },
+    { num: h.apra_red,  label: 'APRA controls at GAP / PENDING', cls: 'gap' },
+  ];
+  kpi.innerHTML = tiles.map(t =>
+    '<div class="kpi ' + t.cls + '"><div class="num">' + t.num + '</div><div class="label">' + t.label + '</div></div>'
+  ).join('');
+
+  const bg = document.getElementById('bucket-grid-a');
+  bg.innerHTML = Object.entries(DATA.buckets).map(([bucket, nhis]) => {
+    const sc = DATA.bucket_state_counts[bucket] || {};
+    const total = nhis.length;
+    const gap = sc.GAP || 0; const partial = sc.PARTIAL || 0;
+    const pending = sc.PENDING || 0; const met = sc.MET || 0;
+    return '<div class="bucket-card">' +
+      '<div class="bucket-header">' +
+        '<span class="bucket-name">' + bucket + '</span>' +
+        '<span class="bucket-count">' + total + ' NHIs · ' +
+          gap + ' gap · ' + partial + ' partial · ' + pending + ' pending' +
+        '</span>' +
+      '</div>' +
+      '<div class="nhi-chip-grid">' +
+        nhis.map(n =>
+          '<span class="nhi-chip ' + n.worst_state + '" title="' +
+            n.nhi_id + ' — ' + (n.short_name || '').replace(/"/g, '&quot;') + ' [' + n.worst_state + ']">' +
+            n.nhi_id +
+          '</span>'
+        ).join('') +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  const apra = document.getElementById('apra-grid-a');
+  apra.innerHTML = DATA.apra_exposure.map(a => {
+    const cls = (a.worst_state === 'GAP' || a.worst_state === 'PENDING') ? 'red'
+              : (a.worst_state === 'PARTIAL') ? 'amber'
+              : (a.worst_state === 'MET') ? 'green' : '';
+    return '<div class="apra-cell ' + cls + '" title="' + a.uc_count + ' UCs; worst=' + a.worst_state + '">' +
+      '<div class="code">' + a.code + '</div>' +
+      '<div class="title">' + a.title + '</div>' +
+      '<div style="font-size:10px;color:var(--color-text-faint);margin-top:3px">' +
+        a.uc_count + ' UCs · ' + (a.p0_count > 0 ? '<b>' + a.p0_count + ' P0</b>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+})();
+
+// ============================ Variant B (narrative)
+(function renderB(){
+  const h = DATA.headline;
+  const n = document.getElementById('narrative-b');
+  n.innerHTML =
+    '<div class="hook">' +
+      'Of ' + h.total_ucs + ' controlled outcomes the bank needs to manage, ' +
+      '<span class="stat">' + (DATA.state_counts.GAP || 0) + ' are open gaps</span>, ' +
+      '<span class="stat amber">' + (DATA.state_counts.PARTIAL || 0) + ' partial</span>, ' +
+      '<span class="stat" style="color:var(--rag-grey)">' + (DATA.state_counts.PENDING || 0) + ' not yet assessed</span>.' +
+    '</div>' +
+    '<div class="sub">' +
+      'Of ' + h.p0_total + ' priority-zero outcomes, <b>' + h.p0_gap + ' remain open as of today</b>. ' +
+      'NHI estate: ' + h.total_nhis + ' identity types tracked — ' + h.gap_nhis + ' with confirmed coverage gaps.' +
+    '</div>';
+
+  // Stack bar — state distribution
+  const stb = document.getElementById('stack-b');
+  const tot = h.total_ucs;
+  const segs = [
+    ['GAP',     DATA.state_counts.GAP || 0],
+    ['PARTIAL', DATA.state_counts.PARTIAL || 0],
+    ['PENDING', DATA.state_counts.PENDING || 0],
+    ['MET',     DATA.state_counts.MET || 0],
+  ];
+  stb.innerHTML =
+    '<div class="stack-bar">' +
+      segs.filter(([k,v]) => v > 0).map(([k,v]) =>
+        '<div class="stack-seg ' + k + '" style="width:' + (100*v/tot).toFixed(2) + '%">' + v + ' ' + k + '</div>'
+      ).join('') +
+    '</div>' +
+    '<div class="stack-legend">' +
+      segs.map(([k,v]) =>
+        '<span><span class="sw" style="background:var(--rag-' + ({GAP:'red',PARTIAL:'amber',PENDING:'grey',MET:'green'}[k]) + ')"></span>' + k + ' (' + v + ')</span>'
+      ).join('') +
+    '</div>';
+
+  // APRA roll-up — narrative form (one row per RAG tier)
+  const apraN = document.getElementById('apra-narrative-b');
+  apraN.innerHTML =
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">' +
+      '<div class="apra-cell red" style="font-family:var(--font-sans);font-size:var(--text-base);text-align:center;padding:14px"><div style="font-size:var(--text-2xl);font-weight:700;font-family:var(--font-display)">' + h.apra_red + '</div><div>controls at GAP / PENDING</div></div>' +
+      '<div class="apra-cell amber" style="font-family:var(--font-sans);font-size:var(--text-base);text-align:center;padding:14px"><div style="font-size:var(--text-2xl);font-weight:700;font-family:var(--font-display)">' + h.apra_amber + '</div><div>controls PARTIAL</div></div>' +
+      '<div class="apra-cell green" style="font-family:var(--font-sans);font-size:var(--text-base);text-align:center;padding:14px"><div style="font-size:var(--text-2xl);font-weight:700;font-family:var(--font-display)">' + h.apra_green + '</div><div>controls MET</div></div>' +
+    '</div>';
+})();
+
+// ============================ Variant C
+(function renderC(){
+  // Build joined risk rows
+  const allUcs = []; // gather joined
+  for (const s of Object.entries(DATA.state_counts)) { /* unused, kept for clarity */ }
+
+  // We use raw DATA — build from ucs (we need title + nhis + apra back-map)
+  // We didn't ship ucs in DATA shape; recompose from buckets+exposure indirectly is wrong.
+  // Instead include UC rows via DATA.uc_rows (filled below if present).
+  let rows = DATA.uc_rows || [];
+
+  // Sort: P0 first, then P1, then P2; within each, GAP > PARTIAL > PENDING > MET
+  const priOrder = { P0:0, P1:1, P2:2 };
+  const stOrder  = { GAP:0, PENDING:1, PARTIAL:2, MET:3 };
+  rows.sort((a,b) => (priOrder[a.priority]||9) - (priOrder[b.priority]||9)
+                  || (stOrder[a.state]||9) - (stOrder[b.state]||9));
+
+  const summary = document.getElementById('risk-summary-c');
+  const byPri = {};
+  for (const r of rows) {
+    byPri[r.priority] = byPri[r.priority] || { total:0, gap:0, partial:0, pending:0 };
+    byPri[r.priority].total++;
+    if (r.state === 'GAP') byPri[r.priority].gap++;
+    else if (r.state === 'PARTIAL') byPri[r.priority].partial++;
+    else if (r.state === 'PENDING') byPri[r.priority].pending++;
+  }
+  summary.innerHTML = Object.entries(byPri).sort().map(([p,c]) =>
+    p + ': ' + c.total + ' UCs (' + c.gap + ' gap · ' + c.partial + ' partial · ' + c.pending + ' pending)'
+  ).join('  ·  ');
+
+  const tbody = document.querySelector('#risk-table-c tbody');
+  tbody.innerHTML = rows.map(r =>
+    '<tr>' +
+      '<td class="id">' + r.uc_id + '</td>' +
+      '<td class="pri ' + r.priority + '">' + r.priority + '</td>' +
+      '<td class="state ' + r.state + '">' + r.state + '</td>' +
+      '<td>' + r.title + '</td>' +
+      '<td style="font-family:var(--font-mono);font-size:var(--text-xxs);color:var(--color-text-muted)">' + (r.nhis || '') + '</td>' +
+      '<td style="font-family:var(--font-mono);font-size:var(--text-xxs);color:var(--color-text-muted)">' + (r.apra || '') + '</td>' +
+    '</tr>'
+  ).join('');
+})();
+</script>
+</body>
+</html>

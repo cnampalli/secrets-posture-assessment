@@ -1,0 +1,98 @@
+/* Default theme — neutral professional palette
+   XYZ Secrets-Management PRD stakeholder visualisations.
+   Reuses accent + coverage colors from matrix/matrix-viewer.html for continuity. */
+
+:root {
+  /* Surface */
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafbfc;
+  --color-border: #e1e4e8;
+  --color-border-strong: #c8ced4;
+
+  /* Text */
+  --color-text: #1a2230;
+  --color-text-muted: #5a6471;
+  --color-text-faint: #8b94a0;
+  --color-text-inverse: #ffffff;
+
+  /* Accent (matrix-viewer continuity) */
+  --color-primary: #2a4d6e;
+  --color-primary-hover: #1f3a55;
+  --color-primary-soft: #e7ecf2;
+
+  /* Coverage / status palette (matrix-viewer continuity) */
+  --cov-native:  #2e7d32;   /* full coverage */
+  --cov-addon:   #ed6c02;   /* partial / addon */
+  --cov-partner: #6a1b9a;   /* via partner */
+  --cov-gap:     #c62828;   /* gap */
+  --cov-na:      #757575;   /* not applicable */
+
+  /* RAG (board-friendly) */
+  --rag-green:  #2e7d32;
+  --rag-amber:  #ed6c02;
+  --rag-red:    #c62828;
+  --rag-grey:   #9aa3ad;
+  --rag-green-soft: #e6f4e7;
+  --rag-amber-soft: #fdecdc;
+  --rag-red-soft:   #fbe4e4;
+  --rag-grey-soft:  #eceff2;
+
+  /* Maturity scale (heat) */
+  --heat-0: #f1f3f6;  /* GAP / no coverage */
+  --heat-1: #fde0c1;
+  --heat-2: #f4b27c;
+  --heat-3: #d97a3a;
+  --heat-4: #2a4d6e;
+  --heat-5: #15314a;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --font-display: "Source Serif Pro", Georgia, "Times New Roman", serif;
+  --text-xxs: 0.6875rem;  /* 11px */
+  --text-xs:  0.75rem;    /* 12px */
+  --text-sm:  0.8125rem;  /* 13px */
+  --text-base: 0.9375rem; /* 15px */
+  --text-md:  1.0625rem;  /* 17px */
+  --text-lg:  1.25rem;    /* 20px */
+  --text-xl:  1.5rem;     /* 24px */
+  --text-2xl: 2rem;       /* 32px */
+  --text-3xl: 2.5rem;     /* 40px */
+
+  /* Spacing */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Radii */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 9999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 2px 6px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.10);
+}
+
+/* Print path — board pack distribution */
+@media print {
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+  }
+  body { background: #ffffff !important; }
+  #sketch-tools, #variant-nav { display: none !important; }
+  .variant { display: block !important; page-break-after: always; }
+  .variant:last-child { page-break-after: auto; }
+  .no-print { display: none !important; }
+}
