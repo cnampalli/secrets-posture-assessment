@@ -96,6 +96,24 @@
   .vrow2{display:grid;grid-template-columns:26px 1fr 74px;gap:6px;padding:5px 4px;border-bottom:1px dotted var(--border);align-items:start;}
   .vrow2 .m{font-weight:700;text-align:center;color:var(--accent);} .vrow2 .vq{grid-column:1/4;font-size:10px;color:var(--muted);font-style:italic;line-height:1.35;}
   .placeholder{padding:20px;color:var(--muted);font-style:italic;text-align:center;}
+  /* business-value view */
+  .vsec{font-size:14px;color:var(--accent);margin:18px 0 8px;border-bottom:1px solid var(--border);padding-bottom:5px;}
+  .loop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 2px;}
+  .loop .step{flex:1;min-width:128px;background:var(--card);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:6px;padding:9px 11px;}
+  .loop .step .num{font-family:ui-monospace,monospace;font-size:10px;color:var(--muted);}
+  .loop .step b{display:block;font-size:13px;color:var(--fg);margin:2px 0;}
+  .loop .step .d{font-size:11px;color:var(--muted);line-height:1.3;}
+  .loparrow{color:var(--accent);font-weight:700;flex:none;}
+  .ocard .mech{margin:6px 0 8px;font-size:13px;}
+  .ocard .measure{font-size:12px;color:var(--muted);border-top:1px dotted var(--border);padding-top:6px;}
+  .ocard .measure b{color:var(--accent);}
+  .vtag{display:inline-block;font-family:ui-monospace,monospace;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:10px;color:#fff;}
+  .vtag.hard{background:var(--native);} .vtag.hours{background:var(--accent);} .vtag.risk{background:var(--gap);} .vtag.kpi{background:var(--pending);}
+  .kpitable{width:100%;border-collapse:collapse;font-size:12px;}
+  .kpitable th{text-align:left;border-bottom:2px solid #ccc;padding:6px;color:var(--accent);}
+  .kpitable td{padding:6px;border-bottom:1px solid #eee;vertical-align:top;}
+  .roi-banner{background:#eef6ee;border:1px solid #cfe3cf;border-left:4px solid var(--native);border-radius:6px;padding:14px 16px;margin-top:16px;font-size:13px;line-height:1.5;}
+  .roi-banner b{color:var(--native);}
 </style>
 </head>
 <body>
@@ -110,6 +128,7 @@
   <button data-view="nhi">By identity</button>
   <button data-view="reg">Compliance trace</button>
   <button data-view="rec">Recommendations</button>
+  <button data-view="value">Business value</button>
   <button data-view="table">Browse all</button>
 </nav>
 <main>
@@ -175,6 +194,13 @@
   <h2>Vendor recommendations — compose a best-of-breed stack</h2>
   <p class="muted">Layer-scoped and AU-residency-first. Rank <i>within</i> a layer; compose <i>across</i> layers (ADR-007). Generic XYZ-FI guidance — no assumption about incumbent tooling.</p>
   <div id="rec-body"></div>
+</section>
+
+<section id="view-value" class="view">
+  <h2>Business value — what this assessment is worth</h2>
+  <p class="muted">A posture grade is a diagnosis; the value is in the loop it drives — <b>assess &rarr; prioritise &rarr; remediate &rarr; measure</b>. Each outcome below maps to how it is measured and where the return comes from.</p>
+  <div id="value-body"></div>
+  <p class="note">ROI here is cost-avoidance and decision-efficiency, not new revenue. Figures are intentionally not invented — this view supplies the metrics to quantify against the institution's own baselines.</p>
 </section>
 
 <section id="view-table" class="view">
@@ -510,9 +536,52 @@ function renderRecommendations(){
   el.innerHTML=h;
 }
 
+// ---- business value ----
+function renderValue(){
+  const gaps=XYZ.filter(a=>a.anz_state==="GAP").length;
+  const part=XYZ.filter(a=>a.anz_state==="PARTIAL").length;
+  const pend=XYZ.filter(a=>a.anz_state==="PENDING").length;
+  const targets=gaps+part+pend;
+  const nf=UCS.filter(u=>/NON[_-]?FUNCTIONAL/i.test(u.category||"")).length;
+
+  const steps=[["01","Assess","grade "+META.ucs+" capabilities vs E8 / Zero Trust / CPS 234 / ISM"],
+    ["02","Prioritise","rank gaps by risk × regulatory weight"],
+    ["03","Remediate","sequenced, owned roadmap actions"],
+    ["04","Measure","KPIs on coverage &amp; gap-closure"],
+    ["05","Re-assess","refresh the baseline, delta-tracked"]];
+  const loop=steps.map(s=>'<div class="step"><div class="num">'+s[0]+'</div><b>'+esc(s[1])+'</b><span class="d">'+s[2]+'</span></div>').join('<div class="loparrow">&rarr;</div>');
+
+  const LBL={hard:"Hard $",hours:"Hours",risk:"Risk",kpi:"KPI"};
+  const outcomes=[
+    ["hard","Rationalise tooling spend","The vendor matrix exposes overlapping vault / secrets tools running in parallel and gives a layer-scoped consolidation path.","Tool count &darr; · avoided licence + procurement effort"],
+    ["hours","Audit &amp; compliance efficiency","A pre-built control-evidence pack (3-click framework &rarr; control &rarr; use case &rarr; evidence) answers APRA / ISM audits and cuts findings.","Audit hours &darr; · findings &darr; · avoided enforcement"],
+    ["risk","Lower expected breach loss","Closing prioritised credential-access gaps (MITRE T1552) reduces the probability × impact of a machine-identity breach.","Gaps closed · risk-adjusted expected-loss &darr;"],
+    ["kpi","Reduce operational toil","Dynamic credentials, just-in-time access and automated rotation remove manual secret handling and rotation-driven incidents.","Manual rotations &darr; · credential incidents &darr;"]];
+  const ocards=outcomes.map(o=>'<div class="card ocard"><h3><span class="vtag '+o[0]+'">'+LBL[o[0]]+'</span> '+o[1]+'</h3>'+
+    '<div class="mech">'+o[2]+'</div><div class="measure"><b>Measured by:</b> '+o[3]+'</div></div>').join("");
+
+  const kpis=[
+    ["NHI inventory completeness","% of machine identities discovered &amp; owner-attested","Inventory / attestation use cases","per cycle"],
+    ["Rotation coverage &amp; freshness","% of secrets under managed rotation within SLA","Rotation / lifecycle use cases","monthly"],
+    ["Gap-closure rate","assessed GAP / PARTIAL &rarr; MET over time","this assessment baseline","per cycle"],
+    ["Plaintext secrets in repos","secrets detected in source &amp; history","pre-commit + history-scan use cases","continuous"],
+    ["Tool consolidation","count of overlapping secrets / vault tools","vendor matrix","per cycle"]];
+  const kpirows=kpis.map(k=>'<tr><td><b>'+k[0]+'</b></td><td class="muted">'+k[1]+'</td><td class="muted">'+k[2]+'</td><td class="mono">'+k[3]+'</td></tr>').join("");
+
+  document.getElementById("value-body").innerHTML =
+    '<div class="loop">'+loop+'</div>'+
+    '<p class="muted" style="margin:8px 0 0">Current baseline feeds the loop: <b>'+targets+'</b> prioritised remediation targets ('+gaps+' GAP · '+part+' PARTIAL · '+pend+' PENDING) tracked to closure.</p>'+
+    '<h3 class="vsec">Where the return comes from</h3>'+
+    '<div class="grid2">'+ocards+'</div>'+
+    '<h3 class="vsec">How it&rsquo;s measured — KPIs (underpinned by '+nf+' non-functional use cases)</h3>'+
+    '<div class="card"><table class="kpitable"><thead><tr><th>KPI</th><th>What it measures</th><th>Source</th><th>Cadence</th></tr></thead><tbody>'+kpirows+'</tbody></table></div>'+
+    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — one credential-driven breach, one regulatory enforcement action, or one duplicated vault platform — typically exceeds the whole assessment cost by an order of magnitude. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>';
+}
+
 renderDashboard();
 renderTable();
 renderRecommendations();
+renderValue();
 </script>
 </body>
 </html>
