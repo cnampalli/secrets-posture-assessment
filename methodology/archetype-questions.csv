@@ -1,0 +1,26 @@
+archetype_id,q_id,question_template,dimension,informs_state
+A1,A1-Q1,"Is {control} deployed at all relevant gates for {nhi_population}?",coverage,GAP_PARTIAL
+A1,A1-Q2,"Is {control} enforced in blocking mode (not detect-only) across {scope}?",enforcement,PARTIAL_MET
+A1,A1-Q3,"Are bypasses controlled by a registered exception with owner and expiry?",exception,PARTIAL_MET
+A2,A2-Q1,"Is {target_pattern} the enforced default for new {nhi_population}?",enforcement,GAP_PARTIAL
+A2,A2-Q2,"What share of existing {nhi_population} has migrated off {legacy_pattern}?",coverage,PARTIAL_MET
+A2,A2-Q3,"Is there an inventory plus active burn-down for the legacy remainder?",governance,PARTIAL_MET
+A2,A2-Q4,"Are exceptions registered with owner and expiry?",exception,PARTIAL_MET
+A3,A3-Q1,"Is {capability} available in production for {nhi_population}?",coverage,GAP_PARTIAL
+A3,A3-Q2,"What share of {nhi_population} actually uses {capability} (vs shelf-ware)?",depth,PARTIAL_MET
+A3,A3-Q3,"Does the configuration meet {config_target}?",depth,PARTIAL_MET
+A4,A4-Q1,"Is any lifecycle phase for {credential_type} automated?",coverage,GAP_PARTIAL
+A4,A4-Q2,"Are issuance, rotation AND revocation all automated within {sla}?",depth,PARTIAL_MET
+A4,A4-Q3,"Are automation failures alerted to on-call?",enforcement,PARTIAL_MET
+A5,A5-Q1,"Does a register of {nhi_population} exist?",coverage,GAP_PARTIAL
+A5,A5-Q2,"Does it cover >= {threshold} of {nhi_population} with owner attestation?",depth,PARTIAL_MET
+A5,A5-Q3,"Is it re-attested every {cadence} and exported to {system}?",cadence,PARTIAL_MET
+A6,A6-Q1,"Is {metric} produced at all?",coverage,GAP_PARTIAL
+A6,A6-Q2,"Is it published every {cadence} with drill-down by {dimension}?",cadence,PARTIAL_MET
+A6,A6-Q3,"Is data freshness within {freshness}?",depth,PARTIAL_MET
+A7,A7-Q1,"Is {process} documented and operating?",coverage,GAP_PARTIAL
+A7,A7-Q2,"Does every entry carry owner and expiry?",governance,PARTIAL_MET
+A7,A7-Q3,"Do expired entries auto-escalate?",enforcement,PARTIAL_MET
+A8,A8-Q1,"Is {artifact} produced at all?",coverage,GAP_PARTIAL
+A8,A8-Q2,"Is it assembled every {cadence} covering {scope} with sign-off?",cadence,PARTIAL_MET
+A8,A8-Q3,"Is it generated within {sla}?",depth,PARTIAL_MET

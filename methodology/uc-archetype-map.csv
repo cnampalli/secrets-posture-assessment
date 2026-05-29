@@ -1,0 +1,48 @@
+uc_id,archetype_id,params,notes
+UC-F-001,A1,"control=secret push-protection;nhi_population=repo-committed secrets;scope=all source repos",Prevent plaintext secrets in repos
+UC-F-002,A6,"metric=plaintext secrets in repo history;cadence=quarterly full-history scan;dimension=NHI bucket / rotation-status / age;freshness=quarterly;forum=remediation review",Recurring historical-secret scan KPI
+UC-F-003,A2,"nhi_population=cloud IAM pipeline credentials;legacy_pattern=static cloud access keys;target_pattern=OIDC federation (sub/aud-scoped);threshold=95%",JIT cloud creds via OIDC
+UC-F-004,A3,"capability=SPIFFE workload-attested identity;nhi_population=production workloads;config_target=SVID TTL <=1h with auto-rotation;threshold=in-scope production workloads",Workload-attested ephemeral identity
+UC-F-005,A3,"capability=dynamic database credentials (broker leases);nhi_population=in-scope DB engines;config_target=per-data-class max TTL;threshold=in-scope DB estate",Dynamic DB credentials
+UC-F-006,A4,"credential_type=long-lived static secrets;nhi_population=rotatable secret buckets;sla=rotation failures alert on-call within 15 minutes",Automated rotation (coverage target >95% within policy interval)
+UC-F-007,A4,"credential_type=active NHI credentials and sessions;nhi_population=all in-scope NHIs;sla=revocation in 1 min, introspection invalidation in 5 min",Immediate revocation on compromise
+UC-F-008,A3,"capability=CSI/agent-injector/projected-token secret consumption;nhi_population=production pods;config_target=no plaintext Secret objects, etcd CMK encryption;threshold=cluster-wide",K8s secret consumption without plaintext
+UC-F-009,A3,"capability=per-workload scoped image-pull credentials;nhi_population=production container workloads;config_target=no shared imagePullSecret in prod and pull-credential rotation automated;threshold=all prod namespaces",Per-workload image-pull credentials
+UC-F-010,A3,"capability=apply-time broker secret injection;nhi_population=IaC runner identities;config_target=zero plaintext in state/var-files/caches;threshold=in-scope IaC pipelines",IaC apply-time secret injection
+UC-F-011,A4,"credential_type=observability ingest tokens;nhi_population=monitoring agents per env and class;sla=rotated at least quarterly without gaps",Observability-agent token hygiene
+UC-F-012,A3,"capability=mTLS/cloud-IAM broker authentication;nhi_population=in-scope message-broker clients;config_target=mTLS/IAM default with cross-tenant ACLs;threshold=in-scope brokers",Message-broker client identity hardening
+UC-F-013,A2,"nhi_population=AD service accounts;legacy_pattern=svc_ static passwords;target_pattern=gMSA/sMSA or federation;threshold=eligible svc_ accounts migrated",gMSA/Kerberos modernisation
+UC-F-014,A3,"capability=strong upstream gateway identity (mTLS/signed-JWT/SigV4);nhi_population=API gateways;config_target=HMAC-only deprecated, cert lifecycle automated;threshold=production gateways",API-gateway upstream identity standardised
+UC-F-015,A3,"capability=per-session vault credential brokering;nhi_population=RPA bot identities;config_target=no embedded passwords, sessions tied to ticket/process;threshold=in-scope orchestrators",RPA bot credential brokering
+UC-F-016,A3,"capability=keyless/short-lived artifact signing;nhi_population=build/signing identities;config_target=keyless or HSM-backed with quorum, verified at admission;threshold=90% of artefact types",Keyless code/artifact signing
+UC-F-017,A0,,TEE attestation-gated release — bespoke
+UC-F-018,A3,"capability=per-tool per-session workload-broker token issuance;nhi_population=AI/LLM agent tool identities;config_target=static keys forbidden in new patterns, scopes audited, tool calls logged with agent identity;threshold=all new agent integrations",AI-agent tool-credential brokering
+UC-F-019,A2,"nhi_population=IoT/OT/ATM/branch device identities;legacy_pattern=fleet-wide PSKs and default credentials;target_pattern=per-device hardware-rooted certs;threshold=supported fleets enrolled",Device identity enrolment
+UC-F-020,A2,"nhi_population=mainframe started-task and batch credentials (RACF/ACF2/Top-Secret/IBM-i);legacy_pattern=manually managed static mainframe credentials;target_pattern=vault-integrated rotation with change-window runbooks;threshold=in-scope started-task classes onboarded",Mainframe credential rotation onboarding
+UC-F-021,A3,"capability=least-privilege vaulted backup/DR credentials;nhi_population=backup/DR agent identities;config_target=vaulted creds, immutable-storage tokens in HSM, MFA+JIT elevation;threshold=in-scope backup estate",Backup/DR agent de-privileging
+UC-F-022,A1,"control=inbound webhook signature/mTLS verification;nhi_population=inbound webhook callers;scope=all inbound webhook endpoints",Webhook inbound identity verification
+UC-F-023,A2,"nhi_population=network-device admin credentials;legacy_pattern=shared device-admin passwords and SNMP communities;target_pattern=vault-integrated TACACS+/RADIUS with SNMPv3;threshold=fabric-wide deployment",Network-device credential modernisation
+UC-F-024,A3,"capability=FAPI-2.0 mTLS partner identity;nhi_population=open-banking/payments partner clients;config_target=sender-constrained tokens (private_key_jwt/DPoP), managed cert lifecycle;threshold=in-scope partner integrations",Open-Banking FAPI 2.0 partner identity
+UC-F-025,A5,"nhi_population=third-party OAuth apps;threshold=tenant-wide coverage;cadence=weekly;system=OAuth-app inventory/GRC",OAuth-app marketplace governance
+UC-F-026,A0,,Vault-internal identity hardening — bespoke
+UC-F-027,A5,"nhi_population=orphaned/dormant NHIs;threshold=activity-based dormancy per bucket;cadence=recurring sweep;system=immutable evidence store",Orphaned/dormant NHI cleanup
+UC-N-001,A6,"metric=plaintext-secret sprawl findings;cadence=continuous;dimension=team/repo/NHI bucket/age;freshness=24h;forum=remediation prioritisation review",Secret-sprawl KPI dashboard
+UC-N-002,A5,"nhi_population=all in-scope NHI buckets;threshold=95%;cadence=annual;system=GRC",NHI inventory + attestation
+UC-N-003,A6,"metric=rotation coverage/freshness/failure backlog;cadence=monthly;dimension=NHI bucket and data classification;freshness=monthly reporting window;forum=executive forum",Rotation coverage KPIs
+UC-N-004,A8,"artifact=CPS 234 regulator evidence pack;cadence=on-demand per NHI bucket;scope=in-scope NHI bucket controls and artefacts;sla=1 business day",Regulator audit evidence pack
+UC-N-005,A8,"artifact=E8/ZT control-area scorecard;cadence=quarterly;scope=secrets programme across E8 maturity and ZT pillars;sla=quarterly publication to Risk Committee",E8/ZT control scorecard
+UC-N-006,A7,"process=vendor/SaaS supply-chain risk attestation register;cadence=annual",Vendor supply-chain risk attestation
+UC-N-007,A7,"process=data-sovereignty and residency data-flow register per vendor;cadence=annual or per material vendor change",Residency assurance (CPS 230 BCM trigger)
+UC-N-008,A6,"metric=secure-coding training completion;cadence=annual refresh;dimension=business unit;freshness=12-month rolling window;forum=champions network",Secure-coding adoption KPI
+UC-N-009,A7,"process=exception and risk-acceptance register;cadence=quarterly",Exception register governance
+UC-N-010,A7,"process=break-glass and quorum-operator governance register with SOC same-day review of any use;cadence=quarterly inventory review and semi-annual quorum drills",Break-glass and quorum-operator governance
+UC-N-011,A7,"process=post-incident NHI-attributed RCA register;cadence=per-incident with roadmap review",Post-incident identity RCA
+UC-N-012,A8,"artifact=SLSA provenance coverage report;cadence=quarterly;scope=signed-artifact coverage per artefact class;sla=quarterly publication",SLSA provenance reporting
+UC-N-013,A8,"artifact=crypto-agility/PQC readiness scorecard;cadence=board reporting cycle;scope=vaults/CAs/HSMs/mTLS/code-signing inventory;sla=board-cycle publication",PQC readiness scorecard
+UC-N-014,A8,"artifact=vendor evaluation matrix;cadence=each release cycle;scope=canonical UC catalog capability deltas per vendor;sla=signed off by independent reviewer per release",Vendor evaluation matrix
+UC-N-015,A7,"process=stakeholder communications calendar;cadence=monthly engineering / quarterly board",Stakeholder communications cadence
+UC-N-016,A6,"metric=IoT/OT/branch fleet identity posture;cadence=monthly;dimension=device class and credential type;freshness=monthly reporting window;forum=Operational Risk Committee",Fleet posture reporting
+UC-N-017,A8,"artifact=observability secret-leak governance audit;cadence=periodic sampled audit;scope=log/telemetry pipelines to external SIEM/APM;sla=findings fed to sprawl dashboard",Observability secret-leak governance
+UC-N-018,A8,"artifact=TEE attestation assurance report;cadence=periodic verifier-policy review;scope=workloads claiming TEE-bound secret release;sla=failed-attestation incidents reported",TEE attestation assurance
+UC-N-019,A6,"metric=AI-agent NHI KPIs (tools/session, scope inflation, refusal/escalation, injection-induced calls);cadence=weekly;dimension=agent and tool;freshness=weekly reporting window;forum=SOC alerting",AI-agent KPI suite
+UC-N-020,A6,"metric=mainframe/legacy NHI rotation and coverage posture;cadence=alongside cloud dashboard cycle;dimension=mainframe/midrange/RPA estate;freshness=dashboard refresh window;forum=audit/exception review",Mainframe/legacy posture transparency
