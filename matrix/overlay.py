@@ -19,3 +19,34 @@ def load_framework_labels(path):
 def load_vendor_residency(path):
     """Return {slug: {residency, irap, note}} verbatim."""
     return _load_yaml(path)
+
+
+def vendor_sort_key(weight, residency, capability_keys):
+    """Compose a sort key placing residency rank per the configured weight.
+
+    capability_keys: tuple of already-negated capability metrics (lower=better),
+    exactly as the engine builds them (e.g. (-secrets_native, -nhi_native)).
+    """
+    r = RES_RANK.get(residency, 9)
+    if weight == "high":
+        return (r,) + tuple(capability_keys)
+    if weight == "medium":
+        return (capability_keys[0], r) + tuple(capability_keys[1:])
+    if weight == "low":
+        return tuple(capability_keys) + (r,)
+    if weight == "off":
+        return tuple(capability_keys)
+    raise ValueError(f"unknown residency weight: {weight!r}")
+
+
+def select_primary(l1_secrets, irap_required):
+    """Pick the primary secrets platform. Reproduces the engine's gate when
+    irap_required=True; otherwise takes the capability leader (l1_secrets[0])."""
+    if irap_required:
+        irap_au = [v for v in l1_secrets
+                   if v["residency"] == "AU-RESIDENT" and v["irap"] == "YES"]
+        if irap_au:
+            return irap_au[0]
+        return next((v for v in l1_secrets if v["residency"] == "AU-RESIDENT"),
+                    l1_secrets[0])
+    return l1_secrets[0]
