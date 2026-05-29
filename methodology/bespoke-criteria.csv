@@ -1,0 +1,7 @@
+uc_id,sub_id,sub_criterion,question,evidence
+UC-F-017,UC-F-017.1,Attestation-gated release is documented for a regulated workload class,"Is high-value secret release gated on TEE attestation for any workload class?",Broker policy + attestation flow doc
+UC-F-017,UC-F-017.2,The broker supports at least one TEE attestation flow,"Does the secrets broker support a TEE attestation flow (Nitro/MAA/Confidential Space)?",Broker config evidencing a TEE flow
+UC-F-017,UC-F-017.3,A pilot exists for a regulated workload and revocation and stale-quote handling is defined,"Is there a live pilot, and does policy handle revocation and stale quotes?",Pilot record + revocation policy
+UC-F-026,UC-F-026.1,The secrets manager root is sealed offline (Shamir or KMS unseal),"Is the vault root token sealed offline via Shamir or KMS auto-unseal?",Seal config
+UC-F-026,UC-F-026.2,Replication tokens are rotated and scoped,"Are replication tokens rotated and least-scoped?",Replication token policy
+UC-F-026,UC-F-026.3,Auto-unseal KMS keys are governed as strictly as customer keys,"Are auto-unseal KMS keys under the same controls as customer keys?",KMS key policy
