@@ -56,3 +56,12 @@ def test_bad_weight_raises(tmp_path):
     cfg_path.write_text("primary: [asd-ism]\nresidency: {weight: extreme}\n")
     with pytest.raises(ec.ConfigError):
         ec.resolve(config_path=cfg_path, available=AVAILABLE, presets_dir=PRESETS)
+
+
+def test_weight_off_yaml_boolean_coercion(tmp_path):
+    # PyYAML turns bare `off` into False; resolve() must treat it as "off".
+    cfg_path = tmp_path / "e.yaml"
+    cfg_path.write_text("primary: [asd-ism]\nresidency: {weight: off, irap_required: false}\n")
+    cfg = ec.resolve(config_path=cfg_path, available=AVAILABLE, presets_dir=PRESETS)
+    assert cfg.residency_weight == "off"
+    assert cfg.irap_required is False

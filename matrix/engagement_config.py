@@ -86,6 +86,12 @@ def resolve(preset=None, config_path=None, cli_frameworks=None,
 
     res = data.get("residency", {}) or {}
     weight = res.get("weight", "high")
+    if weight is False:                 # PyYAML coerces bare 'off' -> False
+        weight = "off"
+    if not isinstance(weight, str):     # e.g. 'on'/'yes' -> True, or a number
+        raise ConfigError(f"residency.weight must be one of {sorted(VALID_WEIGHTS)}, "
+                          f"got {weight!r}")
+    weight = weight.lower()
     if weight not in VALID_WEIGHTS:
         raise ConfigError(f"residency.weight must be one of {sorted(VALID_WEIGHTS)}, "
                           f"got {weight!r}")
