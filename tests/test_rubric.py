@@ -72,3 +72,12 @@ def test_bespoke_file_has_no_anz():
 def test_run_all_returns_no_errors_on_real_data():
     errors = vr.run_all()
     assert errors == [], errors
+
+def test_rescore_covers_all_ucs_and_no_anz():
+    ucs = vr.load_csv(USE_CASES)
+    rescore = vr.load_csv(METH / "posture-rescore.csv")
+    rescored_ids = {r["uc_id"] for r in rescore}
+    assert rescored_ids == {u["uc_id"] for u in ucs}
+    for r in rescore:
+        assert r["proposed_state"] in {"MET", "PARTIAL", "GAP", "N/A", "PENDING"}, r
+    assert vr.check_no_anz([METH / "posture-rescore.csv"]) == []

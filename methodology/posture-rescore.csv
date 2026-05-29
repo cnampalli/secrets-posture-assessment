@@ -1,0 +1,48 @@
+uc_id,archetype_id,proposed_state,confidence,override_reason,notes
+UC-F-001,A1,GAP,HIGH,,A1: push-protection not deployed in blocking mode across repos (2019 red-team finding still open) — coverage dimension absent
+UC-F-002,A6,GAP,HIGH,,A6: historical-secret scan KPI not produced consistently across the estate — metric not produced
+UC-F-003,A2,PARTIAL,HIGH,,"A2: OIDC/JIT target pattern used for AWS only (Azure/GCP uncovered); used for some population, no complete migration inventory"
+UC-F-004,A3,GAP,HIGH,,A3: SPIFFE/SPIRE not in operational use and no PKI/TLS-cert auth method enabled — capability not available
+UC-F-005,A3,PARTIAL,HIGH,,A3: dynamic DB secrets engine enabled but adoption effectively zero (shelf-ware) — available but depth absent
+UC-F-006,A4,PARTIAL,MEDIUM,,A4: some rotation automated (AWS) but manual processes dominate non-AWS; full issue+rotate+revoke within SLA not met
+UC-F-007,A4,PARTIAL,HIGH,,A4: some lifecycle automated via Vault static-backend cert generation but lifecycle owned outside Vault and revocation status unclear
+UC-F-008,A3,GAP,MEDIUM,,A3: cluster-wide CSI/injector plaintext-free secret consumption not in place; cert delivery still email-driven out-of-band
+UC-F-009,A3,PENDING,,,A3: per-workload image-pull credential governance not confirmed — no signal gathered
+UC-F-010,A3,PARTIAL,MEDIUM,,A3: apply-time broker injection available via supply-chain cluster but team adoption inconsistent — available, depth low
+UC-F-011,A4,PENDING,,,A4: observability ingest-token rotation governance not confirmed — no signal gathered
+UC-F-012,A3,PENDING,,,A3: message-broker client mTLS/IAM identity governance not addressed in discovery — no signal gathered
+UC-F-013,A2,PARTIAL,HIGH,,"A2: AD service-account migration owned by PAM (entrenched after Vault rollback); target pattern in use for some, no inventory/burn-down confirmed"
+UC-F-014,A3,PENDING,,,A3: API-gateway upstream identity standardisation not addressed; non-AD SA governance unclear — no signal gathered
+UC-F-015,A3,PENDING,,,A3: RPA bot per-session credential brokering not confirmed (PSM/PSMP scope unconfirmed) — no signal gathered
+UC-F-016,A3,PARTIAL,HIGH,,A3: HSM-backed signing infra present (Fortanix-sealed Vault) but keyless/short-lived signing adoption to threshold not evidenced — capability partial
+UC-F-017,A0,PARTIAL,MEDIUM,,"A0 bespoke: broker (Fortanix CCM) supports a TEE attestation flow (.2 met) but no documented attestation-gated release or pilot/revocation policy (.1/.3 unmet)"
+UC-F-018,A3,GAP,MEDIUM,,A3: AI-agent tool-credential brokering not in operational scope; AI/MCP NHI inventory absent — capability not available
+UC-F-019,A2,PARTIAL,MEDIUM,,"A2: device-identity migration signalled by HSM/cert infra roadmap but per-device hardware-rooted cert enrolment adoption not confirmed; used for some, no inventory"
+UC-F-020,A2,PENDING,,,A2: mainframe started-task credential rotation onboarding pending confirmation — no signal gathered
+UC-F-021,A3,PARTIAL,MEDIUM,,A3: least-privilege vaulted backup/DR credentials partially via PAM but Vault SSH engine off and likely static SSH keys remain — depth partial
+UC-F-022,A1,PENDING,,,A1: inbound webhook signature/mTLS verification governance not addressed in discovery — no signal gathered
+UC-F-023,A2,PENDING,,,A2: network-device credential modernisation not addressed (likely PAM lane, unconfirmed) — no signal gathered
+UC-F-024,A3,PENDING,,,A3: FAPI-2.0 partner-identity governance for CDR/open-banking not addressed — no signal gathered
+UC-F-025,A5,PENDING,,,A5: third-party OAuth-app inventory/governance not addressed — no register signal gathered
+UC-F-026,A0,PARTIAL,HIGH,,"A0 bespoke: HSM-seal offline unseal (.1 met) and scoped multi-region replication (.2) present; recovery-key/quorum custody runbooks to validate (.3 not fully evidenced)"
+UC-F-027,A5,GAP,HIGH,,A5: no orphan/dormant NHI inventory and no NHI-discovery layer above Vault — no register exists
+UC-N-001,A6,GAP,HIGH,,A6: plaintext-secret sprawl KPI dashboard not in operational use — metric not produced
+UC-N-002,A5,GAP,HIGH,,A5: no NHI inventory of any kind above the vault platforms — no register exists
+UC-N-003,A6,PENDING,,,A6: rotation coverage/freshness/failure-backlog KPI not formalised — no metric signal gathered
+UC-N-004,A8,PENDING,,,A8: CPS 234 regulator evidence pack not assembled; current maturity assessment not captured — no artifact signal gathered
+UC-N-005,A8,GAP,HIGH,,A8: E8/ZT control-area scorecard artifact not produced — artifact absent
+UC-N-006,A7,PARTIAL,MEDIUM,,"A7: informal vendor-risk awareness exists (licensing churn tracked, PAM entrenchment noted) but no documented register with owner/expiry/escalation"
+UC-N-007,A7,PENDING,,,A7: data-sovereignty/residency data-flow register per vendor not addressed — no process signal gathered
+UC-N-008,A6,GAP,HIGH,,A6: secure-coding training-completion metric not produced; secret-usage analytics not measured — metric absent
+UC-N-009,A7,PARTIAL,MEDIUM,,A7: exception/risk-acceptance lifecycle partially via PAM but register maturity (owner/expiry/auto-escalate) not confirmed
+UC-N-010,A7,PARTIAL,MEDIUM,,A7: break-glass/quorum governance implied by HSM-sealed Vault with DR replication but runbook formality and escalation not confirmed
+UC-N-011,A7,PENDING,,,A7: post-incident NHI-attributed RCA register not addressed in discovery — no process signal gathered
+UC-N-012,A8,GAP,LOW,Rubric A8 reads SLSA/Sigstore 'not in operational use' as artifact-not-produced (GAP); baseline marked PENDING. Evidence is a directional signal of absence rather than no-signal-at-all,A8: SLSA provenance reporting artifact not produced — supply-chain assurance/Sigstore not in operational use
+UC-N-013,A8,PARTIAL,MEDIUM,,A8: PQC readiness signalled by Fortanix migration but client-specific PQC roadmap/timeline not captured — artifact ad hoc/incomplete
+UC-N-014,A8,PENDING,,,A8: vendor evaluation matrix maintenance KPI not addressed in discovery — no artifact signal gathered
+UC-N-015,A7,PENDING,,,A7: stakeholder communications cadence not addressed — no process signal gathered
+UC-N-016,A6,PENDING,,,A6: IoT/OT/branch fleet posture metric not addressed; cross-platform aggregation unconfirmed — no metric signal gathered
+UC-N-017,A8,PENDING,,,A8: observability secret-leak governance audit (CCM posture) not addressed — no artifact signal gathered
+UC-N-018,A8,PARTIAL,MEDIUM,,A8: TEE attestation assurance reporting potentially available via Fortanix CCM but adoption/cadence not confirmed — artifact ad hoc
+UC-N-019,A6,GAP,MEDIUM,,A6: AI-agent NHI KPI suite not produced; AI/MCP NHI governance not addressed — metric absent
+UC-N-020,A6,PENDING,,,A6: mainframe/legacy NHI posture metric not addressed; board reporting cadence unconfirmed — no metric signal gathered
