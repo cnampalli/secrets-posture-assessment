@@ -50,3 +50,12 @@ def select_primary(l1_secrets, irap_required):
         return next((v for v in l1_secrets if v["residency"] == "AU-RESIDENT"),
                     l1_secrets[0])
     return l1_secrets[0]
+
+
+def scope_frameworks(fw_order, cfg):
+    """Filter fw_order to the configured scope, preserving fw_order's ordering.
+    Default config (no preset/flags) passes through unchanged (regression anchor)."""
+    if getattr(cfg, "is_default", False):
+        return list(fw_order)
+    scope = set(cfg.framework_scope)
+    return [s for s in fw_order if s in scope]

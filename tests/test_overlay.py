@@ -1,4 +1,5 @@
 import json, pathlib
+from types import SimpleNamespace
 import overlay
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -52,3 +53,19 @@ def test_select_primary_gate_off_takes_capability_leader():
     ]
     # list is already capability-sorted; gate off -> first wins
     assert overlay.select_primary(vendors, irap_required=False)["slug"] == "v-cap"
+
+
+ALL = ["essential-8", "cisa-ztmm-v2", "apra-cps-234", "apra-cps-230",
+       "apra-cpg-234", "asd-ism", "mitre-attack"]
+
+
+def test_scope_default_returns_full_order_unchanged():
+    cfg = SimpleNamespace(is_default=True, framework_scope=["essential-8"])
+    assert overlay.scope_frameworks(ALL, cfg) == ALL
+
+
+def test_scope_filters_and_preserves_source_order():
+    cfg = SimpleNamespace(is_default=False,
+                          framework_scope=["asd-ism", "essential-8"])
+    # output keeps fw_order ordering, not config ordering
+    assert overlay.scope_frameworks(ALL, cfg) == ["essential-8", "asd-ism"]
