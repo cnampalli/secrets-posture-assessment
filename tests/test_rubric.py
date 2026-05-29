@@ -59,3 +59,12 @@ def test_every_uc_is_mapped_with_valid_archetype_and_slots():
 
 def test_mapping_file_has_no_anz():
     assert vr.check_no_anz([METH / "uc-archetype-map.csv"]) == []
+
+def test_every_a0_uc_has_bespoke_criteria_and_vice_versa():
+    mapping = vr.load_csv(METH / "uc-archetype-map.csv")
+    bespoke = vr.load_csv(METH / "bespoke-criteria.csv")
+    errors = vr.validate_bespoke(mapping, bespoke)
+    assert errors == [], errors
+
+def test_bespoke_file_has_no_anz():
+    assert vr.check_no_anz([METH / "bespoke-criteria.csv"]) == []

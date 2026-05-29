@@ -101,6 +101,21 @@ def _parse_params(raw):
     return out
 
 
+def validate_bespoke(mapping_rows, bespoke_rows):
+    errors = []
+    a0_ucs = {m["uc_id"] for m in mapping_rows if m.get("archetype_id") == "A0"}
+    bespoke_ucs = {b["uc_id"] for b in bespoke_rows}
+    for uc in sorted(a0_ucs - bespoke_ucs):
+        errors.append(f"A0 use-case {uc}: no bespoke criteria authored")
+    for uc in sorted(bespoke_ucs - a0_ucs):
+        errors.append(f"bespoke criteria for {uc}: but {uc} is not mapped to A0")
+    for b in bespoke_rows:
+        for c in ("uc_id", "sub_id", "sub_criterion", "question", "evidence"):
+            if not (b.get(c) or "").strip():
+                errors.append(f"bespoke {b.get('uc_id')}/{b.get('sub_id')}: empty '{c}'")
+    return errors
+
+
 def validate_mapping(use_case_rows, archetype_rows, question_rows, mapping_rows):
     errors = []
     arch_ids = {r["archetype_id"] for r in archetype_rows}
