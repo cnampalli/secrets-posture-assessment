@@ -1,0 +1,7 @@
+# Financial institutions — APRA-regulated. Reproduces today's residency posture.
+primary:   [apra-cps-234, apra-cps-230, apra-cpg-234]
+overlays:  [cisa-ztmm-v2]
+baseline:  [essential-8]            # always-on AU baseline
+residency:
+  weight: high                      # AU residency is the primary vendor sort key
+  irap_required: true               # primary must be AU-resident AND IRAP-assessed

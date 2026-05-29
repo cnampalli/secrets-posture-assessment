@@ -1,0 +1,19 @@
+# Copy to engagement.yaml and edit for a real engagement.
+# Run: python3 matrix/build_matrix_viewer.py --config engagement.yaml
+#
+# Either name a preset as the base:
+preset: financial
+#
+# ...and/or override individual keys inline (inline wins over preset):
+# primary:   [apra-cps-234]          # frameworks the report scopes to
+# overlays:  [cisa-ztmm-v2, mitre-attack]   # comparison frameworks shown alongside
+# baseline:  [essential-8]           # always-on; union'd in regardless
+# residency:
+#   weight: high                     # high | medium | low | off
+#   irap_required: true              # gate primary vendor on AU-resident + IRAP
+#
+# Valid framework slugs (must exist in matrix/regulatory-trace.csv):
+#   essential-8, cisa-ztmm-v2, apra-cps-234, apra-cps-230, apra-cpg-234,
+#   asd-ism, mitre-attack
+# Frameworks NOT yet available (deferred to a future research workstream):
+#   privacy-act, my-health-record, pspf, soci

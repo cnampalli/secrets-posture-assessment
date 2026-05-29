@@ -1,0 +1,7 @@
+# Generic AU baseline — Essential 8 only. Industry-neutral starting point.
+primary:   [essential-8]
+overlays:  []
+baseline:  [essential-8]
+residency:
+  weight: medium
+  irap_required: false

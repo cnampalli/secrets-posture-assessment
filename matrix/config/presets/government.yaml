@@ -1,0 +1,7 @@
+# Australian government — ISM baseline.
+primary:   [asd-ism]
+overlays:  [cisa-ztmm-v2]
+baseline:  [essential-8]
+residency:
+  weight: high
+  irap_required: true
