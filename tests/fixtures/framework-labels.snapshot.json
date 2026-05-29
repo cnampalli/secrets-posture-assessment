@@ -1,0 +1,30 @@
+{
+  "essential-8": [
+    "Essential 8",
+    "ACSC · maturity baseline"
+  ],
+  "cisa-ztmm-v2": [
+    "CISA Zero Trust Maturity Model v2.0",
+    "CISA ZTMM · pillars + cross-cutting (aligned to NIST SP 800-207)"
+  ],
+  "apra-cps-234": [
+    "APRA CPS 234",
+    "Prudential · information security"
+  ],
+  "apra-cps-230": [
+    "APRA CPS 230",
+    "Prudential · operational risk"
+  ],
+  "apra-cpg-234": [
+    "APRA CPG 234 (guidance)",
+    "Prudential · practice guide"
+  ],
+  "asd-ism": [
+    "ASD ISM",
+    "ACSC · Australian Govt baseline"
+  ],
+  "mitre-attack": [
+    "MITRE ATT&CK",
+    "Adversary TTPs (informative)"
+  ]
+}

@@ -1,0 +1,21 @@
+essential-8:
+  label: Essential 8
+  subtitle: ACSC · maturity baseline
+cisa-ztmm-v2:
+  label: CISA Zero Trust Maturity Model v2.0
+  subtitle: CISA ZTMM · pillars + cross-cutting (aligned to NIST SP 800-207)
+apra-cps-234:
+  label: APRA CPS 234
+  subtitle: Prudential · information security
+apra-cps-230:
+  label: APRA CPS 230
+  subtitle: Prudential · operational risk
+apra-cpg-234:
+  label: APRA CPG 234 (guidance)
+  subtitle: Prudential · practice guide
+asd-ism:
+  label: ASD ISM
+  subtitle: ACSC · Australian Govt baseline
+mitre-attack:
+  label: MITRE ATT&CK
+  subtitle: Adversary TTPs (informative)
