@@ -59,7 +59,12 @@ The credibility core and a prerequisite for the instrument.
   `deep-research` (ground the maturity definitions in real models — Essential 8 maturity levels,
   ZT maturity, NIST), `gsd-spec-phase` (ambiguity-scored WHAT).
 
-### WS-2 — Selectable regulatory overlay (engine) — **enables industry-agnostic**
+### WS-2 — Selectable regulatory overlay (engine) — **enables industry-agnostic** — ✅ DONE (2026-05-29, branch ws2-regulatory-overlay)
+
+Delivered: config-driven framework scoping + 4 presets (financial/government/retail/baseline) +
+residency weight/IRAP knobs in `matrix/config/`; engine wired in `build_matrix_viewer.py`;
+golden no-config regression + integration tests (27 tests). ADR-009. **Deferred:** Privacy Act /
+MyHR / PSPF / SOCI control→UC mappings and a health preset require a new-research workstream.
 - Externalize `FRAMEWORK_LABELS`, framework scoping, and the AU-specific `VENDOR_RESIDENCY`/IRAP
   logic out of `build_matrix_viewer.py` into config (YAML/JSON).
 - Add a **framework-selection input**: report regenerates scoped to chosen framework(s) + 1–2 overlays.

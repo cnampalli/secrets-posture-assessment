@@ -1,0 +1,7 @@
+# Retail / commercial — Essential 8 baseline, residency a soft preference.
+primary:   [essential-8]
+overlays:  [mitre-attack]
+baseline:  [essential-8]
+residency:
+  weight: low                       # residency only as a final tiebreaker
+  irap_required: false              # no IRAP gate on the primary pick

@@ -1,0 +1,97 @@
+fortanix-dsm:
+  residency: AU-RESIDENT
+  irap: 'NO'
+  note: On-prem FX-series appliances give full AU sovereignty; an 'Australia' SaaS
+    region is listed (Equinix Sydney plausible). No IRAP. Evaluated as crypto substrate
+    per ADR-007, not a ranked vendor.
+hashicorp-vault-enterprise:
+  residency: AU-RESIDENT
+  irap: 'NO'
+  note: Self-host in AWS ap-southeast-2 / Azure australiaeast, or HCP Vault Dedicated
+    ap-southeast-2. No vendor IRAP declaration — deploy in an IRAP-assessed environment.
+cyberark-conjur:
+  residency: AU-RESIDENT
+  irap: PARTIAL
+  note: Conjur Enterprise Selective-Follower gives in-AU residency; Conjur Cloud AU
+    region unconfirmed. CyberArk platform is IRAP-PROTECTED; Conjur Cloud scope unconfirmed.
+cyberark-pam:
+  residency: AU-RESIDENT
+  irap: PARTIAL
+  note: Privilege Cloud on AWS Sydney + self-host in AU (NAB is a public reference).
+    IRAP not publicly declared for PAM Self-Hosted — SE confirm.
+delinea-secret-server:
+  residency: AU-RESIDENT
+  irap: 'NO'
+  note: Self-host in XYZ DC / AWS Sydney for residency; Secret Server Cloud is US/EU
+    only. No IRAP confirmed.
+aws-secrets-manager:
+  residency: AU-RESIDENT
+  irap: 'YES'
+  note: Sydney ap-southeast-2 GA (Melbourne ap-southeast-4 emerging). IRAP-PROTECTED
+    in scope (Nov 2025).
+azure-key-vault:
+  residency: AU-RESIDENT
+  irap: 'YES'
+  note: GA across all AU regions; geo-bounded security worlds. Azure IRAP-PROTECTED
+    with Key Vault in assessed scope.
+gcp-secret-manager:
+  residency: AU-RESIDENT
+  irap: 'YES'
+  note: australia-southeast1/2 with user-managed replication pins data in-AU. GCP
+    IRAP-PROTECTED at platform level — verify Secret Manager scope in the Compliance
+    Reports Manager.
+akeyless:
+  residency: CONDITIONAL
+  irap: 'NO'
+  note: No AU SaaS region; self-host the Gateway in an AU cloud + a Customer Fragment
+    so no plaintext key material leaves AU (zero-knowledge). No IRAP.
+doppler:
+  residency: SAAS-ONLY
+  irap: 'NO'
+  note: US-only (GCP us-central1), no self-host. No IRAP. Use only as a developer-experience
+    layer over an AU-sovereign backend.
+infisical:
+  residency: CONDITIONAL
+  irap: 'NO'
+  note: Cloud is US/EU; self-host in AWS ap-southeast-2 / Azure australiaeast for
+    residency. No IRAP.
+1password-secrets-automation:
+  residency: SAAS-ONLY
+  irap: 'NO'
+  note: No AU SaaS region (EU only); self-host Connect leaves the authoritative store
+    outside AU unless air-gapped (not the design intent). No IRAP.
+venafi:
+  residency: AU-RESIDENT
+  irap: 'NO'
+  note: Certificate Manager Self-Hosted on AU infra for full residency; SaaS AU region
+    unconfirmed. No IRAP (CSA STAR / SOC 2 / ISO 27001).
+keyfactor:
+  residency: AU-RESIDENT
+  irap: 'NO'
+  note: Self-host (Command / EJBCA) on XYZ infra is sovereignty-safe; SaaS AU region
+    unconfirmed. No IRAP.
+astrix-security:
+  residency: SAAS-ONLY
+  irap: 'NO'
+  note: SaaS-only, US-hosted; NHI metadata resides offshore. No AU region / IRAP.
+    Post-Cisco AU-sovereign path possible but uncommitted.
+entro-security:
+  residency: SAAS-ONLY
+  irap: 'NO'
+  note: SaaS US/EU only; no AU region / IRAP (ISO 27001 + SOC 2). Observer/analytics
+    layer unless an AU-residency exception or region exists.
+oasis-security:
+  residency: SAAS-ONLY
+  irap: 'NO'
+  note: No AU/APAC region; no IRAP (SOC 2 / ISO 27001 / 27018). Needs a DPA with explicit
+    AU-residency commitment before production.
+aembit:
+  residency: SAAS-ONLY
+  irap: 'NO'
+  note: Edge broker can be AU-hosted, but the control plane (policy/audit) transits
+    US SaaS — a CPS 234 §22 / CPS 230 §39 gap. No IRAP.
+clutch-security:
+  residency: SAAS-ONLY
+  irap: 'NO'
+  note: Zero-knowledge architecture keeps discovery metadata in the customer network
+    (partial mitigation); SaaS control-plane residency unconfirmed. No IRAP.
