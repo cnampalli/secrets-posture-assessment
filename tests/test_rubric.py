@@ -68,3 +68,7 @@ def test_every_a0_uc_has_bespoke_criteria_and_vice_versa():
 
 def test_bespoke_file_has_no_anz():
     assert vr.check_no_anz([METH / "bespoke-criteria.csv"]) == []
+
+def test_run_all_returns_no_errors_on_real_data():
+    errors = vr.run_all()
+    assert errors == [], errors

@@ -147,3 +147,34 @@ def validate_mapping(use_case_rows, archetype_rows, question_rows, mapping_rows)
     for aid in sorted((arch_ids - {"A0"}) - used_archetypes):
         errors.append(f"archetype {aid}: never used by any UC (dead archetype)")
     return errors
+
+
+def run_all():
+    archs = load_csv(METH / "assessment-archetypes.csv")
+    qs = load_csv(METH / "archetype-questions.csv")
+    mapping = load_csv(METH / "uc-archetype-map.csv")
+    bespoke = load_csv(METH / "bespoke-criteria.csv")
+    ucs = load_csv(ROOT / "matrix" / "use-cases.csv")
+    files = [
+        METH / "assessment-archetypes.csv",
+        METH / "archetype-questions.csv",
+        METH / "uc-archetype-map.csv",
+        METH / "bespoke-criteria.csv",
+    ]
+    errors = []
+    errors += validate_archetypes(archs)
+    errors += validate_questions(archs, qs)
+    errors += validate_mapping(ucs, archs, qs, mapping)
+    errors += validate_bespoke(mapping, bespoke)
+    errors += check_no_anz(files)
+    return errors
+
+
+if __name__ == "__main__":
+    problems = run_all()
+    if problems:
+        print("RUBRIC VALIDATION FAILED:")
+        for p in problems:
+            print(f"  - {p}")
+        sys.exit(1)
+    print("Rubric validation passed.")
