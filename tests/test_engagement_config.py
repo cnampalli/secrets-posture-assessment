@@ -65,3 +65,27 @@ def test_weight_off_yaml_boolean_coercion(tmp_path):
     cfg = ec.resolve(config_path=cfg_path, available=AVAILABLE, presets_dir=PRESETS)
     assert cfg.residency_weight == "off"
     assert cfg.irap_required is False
+
+
+def test_config_file_preset_key_is_honored(tmp_path):
+    cfg_path = tmp_path / "e.yaml"
+    cfg_path.write_text("preset: financial\n")
+    cfg = ec.resolve(config_path=cfg_path, available=AVAILABLE, presets_dir=PRESETS)
+    assert set(cfg.framework_scope) == {
+        "apra-cps-234", "apra-cps-230", "apra-cpg-234", "essential-8", "cisa-ztmm-v2"}
+    assert cfg.residency_weight == "high"
+
+
+def test_cli_preset_overrides_config_file_preset(tmp_path):
+    cfg_path = tmp_path / "e.yaml"
+    cfg_path.write_text("preset: financial\n")
+    cfg = ec.resolve(preset="government", config_path=cfg_path,
+                     available=AVAILABLE, presets_dir=PRESETS)
+    assert "asd-ism" in cfg.framework_scope and "apra-cps-234" not in cfg.framework_scope
+
+
+def test_config_inline_keys_override_its_own_preset(tmp_path):
+    cfg_path = tmp_path / "e.yaml"
+    cfg_path.write_text("preset: financial\nprimary: [asd-ism]\n")
+    cfg = ec.resolve(config_path=cfg_path, available=AVAILABLE, presets_dir=PRESETS)
+    assert "asd-ism" in cfg.framework_scope and "apra-cps-234" not in cfg.framework_scope

@@ -235,7 +235,6 @@ meta = {"ranked_vendors": len({r["vendor_slug"] for r in ranked}), "ranked_rows"
         "total_rows": len(all_rows), "nhis": len(nhis), "ucs": len(ucs)}
 
 # ---- Recommendations tab (residency-first, layer-scoped per ADR-007) ----
-RES_ORDER = {"AU-RESIDENT": 0, "CONDITIONAL": 1, "SAAS-ONLY": 2}
 _SECRETS_UCS = set(REC_UC_DOMAIN["secrets"])
 _GOV_UCS = set(REC_UC_DOMAIN["governance"])
 

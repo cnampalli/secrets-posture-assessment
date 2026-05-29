@@ -17,6 +17,9 @@ def test_default_run_matches_frozen_baseline(tmp_path):
     assert [f["slug"] for f in new["REGDATA"]["frameworks"]] == \
            [f["slug"] for f in BASELINE["REGDATA"]["frameworks"]]
     assert new["RECDATA"] == BASELINE["RECDATA"]
+    # REGDATA is additive-only: identical to baseline except the new key
+    assert {k: v for k, v in new["REGDATA"].items() if k != "framework_selection"} \
+           == BASELINE["REGDATA"]
 
 
 def test_financial_preset_scopes_frameworks(tmp_path):

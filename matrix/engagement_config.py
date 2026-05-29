@@ -68,14 +68,16 @@ def resolve(preset=None, config_path=None, cli_frameworks=None,
             selected=list(available), overlays=[], baseline=[],
             residency_weight="high", irap_required=True, is_default=True)
 
+    cfgdata = _load(config_path) if config_path else {}
+    effective_preset = preset or cfgdata.get("preset")
     data = {}
-    if preset:
-        ppath = (presets_dir / f"{preset}.yaml") if presets_dir else None
+    if effective_preset:
+        ppath = (presets_dir / f"{effective_preset}.yaml") if presets_dir else None
         if not ppath or not ppath.exists():
-            raise ConfigError(f"unknown preset '{preset}'")
+            raise ConfigError(f"unknown preset '{effective_preset}'")
         data = _load(ppath)
-    if config_path:
-        data = {**data, **_load(config_path)}   # inline overrides preset
+    if cfgdata:
+        data = {**data, **cfgdata}   # inline config keys override preset
 
     selected = list(data.get("primary", []) or [])
     overlays = list(data.get("overlays", []) or [])
