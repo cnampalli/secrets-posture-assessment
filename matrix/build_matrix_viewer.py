@@ -27,6 +27,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DST = os.path.join(HERE, "matrix-viewer.html")
 SUBSTRATE_SLUG = "fortanix-dsm"
 
+import argparse
+import engagement_config as _ec
+import overlay as _ov
+
+_CFGDIR = os.path.join(HERE, "config")
+
+_ap = argparse.ArgumentParser(description="Build the secrets-management report.")
+_ap.add_argument("--config", help="path to an engagement.yaml")
+_ap.add_argument("--preset", help="named preset (financial|government|retail|baseline)")
+_ap.add_argument("--frameworks", help="comma-separated framework slugs (overrides primary)")
+_ap.add_argument("--emit-data", help="(test hook) also dump {REGDATA,RECDATA} JSON to this path")
+_ARGS, _ = _ap.parse_known_args()
+
 VENDOR_LAYER = {
     SUBSTRATE_SLUG: ("L0", "data-security"),
     "hashicorp-vault-enterprise": ("L1", "core"),
@@ -64,50 +77,8 @@ LAYER_LABEL = {
 }
 APRA_FRAMEWORKS = {"apra-cps-234", "apra-cps-230", "apra-cpg-234"}
 
-# AU data-residency / IRAP per vendor, synthesised from each profile's
-# "AU-specific notes" (research/vendors/<slug>.md). residency: AU-RESIDENT |
-# CONDITIONAL (residency only via self-host/gateway) | SAAS-ONLY. irap: YES |
-# PARTIAL (platform-level / scope unconfirmed) | NO. Drives residency-first ordering.
-VENDOR_RESIDENCY = {
-    "fortanix-dsm": {"residency": "AU-RESIDENT", "irap": "NO",
-        "note": "On-prem FX-series appliances give full AU sovereignty; an 'Australia' SaaS region is listed (Equinix Sydney plausible). No IRAP. Evaluated as crypto substrate per ADR-007, not a ranked vendor."},
-    "hashicorp-vault-enterprise": {"residency": "AU-RESIDENT", "irap": "NO",
-        "note": "Self-host in AWS ap-southeast-2 / Azure australiaeast, or HCP Vault Dedicated ap-southeast-2. No vendor IRAP declaration — deploy in an IRAP-assessed environment."},
-    "cyberark-conjur": {"residency": "AU-RESIDENT", "irap": "PARTIAL",
-        "note": "Conjur Enterprise Selective-Follower gives in-AU residency; Conjur Cloud AU region unconfirmed. CyberArk platform is IRAP-PROTECTED; Conjur Cloud scope unconfirmed."},
-    "cyberark-pam": {"residency": "AU-RESIDENT", "irap": "PARTIAL",
-        "note": "Privilege Cloud on AWS Sydney + self-host in AU (NAB is a public reference). IRAP not publicly declared for PAM Self-Hosted — SE confirm."},
-    "delinea-secret-server": {"residency": "AU-RESIDENT", "irap": "NO",
-        "note": "Self-host in XYZ DC / AWS Sydney for residency; Secret Server Cloud is US/EU only. No IRAP confirmed."},
-    "aws-secrets-manager": {"residency": "AU-RESIDENT", "irap": "YES",
-        "note": "Sydney ap-southeast-2 GA (Melbourne ap-southeast-4 emerging). IRAP-PROTECTED in scope (Nov 2025)."},
-    "azure-key-vault": {"residency": "AU-RESIDENT", "irap": "YES",
-        "note": "GA across all AU regions; geo-bounded security worlds. Azure IRAP-PROTECTED with Key Vault in assessed scope."},
-    "gcp-secret-manager": {"residency": "AU-RESIDENT", "irap": "YES",
-        "note": "australia-southeast1/2 with user-managed replication pins data in-AU. GCP IRAP-PROTECTED at platform level — verify Secret Manager scope in the Compliance Reports Manager."},
-    "akeyless": {"residency": "CONDITIONAL", "irap": "NO",
-        "note": "No AU SaaS region; self-host the Gateway in an AU cloud + a Customer Fragment so no plaintext key material leaves AU (zero-knowledge). No IRAP."},
-    "doppler": {"residency": "SAAS-ONLY", "irap": "NO",
-        "note": "US-only (GCP us-central1), no self-host. No IRAP. Use only as a developer-experience layer over an AU-sovereign backend."},
-    "infisical": {"residency": "CONDITIONAL", "irap": "NO",
-        "note": "Cloud is US/EU; self-host in AWS ap-southeast-2 / Azure australiaeast for residency. No IRAP."},
-    "1password-secrets-automation": {"residency": "SAAS-ONLY", "irap": "NO",
-        "note": "No AU SaaS region (EU only); self-host Connect leaves the authoritative store outside AU unless air-gapped (not the design intent). No IRAP."},
-    "venafi": {"residency": "AU-RESIDENT", "irap": "NO",
-        "note": "Certificate Manager Self-Hosted on AU infra for full residency; SaaS AU region unconfirmed. No IRAP (CSA STAR / SOC 2 / ISO 27001)."},
-    "keyfactor": {"residency": "AU-RESIDENT", "irap": "NO",
-        "note": "Self-host (Command / EJBCA) on XYZ infra is sovereignty-safe; SaaS AU region unconfirmed. No IRAP."},
-    "astrix-security": {"residency": "SAAS-ONLY", "irap": "NO",
-        "note": "SaaS-only, US-hosted; NHI metadata resides offshore. No AU region / IRAP. Post-Cisco AU-sovereign path possible but uncommitted."},
-    "entro-security": {"residency": "SAAS-ONLY", "irap": "NO",
-        "note": "SaaS US/EU only; no AU region / IRAP (ISO 27001 + SOC 2). Observer/analytics layer unless an AU-residency exception or region exists."},
-    "oasis-security": {"residency": "SAAS-ONLY", "irap": "NO",
-        "note": "No AU/APAC region; no IRAP (SOC 2 / ISO 27001 / 27018). Needs a DPA with explicit AU-residency commitment before production."},
-    "aembit": {"residency": "SAAS-ONLY", "irap": "NO",
-        "note": "Edge broker can be AU-hosted, but the control plane (policy/audit) transits US SaaS — a CPS 234 §22 / CPS 230 §39 gap. No IRAP."},
-    "clutch-security": {"residency": "SAAS-ONLY", "irap": "NO",
-        "note": "Zero-knowledge architecture keeps discovery metadata in the customer network (partial mitigation); SaaS control-plane residency unconfirmed. No IRAP."},
-}
+# AU data-residency / IRAP per vendor — externalized to config/vendor-residency.yaml (WS-2).
+VENDOR_RESIDENCY = _ov.load_vendor_residency(os.path.join(_CFGDIR, "vendor-residency.yaml"))
 
 # UC capability domains (from use-cases.csv) used to score domain strength.
 REC_UC_DOMAIN = {
@@ -176,19 +147,23 @@ for r in reg_rows:
             reg[u][bucket].add(r["control_code"])
 REG = {u: {"APRA": sorted(v["APRA"]), "ISM": sorted(v["ISM"])} for u, v in reg.items()}
 
-FRAMEWORK_LABELS = {
-    "essential-8": ("Essential 8", "ACSC · maturity baseline"),
-    "cisa-ztmm-v2": ("CISA Zero Trust Maturity Model v2.0", "CISA ZTMM · pillars + cross-cutting (aligned to NIST SP 800-207)"),
-    "apra-cps-234": ("APRA CPS 234", "Prudential · information security"),
-    "apra-cps-230": ("APRA CPS 230", "Prudential · operational risk"),
-    "apra-cpg-234": ("APRA CPG 234 (guidance)", "Prudential · practice guide"),
-    "asd-ism": ("ASD ISM", "ACSC · Australian Govt baseline"),
-    "mitre-attack": ("MITRE ATT&CK", "Adversary TTPs (informative)"),
-}
+# Framework labels — externalized to config/frameworks.yaml (WS-2).
+FRAMEWORK_LABELS = _ov.load_framework_labels(os.path.join(_CFGDIR, "frameworks.yaml"))
 fw_order, fw_seen = [], set()
 for r in reg_rows:
     if r["framework_slug"] not in fw_seen:
         fw_seen.add(r["framework_slug"]); fw_order.append(r["framework_slug"])
+_available = list(dict.fromkeys(fw_order))     # the framework slugs present in the data
+_cli_fw = [s.strip() for s in _ARGS.frameworks.split(",")] if _ARGS.frameworks else None
+import pathlib as _pl
+ENGAGEMENT = _ec.resolve(
+    preset=_ARGS.preset,
+    config_path=_ARGS.config,
+    cli_frameworks=_cli_fw,
+    available=_available,
+    presets_dir=_pl.Path(_CFGDIR) / "presets",
+)
+fw_order = _ov.scope_frameworks(fw_order, ENGAGEMENT)
 state_by_uc = {a["uc_id"]: a["anz_state"] for a in anz}
 framework_controls = defaultdict(list)
 for r in reg_rows:
@@ -225,6 +200,12 @@ REGDATA = {
                     "subtitle": FRAMEWORK_LABELS.get(s, (s, ""))[1],
                     "control_count": len(framework_controls[s])} for s in fw_order],
     "controls": framework_controls, "ucs": uc_index, "vendor_uc": dict(vendor_uc),
+    "framework_selection": {
+        "selected": list(ENGAGEMENT.selected) if not ENGAGEMENT.is_default else list(_available),
+        "overlays": list(ENGAGEMENT.overlays),
+        "baseline": list(ENGAGEMENT.baseline) if not ENGAGEMENT.is_default else [],
+        "available": list(_available),
+    },
 }
 
 
@@ -288,16 +269,21 @@ _pki = [s for s, (lay, t) in VENDOR_LAYER.items() if lay == "L1" and t == "pki-m
 _l2 = [s for s, (lay, t) in VENDOR_LAYER.items() if lay == "L2"]
 
 l1_secrets = sorted((_vendor_stat(s) for s in _l1),
-                    key=lambda v: (RES_ORDER.get(v["residency"], 9), -v["secrets_native"], -v["nhi_native"]))
+                    key=lambda v: _ov.vendor_sort_key(
+                        ENGAGEMENT.residency_weight, v["residency"],
+                        (-v["secrets_native"], -v["nhi_native"])))
 pki_mim = sorted((_vendor_stat(s) for s in _pki),
-                 key=lambda v: (RES_ORDER.get(v["residency"], 9), -v["secrets_native"]))
+                 key=lambda v: _ov.vendor_sort_key(
+                     ENGAGEMENT.residency_weight, v["residency"],
+                     (-v["secrets_native"],)))
 l2_governance = sorted((_vendor_stat(s) for s in _l2),
-                       key=lambda v: (RES_ORDER.get(v["residency"], 9), -v["gov_native"], -v["nhi_native"]))
+                       key=lambda v: _ov.vendor_sort_key(
+                           ENGAGEMENT.residency_weight, v["residency"],
+                           (-v["gov_native"], -v["nhi_native"])))
 
 # Most compliance-defensible primary = AU-resident AND IRAP-assessed (by coverage);
 # highest-capability multi-cloud alternative = Vault.
-_irap_au = [v for v in l1_secrets if v["residency"] == "AU-RESIDENT" and v["irap"] == "YES"]
-_primary = _irap_au[0] if _irap_au else next((v for v in l1_secrets if v["residency"] == "AU-RESIDENT"), l1_secrets[0])
+_primary = _ov.select_primary(l1_secrets, ENGAGEMENT.irap_required)
 _multicloud = next((v for v in l1_secrets if v["slug"] == "hashicorp-vault-enterprise"), l1_secrets[0])
 _overlay = l2_governance[0]
 _pki_lead = pki_mim[0]
@@ -947,6 +933,11 @@ html = (TEMPLATE
         .replace("__RV__", str(meta["ranked_vendors"]))
         .replace("__NHI__", str(meta["nhis"]))
         .replace("__UC__", str(meta["ucs"])))
+
+if _ARGS.emit_data:
+    with open(_ARGS.emit_data, "w", encoding="utf-8") as _ef:
+        json.dump({"REGDATA": REGDATA, "RECDATA": RECDATA}, _ef,
+                  ensure_ascii=False, sort_keys=True)
 
 with open(DST, "w", encoding="utf-8") as f:
     f.write(html)
