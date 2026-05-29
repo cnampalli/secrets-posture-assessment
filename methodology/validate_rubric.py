@@ -70,3 +70,65 @@ def validate_questions(archetype_rows, question_rows):
     for aid in sorted(non_a0 - covered):
         errors.append(f"archetype {aid}: has no diagnostic questions")
     return errors
+
+
+SLOT_RE = re.compile(r"\{([a-zA-Z_]+)\}")
+
+
+def _slots_for_archetype(aid, archetype_rows, question_rows):
+    """All {slot} names referenced by an archetype's defs + its questions."""
+    slots = set()
+    for r in archetype_rows:
+        if r["archetype_id"] == aid:
+            for col in ("met_def", "partial_def", "gap_def", "na_def", "intent"):
+                slots |= set(SLOT_RE.findall(r.get(col, "")))
+    for q in question_rows:
+        if q["archetype_id"] == aid:
+            slots |= set(SLOT_RE.findall(q.get("question_template", "")))
+    return slots
+
+
+def _parse_params(raw):
+    out = {}
+    for pair in (raw or "").split(";"):
+        pair = pair.strip()
+        if not pair:
+            continue
+        if "=" not in pair:
+            return None  # malformed
+        k, v = pair.split("=", 1)
+        out[k.strip()] = v.strip()
+    return out
+
+
+def validate_mapping(use_case_rows, archetype_rows, question_rows, mapping_rows):
+    errors = []
+    arch_ids = {r["archetype_id"] for r in archetype_rows}
+    uc_ids = {r["uc_id"] for r in use_case_rows}
+    mapped = set()
+    used_archetypes = set()
+    for m in mapping_rows:
+        uc = m.get("uc_id", "")
+        aid = m.get("archetype_id", "")
+        if uc not in uc_ids:
+            errors.append(f"mapping: unknown uc_id {uc}")
+        if aid not in arch_ids:
+            errors.append(f"mapping {uc}: unknown archetype_id {aid}")
+            continue
+        mapped.add(uc)
+        used_archetypes.add(aid)
+        if aid == "A0":
+            continue  # slots not required; criteria live in bespoke-criteria.csv
+        params = _parse_params(m.get("params", ""))
+        if params is None:
+            errors.append(f"mapping {uc}: malformed params (need key=value;key=value)")
+            continue
+        needed = _slots_for_archetype(aid, archetype_rows, question_rows)
+        missing = needed - set(params)
+        if missing:
+            errors.append(f"mapping {uc} ({aid}): params missing slots {sorted(missing)}")
+    for uc in sorted(uc_ids - mapped):
+        errors.append(f"use-case {uc}: not mapped to any archetype")
+    for aid in sorted((arch_ids - {"A0"}) - used_archetypes):
+        errors.append(f"archetype {aid}: never used by any UC (dead archetype)")
+    return errors

@@ -46,3 +46,16 @@ def test_questions_valid_and_cover_each_non_a0_archetype():
 
 def test_questions_file_has_no_anz():
     assert vr.check_no_anz([METH / "archetype-questions.csv"]) == []
+
+USE_CASES = ROOT / "matrix" / "use-cases.csv"
+
+def test_every_uc_is_mapped_with_valid_archetype_and_slots():
+    ucs = vr.load_csv(USE_CASES)
+    archs = vr.load_csv(METH / "assessment-archetypes.csv")
+    qs = vr.load_csv(METH / "archetype-questions.csv")
+    mapping = vr.load_csv(METH / "uc-archetype-map.csv")
+    errors = vr.validate_mapping(ucs, archs, qs, mapping)
+    assert errors == [], errors
+
+def test_mapping_file_has_no_anz():
+    assert vr.check_no_anz([METH / "uc-archetype-map.csv"]) == []
