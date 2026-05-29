@@ -35,3 +35,14 @@ def test_archetypes_have_all_ids_and_filled_cells():
 
 def test_archetypes_file_has_no_anz():
     assert vr.check_no_anz([METH / "assessment-archetypes.csv"]) == []
+
+ALLOWED_BOUNDARY = {"GAP_PARTIAL", "PARTIAL_MET"}
+
+def test_questions_valid_and_cover_each_non_a0_archetype():
+    archs = vr.load_csv(METH / "assessment-archetypes.csv")
+    qs = vr.load_csv(METH / "archetype-questions.csv")
+    errors = vr.validate_questions(archs, qs)
+    assert errors == [], errors
+
+def test_questions_file_has_no_anz():
+    assert vr.check_no_anz([METH / "archetype-questions.csv"]) == []

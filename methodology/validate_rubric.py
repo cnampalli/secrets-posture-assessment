@@ -45,3 +45,28 @@ def validate_archetypes(rows):
             if not (r.get(c) or "").strip():
                 errors.append(f"{aid}: empty required column '{c}'")
     return errors
+
+
+ALLOWED_BOUNDARY = {"GAP_PARTIAL", "PARTIAL_MET"}
+
+
+def validate_questions(archetype_rows, question_rows):
+    errors = []
+    arch_ids = {r["archetype_id"] for r in archetype_rows}
+    non_a0 = arch_ids - {"A0"}
+    covered = set()
+    for q in question_rows:
+        aid = q.get("archetype_id", "")
+        if aid not in arch_ids:
+            errors.append(f"question {q.get('q_id')}: unknown archetype_id {aid}")
+        covered.add(aid)
+        for c in ("q_id", "question_template", "dimension", "informs_state"):
+            if not (q.get(c) or "").strip():
+                errors.append(f"question {q.get('q_id')}: empty '{c}'")
+        if q.get("informs_state") not in ALLOWED_BOUNDARY:
+            errors.append(
+                f"question {q.get('q_id')}: informs_state must be one of {ALLOWED_BOUNDARY}"
+            )
+    for aid in sorted(non_a0 - covered):
+        errors.append(f"archetype {aid}: has no diagnostic questions")
+    return errors
