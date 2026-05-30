@@ -6,6 +6,12 @@ scoring.js + app.js into template.html via /*__TOKEN__*/ replacement, write one
 offline file with no external references."""
 import json
 import os
+import sys
+
+# Put the repo root on sys.path so `questionnaire` resolves whether this file is
+# run as a script (`python3 questionnaire/build_questionnaire.py`) or imported as
+# a package member (pytest: `import questionnaire.build_questionnaire`).
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from questionnaire import rubric_loader
 
