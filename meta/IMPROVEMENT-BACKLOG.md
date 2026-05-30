@@ -91,7 +91,13 @@ worksheet view, numeric quantitative inputs.
 - **Skills:** `frontend-design`, `gsd-ui-phase` (UI-SPEC) / `gsd-sketch` (throwaway mockup first),
   `superpowers:test-driven-development`, `gsd-ui-review`.
 
-### WS-4 — End-to-end process doc (playbook) — **the consulting product**
+### WS-4 — End-to-end process doc (playbook) — **the consulting product** — ✅ DONE slice 1 (2026-05-30, branch ws4-methodology-playbook)
+
+Delivered (slice 1): two methodology docs in `methodology/` — `PLAYBOOK.md` (consultant
+operating manual: 6-stage lifecycle, risk×effort prioritisation, XYZ worked-example callouts)
+and `METHODOLOGY.md` (client-facing, distilled). ADR-012. **Deferred:** the roadmap generator
+(auto-emit the engagement menu from assessment-record.json) and the exec-summary print view.
+
 - Document the methodology: scoping → evidence collection → scoring → **gap report + remediation
   roadmap** → re-assessment cadence.
 - Remediation roadmap output: turn GAP/PARTIAL findings into a prioritised engagement menu (the wedge).
