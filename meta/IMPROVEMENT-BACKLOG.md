@@ -73,7 +73,15 @@ MyHR / PSPF / SOCI control→UC mappings and a health preset require a new-resea
 - **Skills:** `gsd-plan-phase` + `gsd-execute-phase`, `superpowers:test-driven-development`
   (scoring/filtering logic), `code-review` / `requesting-code-review`, `superpowers:systematic-debugging`.
 
-### WS-3 — Interactive instrument (questionnaire UI) — **the front door**
+### WS-3 — Interactive instrument (questionnaire UI) — **the front door** — ✅ DONE slice 1 (2026-05-29, branch ws3-questionnaire)
+
+Delivered (slice 1): self-contained questionnaire baked from the WS-1 rubric
+(`questionnaire/`), Python scoring reference (`methodology/scoring.py`) + JS mirror pinned to
+shared vectors, Variant-A wizard with live laddering, A0 manual scoring, override+rationale+
+confidence, autosave, and import/export of a rich `assessment-record.json`. ADR-010.
+**Deferred:** report adapter (record→current-state.csv), framework-selection UI, Variant-B
+worksheet view, numeric quantitative inputs.
+
 - Self-contained HTML questionnaire (matches the no-server moat).
 - Rubric-assisted scoring: proposes state from answers, **override + rationale + confidence**.
 - Exports the **current-state file** (the single source of truth) that feeds the report.
