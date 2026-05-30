@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WS-3 Sketch · Variant B — Dense Worksheet</title>
+<style>
+  :root{
+    --ink:#1a1d21; --muted:#5b6470; --line:#e2e6ea; --paper:#f6f7f9; --card:#fff;
+    --gap:#c0392b; --partial:#c97a14; --met:#2e7d52; --pending:#7a8593; --na:#9aa3ad;
+    --accent:#2a4d8f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper)}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;margin:0}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  header{display:flex;align-items:center;gap:18px;padding:12px 22px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  header h1{font-size:17px}
+  .sketch-tag{font:11px/1 -apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--accent);padding:4px 8px;border-radius:3px}
+  .filters{flex:1;display:flex;gap:8px}
+  .filters button{font:12.5px/1 inherit;padding:7px 11px;border:1px solid var(--line);background:#fff;border-radius:20px;cursor:pointer;color:var(--muted)}
+  .filters button.on{border-color:var(--accent);background:#eef3fb;color:var(--accent)}
+  .btn{font:13px/1 inherit;padding:9px 14px;border-radius:5px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+  .wrap{display:grid;grid-template-columns:1fr 300px;gap:24px;padding:24px 28px;align-items:start}
+  /* worksheet rows */
+  .grp-h{font-family:Georgia,serif;font-size:15px;color:var(--muted);margin:18px 0 8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;overflow:hidden}
+  .row-head{display:flex;align-items:center;gap:14px;padding:13px 16px;cursor:pointer}
+  .row-head:hover{background:#fafbfc}
+  .state-chip{font:12px/1 sans-serif;font-weight:600;letter-spacing:.04em;padding:6px 11px;border-radius:5px;color:#fff;min-width:74px;text-align:center}
+  .state-chip.GAP{background:var(--gap)}.state-chip.PARTIAL{background:var(--partial)}.state-chip.MET{background:var(--met)}.state-chip.PENDING{background:var(--pending)}.state-chip.NA{background:var(--na)}
+  .row-head .id{font-size:12px;color:var(--muted);width:78px;flex:none}
+  .row-head .ti{flex:1;font-size:14.5px}
+  .row-head .arch{font:11px/1 sans-serif;color:var(--accent);background:#eef3fb;border:1px solid #d3e0f5;padding:4px 8px;border-radius:20px}
+  .row-head .chev{color:var(--muted);transition:transform .15s}
+  .row.open .chev{transform:rotate(90deg)}
+  .body{display:none;padding:4px 16px 16px;border-top:1px solid var(--line)}
+  .row.open .body{display:block}
+  .q{padding:11px 0;border-bottom:1px dashed var(--line);display:flex;align-items:flex-start;gap:14px}
+  .q:last-of-type{border-bottom:0}
+  .q .qt{flex:1;font-size:14px}
+  .q .qt b{color:var(--accent)}
+  .q .tags{display:flex;gap:6px;margin-top:5px}
+  .pill{font:10px/1 sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--paper);border:1px solid var(--line);padding:3px 6px;border-radius:10px}
+  .pill.gp{color:#8a4b12;border-color:#e7cba3;background:#fdf6ec}
+  .pill.pm{color:#1f5e3f;border-color:#bfe0cd;background:#eef7f1}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex:none}
+  .seg button{font:12px/1 inherit;padding:7px 12px;border:0;background:#fff;cursor:pointer;color:var(--muted);border-right:1px solid var(--line)}
+  .seg button:last-child{border-right:0}
+  .seg button.on[data-v=yes]{background:var(--met);color:#fff}
+  .seg button.on[data-v=no]{background:var(--gap);color:#fff}
+  .seg button.on[data-v=na]{background:var(--na);color:#fff}
+  .ladder{margin-top:12px;font-size:12.5px;color:var(--muted);background:var(--paper);border-radius:6px;padding:9px 12px}
+  .ladder b{color:var(--ink)}
+  .ovr{margin-top:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .ovr textarea{flex:1;min-width:240px;min-height:38px;border:1px solid var(--line);border-radius:6px;padding:7px;font:12.5px/1.4 inherit;resize:vertical}
+  .ovr select{padding:6px;border:1px solid var(--line);border-radius:5px;font:12.5px inherit}
+  .conf{display:flex;gap:5px}
+  .conf button{font:11px/1 inherit;padding:6px 9px;border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;color:var(--muted)}
+  .conf button.on{border-color:var(--accent);background:#eef3fb;color:var(--accent);font-weight:600}
+  /* sticky tally */
+  aside{position:sticky;top:77px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+  aside h3{font-size:15px;margin-bottom:4px}
+  aside .sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+  .tally{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-bottom:12px}
+  .tally>span{display:block}
+  .legend{font-size:12.5px}
+  .legend div{display:flex;align-items:center;gap:8px;padding:4px 0}
+  .legend .sw{width:11px;height:11px;border-radius:3px}
+  .legend .n{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted)}
+  aside .btn{width:100%;margin-top:16px;text-align:center}
+  .note{font-size:12px;color:var(--muted);background:#fffdf3;border:1px solid #ece3c0;border-radius:6px;padding:8px 11px;margin:0 28px}
+</style>
+</head>
+<body>
+<header>
+  <span class="sketch-tag">Sketch · Variant B</span>
+  <h1>Posture Assessment Worksheet</h1>
+  <div class="filters">
+    <button class="on" data-f="all" onclick="setFilter('all',this)">All</button>
+    <button data-f="GAP" onclick="setFilter('GAP',this)">Gaps</button>
+    <button data-f="PARTIAL" onclick="setFilter('PARTIAL',this)">Partial</button>
+    <button data-f="PENDING" onclick="setFilter('PENDING',this)">Unscored</button>
+  </div>
+</header>
+<div class="note">Throwaway mockup — engine is live. Expand any row to answer; the right rail tallies the whole estate. Representative slice, not the full 47.</div>
+
+<div class="wrap">
+  <div id="sheet"></div>
+  <aside id="tally"></aside>
+</div>
+
+<script>
+const ARCH = {A1:"Preventive Guardrail", A2:"Population Migration", A3:"Capability Enablement", A6:"Recurring KPI"};
+const UCS = [
+  {id:"UC-F-001", title:"Prevent plaintext secrets in repos", arch:"A1", cat:"Functional", questions:[
+    {qid:"A1-Q1", dim:"coverage", informs:"GAP_PARTIAL", text:'Is <b>secret push-protection</b> deployed at all relevant gates for <b>repo-committed secrets</b>?'},
+    {qid:"A1-Q2", dim:"enforcement", informs:"PARTIAL_MET", text:'Is it enforced in blocking mode (not detect-only) across <b>all source repos</b>?'},
+    {qid:"A1-Q3", dim:"exception", informs:"PARTIAL_MET", text:'Are bypasses controlled by a registered exception with owner and expiry?'}
+  ]},
+  {id:"UC-F-003", title:"JIT cloud creds via OIDC", arch:"A2", cat:"Functional", questions:[
+    {qid:"A2-Q1", dim:"enforcement", informs:"GAP_PARTIAL", text:'Is <b>OIDC federation (sub/aud-scoped)</b> the enforced default for new <b>cloud IAM pipeline credentials</b>?'},
+    {qid:"A2-Q2", dim:"coverage", informs:"PARTIAL_MET", text:'Have <b>≥ 95%</b> of existing creds migrated off <b>static cloud access keys</b>?'},
+    {qid:"A2-Q3", dim:"governance", informs:"PARTIAL_MET", text:'Is there an inventory plus active burn-down for the legacy remainder?'},
+    {qid:"A2-Q4", dim:"exception", informs:"PARTIAL_MET", text:'Are exceptions registered with owner and expiry?'}
+  ]},
+  {id:"UC-F-002", title:"Recurring historical-secret scan KPI", arch:"A6", cat:"Functional", questions:[
+    {qid:"A6-Q1", dim:"coverage", informs:"GAP_PARTIAL", text:'Is the historical-secret scan KPI produced across the full estate?'},
+    {qid:"A6-Q2", dim:"freshness", informs:"PARTIAL_MET", text:'Is it produced quarterly and reviewed in a remediation forum?'}
+  ]},
+  {id:"UC-F-004", title:"Workload-attested ephemeral identity", arch:"A3", cat:"Functional", questions:[
+    {qid:"A3-Q1", dim:"coverage", informs:"GAP_PARTIAL", text:'Is SPIFFE workload-attested identity available for production workloads?'},
+    {qid:"A3-Q2", dim:"config", informs:"PARTIAL_MET", text:'Are SVID TTLs ≤ 1h with auto-rotation across in-scope workloads?'}
+  ]},
+  {id:"UC-F-005", title:"Centralised secret brokering", arch:"A1", cat:"Functional", questions:[
+    {qid:"A1-Q1", dim:"coverage", informs:"GAP_PARTIAL", text:'Is a central broker deployed for application secrets?'},
+    {qid:"A1-Q2", dim:"enforcement", informs:"PARTIAL_MET", text:'Is direct secret access blocked outside the broker?'}
+  ]},
+  {id:"UC-N-012", title:"NHI offboarding on joiner-mover-leaver", arch:"A2", cat:"Non-functional", questions:[
+    {qid:"A2-Q1", dim:"enforcement", informs:"GAP_PARTIAL", text:'Is automated NHI offboarding the enforced default on leaver events?'},
+    {qid:"A2-Q2", dim:"coverage", informs:"PARTIAL_MET", text:'Have ≥ 90% of orphaned NHIs been remediated?'}
+  ]}
+];
+const STATE = {}; UCS.forEach(u=>STATE[u.id]={answers:{},override:null,reason:"",conf:"MED",open:false});
+STATE["UC-F-001"].answers={"A1-Q1":"no"};
+STATE["UC-F-003"].answers={"A2-Q1":"yes","A2-Q2":"no","A2-Q3":"yes","A2-Q4":"yes"};
+STATE["UC-F-002"].answers={"A6-Q1":"yes","A6-Q2":"yes"};
+STATE["UC-F-005"].answers={"A1-Q1":"yes","A1-Q2":"yes"};
+STATE["UC-N-012"].answers={"A2-Q1":"yes","A2-Q2":"na"};
+let filter="all";
+
+function derive(uc){
+  const st=STATE[uc.id]; if(st.override) return {state:st.override,why:"Assessor override",overridden:true};
+  const qs=uc.questions, ans=st.answers;
+  const na=qs.filter(q=>ans[q.qid]==="na").length;
+  if(na===qs.length&&na>0) return {state:"NA",why:"All criteria not-applicable"};
+  const un=qs.filter(q=>!ans[q.qid]);
+  if(un.length) return {state:"PENDING",why:un.length+" of "+qs.length+" unanswered"};
+  const gp=qs.find(q=>q.informs==="GAP_PARTIAL"&&ans[q.qid]==="no");
+  if(gp) return {state:"GAP",why:"GAP↔PARTIAL question No ("+gp.qid+")"};
+  const pm=qs.find(q=>q.informs==="PARTIAL_MET"&&ans[q.qid]==="no");
+  if(pm) return {state:"PARTIAL",why:"PARTIAL↔MET question No ("+pm.qid+")"};
+  return {state:"MET",why:"All dimensions satisfied"};
+}
+
+function renderSheet(){
+  const groups={}; UCS.forEach(u=>{(groups[u.cat]=groups[u.cat]||[]).push(u)});
+  let h="";
+  for(const g in groups){
+    const vis=groups[g].filter(u=>filter==="all"||derive(u).state===filter);
+    if(!vis.length) continue;
+    h+='<div class="grp-h">'+g+' use cases</div>';
+    vis.forEach(u=>{
+      const st=STATE[u.id], d=derive(u);
+      h+='<div class="row '+(st.open?'open':'')+'">'+
+        '<div class="row-head" onclick="toggle(\''+u.id+'\')">'+
+          '<span class="state-chip '+d.state+'">'+d.state+'</span>'+
+          '<span class="id mono">'+u.id+'</span>'+
+          '<span class="ti">'+u.title+'</span>'+
+          '<span class="arch mono">'+u.arch+'</span>'+
+          '<span class="chev">▶</span>'+
+        '</div><div class="body">';
+      u.questions.forEach(q=>{
+        const a=st.answers[q.qid]||"";
+        h+='<div class="q"><div class="qt">'+q.text+
+           '<div class="tags"><span class="pill">'+q.dim+'</span><span class="pill '+(q.informs==="GAP_PARTIAL"?"gp":"pm")+'">'+(q.informs==="GAP_PARTIAL"?"GAP↔PARTIAL":"PARTIAL↔MET")+'</span></div></div>'+
+           '<div class="seg">'+['yes','no','na'].map(v=>'<button data-v="'+v+'" class="'+(a===v?'on':'')+'" onclick="answer(\''+u.id+'\',\''+q.qid+'\',\''+v+'\')">'+v.toUpperCase()+'</button>').join('')+'</div></div>';
+      });
+      h+='<div class="ladder"><b>'+d.state+'</b> — '+d.why+'</div>'+
+        '<div class="ovr"><textarea placeholder="override rationale…" oninput="setReason(\''+u.id+'\',this.value)">'+st.reason+'</textarea>'+
+          '<div class="conf">'+['LOW','MED','HIGH'].map(c=>'<button class="'+(st.conf===c?'on':'')+'" onclick="setConf(\''+u.id+'\',\''+c+'\')">'+c+'</button>').join('')+'</div>'+
+          '<select onchange="setOverride(\''+u.id+'\',this.value)">'+['(proposed: '+d.state+')','GAP','PARTIAL','MET','PENDING','NA'].map((o,i)=>'<option value="'+(i===0?'':o)+'" '+(st.override===o?'selected':'')+'>'+o+'</option>').join('')+'</select>'+
+        '</div></div></div>';
+    });
+  }
+  document.getElementById("sheet").innerHTML=h||'<p style="color:var(--muted)">No use cases match this filter.</p>';
+}
+
+function renderTally(){
+  const counts={GAP:0,PARTIAL:0,MET:0,PENDING:0,NA:0};
+  UCS.forEach(u=>counts[derive(u).state]++);
+  const total=UCS.length, scored=total-counts.PENDING;
+  const col={GAP:"var(--gap)",PARTIAL:"var(--partial)",MET:"var(--met)",PENDING:"var(--pending)",NA:"var(--na)"};
+  let bars=Object.keys(counts).map(k=>counts[k]?'<span style="background:'+col[k]+';width:'+(counts[k]/total*100)+'%"></span>':'').join('');
+  let leg=Object.keys(counts).map(k=>'<div><span class="sw" style="background:'+col[k]+'"></span>'+k+'<span class="n">'+counts[k]+'</span></div>').join('');
+  document.getElementById("tally").innerHTML=
+    '<h3>Estate posture</h3><div class="sub">'+scored+' of '+total+' use cases scored</div>'+
+    '<div class="tally">'+bars+'</div><div class="legend">'+leg+'</div>'+
+    '<button class="btn" onclick="exportCSV()">⤓ Export current-state CSV</button>';
+}
+function render(){renderSheet();renderTally();}
+function toggle(id){STATE[id].open=!STATE[id].open;renderSheet();}
+function answer(id,qid,v){const a=STATE[id].answers;a[qid]=(a[qid]===v?undefined:v);if(a[qid]===undefined)delete a[qid];render();}
+function setReason(id,v){STATE[id].reason=v;}
+function setConf(id,c){STATE[id].conf=c;renderSheet();}
+function setOverride(id,v){STATE[id].override=v||null;render();}
+function setFilter(f,el){filter=f;[...document.querySelectorAll('.filters button')].forEach(b=>b.classList.remove('on'));el.classList.add('on');renderSheet();}
+function exportCSV(){
+  let rows=[["uc_id","archetype_id","proposed_state","final_state","confidence","override_reason"]];
+  UCS.forEach(u=>{const st=STATE[u.id],d=derive(u);rows.push([u.id,u.arch,d.overridden?"(overridden)":d.state,st.override||d.state,st.conf,(st.reason||"").replace(/[\n,]/g," ")]);});
+  const csv=rows.map(r=>r.join(",")).join("\n");const b=new Blob([csv],{type:"text/csv"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="current-state.csv";a.click();
+}
+render();
+</script>
+</body>
+</html>

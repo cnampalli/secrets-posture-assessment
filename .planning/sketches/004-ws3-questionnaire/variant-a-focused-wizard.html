@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WS-3 Sketch · Variant A — Focused Wizard</title>
+<style>
+  :root{
+    --ink:#1a1d21; --muted:#5b6470; --line:#e2e6ea; --paper:#f6f7f9; --card:#fff;
+    --gap:#c0392b; --partial:#c97a14; --met:#2e7d52; --pending:#7a8593; --na:#9aa3ad;
+    --accent:#2a4d8f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper)}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;margin:0}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  /* top bar */
+  header{display:flex;align-items:center;gap:18px;padding:12px 22px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  header h1{font-size:17px}
+  .sketch-tag{font:11px/1 -apple-system,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--accent);padding:4px 8px;border-radius:3px}
+  .ovr-progress{flex:1;display:flex;align-items:center;gap:10px;max-width:420px}
+  .bar{flex:1;height:7px;background:var(--line);border-radius:4px;overflow:hidden}
+  .bar>span{display:block;height:100%;background:var(--accent);width:13%}
+  .btn{font:13px/1 inherit;padding:9px 14px;border-radius:5px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  /* layout */
+  .wrap{display:grid;grid-template-columns:264px 1fr;min-height:calc(100vh - 53px)}
+  /* rail */
+  nav{background:var(--card);border-right:1px solid var(--line);padding:14px 0;overflow:auto}
+  .rail-grp{font:11px/1 sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 18px 6px}
+  .rail-item{display:flex;align-items:center;gap:10px;padding:8px 18px;cursor:pointer;border-left:3px solid transparent}
+  .rail-item:hover{background:var(--paper)}
+  .rail-item.active{background:#eef3fb;border-left-color:var(--accent)}
+  .rail-item .mono{font-size:12px;color:var(--muted)}
+  .rail-item .t{font-size:12.5px;flex:1;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--pending);flex:none}
+  .dot.GAP{background:var(--gap)}.dot.PARTIAL{background:var(--partial)}.dot.MET{background:var(--met)}.dot.NA{background:var(--na)}
+  /* main */
+  main{padding:30px 38px;max-width:860px}
+  .crumb{font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  .uc-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+  .uc-head h2{font-size:23px}
+  .arch-badge{font:11px/1 sans-serif;letter-spacing:.04em;color:var(--accent);background:#eef3fb;border:1px solid #d3e0f5;padding:5px 9px;border-radius:20px}
+  .uc-sub{color:var(--muted);font-size:13.5px;margin:2px 0 22px}
+  /* question */
+  .q{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:12px}
+  .q .qmeta{display:flex;gap:8px;margin-bottom:8px}
+  .pill{font:10.5px/1 sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--paper);border:1px solid var(--line);padding:4px 7px;border-radius:12px}
+  .pill.gp{color:#8a4b12;border-color:#e7cba3;background:#fdf6ec}
+  .pill.pm{color:#1f5e3f;border-color:#bfe0cd;background:#eef7f1}
+  .q p{margin:0 0 12px;font-size:15px}
+  .q p b{color:var(--accent);font-weight:600}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .seg button{font:13px/1 inherit;padding:8px 16px;border:0;background:#fff;cursor:pointer;color:var(--muted);border-right:1px solid var(--line)}
+  .seg button:last-child{border-right:0}
+  .seg button.on[data-v=yes]{background:var(--met);color:#fff}
+  .seg button.on[data-v=no]{background:var(--gap);color:#fff}
+  .seg button.on[data-v=na]{background:var(--na);color:#fff}
+  .quant{font-size:12px;color:var(--muted);margin-left:10px}
+  /* scoring card */
+  .score{position:sticky;bottom:0;margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;box-shadow:0 -6px 18px rgba(20,30,50,.05)}
+  .score-row{display:flex;align-items:center;gap:16px}
+  .state-chip{font-family:Georgia,serif;font-size:20px;font-weight:600;padding:8px 18px;border-radius:7px;color:#fff;min-width:120px;text-align:center}
+  .state-chip.GAP{background:var(--gap)}.state-chip.PARTIAL{background:var(--partial)}.state-chip.MET{background:var(--met)}.state-chip.PENDING{background:var(--pending)}.state-chip.NA{background:var(--na)}
+  .why{font-size:13px;color:var(--muted);flex:1}
+  .why b{color:var(--ink)}
+  .ovr-toggle{font-size:13px;color:var(--accent);cursor:pointer;user-select:none}
+  .ovr{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:none}
+  .ovr.open{display:block}
+  .ovr label{font-size:12.5px;color:var(--muted);display:block;margin-bottom:5px}
+  .ovr textarea{width:100%;min-height:54px;border:1px solid var(--line);border-radius:6px;padding:9px;font:13.5px/1.45 inherit;resize:vertical}
+  .ovr-grid{display:flex;gap:24px;align-items:flex-end;margin-top:12px}
+  .conf{display:flex;gap:6px}
+  .conf button{font:12px/1 inherit;padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;color:var(--muted)}
+  .conf button.on{border-color:var(--accent);background:#eef3fb;color:var(--accent);font-weight:600}
+  .ovr-final{display:flex;align-items:center;gap:10px}
+  .ovr-final select{padding:7px;border:1px solid var(--line);border-radius:5px;font:13px inherit}
+  .navrow{display:flex;justify-content:space-between;margin-top:22px}
+  .note{font-size:12px;color:var(--muted);background:#fffdf3;border:1px solid #ece3c0;border-radius:6px;padding:8px 11px;margin-bottom:18px}
+</style>
+</head>
+<body>
+<header>
+  <span class="sketch-tag">Sketch · Variant A</span>
+  <h1>Posture Assessment Instrument</h1>
+  <div class="ovr-progress"><span class="mono" style="font-size:12px;color:var(--muted)">6 / 47 scored</span><div class="bar"><span></span></div></div>
+  <button class="btn ghost" onclick="exportCSV()">⤓ Export current-state CSV</button>
+</header>
+
+<div class="note">Throwaway mockup — the laddering engine is live (click Yes/No/NA and watch the state card). Data is a representative slice, not the full 47.</div>
+
+<div class="wrap">
+  <nav id="rail"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+/* ---- representative rubric slice ---- */
+const ARCH = {A1:"Preventive Guardrail", A2:"Population Migration / Coverage", A3:"Capability Enablement", A6:"Recurring KPI / Assurance"};
+const UCS = [
+  {id:"UC-F-001", title:"Prevent plaintext secrets in repos", arch:"A1", cat:"Functional", questions:[
+    {qid:"A1-Q1", dim:"coverage",    informs:"GAP_PARTIAL", text:'Is <b>secret push-protection</b> deployed at all relevant gates for <b>repo-committed secrets</b>?'},
+    {qid:"A1-Q2", dim:"enforcement", informs:"PARTIAL_MET", text:'Is <b>secret push-protection</b> enforced in blocking mode (not detect-only) across <b>all source repos</b>?'},
+    {qid:"A1-Q3", dim:"exception",   informs:"PARTIAL_MET", text:'Are bypasses controlled by a registered exception with owner and expiry?'}
+  ]},
+  {id:"UC-F-003", title:"JIT cloud creds via OIDC", arch:"A2", cat:"Functional", questions:[
+    {qid:"A2-Q1", dim:"enforcement", informs:"GAP_PARTIAL", text:'Is <b>OIDC federation (sub/aud-scoped)</b> the enforced default for new <b>cloud IAM pipeline credentials</b>?'},
+    {qid:"A2-Q2", dim:"coverage",    informs:"PARTIAL_MET", quant:"threshold ≥ 95%", text:'Have <b>≥ 95%</b> of existing <b>cloud IAM pipeline credentials</b> migrated off <b>static cloud access keys</b>?'},
+    {qid:"A2-Q3", dim:"governance",  informs:"PARTIAL_MET", text:'Is there an inventory plus active burn-down for the legacy remainder?'},
+    {qid:"A2-Q4", dim:"exception",   informs:"PARTIAL_MET", text:'Are exceptions registered with owner and expiry?'}
+  ]},
+  {id:"UC-F-002", title:"Recurring historical-secret scan KPI", arch:"A6", cat:"Functional", questions:[
+    {qid:"A6-Q1", dim:"coverage", informs:"GAP_PARTIAL", text:'Is the historical-secret scan KPI produced across the full estate?'},
+    {qid:"A6-Q2", dim:"freshness", informs:"PARTIAL_MET", text:'Is it produced on a quarterly cadence and reviewed in a remediation forum?'}
+  ]},
+  {id:"UC-F-004", title:"Workload-attested ephemeral identity", arch:"A3", cat:"Functional", questions:[
+    {qid:"A3-Q1", dim:"coverage", informs:"GAP_PARTIAL", text:'Is SPIFFE workload-attested identity available for production workloads?'},
+    {qid:"A3-Q2", dim:"config", informs:"PARTIAL_MET", text:'Are SVID TTLs ≤ 1h with auto-rotation across in-scope production workloads?'}
+  ]},
+  {id:"UC-F-005", title:"Centralised secret brokering", arch:"A1", cat:"Functional", questions:[
+    {qid:"A1-Q1", dim:"coverage", informs:"GAP_PARTIAL", text:'Is a central broker deployed for application secrets?'},
+    {qid:"A1-Q2", dim:"enforcement", informs:"PARTIAL_MET", text:'Is direct secret access blocked outside the broker?'}
+  ]},
+  {id:"UC-N-012", title:"NHI offboarding on joiner-mover-leaver", arch:"A2", cat:"Non-functional", questions:[
+    {qid:"A2-Q1", dim:"enforcement", informs:"GAP_PARTIAL", text:'Is automated NHI offboarding the enforced default on leaver events?'},
+    {qid:"A2-Q2", dim:"coverage", informs:"PARTIAL_MET", text:'Have ≥ 90% of orphaned NHIs been remediated?'}
+  ]}
+];
+
+/* seed a few as pre-answered so the rail/ progress look real */
+const STATE = {};   // ucId -> {answers:{qid:'yes'|'no'|'na'}, override:null|state, reason:'', conf:'MED', open:false}
+UCS.forEach(u=>STATE[u.id]={answers:{},override:null,reason:"",conf:"MED",open:false});
+STATE["UC-F-001"].answers = {"A1-Q1":"no"};               // -> GAP
+STATE["UC-F-003"].answers = {"A2-Q1":"yes","A2-Q2":"no","A2-Q3":"yes","A2-Q4":"yes"}; // -> PARTIAL
+STATE["UC-F-002"].answers = {"A6-Q1":"yes","A6-Q2":"yes"}; // -> MET
+STATE["UC-N-012"].answers = {"A2-Q1":"yes","A2-Q2":"na"};
+STATE["UC-F-005"].answers = {"A1-Q1":"yes","A1-Q2":"yes"}; // -> MET
+
+let current = "UC-F-001";
+
+/* ---- the laddering engine (the heart of WS-3) ---- */
+function derive(uc){
+  const st = STATE[uc.id];
+  if(st.override) return {state:st.override, why:"Assessor override", overridden:true};
+  const qs = uc.questions;
+  const ans = st.answers;
+  const required = qs.filter(q=>ans[q.qid] && ans[q.qid]!=="na");
+  const naCount = qs.filter(q=>ans[q.qid]==="na").length;
+  if(naCount===qs.length && naCount>0) return {state:"NA", why:"All criteria marked not-applicable"};
+  const unanswered = qs.filter(q=>!ans[q.qid]);
+  if(unanswered.length) return {state:"PENDING", why:unanswered.length+" of "+qs.length+" question(s) unanswered — insufficient evidence"};
+  const gpNo = qs.find(q=>q.informs==="GAP_PARTIAL" && ans[q.qid]==="no");
+  if(gpNo) return {state:"GAP", why:"GAP↔PARTIAL question answered No ("+gpNo.qid+", "+gpNo.dim+")"};
+  const pmNo = qs.find(q=>q.informs==="PARTIAL_MET" && ans[q.qid]==="no");
+  if(pmNo) return {state:"PARTIAL", why:"All GAP↔PARTIAL met; a PARTIAL↔MET question is No ("+pmNo.qid+", "+pmNo.dim+")"};
+  return {state:"MET", why:"All criteria satisfied across every dimension"};
+}
+
+/* ---- render ---- */
+function renderRail(){
+  const groups = {};
+  UCS.forEach(u=>{(groups[u.cat]=groups[u.cat]||[]).push(u)});
+  let h="";
+  for(const g in groups){
+    h+='<div class="rail-grp">'+g+'</div>';
+    groups[g].forEach(u=>{
+      const d=derive(u);
+      h+='<div class="rail-item '+(u.id===current?'active':'')+'" onclick="go(\''+u.id+'\')">'+
+         '<span class="dot '+d.state+'"></span>'+
+         '<span class="t">'+u.title+'</span>'+
+         '<span class="mono">'+u.id+'</span></div>';
+    });
+  }
+  document.getElementById("rail").innerHTML=h;
+}
+
+function renderMain(){
+  const uc = UCS.find(u=>u.id===current);
+  const st = STATE[uc.id];
+  const d = derive(uc);
+  let h='<div class="crumb">'+uc.cat+' · use case</div>'+
+    '<div class="uc-head"><h2>'+uc.title+'</h2><span class="arch-badge mono">'+uc.arch+' · '+ARCH[uc.arch]+'</span></div>'+
+    '<div class="uc-sub mono">'+uc.id+'</div>';
+  uc.questions.forEach(q=>{
+    const a = st.answers[q.qid]||"";
+    h+='<div class="q"><div class="qmeta"><span class="pill">'+q.dim+'</span>'+
+       '<span class="pill '+(q.informs==="GAP_PARTIAL"?"gp":"pm")+'">'+(q.informs==="GAP_PARTIAL"?"GAP ↔ PARTIAL":"PARTIAL ↔ MET")+'</span></div>'+
+       '<p>'+q.text+(q.quant?'<span class="quant">('+q.quant+')</span>':'')+'</p>'+
+       '<div class="seg">'+
+         ['yes','no','na'].map(v=>'<button data-v="'+v+'" class="'+(a===v?'on':'')+'" onclick="answer(\''+q.qid+'\',\''+v+'\')">'+v.toUpperCase()+'</button>').join('')+
+       '</div></div>';
+  });
+  // score card
+  h+='<div class="score"><div class="score-row">'+
+       '<span class="state-chip '+d.state+'">'+d.state+'</span>'+
+       '<span class="why"><b>Proposed.</b> '+d.why+'</span>'+
+       '<span class="ovr-toggle" onclick="toggleOvr()">'+(st.open?'▾ hide override':'▸ override / confidence')+'</span>'+
+     '</div>'+
+     '<div class="ovr '+(st.open?'open':'')+'">'+
+       '<label>Override rationale (required if you change the proposed state)</label>'+
+       '<textarea placeholder="e.g. 2019 red-team finding reopened; blocking mode disabled on 3 monorepos…" oninput="setReason(this.value)">'+st.reason+'</textarea>'+
+       '<div class="ovr-grid">'+
+         '<div><label>Confidence</label><div class="conf">'+
+            ['LOW','MED','HIGH'].map(c=>'<button class="'+(st.conf===c?'on':'')+'" onclick="setConf(\''+c+'\')">'+c+'</button>').join('')+
+         '</div></div>'+
+         '<div class="ovr-final"><label style="margin:0">Final state</label>'+
+            '<select onchange="setOverride(this.value)">'+
+              ['(use proposed: '+d.state+')','GAP','PARTIAL','MET','PENDING','NA'].map((o,i)=>'<option value="'+(i===0?'':o)+'" '+(st.override===o?'selected':'')+'>'+o+'</option>').join('')+
+            '</select></div>'+
+       '</div>'+
+     '</div></div>';
+  // nav
+  const idx = UCS.findIndex(u=>u.id===current);
+  h+='<div class="navrow">'+
+     '<button class="btn ghost" '+(idx===0?'disabled':'')+' onclick="go(UCS['+(idx-1)+']?.id||current)">← Previous</button>'+
+     '<button class="btn" onclick="go(UCS['+(idx+1)+']?.id||current)">Save & next →</button></div>';
+  document.getElementById("main").innerHTML=h;
+}
+
+function render(){renderRail();renderMain();}
+function go(id){if(id){current=id;render();window.scrollTo(0,0);}}
+function answer(qid,v){const a=STATE[current].answers;a[qid]=(a[qid]===v?undefined:v);if(a[qid]===undefined)delete a[qid];render();}
+function toggleOvr(){STATE[current].open=!STATE[current].open;renderMain();}
+function setReason(v){STATE[current].reason=v;}
+function setConf(c){STATE[current].conf=c;renderMain();}
+function setOverride(v){STATE[current].override=v||null;render();}
+function exportCSV(){
+  let rows=[["uc_id","archetype_id","proposed_state","final_state","confidence","override_reason"]];
+  UCS.forEach(u=>{const st=STATE[u.id];const d=derive(u);rows.push([u.id,u.arch,d.overridden?"(overridden)":d.state,st.override||d.state,st.conf,(st.reason||"").replace(/[\n,]/g," ")]);});
+  const csv=rows.map(r=>r.join(",")).join("\n");
+  const b=new Blob([csv],{type:"text/csv"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="current-state.csv";a.click();
+}
+render();
+</script>
+</body>
+</html>
