@@ -38,6 +38,9 @@ _ap.add_argument("--config", help="path to an engagement.yaml")
 _ap.add_argument("--preset", help="named preset (financial|government|retail|baseline)")
 _ap.add_argument("--frameworks", help="comma-separated framework slugs (overrides primary)")
 _ap.add_argument("--emit-data", help="(test hook) also dump {REGDATA,RECDATA} JSON to this path")
+_ap.add_argument("--current-state", default="anz-current-state.csv",
+                 help="current-state CSV the report scores against (a questionnaire export via "
+                      "questionnaire/report_adapter.py). Default keeps existing behaviour.")
 _ARGS, _ = _ap.parse_known_args()
 
 VENDOR_LAYER = {
@@ -129,7 +132,7 @@ nhis = [{"nhi_id": r["nhi_id"], "bucket": r.get("bucket", ""), "short_name": r.g
 
 anz = [{"uc_id": r["uc_id"], "anz_state": r.get("anz_state", ""), "confidence": r.get("confidence", ""),
         "evidence": r.get("evidence_redacted", ""), "recommendation": r.get("gap_notes", ""),
-        "sensitivity": r.get("sensitivity_tag", "")} for r in read_csv("anz-current-state.csv")]
+        "sensitivity": r.get("sensitivity_tag", "")} for r in read_csv(_ARGS.current_state)]
 
 # Regulatory data (read once): per-UC APRA/ISM chips + the full
 # Framework -> Control -> UC -> Vendor-evidence cascade (Compliance-trace tab).
