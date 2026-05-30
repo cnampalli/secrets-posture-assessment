@@ -10,12 +10,7 @@ CLI: python3 -m questionnaire.report_adapter <record.json> -o <current-state.csv
 import argparse
 import csv
 import json
-import os
 import sys
-
-# Put repo root on sys.path so this resolves as `questionnaire.report_adapter`
-# whether run as a script or imported as a package member.
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 SCHEMA = "posture-assessment-record/v1"
 COLUMNS = ["uc_id", "anz_state", "confidence", "evidence_q_ids",
