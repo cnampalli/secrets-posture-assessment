@@ -72,5 +72,8 @@ def load_rubric(meth_dir):
                  "informs_state": q["informs_state"],
                  "text": _fill(q["question_template"], params, uc_id, q["q_id"])}
                 for q in questions_by_arch.get(arch, [])]
+            if not base["questions"]:
+                raise RubricError(
+                    f"{uc_id}: archetype {arch!r} has no questions in archetype-questions.csv")
         out.append(base)
     return out

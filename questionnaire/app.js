@@ -36,7 +36,7 @@ function finalFor(uc) {
 }
 function whyFor(uc) {
   const r = resp(uc.uc_id);
-  if (uc.kind === "bespoke") return "Bespoke (A0) — assessor sets the state from the criteria below";
+  if (uc.kind === "bespoke") return "Bespoke (A0) — choose the posture state below and add a rationale";
   const p = proposedFor(uc), a = r.answers, qs = uc.questions;
   if (p === "PENDING") { const n = qs.filter(q => !["yes","no","na"].includes(a[q.qid])).length; return n + " of " + qs.length + " question(s) unanswered"; }
   if (p === "NA") return "All criteria marked not-applicable";
@@ -104,12 +104,13 @@ function renderMain() {
   }
 
   const proposed = proposedFor(uc), final = finalFor(uc);
+  const drawerOpen = uiOpen[uc.uc_id] || uc.kind === "bespoke";   // A0 state UI is always visible
   h += '<div class="score"><div class="score-row">' +
     '<span class="state-chip ' + final + '">' + final + "</span>" +
     '<span class="why"><b>' + (uc.kind === "bespoke" ? "State." : "Proposed.") + "</b> " + whyFor(uc) + "</span>" +
-    '<span class="ovr-toggle" onclick="App.toggleOvr()">' + (uiOpen[uc.uc_id] ? "▾ hide" : "▸ override / confidence") + "</span></div>" +
-    '<div class="ovr ' + (uiOpen[uc.uc_id] ? "open" : "") + '">' +
-    "<label>" + (uc.kind === "bespoke" ? "Rationale" : "Override rationale (required to change the proposed state)") + "</label>" +
+    (uc.kind === "bespoke" ? "" : '<span class="ovr-toggle" onclick="App.toggleOvr()">' + (uiOpen[uc.uc_id] ? "▾ hide" : "▸ override / confidence") + "</span>") + "</div>" +
+    '<div class="ovr ' + (drawerOpen ? "open" : "") + '">' +
+    "<label>" + (uc.kind === "bespoke" ? "Posture state — assessor judgment (rationale required)" : "Override rationale (required to change the proposed state)") + "</label>" +
     '<textarea id="rat" oninput="App.setRationale(this.value)">' + esc(r.rationale) + "</textarea>" +
     '<div class="ovr-grid"><div><label>Confidence</label><div class="conf">' +
     ["LOW", "MED", "HIGH"].map(c => '<button class="' + (r.confidence === c ? "on" : "") + '" onclick="App.setConf(\'' + c + '\')">' + c + "</button>").join("") +
@@ -126,7 +127,7 @@ function renderMain() {
 }
 
 function render() { renderRail(); renderMain(); }
-function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c])); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c])); }
 function toast(m) { const t = document.getElementById("toast"); t.textContent = m; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1600); }
 
 const App = {
@@ -140,10 +141,12 @@ const App = {
     const uc = RUBRIC_BY_ID[current], r = resp(current);
     if (!v) { r.overridden = false; r.final_state = null; save(); render(); return; }
     const proposed = proposedFor(uc);
-    if (proposed && v !== proposed && !(r.rationale || "").trim()) {
+    // A0 (bespoke) has no proposed state — setting it is a judgment call that requires a rationale.
+    const needsRationale = uc.kind === "bespoke" ? true : (proposed && v !== proposed);
+    if (needsRationale && !(r.rationale || "").trim()) {
       uiOpen[current] = true; renderMain();
       const ta = document.getElementById("rat"); if (ta) ta.classList.add("need");
-      toast("Rationale required to override"); return;
+      toast(uc.kind === "bespoke" ? "Rationale required to set an A0 state" : "Rationale required to override"); return;
     }
     r.overridden = uc.kind === "bespoke" ? true : (v !== proposed);
     r.final_state = v; save(); render();
@@ -157,11 +160,14 @@ const App = {
     let rec; try { rec = JSON.parse(text); } catch (e) { toast("Import failed: invalid JSON"); return; }
     if (!rec || rec.schema !== SCHEMA) { toast("Import failed: unrecognised schema"); return; }
     const incoming = rec.responses || {};
+    // Merge (not replace): UCs absent from the file keep their current session answers.
     Object.keys(incoming).forEach(id => {
       if (!RUBRIC_BY_ID[id]) return;
-      const s = incoming[id];
-      responses[id] = {answers: s.answers || {}, overridden: !!s.overridden,
-        final_state: s.final_state || null, rationale: s.rationale || "", confidence: s.confidence || "MED"};
+      const s = incoming[id] || {};
+      const answers = (s.answers && typeof s.answers === "object") ? s.answers : {};
+      const final_state = STATES.includes(s.final_state) ? s.final_state : null;
+      responses[id] = {answers: answers, overridden: !!s.overridden,
+        final_state: final_state, rationale: s.rationale || "", confidence: s.confidence || "MED"};
     });
     save(); render(); toast("Record imported");
   }

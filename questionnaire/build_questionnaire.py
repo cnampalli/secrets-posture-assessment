@@ -25,6 +25,9 @@ def build(out_path=None):
     template = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
     scoring = open(os.path.join(HERE, "scoring.js"), encoding="utf-8").read()
     app = open(os.path.join(HERE, "app.js"), encoding="utf-8").read()
+    for tok in ("/*__SCORING__*/", "/*__RUBRIC__*/[]", "/*__APP__*/"):
+        if tok not in template:
+            raise ValueError(f"template.html is missing injection token: {tok}")
     html = (template
             .replace("/*__SCORING__*/", scoring)
             .replace("/*__RUBRIC__*/[]", json.dumps(rubric, ensure_ascii=False))

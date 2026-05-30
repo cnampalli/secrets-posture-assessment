@@ -61,3 +61,19 @@ def test_missing_param_raises(tmp_path):
     bs.write_text("uc_id,sub_id,sub_criterion,question,evidence\n", encoding="utf-8")
     with pytest.raises(rl.RubricError):
         rl.load_rubric(tmp_path)
+
+
+def test_archetype_with_no_questions_raises(tmp_path):
+    # a non-A0 UC mapped to an archetype that has no questions must fail loudly,
+    # not silently produce an empty (auto-MET) question set.
+    aq = tmp_path / "archetype-questions.csv"
+    aq.write_text("archetype_id,q_id,question_template,dimension,informs_state\n", encoding="utf-8")
+    arch = tmp_path / "assessment-archetypes.csv"
+    arch.write_text("archetype_id,name,intent,met_def,partial_def,gap_def,na_def,evidence_expectation\n"
+                    "BX,Empty,i,m,p,g,n,e\n", encoding="utf-8")
+    mp = tmp_path / "uc-archetype-map.csv"
+    mp.write_text("uc_id,archetype_id,params,notes\nUC-F-901,BX,,Title\n", encoding="utf-8")
+    bs = tmp_path / "bespoke-criteria.csv"
+    bs.write_text("uc_id,sub_id,sub_criterion,question,evidence\n", encoding="utf-8")
+    with pytest.raises(rl.RubricError):
+        rl.load_rubric(tmp_path)
