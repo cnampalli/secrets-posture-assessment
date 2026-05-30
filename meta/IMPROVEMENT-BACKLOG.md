@@ -79,7 +79,9 @@ Delivered (slice 1): self-contained questionnaire baked from the WS-1 rubric
 (`questionnaire/`), Python scoring reference (`methodology/scoring.py`) + JS mirror pinned to
 shared vectors, Variant-A wizard with live laddering, A0 manual scoring, override+rationale+
 confidence, autosave, and import/export of a rich `assessment-record.json`. ADR-010.
-**Deferred:** report adapter (record→current-state.csv), framework-selection UI, Variant-B
+**Deferred:** ~~report adapter (record→current-state.csv)~~ ✅ DONE 2026-05-30 (branch
+report-adapter, ADR-011 — `questionnaire/report_adapter.py` + `build_matrix_viewer.py
+--current-state`; answer→report loop closed, E2E-tested); framework-selection UI, Variant-B
 worksheet view, numeric quantitative inputs.
 
 - Self-contained HTML questionnaire (matches the no-server moat).
