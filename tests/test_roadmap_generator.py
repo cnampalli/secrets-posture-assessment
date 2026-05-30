@@ -125,3 +125,47 @@ def test_wrong_schema_raises():
 def test_no_generated_timestamp_key():
     menu = rg.build_engagement_menu(RECORD, USE_CASES, TRACE, {}, SCOPE)
     assert "generated" not in menu
+
+
+import json, pathlib, subprocess, sys
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+
+
+def test_preset_scope_reads_financial():
+    scope = rg.preset_scope(str(ROOT / "matrix" / "config" / "presets" / "financial.yaml"))
+    assert scope == {"apra-cps-234", "apra-cps-230", "apra-cpg-234", "cisa-ztmm-v2", "essential-8"}
+
+
+def test_cli_writes_menu(tmp_path):
+    record = {"schema": "posture-assessment-record/v1", "responses": {
+        "UC-F-001": {"proposed_state": "GAP", "final_state": "GAP"}}}
+    rec_path = tmp_path / "record.json"
+    rec_path.write_text(json.dumps(record), encoding="utf-8")
+    out = tmp_path / "menu.json"
+    rc = subprocess.run(
+        [sys.executable, "-m", "questionnaire.roadmap_generator", str(rec_path), "-o", str(out)],
+        cwd=ROOT, capture_output=True, text=True)
+    assert rc.returncode == 0, rc.stderr
+    menu = json.loads(out.read_text(encoding="utf-8"))
+    assert menu["schema"] == "engagement-menu/v1"
+    assert menu["frameworks_scope"] == sorted(
+        {"apra-cps-234", "apra-cps-230", "apra-cpg-234", "cisa-ztmm-v2", "essential-8"})
+    item = menu["items"][0]
+    assert item["uc_id"] == "UC-F-001"
+    assert item["risk_band"] == "High" and item["quadrant"] == "Quick wins"
+    assert item["regulatory_driver"]
+    assert all(d["framework_slug"] != "mitre-attack" for d in item["regulatory_driver"])
+
+
+def test_cli_frameworks_override(tmp_path):
+    record = {"schema": "posture-assessment-record/v1", "responses": {
+        "UC-F-001": {"proposed_state": "GAP", "final_state": "GAP"}}}
+    rec_path = tmp_path / "r.json"; rec_path.write_text(json.dumps(record), encoding="utf-8")
+    out = tmp_path / "m.json"
+    rc = subprocess.run(
+        [sys.executable, "-m", "questionnaire.roadmap_generator", str(rec_path),
+         "-o", str(out), "--frameworks", "essential-8"],
+        cwd=ROOT, capture_output=True, text=True)
+    assert rc.returncode == 0, rc.stderr
+    menu = json.loads(out.read_text(encoding="utf-8"))
+    assert menu["frameworks_scope"] == ["essential-8"]

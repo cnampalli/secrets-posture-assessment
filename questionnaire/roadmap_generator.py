@@ -113,3 +113,75 @@ def build_engagement_menu(record, use_cases, trace_rows, engagement_inputs, scop
     menu["frameworks_scope"] = sorted(scope)
     menu["items"] = items
     return menu
+
+
+def load_use_cases(path):
+    with open(path, newline="", encoding="utf-8") as fh:
+        return {row["uc_id"]: row for row in csv.DictReader(fh)}
+
+
+def load_trace(path):
+    with open(path, newline="", encoding="utf-8") as fh:
+        return list(csv.DictReader(fh))
+
+
+def load_engagement(path):
+    if not path:
+        return {}
+    with open(path, newline="", encoding="utf-8") as fh:
+        return {row["uc_id"]: row for row in csv.DictReader(fh)}
+
+
+def preset_scope(preset_path):
+    """Union of primary + overlays + baseline framework slugs from a preset YAML."""
+    import yaml
+    with open(preset_path, encoding="utf-8") as fh:
+        cfg = yaml.safe_load(fh) or {}
+    slugs = []
+    for key in ("primary", "overlays", "baseline"):
+        slugs += cfg.get(key) or []
+    return set(slugs)
+
+
+def write_menu(menu, path):
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(menu, fh, indent=2, ensure_ascii=False)
+        fh.write("\n")
+
+
+def main(argv=None):
+    here = os.path.dirname(os.path.abspath(__file__))
+    root = os.path.dirname(here)
+    ap = argparse.ArgumentParser(
+        description="Generate engagement-menu.json from an assessment record.")
+    ap.add_argument("record", help="path to assessment-record.json")
+    ap.add_argument("-o", "--output", default="engagement-menu.json", help="output JSON path")
+    ap.add_argument("--engagement", help="per-engagement CSV "
+                    "(uc_id,risk_override,effort,dependency,escalation_control)")
+    ap.add_argument("--frameworks", help="comma-separated framework slugs (overrides preset scope)")
+    ap.add_argument("--preset", default="financial",
+                    help="preset name for default framework scope (default: financial)")
+    ap.add_argument("--use-cases", default=os.path.join(root, "matrix", "use-cases.csv"))
+    ap.add_argument("--trace", default=os.path.join(root, "matrix", "regulatory-trace.csv"))
+    args = ap.parse_args(argv)
+
+    with open(args.record, encoding="utf-8") as fh:
+        record = json.load(fh)
+    use_cases = load_use_cases(args.use_cases)
+    trace = load_trace(args.trace)
+    engagement = load_engagement(args.engagement)
+    if args.frameworks:
+        scope = {s.strip() for s in args.frameworks.split(",") if s.strip()}
+    else:
+        scope = preset_scope(os.path.join(
+            root, "matrix", "config", "presets", f"{args.preset}.yaml"))
+
+    menu = build_engagement_menu(record, use_cases, trace, engagement, scope,
+                                 source_record=args.record)
+    write_menu(menu, args.output)
+    print(f"Wrote {args.output} ({len(menu['items'])} engagement items)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
