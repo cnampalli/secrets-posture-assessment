@@ -1,0 +1,10 @@
+[
+  {"name": "all met",        "questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"},{"qid":"Q2","informs_state":"PARTIAL_MET"}], "answers": {"Q1":"yes","Q2":"yes"}, "expected": "MET"},
+  {"name": "gp no -> gap",   "questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"},{"qid":"Q2","informs_state":"PARTIAL_MET"}], "answers": {"Q1":"no","Q2":"yes"},  "expected": "GAP"},
+  {"name": "pm no -> partial","questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"},{"qid":"Q2","informs_state":"PARTIAL_MET"}], "answers": {"Q1":"yes","Q2":"no"},  "expected": "PARTIAL"},
+  {"name": "unanswered -> pending", "questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"},{"qid":"Q2","informs_state":"PARTIAL_MET"}], "answers": {"Q1":"yes"}, "expected": "PENDING"},
+  {"name": "null -> pending", "questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"}], "answers": {"Q1": null}, "expected": "PENDING"},
+  {"name": "all na -> na",    "questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"},{"qid":"Q2","informs_state":"PARTIAL_MET"}], "answers": {"Q1":"na","Q2":"na"}, "expected": "NA"},
+  {"name": "na neutral on gate", "questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"},{"qid":"Q2","informs_state":"PARTIAL_MET"}], "answers": {"Q1":"na","Q2":"yes"}, "expected": "MET"},
+  {"name": "gp precedence over pm", "questions": [{"qid":"Q1","informs_state":"GAP_PARTIAL"},{"qid":"Q2","informs_state":"PARTIAL_MET"}], "answers": {"Q1":"no","Q2":"no"}, "expected": "GAP"}
+]
