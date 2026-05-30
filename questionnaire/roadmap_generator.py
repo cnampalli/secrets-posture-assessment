@@ -75,3 +75,41 @@ def regulatory_driver(uc_id, trace_rows, scope, cap=3):
     ordered = sorted(by_fw.values(),
                      key=lambda d: (_ROLE_ORDER.get(d["_role"], 9), d["framework_slug"]))
     return [{k: v for k, v in d.items() if not k.startswith("_")} for d in ordered[:cap]]
+
+
+def build_engagement_menu(record, use_cases, trace_rows, engagement_inputs, scope, source_record=""):
+    """Pure transform: assessment record -> engagement-menu/v1 dict (GAP/PARTIAL only)."""
+    if (record or {}).get("schema") != SCHEMA:
+        raise RoadmapError(
+            f"unrecognised record schema: {(record or {}).get('schema')!r} (expected {SCHEMA!r})")
+    items = []
+    for uc_id, resp in (record.get("responses") or {}).items():
+        state = resolve_state(resp)
+        if state not in ENGAGEMENT_STATES:
+            continue
+        uc = use_cases.get(uc_id, {})
+        ov = engagement_inputs.get(uc_id, {})
+        risk = (ov.get("risk_override") or "").strip() or seed_risk(uc.get("priority_fi"))
+        effort = (ov.get("effort") or "").strip() or "Med"
+        items.append({
+            "uc_id": uc_id,
+            "state": state,
+            "risk_band": risk,
+            "effort_band": effort,
+            "quadrant": quadrant(risk, effort),
+            "regulatory_driver": regulatory_driver(uc_id, trace_rows, scope),
+            "dependency": ov.get("dependency") or "",
+            "proposed_engagement": f"{state} → remediate: {uc.get('short_title', uc_id)}",
+        })
+    items.sort(key=lambda it: (
+        _QUADRANT_ORDER.get(it["quadrant"], 9),
+        _RISK_ORDER.get(it["risk_band"], 9),
+        0 if it["regulatory_driver"] else 1,    # regulatory-driven first (tie-breaker)
+        it["uc_id"],
+    ))
+    menu = {"schema": OUTPUT_SCHEMA}
+    if source_record:
+        menu["source_record"] = source_record
+    menu["frameworks_scope"] = sorted(scope)
+    menu["items"] = items
+    return menu
