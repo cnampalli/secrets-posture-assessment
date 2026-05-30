@@ -155,7 +155,7 @@ The current-state record carries three fields governing the rubric's interaction
 |-------|---------|
 | `proposed_state` | The state the rubric proposes, derived mechanically from the archetype definition and the answers to its diagnostic questions. |
 | `final_state` | The assessor's recorded verdict. May match or differ from `proposed_state`. |
-| `override_reason` | **Required whenever `final_state` differs from `proposed_state`.** Must cite the dimension(s) where the rubric's answer differed from the assessor's read and why. |
+| `rationale` | **Required whenever `final_state` differs from `proposed_state`.** Must cite the dimension(s) where the rubric's answer differed from the assessor's read and why. |
 
 The intent: the rubric is a forcing function for explicit documentation, not an authority that overrides domain expertise. An assessor who knows more than the rubric should record that knowledge as an override rather than silently diverging.
 

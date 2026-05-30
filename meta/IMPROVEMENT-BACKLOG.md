@@ -98,6 +98,13 @@ operating manual: 6-stage lifecycle, risk×effort prioritisation, XYZ worked-exa
 and `METHODOLOGY.md` (client-facing, distilled). ADR-012. **Deferred:** the roadmap generator
 (auto-emit the engagement menu from assessment-record.json) and the exec-summary print view.
 
+**Slice 2 — ✅ DONE (2026-05-31, branch ws4-roadmap-generator):** `questionnaire/roadmap_generator.py`
+emits `engagement-menu/v1` JSON from an assessment record (risk seed from priority_fi, effort from a
+per-engagement CSV, risk×effort quadrants, regulatory driver scoped to the financial preset / MITRE
+excluded / capped, regulation as ordering tie-breaker). Shared `record_state.py` resolver keeps the menu
+and report in agreement. ADR-013. Bundled doc fixes: RUBRIC `rationale`, escalation softened to a logged
+assessor judgment. **Deferred:** the exec-summary print view (renders this JSON).
+
 - Document the methodology: scoping → evidence collection → scoring → **gap report + remediation
   roadmap** → re-assessment cadence.
 - Remediation roadmap output: turn GAP/PARTIAL findings into a prioritised engagement menu (the wedge).
