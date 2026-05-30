@@ -12,7 +12,8 @@ import csv
 import json
 import sys
 
-SCHEMA = "posture-assessment-record/v1"
+from questionnaire.record_state import SCHEMA, resolve_state
+
 COLUMNS = ["uc_id", "anz_state", "confidence", "evidence_q_ids",
            "evidence_redacted", "gap_notes", "sensitivity_tag", "citation_keys"]
 
@@ -33,7 +34,7 @@ def record_to_rows(record):
         answered = [k for k, v in answers.items() if v not in (None, False)]
         rows.append({
             "uc_id": uc_id,
-            "anz_state": r.get("final_state") or r.get("proposed_state") or "PENDING",
+            "anz_state": resolve_state(r),
             "confidence": r.get("confidence") or "MED",
             "evidence_q_ids": ";".join(sorted(answered)),
             "evidence_redacted": "",
