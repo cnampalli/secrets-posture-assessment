@@ -48,3 +48,30 @@ def quadrant(risk, effort):
     if not risk_high and not effort_high:
         return "Fill-ins"
     return "Hard slogs"
+
+
+def regulatory_driver(uc_id, trace_rows, scope, cap=3):
+    """In-scope control drivers for a UC: one per framework, regulator-first, capped.
+
+    Excludes ADVERSARY-LENS (e.g. MITRE) — not a regulatory obligation. Within a
+    framework the lexicographically smallest control_code is chosen (deterministic).
+    """
+    by_fw = {}
+    for row in trace_rows:
+        slug = row["framework_slug"]
+        if row.get("framework_role") == "ADVERSARY-LENS" or slug not in scope:
+            continue
+        if uc_id not in (row.get("uc_ids") or "").split(";"):
+            continue
+        cand = {
+            "framework_slug": slug,
+            "control_code": row["control_code"],
+            "control_short_title": row.get("control_short_title", ""),
+            "_role": row.get("framework_role", ""),
+        }
+        cur = by_fw.get(slug)
+        if cur is None or cand["control_code"] < cur["control_code"]:
+            by_fw[slug] = cand
+    ordered = sorted(by_fw.values(),
+                     key=lambda d: (_ROLE_ORDER.get(d["_role"], 9), d["framework_slug"]))
+    return [{k: v for k, v in d.items() if not k.startswith("_")} for d in ordered[:cap]]
