@@ -241,12 +241,14 @@ number, and it forces the consultant to name the reasoning rather than hide it i
   effort — scope and sequence deliberately), **Fill-ins** (Low risk / Low effort — bundle
   opportunistically), and **Hard slogs** (Low risk / High effort — defer unless a regulatory
   driver pulls them forward).
-- **Regulatory tie-breaker / escalator.** A binding regulatory obligation (APRA CPS 234 / CPS
-  230, the ASD ISM, or the selected overlay) is used two ways: it **breaks ties** between
-  findings that land in the same cell, and it can **escalate a finding's risk band up by one**
-  where the obligation makes the exposure non-discretionary. This is **always logged with the
-  specific control reference, never applied silently** — an escalation without a cited control
-  is not permitted, because the client must be able to trace why a finding moved.
+- **Regulatory tie-breaker.** A binding regulatory obligation (APRA CPS 234 / CPS 230, the
+  ASD ISM, or the selected overlay) **breaks ties** between findings that land in the same cell —
+  the obligation-bearing finding sorts first, and the generator applies this automatically. Where
+  an obligation makes an exposure non-discretionary, the assessor may additionally **escalate that
+  finding's risk band by one** as a deliberate, recorded judgment — captured in the per-engagement
+  input (the `escalation_control` column) with the specific control reference, never applied
+  silently. Band escalation is the assessor's logged call, not an automatic consequence of a
+  control merely mapping to the finding.
 - **Dependency note.** Every row records its sequencing constraints — for example, the
   inventory layer must exist before ownership-attestation findings can be closed — so the
   resulting roadmap is actually buildable in order rather than being an unordered wish-list.

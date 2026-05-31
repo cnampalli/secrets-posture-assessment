@@ -63,9 +63,9 @@ owed. **You receive** the current-state report — your defensible picture of to
 
 Gaps become a prioritised engagement menu using a risk-versus-effort model: we band each finding
 by the exposure it carries and the effort to close it, then sequence them so you know what to do
-first, why, and what each item depends on. Regulatory obligations escalate priority — where an
-obligation makes an exposure non-discretionary, it raises a finding's standing, and we always
-record the specific control reference so you can trace why a finding moved. We deliberately use
+first, why, and what each item depends on. Where a regulatory obligation makes an exposure
+non-discretionary, our assessor may raise that finding's standing — a recorded judgment tied to
+the specific control reference, so you can always trace why a finding moved. We deliberately use
 qualitative bands rather than false-precision scores, and we record sequencing constraints so
 the plan is actually buildable in order. **You receive** a sequenced remediation roadmap — an
 ordered, dependency-aware plan tied to your obligations.
