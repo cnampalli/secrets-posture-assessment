@@ -120,6 +120,12 @@ true finals). ADR-014. **WS-4 COMPLETE** — methodology (slice 1) → engagemen
   `gsd-docs-update`.
 
 ### WS-5 — Codebase hygiene (opportunistic enabler)
+
+**Slice 1 — ✅ DONE (2026-06-01, branch ws5-cleanup-validation):** stale `GEMINI.md` removed; 12 vendor
+research checkpoints archived to `research/vendors/_archive/`; `matrix/validate_data.py` added — first CSV
+schema + referential-integrity validator (core 4 + aggregate + 19 vendor files), standalone CLI + pytest
+(14 tests), not wired into builds. Real data certified clean. ADR-015. **Next:** 5b legacy `anz` rename → 5d monolith split.
+
 Pull in only where it unblocks WS-2/WS-3.
 - Rename `anz-current-state.*`, `ADR-005-anz-evidence-policy.md`, `07-anz-current-state-synthesizer.md`
   → client-generic names; update references.
