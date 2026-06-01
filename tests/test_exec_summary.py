@@ -28,3 +28,28 @@ def test_inject_replaces_tokens():
 def test_inject_missing_token_raises():
     with pytest.raises(es.ExecSummaryError):
         es.inject("<style>/*__CSS__*/</style>", "x", {}, "y")  # missing DATA + APP tokens
+
+
+import re
+
+
+def test_build_self_contained_and_complete(tmp_path):
+    rec = tmp_path / "rec.json"
+    rec.write_text(json.dumps(xyz_record()), encoding="utf-8")
+    out = tmp_path / "exec.html"
+    es.build(str(rec), out_path=str(out))
+    html = out.read_text(encoding="utf-8")
+    assert '"GAP": 11' in html and '"PARTIAL": 16' in html
+    menu_ids = [it["uc_id"] for it in json.loads(
+        re.search(r"window\.__EXEC_DATA__\s*=\s*(\{.*?\});", html, re.S).group(1))["menu"]["items"]]
+    assert len(menu_ids) == 27
+    assert "@media print" in html
+    externals = re.findall(r'(?:src|href)\s*=\s*["\'](https?://[^"\']+)', html)
+    assert all("fonts.googleapis.com" in u or "fonts.gstatic.com" in u for u in externals), externals
+
+
+def test_build_is_byte_stable(tmp_path):
+    rec = tmp_path / "r.json"; rec.write_text(json.dumps(xyz_record()), encoding="utf-8")
+    a = tmp_path / "a.html"; b = tmp_path / "b.html"
+    es.build(str(rec), out_path=str(a)); es.build(str(rec), out_path=str(b))
+    assert a.read_bytes() == b.read_bytes()
