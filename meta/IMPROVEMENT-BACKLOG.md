@@ -91,7 +91,7 @@ worksheet view, numeric quantitative inputs.
 - **Skills:** `frontend-design`, `gsd-ui-phase` (UI-SPEC) / `gsd-sketch` (throwaway mockup first),
   `superpowers:test-driven-development`, `gsd-ui-review`.
 
-### WS-4 — End-to-end process doc (playbook) — **the consulting product** — ✅ DONE slice 1 (2026-05-30, branch ws4-methodology-playbook)
+### WS-4 — End-to-end process doc (playbook) — **the consulting product** — ✅ DONE slice 1 (2026-05-30, branch ws4-methodology-playbook) — ✅ COMPLETE (3 slices)
 
 Delivered (slice 1): two methodology docs in `methodology/` — `PLAYBOOK.md` (consultant
 operating manual: 6-stage lifecycle, risk×effort prioritisation, XYZ worked-example callouts)
@@ -104,6 +104,13 @@ per-engagement CSV, risk×effort quadrants, regulatory driver scoped to the fina
 excluded / capped, regulation as ordering tie-breaker). Shared `record_state.py` resolver keeps the menu
 and report in agreement. ADR-013. Bundled doc fixes: RUBRIC `rationale`, escalation softened to a logged
 assessor judgment. **Deferred:** the exec-summary print view (renders this JSON).
+
+**Slice 3 — ✅ DONE (2026-05-31, branch ws4-exec-summary):** `presentation/build_exec_summary.py`
+renders a self-contained interactive `exec-summary.html` (posture snapshot + prioritised tier +
+filterable/sortable quadrant board + print appendix) from an assessment record, reusing the roadmap
+generator and `record_state`. Dark brand on screen, clean `@media print` (printed counters forced to
+true finals). ADR-014. **WS-4 COMPLETE** — methodology (slice 1) → engagement-menu generator (slice 2)
+→ client-facing exec summary (slice 3).
 
 - Document the methodology: scoping → evidence collection → scoring → **gap report + remediation
   roadmap** → re-assessment cadence.
