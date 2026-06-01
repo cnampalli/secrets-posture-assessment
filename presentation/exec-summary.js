@@ -117,16 +117,26 @@ if (typeof document !== "undefined") {
   // -----------------------------------------------------------------------
   // #es-snapshot — animated count-up tiles
   // -----------------------------------------------------------------------
+  // Count-up flourish. The node already carries its true final (textContent +
+  // dataset.value) BEFORE this runs, so any static capture is correct even if
+  // the animation never starts. We only ever animate 0 -> target and always
+  // settle exactly on target.
   function animateCount(node, target) {
-    if (reduceMotion || target <= 0) { node.textContent = String(target); return; }
+    if (reduceMotion || target <= 0) {
+      // Leave the final value already painted by renderSnapshot.
+      return;
+    }
     const duration = 900;
     const start = performance.now();
     function frame(now) {
       const t = Math.min(1, (now - start) / duration);
       const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
-      node.textContent = String(Math.round(eased * target));
-      if (t < 1) requestAnimationFrame(frame);
-      else node.textContent = String(target);
+      if (t < 1) {
+        node.textContent = String(Math.round(eased * target));
+        requestAnimationFrame(frame);
+      } else {
+        node.textContent = node.dataset.value; // guaranteed exact final
+      }
     }
     node.textContent = "0";
     requestAnimationFrame(frame);
@@ -143,13 +153,37 @@ if (typeof document !== "undefined") {
         class: `es-tile ${s.cls}`,
         attrs: { "data-state": s.key },
       });
-      const num = el("span", { class: "es-tile__count", attrs: { "aria-hidden": "false" } });
+      // Set the TRUE final value immediately: as textContent (so the very first
+      // paint is correct) and as data-value (the source of truth for print and
+      // animation end). Any print/PDF/screenshot is correct regardless of when
+      // it is taken.
+      const num = el("span", {
+        class: "es-tile__count",
+        text: value,
+        attrs: { "aria-hidden": "false", "data-value": String(value) },
+      });
       tile.appendChild(num);
       tile.appendChild(el("span", { class: "es-tile__label", text: s.label }));
       grid.appendChild(tile);
       animateCount(num, value);
     }
     root.appendChild(grid);
+
+    // Print safety: force every counter to its true final before any print so
+    // Print -> Save as PDF never captures a mid-animation value. Belt and
+    // braces: both the beforeprint event and a print media-query listener.
+    const forceFinals = () => {
+      for (const num of root.querySelectorAll(".es-tile__count")) {
+        if (num.dataset.value != null) num.textContent = num.dataset.value;
+      }
+    };
+    window.addEventListener("beforeprint", forceFinals);
+    if (typeof window.matchMedia === "function") {
+      const mql = window.matchMedia("print");
+      const onPrint = (e) => { if (e.matches) forceFinals(); };
+      if (typeof mql.addEventListener === "function") mql.addEventListener("change", onPrint);
+      else if (typeof mql.addListener === "function") mql.addListener(onPrint);
+    }
   }
 
   // -----------------------------------------------------------------------
