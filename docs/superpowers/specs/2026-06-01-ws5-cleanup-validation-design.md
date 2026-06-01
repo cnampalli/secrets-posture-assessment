@@ -50,17 +50,23 @@ Read-only validator, mirrors `methodology/validate_rubric.py`:
 - use-cases and current-state have the **same `uc_id` set**.
 
 ### 4.3 Value enums (high-confidence only, to avoid false positives)
-- `anz_state ∈ {MET, PARTIAL, GAP, PENDING, NA}`
+- `anz_state ∈ {MET, PARTIAL, GAP, PENDING, NA}` (real data uses GAP/PARTIAL/PENDING — superset is fine)
 - `framework_role ∈ {PRIMARY-LENS, BACK-MAP, ADVERSARY-LENS}`
-- vendor `maturity` parses as an integer in **1–5**
-- vendor `coverage` is **non-empty** (no hardcoded enum — deferred to avoid false errors)
+- vendor `maturity` parses as an integer in **0–5** (real data ranges 0–4)
+- vendor `coverage` is **non-empty** (real values: NATIVE/PARTNER/ADD-ON/GAP/N-A — no hardcoded enum, deferred)
+
+### 4.3.1 Intentional sentinels (allowlisted, NOT violations)
+`regulatory-trace.csv` deliberately uses `MISSING-UC` / `MISSING-NHI` as "no known mapping"
+placeholders (3 rows: E8-MAC, E8-RAP-NHI-GAP, ISM-0039). The referential checks **skip** these
+two sentinel tokens — they are documented markers, not dangling refs. `SENTINELS = {"MISSING-UC",
+"MISSING-NHI"}`.
 
 ### 4.4 Referential integrity (the high-value class)
 - `current-state.uc_id` ⊆ `use-cases.uc_id`
-- `regulatory-trace.uc_ids` (`;`-split, ignoring blanks) ⊆ `use-cases.uc_id`
-- `regulatory-trace.nhi_ids` (`;`-split) ⊆ `identity-catalog.nhi_id`
+- `regulatory-trace.uc_ids` (`;`-split, ignoring blanks **and sentinels**) ⊆ `use-cases.uc_id`
+- `regulatory-trace.nhi_ids` (`;`-split, ignoring sentinels) ⊆ `identity-catalog.nhi_id`
 - `use-cases.nhis_in_scope` (`;`-split) ⊆ `identity-catalog.nhi_id`
-- vendor `target_id`: rows with `target_type == "NHI"` ⊆ identity-catalog `nhi_id`; rows with `target_type == "UC"` ⊆ use-cases `uc_id`
+- vendor `target_id`: rows with `target_type == "NHI"` ⊆ identity-catalog `nhi_id`; rows with `target_type` starting `"UC"` (real values `UC-F`/`UC-N`) ⊆ use-cases `uc_id`; other target_types ignored
 - each per-vendor `vendor-capabilities-<slug>.csv`: a single consistent `vendor_slug`; same `target_id` integrity as the aggregate
 
 **Note:** if `validate_all` against the real data surfaces genuine violations, that is a real data-quality finding — record it in the slice report; fix only obvious typos, otherwise flag for the user. (Goal: the real data should validate clean and become the golden baseline.)
