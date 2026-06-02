@@ -126,6 +126,12 @@ research checkpoints archived to `research/vendors/_archive/`; `matrix/validate_
 schema + referential-integrity validator (core 4 + aggregate + 19 vendor files), standalone CLI + pytest
 (14 tests), not wired into builds. Real data certified clean. ADR-015. **Next:** 5b legacy `anz` rename → 5d monolith split.
 
+**Slice 2 (5b) — ✅ DONE (2026-06-02, branch ws5-anz-rename):** legacy schema tokens renamed client-generic
+— `anz_state`→`current_state`, `anz-current-state.csv`→`current-state.csv`, `sources_at_anz_likely`→`sources_likely`
+— across code/data/tests in lockstep; engine golden regenerated (key-rename only); `check_no_legacy_token` guard
+added. Historical docs/dist/sketches and the "XYZ" client branding left as-is. ADR-016. 104 tests green; validator
+clean. **Remaining:** 5d monolith split (the 949-line `build_matrix_viewer.py`).
+
 Pull in only where it unblocks WS-2/WS-3.
 - Rename `anz-current-state.*`, `ADR-005-anz-evidence-policy.md`, `07-anz-current-state-synthesizer.md`
   → client-generic names; update references.
