@@ -119,7 +119,7 @@ true finals). ADR-014. **WS-4 COMPLETE** — methodology (slice 1) → engagemen
 - **Skills:** `brand-guidelines` (polish), document-generation skills if Word/Excel exports wanted,
   `gsd-docs-update`.
 
-### WS-5 — Codebase hygiene (opportunistic enabler)
+### WS-5 — Codebase hygiene (opportunistic enabler) — ✅ COMPLETE (3 slices)
 
 **Slice 1 — ✅ DONE (2026-06-01, branch ws5-cleanup-validation):** stale `GEMINI.md` removed; 12 vendor
 research checkpoints archived to `research/vendors/_archive/`; `matrix/validate_data.py` added — first CSV
@@ -131,6 +131,11 @@ schema + referential-integrity validator (core 4 + aggregate + 19 vendor files),
 — across code/data/tests in lockstep; engine golden regenerated (key-rename only); `check_no_legacy_token` guard
 added. Historical docs/dist/sketches and the "XYZ" client branding left as-is. ADR-016. 104 tests green; validator
 clean. **Remaining:** 5d monolith split (the 949-line `build_matrix_viewer.py`).
+
+**Slice 3 (5d) — ✅ DONE (2026-06-03, branch ws5-monolith-split):** the 949-line `build_matrix_viewer.py` split
+into `report_io.py` / `report_logic.py` / `report_render.py` + `report-template.html` + an 89-line orchestrator.
+Byte-identical output (permanent HTML snapshot test + REGDATA/RECDATA golden); `report_logic` now unit-tested.
+ADR-017. 111 tests green. **WS-5 COMPLETE** — cleanup + validation (5a/5c) → anz rename (5b) → modularization (5d).
 
 Pull in only where it unblocks WS-2/WS-3.
 - Rename `anz-current-state.*`, `ADR-005-anz-evidence-policy.md`, `07-anz-current-state-synthesizer.md`
