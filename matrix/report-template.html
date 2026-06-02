@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XYZ Secrets-Management — Stakeholder Report (PRD v0.1)</title>
+<style>
+  :root{ --bg:#f4f6f8;--fg:#1a1a1a;--muted:#667;--border:#dcdfe3;--card:#fff;--accent:#2a4d6e;
+    --l1:#2a4d6e;--l2:#00838f;--l0:#8d6e63;--native:#2e7d32;--addon:#ed6c02;--partner:#6a1b9a;
+    --gap:#c62828;--na:#757575;--met:#2e7d32;--partial:#ed6c02;--pending:#5c6bc0; }
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:var(--bg);
+    color:var(--fg);margin:0;padding:0;font-size:13px;line-height:1.5;}
+  .internal-bar{background:#7a1212;color:#fff;text-align:center;font-size:11px;font-weight:600;padding:3px;}
+  header{background:var(--accent);color:#fff;padding:14px 18px;}
+  header h1{margin:0;font-size:17px;} header .sub{font-size:12px;opacity:.85;margin-top:3px;}
+  nav{display:flex;gap:2px;background:#1f3a52;padding:0 10px;flex-wrap:wrap;}
+  nav button{background:transparent;color:#cdd8e3;border:0;border-bottom:3px solid transparent;
+    padding:9px 14px;font-size:13px;cursor:pointer;font-family:inherit;}
+  nav button:hover{color:#fff;} nav button.active{color:#fff;border-bottom-color:#ffb74d;font-weight:600;}
+  main{padding:16px;max-width:1180px;margin:0 auto;}
+  .view{display:none;} .view.active{display:block;}
+  h2{font-size:15px;color:var(--accent);margin:0 0 10px;} .muted{color:var(--muted);}
+  .gloss{cursor:help;border-bottom:1px dotted var(--muted);}
+  .kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px 14px;min-width:96px;}
+  .kpi .n{font-size:22px;font-weight:700;color:var(--accent);} .kpi .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+  .posture{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:16px;}
+  .bar{display:flex;height:30px;border-radius:4px;overflow:hidden;margin:8px 0;}
+  .bar span{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:12px;}
+  .seg-MET{background:var(--met);} .seg-PARTIAL{background:var(--partial);} .seg-GAP{background:var(--gap);} .seg-PENDING{background:var(--pending);}
+  .legend{font-size:11px;color:var(--muted);} .legend b{color:var(--fg);}
+  .adj{font-size:12px;margin-top:8px;padding:6px 8px;background:#eef6ee;border:1px solid #cfe3cf;border-radius:4px;}
+  .adj a{color:var(--accent);cursor:pointer;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;} @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;} @media(max-width:760px){.grid3{grid-template-columns:1fr;}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:14px;}
+  .card h3{margin:0 0 6px;font-size:14px;color:var(--accent);}
+  .gaplist{list-style:none;padding:0;margin:0;} .gaplist li{padding:7px 8px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:8px;align-items:center;}
+  .gaplist li:hover{background:#eef3f8;} .gaplist .id{font-family:ui-monospace,monospace;color:var(--accent);font-size:12px;min-width:74px;}
+  .pill{display:inline-block;padding:1px 7px;border-radius:10px;color:#fff;font-size:11px;font-weight:600;}
+  .pill-GAP{background:var(--gap);} .pill-PARTIAL{background:var(--partial);} .pill-PENDING{background:var(--pending);} .pill-MET{background:var(--met);}
+  .lchip{display:inline-block;padding:1px 6px;border-radius:3px;color:#fff;font-weight:600;font-size:11px;}
+  .lchip.L0{background:var(--l0);} .lchip.L1{background:var(--l1);} .lchip.L2{background:var(--l2);}
+  .reco{background:#eef3f8;border-left:4px solid var(--accent);border-radius:4px;padding:9px 11px;margin-bottom:10px;font-size:13px;}
+  .layerhdr{margin:12px 0 4px;font-weight:600;}
+  .gridwrap{overflow-x:auto;border:1px solid var(--border);border-radius:4px;}
+  table.vgrid{border-collapse:collapse;font-size:11px;white-space:nowrap;min-width:100%;}
+  table.vgrid th,table.vgrid td{border:1px solid var(--border);padding:4px 6px;text-align:center;}
+  table.vgrid thead th{background:#eef1f4;position:sticky;top:0;font-weight:600;}
+  table.vgrid tbody th{background:#f7f9fb;text-align:right;position:sticky;left:0;font-weight:600;color:var(--muted);}
+  table.vgrid td.matcell{font-weight:700;}
+  .cell-NATIVE{background:#e6f4ea;color:var(--native);font-weight:700;} .cell-ADD-ON{background:#fdf0e3;color:var(--addon);}
+  .cell-PARTNER{background:#f3e9f7;color:var(--partner);} .cell-GAP{background:#fdecec;color:var(--gap);} .cell-NA{background:#f0f0f0;color:var(--na);}
+  .chips{margin-top:6px;} .chips b{font-size:12px;}
+  .chips span{display:inline-block;background:#eef1f4;border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin:2px 3px 2px 0;font-size:11px;}
+  .anz-card{border-left:4px solid var(--partial);}
+  .rec{background:#eef6ee;border:1px solid #cfe3cf;border-radius:4px;padding:8px 10px;margin-top:8px;}
+  .met-toggle{margin-top:10px;padding:8px;background:#f7f9fb;border:1px dashed var(--border);border-radius:4px;}
+  .met-toggle label{cursor:pointer;}
+  .tag-internal{background:#7a1212;color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;font-weight:700;}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:8px;}
+  .controls label{font-size:12px;color:var(--muted);}
+  .layer-toggles{display:flex;gap:10px;align-items:center;padding:4px 8px;border:1px solid var(--border);border-radius:3px;background:#f7f9fb;}
+  .layer-toggles label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:var(--fg);}
+  #count{margin-left:auto;font-weight:600;color:var(--accent);}
+  .tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:4px;}
+  table.matrix{width:100%;min-width:1220px;border-collapse:collapse;background:var(--card);font-size:12px;}
+  table.matrix th,table.matrix td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:top;}
+  table.matrix th{background:var(--accent);color:#fff;cursor:pointer;user-select:none;position:sticky;top:0;white-space:nowrap;}
+  table.matrix th.sort-asc::after{content:" ▲";} table.matrix th.sort-desc::after{content:" ▼";}
+  table.matrix td.wrap{white-space:normal;word-break:break-word;}
+  .cov{font-weight:600;padding:1px 6px;border-radius:3px;color:#fff;display:inline-block;font-size:11px;}
+  .cov-NATIVE{background:var(--native);} .cov-ADD-ON{background:var(--addon);} .cov-PARTNER{background:var(--partner);} .cov-GAP{background:var(--gap);} .cov-NA{background:var(--na);}
+  .ev-url a{color:var(--accent);word-break:break-all;}
+  .note{font-size:12px;color:var(--muted);margin-top:8px;}
+  .colw-vendor{width:150px;} .colw-target{width:80px;} .colw-type{width:54px;} .colw-cov{width:90px;}
+  .colw-mat{width:80px;} .colw-url{width:230px;} .colw-quote{width:260px;} .colw-cite{width:150px;} .colw-notes{width:230px;} .colw-layer{width:46px;}
+  /* compliance-trace cascade */
+  .casc{display:grid;grid-template-columns:215px 290px 1fr 1fr;gap:8px;height:68vh;}
+  @media(max-width:900px){.casc{grid-template-columns:1fr 1fr;height:auto;}}
+  .casc-col{border:1px solid var(--border);border-radius:6px;background:var(--card);display:flex;flex-direction:column;min-height:0;}
+  .casc-col .col-head{background:#eef1f4;padding:6px 10px;font-weight:600;font-size:12px;border-bottom:1px solid var(--border);}
+  .casc-col .scroll{overflow-y:auto;padding:4px;flex:1;min-height:120px;}
+  .item{padding:7px 8px;border-bottom:1px solid var(--border);cursor:pointer;border-radius:4px;}
+  .item:hover{background:#eef3f8;} .item.active{background:#dfeaf4;outline:2px solid var(--accent);}
+  .mono{font-family:ui-monospace,monospace;} .ctrlcode{font-family:ui-monospace,monospace;color:var(--accent);font-weight:700;}
+  .ml{font-family:ui-monospace,monospace;font-size:9px;background:var(--accent);color:#fff;padding:0 4px;border-radius:2px;margin-left:4px;}
+  .state-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+  .state-dot.GAP{background:var(--gap);} .state-dot.PARTIAL{background:var(--partial);} .state-dot.PENDING{background:var(--pending);} .state-dot.MET{background:var(--met);} .state-dot.UNKNOWN{background:#bbb;}
+  .ustate{padding:0 4px;border-radius:2px;color:#fff;font-size:9px;font-family:ui-monospace,monospace;}
+  .ustate.GAP{background:var(--gap);} .ustate.PARTIAL{background:var(--partial);} .ustate.PENDING{background:var(--pending);} .ustate.MET{background:var(--met);} .ustate.UNKNOWN{background:#999;}
+  .ctrlhdr{background:#eef3f8;border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin-bottom:6px;}
+  .subtle{font-size:10px;color:var(--muted);font-family:ui-monospace,monospace;}
+  .quotebox{font-size:10px;color:var(--muted);font-style:italic;line-height:1.4;border-left:3px solid var(--accent);padding-left:6px;margin-top:4px;}
+  .vrow2{display:grid;grid-template-columns:26px 1fr 74px;gap:6px;padding:5px 4px;border-bottom:1px dotted var(--border);align-items:start;}
+  .vrow2 .m{font-weight:700;text-align:center;color:var(--accent);} .vrow2 .vq{grid-column:1/4;font-size:10px;color:var(--muted);font-style:italic;line-height:1.35;}
+  .placeholder{padding:20px;color:var(--muted);font-style:italic;text-align:center;}
+  /* business-value view */
+  .vsec{font-size:14px;color:var(--accent);margin:18px 0 8px;border-bottom:1px solid var(--border);padding-bottom:5px;}
+  .loop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 2px;}
+  .loop .step{flex:1;min-width:128px;background:var(--card);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:6px;padding:9px 11px;}
+  .loop .step .num{font-family:ui-monospace,monospace;font-size:10px;color:var(--muted);}
+  .loop .step b{display:block;font-size:13px;color:var(--fg);margin:2px 0;}
+  .loop .step .d{font-size:11px;color:var(--muted);line-height:1.3;}
+  .loparrow{color:var(--accent);font-weight:700;flex:none;}
+  .ocard .mech{margin:6px 0 8px;font-size:13px;}
+  .ocard .measure{font-size:12px;color:var(--muted);border-top:1px dotted var(--border);padding-top:6px;}
+  .ocard .measure b{color:var(--accent);}
+  .vtag{display:inline-block;font-family:ui-monospace,monospace;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:10px;color:#fff;}
+  .vtag.hard{background:var(--native);} .vtag.hours{background:var(--accent);} .vtag.risk{background:var(--gap);} .vtag.kpi{background:var(--pending);}
+  .kpitable{width:100%;border-collapse:collapse;font-size:12px;}
+  .kpitable th{text-align:left;border-bottom:2px solid #ccc;padding:6px;color:var(--accent);}
+  .kpitable td{padding:6px;border-bottom:1px solid #eee;vertical-align:top;}
+  .roi-banner{background:#eef6ee;border:1px solid #cfe3cf;border-left:4px solid var(--native);border-radius:6px;padding:14px 16px;margin-top:16px;font-size:13px;line-height:1.5;}
+  .roi-banner b{color:var(--native);}
+</style>
+</head>
+<body>
+<div class="internal-bar">INTERNAL — prepared for a major AU Tier-1 FI (XYZ). Contains [INTERNAL] current-state findings. Do not distribute externally (open question O2).</div>
+<header>
+  <h1>XYZ Secrets-Management — Stakeholder Report</h1>
+  <div class="sub">PRD v0.1 · __RV__ ranked vendors (+ a Layer-0 crypto-substrate dependency) · __NHI__ identities · __UC__ use cases</div>
+</header>
+<nav>
+  <button data-view="dashboard" class="active">XYZ posture</button>
+  <button data-view="uc">By use case</button>
+  <button data-view="nhi">By identity</button>
+  <button data-view="reg">Compliance trace</button>
+  <button data-view="rec">Recommendations</button>
+  <button data-view="value">Business value</button>
+  <button data-view="table">Browse all</button>
+</nav>
+<main>
+
+<section id="view-dashboard" class="view active">
+  <h2>Where XYZ stands today</h2>
+  <div class="kpis" id="kpis"></div>
+  <div class="posture">
+    <b>XYZ secrets posture — __UC__ use cases scored</b>
+    <div class="bar" id="posture-bar"></div>
+    <div class="legend" id="posture-legend"></div>
+    <div class="adj" id="posture-adj" style="display:none"></div>
+  </div>
+  <div class="grid3">
+    <div class="card">
+      <h3>Top gaps — click to open the decision card</h3>
+      <ul class="gaplist" id="gaplist"></ul>
+    </div>
+    <div class="card">
+      <h3>Partial coverage — tick what XYZ actually considers MET</h3>
+      <p class="muted" style="margin-top:0">Your assessment is saved in this browser and updates the posture above.</p>
+      <ul class="gaplist" id="partiallist"></ul>
+    </div>
+    <div class="card">
+      <h3>Pending / in progress — click to open the decision card</h3>
+      <ul class="gaplist" id="pendinglist"></ul>
+    </div>
+  </div>
+  <div class="card" style="border-left:4px solid var(--l0);">
+    <h3><span class="lchip L0">L0</span> Crypto-substrate dependency (not ranked)</h3>
+    <p class="muted">The vault is unsealed / key-rooted by an HSM substrate beneath it — a
+    <b>dependency, not a vendor in this comparison</b> (ADR-007). XYZ's live decision is the
+    <b>Thales SafeNet Luna → Fortanix DSM</b> migration. Evaluate as crypto infrastructure
+    (FIPS 140-3, IRAP, PQC, vault PKCS#11), not against the vaults ranked here.</p>
+  </div>
+</section>
+
+<section id="view-uc" class="view">
+  <h2>Pick a use case → recommendation, vendor coverage, controls, XYZ stance</h2>
+  <div style="margin-bottom:12px;"><label class="muted">Use case&nbsp;</label><select id="uc-select" style="min-width:380px;max-width:100%"></select></div>
+  <div id="uc-card"></div>
+</section>
+
+<section id="view-nhi" class="view">
+  <h2>Pick a machine identity → which vendors handle it, by layer</h2>
+  <div style="margin-bottom:12px;"><label class="muted">Identity&nbsp;</label><select id="nhi-select" style="min-width:380px;max-width:100%"></select></div>
+  <div id="nhi-card"></div>
+</section>
+
+<section id="view-reg" class="view">
+  <h2>Trace a regulatory control → use cases → vendor evidence</h2>
+  <p class="muted">Click left → right: <b>framework → control → use case → vendor evidence</b>. Default: APRA CPS 234. Built for Risk &amp; Compliance / APRA audit packs.</p>
+  <div class="casc">
+    <div class="casc-col"><div class="col-head">Framework</div><div class="scroll" id="casc-fw"></div></div>
+    <div class="casc-col"><div class="col-head">Control</div><div class="scroll" id="casc-ctrl"></div></div>
+    <div class="casc-col"><div class="col-head">Use case</div><div class="scroll" id="casc-uc"></div></div>
+    <div class="casc-col"><div class="col-head">Vendor evidence</div><div class="scroll" id="casc-vendor"></div></div>
+  </div>
+  <p class="note">Vendor evidence is the 18 ranked vendors (Fortanix excluded per ADR-007). State dot = worst XYZ state across the control's use cases (GAP &gt; PARTIAL &gt; PENDING &gt; MET).</p>
+</section>
+
+<section id="view-rec" class="view">
+  <h2>Vendor recommendations — compose a best-of-breed stack</h2>
+  <p class="muted">Layer-scoped and AU-residency-first. Rank <i>within</i> a layer; compose <i>across</i> layers (ADR-007). Generic XYZ-FI guidance — no assumption about incumbent tooling.</p>
+  <div id="rec-body"></div>
+</section>
+
+<section id="view-value" class="view">
+  <h2>Business value — what this assessment is worth</h2>
+  <p class="muted">A posture grade is a diagnosis; the value is in the loop it drives — <b>assess &rarr; prioritise &rarr; remediate &rarr; measure</b>. Each outcome below maps to how it is measured and where the return comes from.</p>
+  <div id="value-body"></div>
+  <p class="note">ROI here is cost-avoidance and decision-efficiency, not new revenue. Figures are intentionally not invented — this view supplies the metrics to quantify against the institution's own baselines.</p>
+</section>
+
+<section id="view-table" class="view">
+  <h2>Browse all capability rows</h2>
+  <div class="controls">
+    <div class="layer-toggles" title="Show/hide stack layers">
+      <span class="muted">Layers:</span>
+      <label><input type="checkbox" class="layer-toggle" value="L1" checked> <span class="lchip L1">L1</span></label>
+      <label><input type="checkbox" class="layer-toggle" value="L2" checked> <span class="lchip L2">L2</span></label>
+    </div>
+    <label for="search">Search</label><input id="search" type="text" placeholder="any column...">
+    <label for="vendor-filter">Vendor</label><select id="vendor-filter"><option value="">all</option></select>
+    <label for="cov-filter">Coverage</label><select id="cov-filter"><option value="">all</option></select>
+    <button id="reset">reset</button><span id="count"></span>
+  </div>
+  <div class="tablewrap">
+  <table class="matrix" id="matrix-table">
+    <thead><tr>
+      <th class="colw-layer" data-key="layer">Layer</th>
+      <th class="colw-vendor" data-key="vendor_name">Vendor</th>
+      <th class="colw-target" data-key="target_id">Target</th>
+      <th class="colw-type" data-key="target_type">Type</th>
+      <th class="colw-cov" data-key="coverage">Coverage</th>
+      <th class="colw-mat" data-key="maturity">Maturity</th>
+      <th class="colw-url" data-key="evidence_url">Evidence URL</th>
+      <th class="colw-quote" data-key="evidence_quote">Evidence quote</th>
+      <th class="colw-cite" data-key="citation_keys">Citations</th>
+      <th class="colw-notes" data-key="notes">Notes</th>
+    </tr></thead>
+    <tbody id="matrix-body"></tbody>
+  </table>
+  </div>
+  <p class="note">Fortanix DSM (Layer-0 substrate) is excluded here per ADR-007 — see the XYZ-posture tab. Scroll the table sideways to see all columns.</p>
+</section>
+
+</main>
+<script>
+const DATA = /*__DATA__*/[];
+const XYZ = /*__XYZ__*/[];
+const UCS = /*__UCS__*/[];
+const NHIS = /*__NHIS__*/[];
+const GLOSSARY = /*__GLOSSARY__*/{};
+const LAYER_LABEL = /*__LAYERLABEL__*/{};
+const SHORT = /*__SHORT__*/{};
+const REG = /*__REG__*/{};
+const REGDATA = /*__REGDATA__*/{};
+const RECDATA = /*__RECDATA__*/{};
+const META = /*__META__*/{};
+
+function esc(s){ if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function gloss(code){ const d=GLOSSARY[code]; const t=esc(code); return d?'<span class="gloss" title="'+esc(d)+'">'+t+'</span>':t; }
+function covClass(c){ return "cov cov-"+(c==="N/A"?"NA":c); }
+function cellClass(c){ return "cell-"+(c==="N/A"?"NA":c); }
+function covAbbr(c){ return {NATIVE:"NAT","ADD-ON":"ADD",PARTNER:"PTR",GAP:"—","N/A":"N/A"}[c]||c; }
+function byId(a,k,v){ return a.find(x=>x[k]===v); }
+const COVRANK={NATIVE:0,"ADD-ON":1,PARTNER:2,GAP:3,"N/A":4};
+
+// vendor metadata derived from ranked DATA
+const VLAYER={}, VNAME={};
+DATA.forEach(r=>{ VLAYER[r.vendor_slug]=r.layer; VNAME[r.vendor_slug]=r.vendor_name; });
+const VENDOR_SLUGS=[...new Set(DATA.map(r=>r.vendor_slug))];
+
+// ---- XYZ override state (stakeholder "mark as MET"), persisted ----
+function loadOv(){ try{ return JSON.parse(localStorage.getItem("anz_overrides")||"{}"); }catch(e){ return {}; } }
+function saveOv(){ try{ localStorage.setItem("anz_overrides",JSON.stringify(OV)); }catch(e){} }
+let OV=loadOv();
+function effState(a){ return OV[a.uc_id] ? "MET" : a.current_state; }
+function toggleMet(uc){ if(OV[uc]) delete OV[uc]; else OV[uc]=true; saveOv(); renderDashboard();
+  const s=document.getElementById("uc-select"); if(s && s.value) renderUCCard(s.value); }
+function resetOv(){ OV={}; saveOv(); renderDashboard(); }
+
+// ---- navigation ----
+const NAVBTNS=document.querySelectorAll("nav button");
+function showView(n){ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById("view-"+n).classList.add("active"); NAVBTNS.forEach(b=>b.classList.toggle("active",b.dataset.view===n)); }
+NAVBTNS.forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+
+// ---- vendor-as-columns coverage/maturity grid ----
+function vgrid(targetId){
+  let html="";
+  [["L1","Secrets management"],["L2","NHI governance"]].forEach(([L,lbl])=>{
+    const entries = VENDOR_SLUGS.filter(s=>VLAYER[s]===L)
+      .map(s=>({slug:s, r:DATA.find(d=>d.vendor_slug===s && d.target_id===targetId)}))
+      .filter(e=>e.r)
+      .sort((a,b)=>(COVRANK[a.r.coverage]-COVRANK[b.r.coverage])||(parseFloat(b.r.maturity||0)-parseFloat(a.r.maturity||0)));
+    if(!entries.length) return;
+    html += '<div class="layerhdr"><span class="lchip '+L+'">'+L+'</span> '+esc(lbl)+
+      ' <span class="muted" style="font-weight:400">(vendors as columns — hover a code for its meaning)</span></div>';
+    html += '<div class="gridwrap"><table class="vgrid"><thead><tr><th></th>'+
+      entries.map(e=>'<th title="'+esc(VNAME[e.slug])+'">'+esc(SHORT[e.slug]||VNAME[e.slug])+'</th>').join("")+
+      '</tr></thead><tbody><tr><th>Satisfies</th>'+
+      entries.map(e=>'<td class="'+cellClass(e.r.coverage)+'" title="'+esc(GLOSSARY[e.r.coverage]||"")+'">'+covAbbr(e.r.coverage)+'</td>').join("")+
+      '</tr><tr><th>Maturity</th>'+
+      entries.map(e=>'<td class="matcell" title="'+esc(GLOSSARY[e.r.maturity]||"")+'">'+(e.r.coverage==="GAP"?"—":esc(e.r.maturity))+'</td>').join("")+
+      '</tr></tbody></table></div>';
+  });
+  return html || '<p class="muted">No coverage rows for this target.</p>';
+}
+
+function recommend(targetId){
+  const fit=DATA.filter(r=>r.target_id===targetId && (r.coverage==="NATIVE"||r.coverage==="ADD-ON"||r.coverage==="PARTNER"))
+    .sort((a,b)=>(COVRANK[a.coverage]-COVRANK[b.coverage])||(parseFloat(b.maturity||0)-parseFloat(a.maturity||0)));
+  const l1=fit.find(r=>r.layer==="L1"), l2=fit.find(r=>r.layer==="L2");
+  if(!l1 && !l2) return "No vendor offers first-class coverage here — a structural market gap.";
+  let s="";
+  if(l1) s='Best fit: <b>'+esc(l1.vendor_name)+'</b> — '+esc(l1.coverage)+', maturity '+esc(l1.maturity)+' (L1 secrets management).';
+  if(l2) s+=(s?" ":"")+'Complement above the vault with <b>'+esc(l2.vendor_name)+'</b> ('+esc(l2.coverage)+', m'+esc(l2.maturity)+', L2 governance).';
+  return s;
+}
+
+function regChips(uc){
+  const r=REG[uc]; if(!r) return "";
+  const mk=(arr,lbl)=> '<div class="chips"><b>'+lbl+':</b> '+(arr.length?arr.map(c=>'<span>'+esc(c)+'</span>').join(""):'<span class="muted">none</span>')+'</div>';
+  return mk(r.APRA||[],"APRA CPS 234")+mk(r.ISM||[],"ASD ISM");
+}
+
+// ---- dashboard ----
+function renderDashboard(){
+  document.getElementById("kpis").innerHTML =
+    [["ranked vendors",META.ranked_vendors],["machine identities",META.nhis],["use cases",META.ucs]]
+    .map(([l,n])=>'<div class="kpi"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>').join("");
+  const order=["MET","PARTIAL","GAP","PENDING"];
+  const base={MET:0,PARTIAL:0,GAP:0,PENDING:0}, adj={MET:0,PARTIAL:0,GAP:0,PENDING:0};
+  XYZ.forEach(a=>{ if(base[a.current_state]!=null) base[a.current_state]++; const e=effState(a); if(adj[e]!=null) adj[e]++; });
+  const total=XYZ.length||1;
+  document.getElementById("posture-bar").innerHTML = order.filter(s=>base[s]>0).map(s=>{
+    const pct=(100*base[s]/total).toFixed(1);
+    return '<span class="seg-'+s+'" style="width:'+pct+'%" title="'+s+' '+base[s]+'">'+(base[s]>=2?base[s]:"")+'</span>'; }).join("");
+  document.getElementById("posture-legend").innerHTML = order.map(s=>'<span class="pill pill-'+s+'">'+s+'</span> <b>'+base[s]+'</b> &nbsp;').join("")+
+    ' — assessed baseline. 0 MET reflects the dominant finding: with no inventory layer, XYZ cannot quantify "working" as "met".';
+  const adjEl=document.getElementById("posture-adj");
+  const nOv=Object.keys(OV).length;
+  if(nOv){ adjEl.style.display="block";
+    adjEl.innerHTML='<b>With your assessment ('+nOv+' marked MET):</b> '+order.map(s=>'<span class="pill pill-'+s+'">'+s+'</span> <b>'+adj[s]+'</b> &nbsp;').join("")+
+      ' &nbsp;<a onclick="resetOv()">reset</a>'; }
+  else { adjEl.style.display="none"; }
+
+  const ucTitle=id=>{ const u=byId(UCS,"uc_id",id); return u?u.short_title:id; };
+  document.getElementById("gaplist").innerHTML = XYZ.filter(a=>a.current_state==="GAP").map(a=>
+    '<li onclick="goToUC(\''+a.uc_id+'\')"><span class="id">'+esc(a.uc_id)+'</span><span>'+esc(ucTitle(a.uc_id))+'</span>'+
+    '<span class="pill pill-GAP" style="margin-left:auto">'+esc(a.confidence)+'</span></li>').join("")||'<li class="muted">none</li>';
+  document.getElementById("pendinglist").innerHTML = XYZ.filter(a=>a.current_state==="PENDING").map(a=>
+    '<li onclick="goToUC(\''+a.uc_id+'\')"><span class="id">'+esc(a.uc_id)+'</span><span>'+esc(ucTitle(a.uc_id))+'</span>'+
+    '<span class="pill pill-PENDING" style="margin-left:auto">'+esc(a.confidence)+'</span></li>').join("")||'<li class="muted">none</li>';
+  document.getElementById("partiallist").innerHTML = XYZ.filter(a=>a.current_state==="PARTIAL").map(a=>{
+    const checked=OV[a.uc_id]?"checked":"";
+    return '<li><input type="checkbox" '+checked+' onclick="event.stopPropagation();toggleMet(\''+a.uc_id+'\')" title="XYZ considers this MET">'+
+      '<span class="id" onclick="goToUC(\''+a.uc_id+'\')">'+esc(a.uc_id)+'</span>'+
+      '<span onclick="goToUC(\''+a.uc_id+'\')">'+esc(ucTitle(a.uc_id))+'</span>'+
+      (OV[a.uc_id]?'<span class="pill pill-MET" style="margin-left:auto">MET ✓</span>':'<span class="pill pill-PARTIAL" style="margin-left:auto">PARTIAL</span>')+'</li>'; }).join("")||'<li class="muted">none</li>';
+}
+
+// ---- use-case card ----
+function goToUC(id){ const s=document.getElementById("uc-select"); s.value=id; renderUCCard(id); showView("uc"); }
+function renderUCCard(id){
+  const u=byId(UCS,"uc_id",id), a=byId(XYZ,"uc_id",id), el=document.getElementById("uc-card");
+  if(!u){ el.innerHTML=""; return; }
+  const nhiChips=(u.nhis_in_scope||"").split(";").filter(Boolean).map(n=>'<span>'+gloss(n.trim())+'</span>').join("");
+  const lensChips=(u.outcome_lens||"").split(";").filter(Boolean).map(x=>'<span>'+esc(x.trim())+'</span>').join("");
+  let anzHtml='<p class="muted">No XYZ current-state record.</p>';
+  if(a){
+    const eff=effState(a), overridden=!!OV[a.uc_id];
+    anzHtml='<div><span class="pill pill-'+eff+'">'+esc(eff)+'</span> '+
+      (overridden?'<span class="muted">(stakeholder-assessed; baseline '+esc(a.current_state)+')</span>':'<span class="muted">confidence '+esc(a.confidence)+'</span>')+' '+
+      (a.sensitivity?'<span class="tag-internal">'+esc(a.sensitivity.replace(/[\[\]]/g,""))+'</span>':'')+'</div>'+
+      (a.evidence?'<p>'+esc(a.evidence)+'</p>':'')+
+      (a.recommendation?'<div class="rec"><b>Recommended:</b> '+esc(a.recommendation)+'</div>':'')+
+      '<div class="met-toggle"><label><input type="checkbox" '+(overridden?"checked":"")+' onclick="toggleMet(\''+a.uc_id+'\')"> '+
+      'XYZ considers this use case <b>MET</b> (stakeholder assessment — saved in this browser)</label></div>';
+  }
+  el.innerHTML =
+    '<div class="card"><h3>'+esc(u.uc_id)+' · '+esc(u.short_title)+' <span class="muted" style="font-weight:400">('+esc(u.category)+' · '+esc(u.priority_fi)+')</span></h3>'+
+      (u.story?'<p class="muted">"'+esc(u.story)+'"</p>':"")+
+      '<div class="chips"><b>Lens:</b> '+lensChips+'</div>'+
+      '<div class="chips"><b>Identities in scope:</b> '+nhiChips+'</div>'+
+      regChips(id)+'</div>'+
+    '<div class="card"><h3>Recommendation &amp; vendor coverage</h3>'+
+      '<div class="reco">'+recommend(id)+'</div>'+ vgrid(id)+
+      '<p class="note">A discovery tool (L2) complements a vault (L1) — it does not replace it. NAT=NATIVE · ADD=add-on · PTR=partner · —=gap.</p></div>'+
+    '<div class="card anz-card"><h3>Where XYZ stands</h3>'+anzHtml+'</div>';
+}
+
+// ---- nhi card ----
+function renderNHICard(id){
+  const n=byId(NHIS,"nhi_id",id), el=document.getElementById("nhi-card");
+  if(!n){ el.innerHTML=""; return; }
+  el.innerHTML='<div class="card"><h3>'+esc(n.nhi_id)+' · '+esc(n.short_name)+' <span class="muted" style="font-weight:400">('+esc(n.bucket)+')</span></h3>'+
+    (n.description?'<p class="muted">'+esc(n.description)+'</p>':"")+'</div>'+
+    '<div class="card"><h3>Vendor coverage (all vendors, by layer)</h3>'+vgrid(id)+
+    '<p class="note">v0.1 has no per-identity XYZ score (XYZ is assessed per use case). NAT=NATIVE · ADD=add-on · PTR=partner · —=gap.</p></div>';
+}
+
+// ---- selectors ----
+(function(){
+  const sel=document.getElementById("uc-select");
+  [["FUNCTIONAL","Functional"],["NON_FUNCTIONAL","Non-functional"]].forEach(([cat,lbl])=>{
+    const g=document.createElement("optgroup"); g.label=lbl;
+    UCS.filter(u=>u.category===cat).forEach(u=>{ const o=document.createElement("option"); o.value=u.uc_id; o.textContent=u.uc_id+" · "+u.short_title; g.appendChild(o); });
+    if(g.children.length) sel.appendChild(g);
+  });
+  sel.addEventListener("change",()=>renderUCCard(sel.value));
+  if(sel.options.length){ sel.selectedIndex=0; renderUCCard(sel.value); }
+  const nsel=document.getElementById("nhi-select");
+  NHIS.forEach(n=>{ const o=document.createElement("option"); o.value=n.nhi_id; o.textContent=n.nhi_id+" · "+n.short_name; nsel.appendChild(o); });
+  nsel.addEventListener("change",()=>renderNHICard(nsel.value));
+  if(nsel.options.length){ nsel.selectedIndex=0; renderNHICard(nsel.value); }
+})();
+
+// ---- browse table ----
+const TBODY=document.getElementById("matrix-body"), SEARCH=document.getElementById("search"),
+  VFILT=document.getElementById("vendor-filter"), CFILT=document.getElementById("cov-filter"),
+  HEADERS=document.querySelectorAll("#matrix-table th"), TOGGLES=document.querySelectorAll(".layer-toggle");
+let sortKey="vendor_name", sortDir=1;
+VENDOR_SLUGS.slice().sort().forEach(v=>{ const o=document.createElement("option"); o.value=v;o.textContent=v;VFILT.appendChild(o); });
+[...new Set(DATA.map(r=>r.coverage))].sort().forEach(c=>{ const o=document.createElement("option"); o.value=c;o.textContent=c;CFILT.appendChild(o); });
+function activeLayers(){ const s=new Set(); TOGGLES.forEach(t=>{ if(t.checked) s.add(t.value); }); return s; }
+function renderTable(){
+  const q=SEARCH.value.trim().toLowerCase(), v=VFILT.value, c=CFILT.value, layers=activeLayers();
+  const rows=DATA.filter(r=>{ if(!layers.has(r.layer)) return false; if(v&&r.vendor_slug!==v) return false;
+    if(c&&r.coverage!==c) return false; if(q&&Object.values(r).join(" ").toLowerCase().indexOf(q)===-1) return false; return true; });
+  rows.sort((a,b)=>{ const av=a[sortKey]||"",bv=b[sortKey]||"";
+    if(sortKey==="maturity") return (parseFloat(av)-parseFloat(bv))*sortDir; return String(av).localeCompare(String(bv))*sortDir; });
+  TBODY.innerHTML=rows.map(r=>'<tr>'+
+    '<td><span class="lchip '+r.layer+'" title="'+esc(LAYER_LABEL[r.layer]||"")+'">'+esc(r.layer)+'</span></td>'+
+    '<td>'+esc(r.vendor_name)+'</td>'+
+    '<td>'+gloss(r.target_id)+'</td><td>'+esc(r.target_type)+'</td>'+
+    '<td><span class="'+covClass(r.coverage)+'" title="'+esc(GLOSSARY[r.coverage]||"")+'">'+esc(r.coverage)+'</span></td>'+
+    '<td><span class="gloss" title="'+esc(GLOSSARY[r.maturity]||"")+'"><b>'+esc(r.maturity)+'</b></span></td>'+
+    '<td class="wrap">'+(r.evidence_url&&/^https?:/i.test(r.evidence_url)?'<span class="ev-url"><a href="'+esc(r.evidence_url)+'" target="_blank" rel="noopener">'+esc(r.evidence_url)+'</a></span>':esc(r.evidence_url))+'</td>'+
+    '<td class="wrap">'+esc(r.evidence_quote)+'</td><td class="wrap">'+esc(r.citation_keys)+'</td><td class="wrap">'+esc(r.notes)+'</td></tr>').join("");
+  document.getElementById("count").textContent=rows.length+" of "+DATA.length+" rows";
+  HEADERS.forEach(h=>{ h.classList.remove("sort-asc","sort-desc"); if(h.dataset.key===sortKey) h.classList.add(sortDir===1?"sort-asc":"sort-desc"); });
+}
+SEARCH.addEventListener("input",renderTable); VFILT.addEventListener("change",renderTable); CFILT.addEventListener("change",renderTable);
+TOGGLES.forEach(t=>t.addEventListener("change",renderTable));
+document.getElementById("reset").addEventListener("click",()=>{ SEARCH.value="";VFILT.value="";CFILT.value="";TOGGLES.forEach(t=>t.checked=true);sortKey="vendor_name";sortDir=1;renderTable(); });
+HEADERS.forEach(h=>h.addEventListener("click",()=>{ const k=h.dataset.key; if(sortKey===k) sortDir=-sortDir; else {sortKey=k;sortDir=1;} renderTable(); }));
+
+// ---- compliance-trace cascade (Framework → Control → UC → Vendor evidence) ----
+(function(){
+  const cFw=document.getElementById("casc-fw"), cCtrl=document.getElementById("casc-ctrl"),
+    cUc=document.getElementById("casc-uc"), cV=document.getElementById("casc-vendor");
+  if(!cFw) return;
+  cFw.innerHTML = REGDATA.frameworks.map(fw=>'<div class="item" data-fw="'+esc(fw.slug)+'">'+
+    '<div style="font-weight:600">'+esc(fw.label)+'</div><div class="subtle">'+fw.control_count+' controls · '+esc(fw.subtitle)+'</div></div>').join("");
+  function showControls(fw){
+    cFw.querySelectorAll(".item").forEach(x=>x.classList.toggle("active",x.dataset.fw===fw));
+    const list=REGDATA.controls[fw]||[];
+    cCtrl.innerHTML=list.map(c=>'<div class="item" data-code="'+esc(c.code)+'">'+
+      '<span class="state-dot '+(c.current_state||"UNKNOWN")+'"></span><span class="ctrlcode">'+esc(c.code)+'</span>'+
+      (c.maturity_level?'<span class="ml">'+esc(c.maturity_level)+'</span>':"")+
+      '<div style="font-size:11px;margin-top:2px">'+esc(c.title)+'</div>'+
+      '<div class="subtle" style="margin-top:3px">'+c.uc_ids.length+' UCs · '+(c.current_state||"UNKNOWN")+'</div></div>').join("")
+      || '<div class="placeholder">No controls.</div>';
+    cUc.innerHTML='<div class="placeholder">← Pick a control</div>'; cV.innerHTML="";
+  }
+  function showUcs(fw,code){
+    cCtrl.querySelectorAll(".item").forEach(x=>x.classList.toggle("active",x.dataset.code===code));
+    const c=(REGDATA.controls[fw]||[]).find(x=>x.code===code); if(!c) return;
+    let hdr='<div class="ctrlhdr"><span class="ctrlcode">'+esc(c.code)+'</span>'+
+      (c.maturity_level?'<span class="ml">'+esc(c.maturity_level)+'</span>':"")+
+      '<div style="font-size:11px;font-weight:600;margin-top:2px">'+esc(c.title)+'</div>'+
+      (c.evidence_quote?'<div class="quotebox">"'+esc(c.evidence_quote)+'"</div>':"")+
+      (c.evidence_url&&/^https?:/i.test(c.evidence_url)?'<div style="margin-top:4px;font-size:10px"><a href="'+esc(c.evidence_url)+'" target="_blank" rel="noopener">source standard ↗</a></div>':"")+'</div>';
+    let body=c.uc_ids.map(uid=>{ const u=REGDATA.ucs[uid]||{};
+      return '<div class="item" data-uc="'+esc(uid)+'"><span class="ctrlcode">'+esc(uid)+'</span> '+
+        '<span class="ustate '+(u.state||"UNKNOWN")+'">'+(u.state||"?")+'</span>'+
+        '<div style="font-size:11px;margin-top:2px">'+esc(u.title||"(unknown)")+'</div>'+
+        '<div class="subtle" style="margin-top:2px">'+esc(u.priority||"")+' · '+(u.nhi_count||0)+' NHIs · '+((REGDATA.vendor_uc[uid]||[]).length)+' vendor rows</div></div>'; }).join("")
+      || '<div class="placeholder">No UCs.</div>';
+    cUc.innerHTML=hdr+body; cV.innerHTML='<div class="placeholder">← Pick a use case</div>';
+  }
+  function showVendors(uid){
+    cUc.querySelectorAll(".item").forEach(x=>x.classList.toggle("active",x.dataset.uc===uid));
+    const u=REGDATA.ucs[uid]||{}, vlist=REGDATA.vendor_uc[uid]||[];
+    let h='<div class="ctrlhdr"><span class="ctrlcode">'+esc(uid)+'</span><div style="font-size:11px;margin-top:2px">'+esc(u.title||"")+'</div></div>';
+    h+=vlist.map(v=>'<div class="vrow2"><div class="m">'+(v.maturity||0)+'</div><div><b>'+esc(v.vendor_name)+'</b></div>'+
+      '<div><span class="'+covClass(v.coverage)+'">'+esc(v.coverage)+'</span></div>'+
+      (v.quote?'<div class="vq">"'+esc(v.quote)+'"</div>':"")+'</div>').join("") || '<div class="placeholder">No vendor rows.</div>';
+    cV.innerHTML=h;
+  }
+  cFw.addEventListener("click",e=>{ const it=e.target.closest(".item"); if(it) showControls(it.dataset.fw); });
+  cCtrl.addEventListener("click",e=>{ const it=e.target.closest(".item"); if(it){ const a=cFw.querySelector(".item.active"); showUcs(a?a.dataset.fw:REGDATA.frameworks[0].slug, it.dataset.code); } });
+  cUc.addEventListener("click",e=>{ const it=e.target.closest(".item"); if(it&&it.dataset.uc) showVendors(it.dataset.uc); });
+  const def=cFw.querySelector('[data-fw="apra-cps-234"]'); if(def) def.click(); else if(cFw.firstChild) cFw.firstChild.click();
+})();
+
+// ---- Recommendations tab (residency-first, layer-scoped) ----
+function recChip(res, irap){
+  const m={"AU-RESIDENT":["AU-resident","#1a7f37"],"CONDITIONAL":["AU conditional","#9a6700"],"SAAS-ONLY":["SaaS-only","#b35900"]};
+  const x=m[res]||[res,"#555"];
+  const ir = irap==="YES"?" · IRAP ✓":(irap==="PARTIAL"?" · IRAP ~":" · no IRAP");
+  return '<span style="display:inline-block;padding:1px 7px;border-radius:10px;color:#fff;font-size:10px;font-weight:600;background:'+x[1]+'">'+esc(x[0])+ir+'</span>';
+}
+function recVendorRow(v, metric){
+  const lay=VLAYER[v.slug]||"";
+  return '<div style="padding:7px 0;border-bottom:1px solid #eee">'+
+    '<span class="lchip '+lay+'">'+lay+'</span> <b>'+esc(v.name)+'</b> '+
+    '<span class="muted" style="font-size:11px">('+esc(v.tier)+')</span> '+recChip(v.residency,v.irap)+
+    '<div class="muted" style="font-size:11px;margin-top:2px">'+metric+
+    ' · '+v.nhi_native+'/'+RECDATA.coverage_proof.nhi_total+' identities NATIVE'+(v.nhi_gap?' · '+v.nhi_gap+' gaps':'')+'</div>'+
+    (v.res_note?'<div style="font-size:11px;color:#666;margin-top:2px">'+esc(v.res_note)+'</div>':'')+'</div>';
+}
+function renderRecommendations(){
+  const el=document.getElementById("rec-body"); if(!el||!RECDATA.coverage_proof) return;
+  const cp=RECDATA.coverage_proof; let h="";
+  h+='<div class="card" style="border-left:4px solid var(--l1)"><h3>Why a stack, not a single vendor</h3>'+
+     '<p>No single vendor covers all '+META.ucs+' use cases. The strongest Layer-1 vault is NATIVE on only <b>'+cp.max_l1_nhi+' of '+cp.nhi_total+'</b> identity types — and a Layer-1 vault cannot <i>discover / govern</i> identities, while a Layer-2 tool cannot <i>broker</i> secrets. So compose across layers; rank within a layer (ADR-007). Large enterprises deliberately run best-of-breed for exactly this reason.</p></div>';
+  h+='<div class="card"><h3><span class="lchip L1">L1</span> Secrets management — top picks (AU-residency first)</h3>'+
+     '<p class="muted" style="font-size:11px">'+esc(LAYER_LABEL.L1)+'</p>'+
+     RECDATA.l1_secrets.map(v=>recVendorRow(v, v.secrets_native+'/'+v.secrets_total+' secrets-mgmt use cases NATIVE')).join("")+'</div>';
+  h+='<div class="card"><h3><span class="lchip L1">L1</span> PKI / machine-identity (certificates) — a distinct discipline</h3>'+
+     '<p class="muted" style="font-size:11px">Certificate &amp; key lifecycle that most vaults do not own.</p>'+
+     RECDATA.pki_mim.map(v=>recVendorRow(v, v.secrets_native+'/'+v.secrets_total+' secrets-mgmt use cases NATIVE')).join("")+'</div>';
+  h+='<div class="card"><h3><span class="lchip L2">L2</span> NHI discovery / governance — top picks (residency first)</h3>'+
+     '<p class="muted" style="font-size:11px">'+esc(LAYER_LABEL.L2)+'</p>'+
+     '<p class="note">Every Layer-2 vendor is SaaS-only with no AU region / IRAP today — material under APRA CPS 234 §22 / CPS 230 §39. Treat as an observability / governance overlay above an AU-resident vault; pursue BYOC or an AU-residency commitment before production. Human-workforce IGA (SailPoint, Saviynt, Okta IGA) is a separate adjacent market — evaluate it on its own if workforce-identity governance is in scope.</p>'+
+     RECDATA.l2_governance.map(v=>recVendorRow(v, v.gov_native+'/'+v.gov_total+' governance use cases NATIVE')).join("")+'</div>';
+  h+='<div class="card" style="border-left:4px solid var(--l2)"><h3>Top 4 recommendations — by role, not a league table</h3>'+
+     RECDATA.top_picks.map((p,i)=>'<div style="padding:7px 0;border-bottom:1px solid #eee"><b>'+(i+1)+'. '+esc(p.role)+'</b> → <b>'+esc(p.pick)+'</b> '+recChip(p.residency,p.irap)+
+       '<div style="font-size:11px;color:#666;margin-top:2px">'+esc(p.why)+'</div></div>').join("")+
+     '<p class="note">Plus a paired <span class="lchip L0">L0</span> crypto substrate ('+esc(RECDATA.substrate.name)+') beneath the vault — a dependency, not a ranked pick (ADR-007).</p></div>';
+  h+='<div class="card"><h3>Complementary stack — if you already run X, add Y</h3>'+
+     '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
+     '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">You already have</th>'+
+     '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Add to complement</th>'+
+     '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Why</th></tr></thead><tbody>'+
+     RECDATA.complementary.map(c=>'<tr>'+
+       '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top"><b>'+esc(c.have)+'</b></td>'+
+       '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top">'+esc(c.add)+'</td>'+
+       '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top" class="muted">'+esc(c.why)+'</td></tr>').join("")+
+     '</tbody></table></div>';
+  el.innerHTML=h;
+}
+
+// ---- business value ----
+function renderValue(){
+  const gaps=XYZ.filter(a=>a.current_state==="GAP").length;
+  const part=XYZ.filter(a=>a.current_state==="PARTIAL").length;
+  const pend=XYZ.filter(a=>a.current_state==="PENDING").length;
+  const targets=gaps+part+pend;
+  const nf=UCS.filter(u=>/NON[_-]?FUNCTIONAL/i.test(u.category||"")).length;
+
+  const steps=[["01","Assess","grade "+META.ucs+" capabilities vs E8 / Zero Trust / CPS 234 / ISM"],
+    ["02","Prioritise","rank gaps by risk × regulatory weight"],
+    ["03","Remediate","sequenced, owned roadmap actions"],
+    ["04","Measure","KPIs on coverage &amp; gap-closure"],
+    ["05","Re-assess","refresh the baseline, delta-tracked"]];
+  const loop=steps.map(s=>'<div class="step"><div class="num">'+s[0]+'</div><b>'+esc(s[1])+'</b><span class="d">'+s[2]+'</span></div>').join('<div class="loparrow">&rarr;</div>');
+
+  const LBL={hard:"Hard $",hours:"Hours",risk:"Risk",kpi:"KPI"};
+  const outcomes=[
+    ["hard","Rationalise tooling spend","The vendor matrix exposes overlapping vault / secrets tools running in parallel and gives a layer-scoped consolidation path.","Tool count &darr; · avoided licence + procurement effort"],
+    ["hours","Audit &amp; compliance efficiency","A pre-built control-evidence pack (3-click framework &rarr; control &rarr; use case &rarr; evidence) answers APRA / ISM audits and cuts findings.","Audit hours &darr; · findings &darr; · avoided enforcement"],
+    ["risk","Lower expected breach loss","Closing prioritised credential-access gaps (MITRE T1552) reduces the probability × impact of a machine-identity breach.","Gaps closed · risk-adjusted expected-loss &darr;"],
+    ["kpi","Reduce operational toil","Dynamic credentials, just-in-time access and automated rotation remove manual secret handling and rotation-driven incidents.","Manual rotations &darr; · credential incidents &darr;"]];
+  const ocards=outcomes.map(o=>'<div class="card ocard"><h3><span class="vtag '+o[0]+'">'+LBL[o[0]]+'</span> '+o[1]+'</h3>'+
+    '<div class="mech">'+o[2]+'</div><div class="measure"><b>Measured by:</b> '+o[3]+'</div></div>').join("");
+
+  const kpis=[
+    ["NHI inventory completeness","% of machine identities discovered &amp; owner-attested","Inventory / attestation use cases","per cycle"],
+    ["Rotation coverage &amp; freshness","% of secrets under managed rotation within SLA","Rotation / lifecycle use cases","monthly"],
+    ["Gap-closure rate","assessed GAP / PARTIAL &rarr; MET over time","this assessment baseline","per cycle"],
+    ["Plaintext secrets in repos","secrets detected in source &amp; history","pre-commit + history-scan use cases","continuous"],
+    ["Tool consolidation","count of overlapping secrets / vault tools","vendor matrix","per cycle"]];
+  const kpirows=kpis.map(k=>'<tr><td><b>'+k[0]+'</b></td><td class="muted">'+k[1]+'</td><td class="muted">'+k[2]+'</td><td class="mono">'+k[3]+'</td></tr>').join("");
+
+  document.getElementById("value-body").innerHTML =
+    '<div class="loop">'+loop+'</div>'+
+    '<p class="muted" style="margin:8px 0 0">Current baseline feeds the loop: <b>'+targets+'</b> prioritised remediation targets ('+gaps+' GAP · '+part+' PARTIAL · '+pend+' PENDING) tracked to closure.</p>'+
+    '<h3 class="vsec">Where the return comes from</h3>'+
+    '<div class="grid2">'+ocards+'</div>'+
+    '<h3 class="vsec">How it&rsquo;s measured — KPIs (underpinned by '+nf+' non-functional use cases)</h3>'+
+    '<div class="card"><table class="kpitable"><thead><tr><th>KPI</th><th>What it measures</th><th>Source</th><th>Cadence</th></tr></thead><tbody>'+kpirows+'</tbody></table></div>'+
+    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — one credential-driven breach, one regulatory enforcement action, or one duplicated vault platform — typically exceeds the whole assessment cost by an order of magnitude. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>';
+}
+
+renderDashboard();
+renderTable();
+renderRecommendations();
+renderValue();
+</script>
+</body>
+</html>
