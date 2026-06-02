@@ -121,6 +121,18 @@ def validate_referential(use_cases, current_state, reg_trace, identity, vendor_f
     return errs
 
 
+def check_no_legacy_token(current_state, identity):
+    """Fail if a legacy ANZ-era header has crept back into the data (WS-5b rename guard)."""
+    errs = []
+    cur_cols = set(current_state[0].keys()) if current_state else set()
+    idc_cols = set(identity[0].keys()) if identity else set()
+    if "anz_state" in cur_cols:
+        errs.append("current-state.csv: legacy column 'anz_state' present (use 'current_state')")
+    if "sources_at_anz_likely" in idc_cols:
+        errs.append("identity-catalog.csv: legacy column 'sources_at_anz_likely' present (use 'sources_likely')")
+    return errs
+
+
 def validate_all(root="."):
     """Run all checks against the matrix data under <root>/matrix; return all violations."""
     m = os.path.join(root, "matrix")
@@ -151,6 +163,7 @@ def validate_all(root="."):
         errs += validate_vendor_rows(name, rows, single_slug=True)
 
     errs += validate_referential(use_cases, current, trace, identity, vendor_files)
+    errs += check_no_legacy_token(current, identity)
     return errs
 
 

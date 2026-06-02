@@ -103,3 +103,17 @@ def test_validate_all_catches_injected_break(tmp_path):
     viol = vd.validate_all(str(tmp_path))
     assert any("UC-ZZZ-999" in v for v in viol)
     assert vd.main(["--root", str(tmp_path)]) == 1
+
+
+def test_no_legacy_token_clean():
+    cur = [{"uc_id": "UC-1", "current_state": "GAP"}]
+    idc = [{"nhi_id": "NHI-1", "sources_likely": "x"}]
+    assert vd.check_no_legacy_token(cur, idc) == []
+
+
+def test_no_legacy_token_flags_old_headers():
+    cur = [{"uc_id": "UC-1", "anz_state": "GAP"}]          # legacy column back
+    idc = [{"nhi_id": "NHI-1", "sources_at_anz_likely": "x"}]
+    errs = vd.check_no_legacy_token(cur, idc)
+    assert any("anz_state" in e for e in errs)
+    assert any("sources_at_anz_likely" in e for e in errs)
