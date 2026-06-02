@@ -12,26 +12,24 @@ offline HTML file (no server, no internet) with four views:
   3. By Identity (NHI) — vendor-as-columns coverage/maturity grid.
   4. Browse all — the full filterable capability table.
 
-Per ADR-007, Fortanix DSM is a Layer-0 crypto-substrate DEPENDENCY and is
-EXCLUDED from all ranked views (→ 18 ranked vendors). The source CSV is
-never modified. The HTML is built from a raw template with /*__TOKEN__*/
-placeholders (not an f-string) so braces in CSS/JS need no escaping.
+Orchestrator only: input loading lives in report_io, the model transforms in
+report_logic, and the HTML assembly in report_render (+ report-template.html).
+Per ADR-007, Fortanix DSM is a Layer-0 crypto-substrate DEPENDENCY excluded from
+all ranked views (→ 18 ranked vendors). The source CSVs are never modified.
 """
-import csv
+import argparse
 import json
 import os
 import sys
 from collections import defaultdict
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-DST = os.path.join(HERE, "matrix-viewer.html")
-SUBSTRATE_SLUG = "fortanix-dsm"
-
-import argparse
 import engagement_config as _ec
 import overlay as _ov
+import report_io
 import report_render
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+DST = os.path.join(HERE, "matrix-viewer.html")
 _CFGDIR = os.path.join(HERE, "config")
 
 _ap = argparse.ArgumentParser(description="Build the secrets-management report.")
@@ -44,45 +42,13 @@ _ap.add_argument("--current-state", default="current-state.csv",
                       "questionnaire/report_adapter.py). Default keeps existing behaviour.")
 _ARGS, _ = _ap.parse_known_args()
 
-VENDOR_LAYER = {
-    SUBSTRATE_SLUG: ("L0", "data-security"),
-    "hashicorp-vault-enterprise": ("L1", "core"),
-    "cyberark-conjur": ("L1", "core"),
-    "cyberark-pam": ("L1", "core"),
-    "delinea-secret-server": ("L1", "core"),
-    "aws-secrets-manager": ("L1", "cloud-native"),
-    "azure-key-vault": ("L1", "cloud-native"),
-    "gcp-secret-manager": ("L1", "cloud-native"),
-    "akeyless": ("L1", "cloud-native"),
-    "doppler": ("L1", "emerging"),
-    "infisical": ("L1", "emerging"),
-    "1password-secrets-automation": ("L1", "emerging"),
-    "venafi": ("L1", "pki-mim"),
-    "keyfactor": ("L1", "pki-mim"),
-    "astrix-security": ("L2", "nhi-discovery"),
-    "entro-security": ("L2", "nhi-discovery"),
-    "oasis-security": ("L2", "nhi-discovery"),
-    "aembit": ("L2", "nhi-discovery"),
-    "clutch-security": ("L2", "nhi-discovery"),
-}
-SHORT = {
-    "hashicorp-vault-enterprise": "Vault Ent", "cyberark-conjur": "Conjur",
-    "cyberark-pam": "CyberArk PAM", "delinea-secret-server": "Delinea",
-    "aws-secrets-manager": "AWS SM", "azure-key-vault": "Azure KV",
-    "gcp-secret-manager": "GCP SM", "akeyless": "AKEYLESS", "doppler": "Doppler",
-    "infisical": "Infisical", "1password-secrets-automation": "1Password",
-    "venafi": "Venafi", "keyfactor": "Keyfactor", "astrix-security": "Astrix",
-    "entro-security": "Entro", "oasis-security": "Oasis", "aembit": "Aembit",
-    "clutch-security": "Clutch",
-}
-LAYER_LABEL = {
-    "L1": "L1 · Secrets management (the vault tier) — NATIVE = brokers / stores / rotates secrets",
-    "L2": "L2 · NHI discovery / governance (above the vault) — NATIVE = discovers / governs (not brokers)",
-}
+SUBSTRATE_SLUG = report_io.SUBSTRATE_SLUG
+VENDOR_LAYER = report_io.VENDOR_LAYER
+SHORT = report_io.SHORT
+LAYER_LABEL = report_io.LAYER_LABEL
 APRA_FRAMEWORKS = {"apra-cps-234", "apra-cps-230", "apra-cpg-234"}
 
-# AU data-residency / IRAP per vendor — externalized to config/vendor-residency.yaml (WS-2).
-VENDOR_RESIDENCY = _ov.load_vendor_residency(os.path.join(_CFGDIR, "vendor-residency.yaml"))
+VENDOR_RESIDENCY = report_io.load_vendor_residency(_CFGDIR)
 
 # UC capability domains (from use-cases.csv) used to score domain strength.
 REC_UC_DOMAIN = {
@@ -93,52 +59,16 @@ REC_UC_DOMAIN = {
                    "UC-N-009", "UC-N-010", "UC-N-016", "UC-N-017", "UC-N-018", "UC-N-020"],
 }
 
+# ---- load inputs (report_io) ----
+_inputs = report_io.load_inputs(HERE, _ARGS.current_state)
+all_rows = _inputs["all_rows"]
+ranked = _inputs["ranked"]
+ucs = _inputs["ucs"]
+nhis = _inputs["nhis"]
+anz = _inputs["anz"]
+reg_rows = _inputs["reg_rows"]
 
-def read_csv(name):
-    path = os.path.join(HERE, name)
-    if not os.path.exists(path):
-        return []
-    with open(path, newline="", encoding="utf-8") as fh:
-        return list(csv.DictReader(fh))
-
-
-all_rows = read_csv("vendor-capabilities.csv")
-if not all_rows:
-    sys.exit("No rows in vendor-capabilities.csv")
-unmapped = sorted({r["vendor_slug"] for r in all_rows if r["vendor_slug"] not in VENDOR_LAYER})
-if unmapped:
-    sys.exit(f"Unmapped vendor_slug(s): {unmapped}")
-
-ranked = []
-for r in all_rows:
-    if r["vendor_slug"] == SUBSTRATE_SLUG:
-        continue
-    lay, tier = VENDOR_LAYER[r["vendor_slug"]]
-    ranked.append({
-        "vendor_slug": r["vendor_slug"], "vendor_name": r["vendor_name"],
-        "target_id": r["target_id"], "target_type": r["target_type"],
-        "coverage": r["coverage"], "maturity": r["maturity"],
-        "evidence_url": r.get("evidence_url", ""), "evidence_quote": r.get("evidence_quote", ""),
-        "citation_keys": r.get("citation_keys", ""), "notes": r.get("notes", ""),
-        "layer": lay, "tier": tier,
-    })
-
-ucs = [{"uc_id": r["uc_id"], "category": r.get("category", ""), "short_title": r.get("short_title", ""),
-        "story": r.get("story", ""), "outcome_lens": r.get("outcome_lens", ""),
-        "backmap_codes": r.get("backmap_codes", ""), "nhis_in_scope": r.get("nhis_in_scope", ""),
-        "priority_fi": r.get("priority_fi", "")} for r in read_csv("use-cases.csv")]
-
-nhis = [{"nhi_id": r["nhi_id"], "bucket": r.get("bucket", ""), "short_name": r.get("short_name", ""),
-         "description": r.get("description", "")} for r in read_csv("identity-catalog.csv")]
-
-anz = [{"uc_id": r["uc_id"], "current_state": r.get("current_state", ""), "confidence": r.get("confidence", ""),
-        "evidence": r.get("evidence_redacted", ""), "recommendation": r.get("gap_notes", ""),
-        "sensitivity": r.get("sensitivity_tag", "")} for r in read_csv(_ARGS.current_state)]
-
-# Regulatory data (read once): per-UC APRA/ISM chips + the full
-# Framework -> Control -> UC -> Vendor-evidence cascade (Compliance-trace tab).
-reg_rows = read_csv("regulatory-trace.csv")
-
+# Regulatory data: per-UC APRA/ISM chips + the Framework -> Control -> UC -> Vendor cascade.
 reg = defaultdict(lambda: {"APRA": set(), "ISM": set()})
 for r in reg_rows:
     fs = r.get("framework_slug", "")
@@ -151,8 +81,7 @@ for r in reg_rows:
             reg[u][bucket].add(r["control_code"])
 REG = {u: {"APRA": sorted(v["APRA"]), "ISM": sorted(v["ISM"])} for u, v in reg.items()}
 
-# Framework labels — externalized to config/frameworks.yaml (WS-2).
-FRAMEWORK_LABELS = _ov.load_framework_labels(os.path.join(_CFGDIR, "frameworks.yaml"))
+FRAMEWORK_LABELS = report_io.load_framework_labels(_CFGDIR)
 fw_order, fw_seen = [], set()
 for r in reg_rows:
     if r["framework_slug"] not in fw_seen:
