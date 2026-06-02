@@ -12,7 +12,7 @@ def _load(path, key, val):
 
 def main():
     proposed = _load(ROOT / "methodology" / "posture-rescore.csv", "uc_id", "proposed_state")
-    baseline = _load(ROOT / "matrix" / "anz-current-state.csv", "uc_id", "anz_state")
+    baseline = _load(ROOT / "matrix" / "current-state.csv", "uc_id", "current_state")
     matches, diffs = 0, []
     for uc, base in baseline.items():
         prop = proposed.get(uc, "MISSING")

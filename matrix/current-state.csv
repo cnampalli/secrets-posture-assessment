@@ -1,4 +1,4 @@
-uc_id,anz_state,confidence,evidence_q_ids,evidence_redacted,gap_notes,sensitivity_tag,citation_keys
+uc_id,current_state,confidence,evidence_q_ids,evidence_redacted,gap_notes,sensitivity_tag,citation_keys
 UC-F-001,GAP,HIGH,Q-E.00#1;Q-F.02;Q-F.04,Plaintext-secrets-in-repos finding from 2019 red team remains open; dominant XYZ gap with strongest lived-experience evidence,Enforce pre-merge push-protection across all repos plus historical sweep with rotation SLA,[INTERNAL],gitguardian-sots-2024;github-push-protection-2024
 UC-F-002,GAP,HIGH,Q-E.00#1;Q-F.02,Historical secret-scanning not consistent across the estate per lived-experience observations,Quarterly full-history scans plus continuous CI integration with rotation tracking,[INTERNAL],gitguardian-sots-2024
 UC-F-003,PARTIAL,HIGH,Q-D.06;Q-C.01,JIT short-lived creds for AWS only via Vault IAM/EC2 auth; Azure and GCP not covered,Enable Azure auth method on Vault and federate GCP workload identity through Vault,[INTERNAL],github-oidc-2024;aws-iam-oidc-2024

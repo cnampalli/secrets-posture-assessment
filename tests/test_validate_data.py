@@ -26,9 +26,9 @@ def test_unique_flags_duplicate():
 
 
 def test_enum_flags_invalid_and_allows_blank():
-    rows = [{"anz_state": "GAP"}, {"anz_state": "BOGUS"}, {"anz_state": ""}]
-    errs = vd.check_enum("anz-current-state.csv", rows, "anz_state", vd.VALID_STATES)
-    assert errs == ["anz-current-state.csv: invalid anz_state 'BOGUS'"]
+    rows = [{"current_state": "GAP"}, {"current_state": "BOGUS"}, {"current_state": ""}]
+    errs = vd.check_enum("current-state.csv", rows, "current_state", vd.VALID_STATES)
+    assert errs == ["current-state.csv: invalid current_state 'BOGUS'"]
 
 
 def test_ids_drops_blanks_and_sentinels():
@@ -98,8 +98,22 @@ def test_validate_all_catches_injected_break(tmp_path):
     for p in src.glob("*.csv"):
         shutil.copy(p, dst / p.name)
     # inject a current-state row whose uc_id is not in use-cases
-    cs = dst / "anz-current-state.csv"
+    cs = dst / "current-state.csv"
     cs.write_text(cs.read_text() + "UC-ZZZ-999,GAP,MED,,,,,\n", encoding="utf-8")
     viol = vd.validate_all(str(tmp_path))
     assert any("UC-ZZZ-999" in v for v in viol)
     assert vd.main(["--root", str(tmp_path)]) == 1
+
+
+def test_no_legacy_token_clean():
+    cur = [{"uc_id": "UC-1", "current_state": "GAP"}]
+    idc = [{"nhi_id": "NHI-1", "sources_likely": "x"}]
+    assert vd.check_no_legacy_token(cur, idc) == []
+
+
+def test_no_legacy_token_flags_old_headers():
+    cur = [{"uc_id": "UC-1", "anz_state": "GAP"}]          # legacy column back
+    idc = [{"nhi_id": "NHI-1", "sources_at_anz_likely": "x"}]
+    errs = vd.check_no_legacy_token(cur, idc)
+    assert any("anz_state" in e for e in errs)
+    assert any("sources_at_anz_likely" in e for e in errs)

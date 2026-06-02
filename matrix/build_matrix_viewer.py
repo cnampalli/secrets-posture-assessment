@@ -38,7 +38,7 @@ _ap.add_argument("--config", help="path to an engagement.yaml")
 _ap.add_argument("--preset", help="named preset (financial|government|retail|baseline)")
 _ap.add_argument("--frameworks", help="comma-separated framework slugs (overrides primary)")
 _ap.add_argument("--emit-data", help="(test hook) also dump {REGDATA,RECDATA} JSON to this path")
-_ap.add_argument("--current-state", default="anz-current-state.csv",
+_ap.add_argument("--current-state", default="current-state.csv",
                  help="current-state CSV the report scores against (a questionnaire export via "
                       "questionnaire/report_adapter.py). Default keeps existing behaviour.")
 _ARGS, _ = _ap.parse_known_args()
@@ -130,7 +130,7 @@ ucs = [{"uc_id": r["uc_id"], "category": r.get("category", ""), "short_title": r
 nhis = [{"nhi_id": r["nhi_id"], "bucket": r.get("bucket", ""), "short_name": r.get("short_name", ""),
          "description": r.get("description", "")} for r in read_csv("identity-catalog.csv")]
 
-anz = [{"uc_id": r["uc_id"], "anz_state": r.get("anz_state", ""), "confidence": r.get("confidence", ""),
+anz = [{"uc_id": r["uc_id"], "current_state": r.get("current_state", ""), "confidence": r.get("confidence", ""),
         "evidence": r.get("evidence_redacted", ""), "recommendation": r.get("gap_notes", ""),
         "sensitivity": r.get("sensitivity_tag", "")} for r in read_csv(_ARGS.current_state)]
 
@@ -167,7 +167,7 @@ ENGAGEMENT = _ec.resolve(
     presets_dir=_pl.Path(_CFGDIR) / "presets",
 )
 fw_order = _ov.scope_frameworks(fw_order, ENGAGEMENT)
-state_by_uc = {a["uc_id"]: a["anz_state"] for a in anz}
+state_by_uc = {a["uc_id"]: a["current_state"] for a in anz}
 framework_controls = defaultdict(list)
 for r in reg_rows:
     framework_controls[r["framework_slug"]].append({
@@ -181,7 +181,7 @@ STATE_RANK = {"GAP": 0, "PARTIAL": 1, "PENDING": 2, "MET": 3, "UNKNOWN": 9}
 for fw, controls in framework_controls.items():
     for c in controls:
         states = [state_by_uc.get(u, "UNKNOWN") for u in c["uc_ids"]]
-        c["anz_state"] = min(states, key=lambda s: STATE_RANK.get(s, 9)) if states else "UNKNOWN"
+        c["current_state"] = min(states, key=lambda s: STATE_RANK.get(s, 9)) if states else "UNKNOWN"
 # Vendor evidence per UC (ranked rows only — Fortanix excluded per ADR-007)
 ORDER = {"NATIVE": 0, "ADD-ON": 1, "PARTNER": 2, "GAP": 3, "N/A": 4}
 vendor_uc = defaultdict(list)
@@ -600,7 +600,7 @@ const VENDOR_SLUGS=[...new Set(DATA.map(r=>r.vendor_slug))];
 function loadOv(){ try{ return JSON.parse(localStorage.getItem("anz_overrides")||"{}"); }catch(e){ return {}; } }
 function saveOv(){ try{ localStorage.setItem("anz_overrides",JSON.stringify(OV)); }catch(e){} }
 let OV=loadOv();
-function effState(a){ return OV[a.uc_id] ? "MET" : a.anz_state; }
+function effState(a){ return OV[a.uc_id] ? "MET" : a.current_state; }
 function toggleMet(uc){ if(OV[uc]) delete OV[uc]; else OV[uc]=true; saveOv(); renderDashboard();
   const s=document.getElementById("uc-select"); if(s && s.value) renderUCCard(s.value); }
 function resetOv(){ OV={}; saveOv(); renderDashboard(); }
@@ -657,7 +657,7 @@ function renderDashboard(){
     .map(([l,n])=>'<div class="kpi"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>').join("");
   const order=["MET","PARTIAL","GAP","PENDING"];
   const base={MET:0,PARTIAL:0,GAP:0,PENDING:0}, adj={MET:0,PARTIAL:0,GAP:0,PENDING:0};
-  XYZ.forEach(a=>{ if(base[a.anz_state]!=null) base[a.anz_state]++; const e=effState(a); if(adj[e]!=null) adj[e]++; });
+  XYZ.forEach(a=>{ if(base[a.current_state]!=null) base[a.current_state]++; const e=effState(a); if(adj[e]!=null) adj[e]++; });
   const total=XYZ.length||1;
   document.getElementById("posture-bar").innerHTML = order.filter(s=>base[s]>0).map(s=>{
     const pct=(100*base[s]/total).toFixed(1);
@@ -672,13 +672,13 @@ function renderDashboard(){
   else { adjEl.style.display="none"; }
 
   const ucTitle=id=>{ const u=byId(UCS,"uc_id",id); return u?u.short_title:id; };
-  document.getElementById("gaplist").innerHTML = XYZ.filter(a=>a.anz_state==="GAP").map(a=>
+  document.getElementById("gaplist").innerHTML = XYZ.filter(a=>a.current_state==="GAP").map(a=>
     '<li onclick="goToUC(\''+a.uc_id+'\')"><span class="id">'+esc(a.uc_id)+'</span><span>'+esc(ucTitle(a.uc_id))+'</span>'+
     '<span class="pill pill-GAP" style="margin-left:auto">'+esc(a.confidence)+'</span></li>').join("")||'<li class="muted">none</li>';
-  document.getElementById("pendinglist").innerHTML = XYZ.filter(a=>a.anz_state==="PENDING").map(a=>
+  document.getElementById("pendinglist").innerHTML = XYZ.filter(a=>a.current_state==="PENDING").map(a=>
     '<li onclick="goToUC(\''+a.uc_id+'\')"><span class="id">'+esc(a.uc_id)+'</span><span>'+esc(ucTitle(a.uc_id))+'</span>'+
     '<span class="pill pill-PENDING" style="margin-left:auto">'+esc(a.confidence)+'</span></li>').join("")||'<li class="muted">none</li>';
-  document.getElementById("partiallist").innerHTML = XYZ.filter(a=>a.anz_state==="PARTIAL").map(a=>{
+  document.getElementById("partiallist").innerHTML = XYZ.filter(a=>a.current_state==="PARTIAL").map(a=>{
     const checked=OV[a.uc_id]?"checked":"";
     return '<li><input type="checkbox" '+checked+' onclick="event.stopPropagation();toggleMet(\''+a.uc_id+'\')" title="XYZ considers this MET">'+
       '<span class="id" onclick="goToUC(\''+a.uc_id+'\')">'+esc(a.uc_id)+'</span>'+
@@ -697,7 +697,7 @@ function renderUCCard(id){
   if(a){
     const eff=effState(a), overridden=!!OV[a.uc_id];
     anzHtml='<div><span class="pill pill-'+eff+'">'+esc(eff)+'</span> '+
-      (overridden?'<span class="muted">(stakeholder-assessed; baseline '+esc(a.anz_state)+')</span>':'<span class="muted">confidence '+esc(a.confidence)+'</span>')+' '+
+      (overridden?'<span class="muted">(stakeholder-assessed; baseline '+esc(a.current_state)+')</span>':'<span class="muted">confidence '+esc(a.confidence)+'</span>')+' '+
       (a.sensitivity?'<span class="tag-internal">'+esc(a.sensitivity.replace(/[\[\]]/g,""))+'</span>':'')+'</div>'+
       (a.evidence?'<p>'+esc(a.evidence)+'</p>':'')+
       (a.recommendation?'<div class="rec"><b>Recommended:</b> '+esc(a.recommendation)+'</div>':'')+
@@ -783,10 +783,10 @@ HEADERS.forEach(h=>h.addEventListener("click",()=>{ const k=h.dataset.key; if(so
     cFw.querySelectorAll(".item").forEach(x=>x.classList.toggle("active",x.dataset.fw===fw));
     const list=REGDATA.controls[fw]||[];
     cCtrl.innerHTML=list.map(c=>'<div class="item" data-code="'+esc(c.code)+'">'+
-      '<span class="state-dot '+(c.anz_state||"UNKNOWN")+'"></span><span class="ctrlcode">'+esc(c.code)+'</span>'+
+      '<span class="state-dot '+(c.current_state||"UNKNOWN")+'"></span><span class="ctrlcode">'+esc(c.code)+'</span>'+
       (c.maturity_level?'<span class="ml">'+esc(c.maturity_level)+'</span>':"")+
       '<div style="font-size:11px;margin-top:2px">'+esc(c.title)+'</div>'+
-      '<div class="subtle" style="margin-top:3px">'+c.uc_ids.length+' UCs · '+(c.anz_state||"UNKNOWN")+'</div></div>').join("")
+      '<div class="subtle" style="margin-top:3px">'+c.uc_ids.length+' UCs · '+(c.current_state||"UNKNOWN")+'</div></div>').join("")
       || '<div class="placeholder">No controls.</div>';
     cUc.innerHTML='<div class="placeholder">← Pick a control</div>'; cV.innerHTML="";
   }
@@ -871,9 +871,9 @@ function renderRecommendations(){
 
 // ---- business value ----
 function renderValue(){
-  const gaps=XYZ.filter(a=>a.anz_state==="GAP").length;
-  const part=XYZ.filter(a=>a.anz_state==="PARTIAL").length;
-  const pend=XYZ.filter(a=>a.anz_state==="PENDING").length;
+  const gaps=XYZ.filter(a=>a.current_state==="GAP").length;
+  const part=XYZ.filter(a=>a.current_state==="PARTIAL").length;
+  const pend=XYZ.filter(a=>a.current_state==="PENDING").length;
   const targets=gaps+part+pend;
   const nf=UCS.filter(u=>/NON[_-]?FUNCTIONAL/i.test(u.category||"")).length;
 

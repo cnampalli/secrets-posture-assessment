@@ -22,7 +22,7 @@ def test_record_to_rows_maps_and_sorts():
     rows = ra.record_to_rows(SAMPLE)
     assert [r["uc_id"] for r in rows] == ["UC-F-001", "UC-F-003"]   # sorted
     r3 = {r["uc_id"]: r for r in rows}["UC-F-003"]
-    assert r3["anz_state"] == "PARTIAL"
+    assert r3["current_state"] == "PARTIAL"
     assert r3["confidence"] == "HIGH"
     assert r3["gap_notes"] == "82% migrated"
     assert "A2-Q1" in r3["evidence_q_ids"] and "A2-Q2" in r3["evidence_q_ids"]
@@ -33,14 +33,14 @@ def test_state_fallback_to_pending():
     rec = {"schema": "posture-assessment-record/v1", "responses": {
         "UC-X": {"archetype": "A0", "answers": {}, "proposed_state": None, "final_state": None,
                  "overridden": False, "rationale": "", "confidence": "MED"}}}
-    assert ra.record_to_rows(rec)[0]["anz_state"] == "PENDING"
+    assert ra.record_to_rows(rec)[0]["current_state"] == "PENDING"
 
 
 def test_proposed_used_when_no_final():
     rec = {"schema": "posture-assessment-record/v1", "responses": {
         "UC-Y": {"archetype": "A1", "answers": {"A1-Q1": "yes"}, "proposed_state": "MET",
                  "final_state": None, "overridden": False, "rationale": "", "confidence": "LOW"}}}
-    assert ra.record_to_rows(rec)[0]["anz_state"] == "MET"
+    assert ra.record_to_rows(rec)[0]["current_state"] == "MET"
 
 
 def test_wrong_schema_raises():
