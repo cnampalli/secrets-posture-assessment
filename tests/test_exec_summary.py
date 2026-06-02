@@ -6,9 +6,9 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 def xyz_record():
-    rows = list(csv.DictReader(open(ROOT / "matrix" / "anz-current-state.csv", encoding="utf-8")))
+    rows = list(csv.DictReader(open(ROOT / "matrix" / "current-state.csv", encoding="utf-8")))
     return {"schema": "posture-assessment-record/v1", "responses": {
-        r["uc_id"]: {"proposed_state": r["anz_state"], "final_state": r["anz_state"],
+        r["uc_id"]: {"proposed_state": r["current_state"], "final_state": r["current_state"],
                      "rationale": r.get("gap_notes", "")} for r in rows}}
 
 

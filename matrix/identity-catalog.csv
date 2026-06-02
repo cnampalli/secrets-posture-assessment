@@ -1,4 +1,4 @@
-nhi_id,bucket,short_name,description,typical_secrets,lifecycle,governance_maturity,sources_at_anz_likely,citation_keys
+nhi_id,bucket,short_name,description,typical_secrets,lifecycle,governance_maturity,sources_likely,citation_keys
 NHI-001,COMMON,Cloud IAM principal,"Workload-bound principal in AWS IAM, Azure managed identity, or GCP service account used by compute resources to call cloud APIs","STS tokens; managed-identity tokens; metadata-server tokens; SA JSON keys (legacy)",SHORT-LIVED,MEDIUM,Y,aws-iam-roles-2024;azure-managed-identity-2024;gcp-sa-2024
 NHI-002,COMMON,Kubernetes ServiceAccount,"Pod-bound identity issued by the K8s API server, projected as a short-lived JWT via TokenRequest API","Projected SA tokens (audience-bound JWTs); legacy long-lived SA tokens",SHORT-LIVED,MEDIUM,Y,k8s-sa-tokens-2024;k8s-tokenrequest-2024
 NHI-003,COMMON,CI/CD pipeline identity,"GitHub Actions, GitLab CI, Azure DevOps, Jenkins, CircleCI job identity; increasingly OIDC-federated to cloud IAM","OIDC ID tokens; repo/org secrets; deploy keys; PATs",EPHEMERAL,LOW,Y,github-oidc-2024;gitlab-oidc-2024

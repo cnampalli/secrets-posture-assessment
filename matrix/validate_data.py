@@ -16,13 +16,13 @@ import sys
 CORE_REQUIRED = {
     "use-cases.csv": ("uc_id", "category", "short_title", "story", "acceptance_criteria",
                       "nhis_in_scope", "outcome_lens", "backmap_codes", "priority_fi", "citation_keys"),
-    "anz-current-state.csv": ("uc_id", "anz_state", "confidence", "evidence_q_ids",
+    "current-state.csv": ("uc_id", "current_state", "confidence", "evidence_q_ids",
                               "evidence_redacted", "gap_notes", "sensitivity_tag", "citation_keys"),
     "regulatory-trace.csv": ("framework_slug", "framework_role", "control_code", "control_short_title",
                              "uc_ids", "nhi_ids", "maturity_level", "evidence_url", "evidence_quote",
                              "citation_keys"),
     "identity-catalog.csv": ("nhi_id", "bucket", "short_name", "description", "typical_secrets",
-                             "lifecycle", "governance_maturity", "sources_at_anz_likely", "citation_keys"),
+                             "lifecycle", "governance_maturity", "sources_likely", "citation_keys"),
 }
 VENDOR_REQUIRED = ("vendor_slug", "vendor_name", "target_id", "target_type", "coverage",
                    "maturity", "evidence_url", "evidence_quote", "citation_keys", "notes")
@@ -95,9 +95,9 @@ def validate_referential(use_cases, current_state, reg_trace, identity, vendor_f
     nhi_ids = {r.get("nhi_id", "") for r in identity}
     cs_ids = {r.get("uc_id", "") for r in current_state}
     for i in sorted(cs_ids - uc_ids):
-        errs.append(f"anz-current-state.csv: uc_id '{i}' not in use-cases")
+        errs.append(f"current-state.csv: uc_id '{i}' not in use-cases")
     for i in sorted(uc_ids - cs_ids):
-        errs.append(f"anz-current-state.csv: missing uc_id '{i}' present in use-cases")
+        errs.append(f"current-state.csv: missing uc_id '{i}' present in use-cases")
     for r in reg_trace:
         cc = r.get("control_code", "?")
         for u in _ids(r.get("uc_ids")):
@@ -125,16 +125,16 @@ def validate_all(root="."):
     """Run all checks against the matrix data under <root>/matrix; return all violations."""
     m = os.path.join(root, "matrix")
     use_cases = load_csv(os.path.join(m, "use-cases.csv"))
-    current = load_csv(os.path.join(m, "anz-current-state.csv"))
+    current = load_csv(os.path.join(m, "current-state.csv"))
     trace = load_csv(os.path.join(m, "regulatory-trace.csv"))
     identity = load_csv(os.path.join(m, "identity-catalog.csv"))
 
     errs = []
     errs += check_required_columns("use-cases.csv", use_cases, CORE_REQUIRED["use-cases.csv"])
     errs += check_unique("use-cases.csv", use_cases, "uc_id")
-    errs += check_required_columns("anz-current-state.csv", current, CORE_REQUIRED["anz-current-state.csv"])
-    errs += check_unique("anz-current-state.csv", current, "uc_id")
-    errs += check_enum("anz-current-state.csv", current, "anz_state", VALID_STATES)
+    errs += check_required_columns("current-state.csv", current, CORE_REQUIRED["current-state.csv"])
+    errs += check_unique("current-state.csv", current, "uc_id")
+    errs += check_enum("current-state.csv", current, "current_state", VALID_STATES)
     errs += check_required_columns("regulatory-trace.csv", trace, CORE_REQUIRED["regulatory-trace.csv"])
     errs += check_enum("regulatory-trace.csv", trace, "framework_role", VALID_ROLES)
     errs += check_required_columns("identity-catalog.csv", identity, CORE_REQUIRED["identity-catalog.csv"])

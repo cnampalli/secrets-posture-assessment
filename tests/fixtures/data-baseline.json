@@ -363,8 +363,8 @@
     "controls": {
       "apra-cpg-234": [
         {
-          "anz_state": "GAP",
           "code": "CPG234-Att-C",
+          "current_state": "GAP",
           "evidence_quote": "Robust identification and authentication ... access control over information assets.",
           "evidence_url": "https://www.apra.gov.au/prudential-practice-guide-cpg-234-information-security",
           "maturity_level": "Paragraph-Att-C",
@@ -377,8 +377,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPG234-Att-E",
+          "current_state": "PARTIAL",
           "evidence_quote": "Cryptographic techniques and key management covering generation, storage, distribution, change and destruction.",
           "evidence_url": "https://www.apra.gov.au/prudential-practice-guide-cpg-234-information-security",
           "maturity_level": "Paragraph-Att-E",
@@ -391,8 +391,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPG234-Att-D",
+          "current_state": "GAP",
           "evidence_quote": "Software security practices across the software development life cycle, including secure design, development and testing.",
           "evidence_url": "https://www.apra.gov.au/prudential-practice-guide-cpg-234-information-security",
           "maturity_level": "Paragraph-Att-D",
@@ -408,8 +408,8 @@
       ],
       "apra-cps-230": [
         {
-          "anz_state": "PARTIAL",
           "code": "CPS230-§15",
+          "current_state": "PARTIAL",
           "evidence_quote": "Must not rely on a service provider unless it can ensure that ... it can continue to meet its prudential obligations in full.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/2023-07/Prudential%20Standard%20CPS%20230%20Operational%20Risk%20Management.pdf",
           "maturity_level": "Paragraph-15",
@@ -421,8 +421,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS230-§25",
+          "current_state": "GAP",
           "evidence_quote": "Monitor the age and health of its information assets and meet the requirements for information security in Prudential Standard CPS 234.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/2023-07/Prudential%20Standard%20CPS%20230%20Operational%20Risk%20Management.pdf",
           "maturity_level": "Paragraph-25",
@@ -435,8 +435,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS230-§42",
+          "current_state": "PARTIAL",
           "evidence_quote": "Notify APRA ... not later than 24 hours after, if it has suffered a disruption to a critical operation outside tolerance.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/2023-07/Prudential%20Standard%20CPS%20230%20Operational%20Risk%20Management.pdf",
           "maturity_level": "Paragraph-42",
@@ -448,8 +448,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS230-§47",
+          "current_state": "PARTIAL",
           "evidence_quote": "Must maintain a comprehensive service provider management policy.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/2023-07/Prudential%20Standard%20CPS%20230%20Operational%20Risk%20Management.pdf",
           "maturity_level": "Paragraph-47",
@@ -462,8 +462,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS230-§54",
+          "current_state": "PARTIAL",
           "evidence_quote": "For all material arrangements ... must maintain a formal legally binding agreement.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/2023-07/Prudential%20Standard%20CPS%20230%20Operational%20Risk%20Management.pdf",
           "maturity_level": "Paragraph-54",
@@ -475,8 +475,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS230-§59(b)",
+          "current_state": "PARTIAL",
           "evidence_quote": "Prior to entering into any material offshoring arrangement ... where data or personnel ... will be located offshore.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/2023-07/Prudential%20Standard%20CPS%20230%20Operational%20Risk%20Management.pdf",
           "maturity_level": "Paragraph-59b",
@@ -490,8 +490,8 @@
       ],
       "apra-cps-234": [
         {
-          "anz_state": "GAP",
           "code": "CPS234-§13",
+          "current_state": "GAP",
           "evidence_quote": "The Board ... is ultimately responsible for the information security of the entity.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-13",
@@ -504,8 +504,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§14",
+          "current_state": "GAP",
           "evidence_quote": "Must clearly define the information security-related roles and responsibilities of the Board, senior management, governing bodies and individuals.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-14",
@@ -519,8 +519,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§15",
+          "current_state": "GAP",
           "evidence_quote": "Maintain an information security capability commensurate with the size and extent of threats to its information assets.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-15",
@@ -537,8 +537,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§16",
+          "current_state": "PARTIAL",
           "evidence_quote": "The APRA-regulated entity must assess the information security capability of that party.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-16",
@@ -551,8 +551,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§17",
+          "current_state": "GAP",
           "evidence_quote": "Actively maintain its information security capability with respect to changes in vulnerabilities and threats.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-17",
@@ -567,8 +567,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§18",
+          "current_state": "GAP",
           "evidence_quote": "Must maintain an information security policy framework commensurate with its exposures to vulnerabilities and threats.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-18",
@@ -581,8 +581,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§19",
+          "current_state": "GAP",
           "evidence_quote": "Must provide direction on the responsibilities of all parties who have an obligation to maintain information security.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-19",
@@ -593,8 +593,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§20",
+          "current_state": "GAP",
           "evidence_quote": "Classify its information assets ... by criticality and sensitivity.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-20",
@@ -607,8 +607,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§21",
+          "current_state": "GAP",
           "evidence_quote": "Information security controls to protect its information assets ... implemented in a timely manner.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-21",
@@ -633,8 +633,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§21(a)",
+          "current_state": "GAP",
           "evidence_quote": "Commensurate with: (a) vulnerabilities and threats to the information assets.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-21a",
@@ -648,8 +648,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§21(b)",
+          "current_state": "PARTIAL",
           "evidence_quote": "Commensurate with: (b) the criticality and sensitivity of the information assets.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-21b",
@@ -663,8 +663,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§21(c)",
+          "current_state": "GAP",
           "evidence_quote": "Commensurate with: (c) the stage at which the information assets are within their life-cycle.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-21c",
@@ -679,8 +679,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§21(d)",
+          "current_state": "PARTIAL",
           "evidence_quote": "Commensurate with: (d) the potential consequences of an information security incident.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-21d",
@@ -694,8 +694,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§22",
+          "current_state": "PARTIAL",
           "evidence_quote": "Evaluate the design of that party's information security controls that protects the information assets of the APRA-regulated entity.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-22",
@@ -709,8 +709,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§23",
+          "current_state": "GAP",
           "evidence_quote": "Robust mechanisms in place to detect and respond to information security incidents in a timely manner.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-23",
@@ -726,8 +726,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§24",
+          "current_state": "PARTIAL",
           "evidence_quote": "Must maintain plans to respond to information security incidents that the entity considers could plausibly occur.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-24",
@@ -739,8 +739,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§26",
+          "current_state": "PARTIAL",
           "evidence_quote": "Annually review and test its information security response plans to ensure they remain effective and fit-for-purpose.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-26",
@@ -752,8 +752,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§27",
+          "current_state": "GAP",
           "evidence_quote": "Test the effectiveness of its information security controls through a systematic testing program.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-27",
@@ -768,8 +768,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§27(d)",
+          "current_state": "GAP",
           "evidence_quote": "Risks associated with exposure to environments where the APRA-regulated entity is unable to enforce its information security policies.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-27d",
@@ -783,8 +783,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§28",
+          "current_state": "PARTIAL",
           "evidence_quote": "Assess whether the nature and frequency of testing of controls ... is commensurate with paragraphs 27(a) to 27(e).",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-28",
@@ -796,8 +796,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§30",
+          "current_state": "PARTIAL",
           "evidence_quote": "Testing is conducted by appropriately skilled and functionally independent specialists.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-30",
@@ -809,8 +809,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§32",
+          "current_state": "PARTIAL",
           "evidence_quote": "Internal audit activities must include a review of the design and operating effectiveness of information security controls.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-32",
@@ -823,8 +823,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§34",
+          "current_state": "PARTIAL",
           "evidence_quote": "Internal audit function must assess the information security control assurance provided by a related party or third party.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-34",
@@ -836,8 +836,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "CPS234-§35",
+          "current_state": "GAP",
           "evidence_quote": "Notify APRA ... no later than 72 hours, after becoming aware of an information security incident that ... materially affected ... the entity.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-35",
@@ -850,8 +850,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "CPS234-§36",
+          "current_state": "PARTIAL",
           "evidence_quote": "Notify APRA ... no later than 10 business days, after it becomes aware of a material information security control weakness.",
           "evidence_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
           "maturity_level": "Paragraph-36",
@@ -865,8 +865,8 @@
       ],
       "asd-ism": [
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-0471",
+          "current_state": "PARTIAL",
           "evidence_quote": "Only AACAs or high assurance cryptographic algorithms are used by cryptographic equipment and software",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -879,8 +879,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-0507",
+          "current_state": "PARTIAL",
           "evidence_quote": "Cryptographic key management processes, and supporting cryptographic key management procedures, are developed, implemented and maintained",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -896,8 +896,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1324",
+          "current_state": "PARTIAL",
           "evidence_quote": "Certificates are generated using an evaluated certificate authority or hardware security module",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -911,8 +911,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-0481",
+          "current_state": "GAP",
           "evidence_quote": "Only AACPs or high assurance cryptographic protocols are used by cryptographic equipment and software",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -925,8 +925,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-0457",
+          "current_state": "PARTIAL",
           "evidence_quote": "Cryptographic equipment or software that has completed a Common Criteria evaluation against a Protection Profile is used when encrypting media that contains OFFICIAL:…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -943,8 +943,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-0469",
+          "current_state": "GAP",
           "evidence_quote": "An ASD-Approved Cryptographic Protocol (AACP) or high assurance cryptographic protocol is used to protect data when communicated over network infrastructure",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -959,8 +959,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1139",
+          "current_state": "GAP",
           "evidence_quote": "Only the latest version of TLS is used for TLS connections",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -974,8 +974,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1323",
+          "current_state": "GAP",
           "evidence_quote": "Certificates are required for devices and users accessing wireless networks",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -989,8 +989,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1917",
+          "current_state": "PARTIAL",
           "evidence_quote": "The development and procurement of new cryptographic equipment and software ensures support for the use of ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by no later…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -1001,8 +1001,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1173",
+          "current_state": "GAP",
           "evidence_quote": "Multi-factor authentication is used to authenticate all privileged users and any other positions of trust",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1016,8 +1016,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1619",
+          "current_state": "GAP",
           "evidence_quote": "Service accounts are created as group Managed Service Accounts",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1043,8 +1043,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1504",
+          "current_state": "GAP",
           "evidence_quote": "Multi-factor authentication is used to authenticate users to their organisation's online services that process, store or communicate their organisation's sensitive data",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1057,8 +1057,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1401",
+          "current_state": "PARTIAL",
           "evidence_quote": "Multi-factor authentication uses at least two of the following authentication factors: passwords, Universal 2nd Factor security keys, physical one-time password tokens,…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1070,8 +1070,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1795",
+          "current_state": "PARTIAL",
           "evidence_quote": "Credentials for built-in Administrator accounts, break glass accounts, local administrator accounts and service accounts are a minimum of 30 characters",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1085,8 +1085,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1611",
+          "current_state": "PARTIAL",
           "evidence_quote": "Break glass accounts are only used when normal authentication processes cannot be used",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1099,8 +1099,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1613",
+          "current_state": "GAP",
           "evidence_quote": "Use of break glass accounts is centrally logged",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1114,8 +1114,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1690",
+          "current_state": "GAP",
           "evidence_quote": "Patches, updates or other vendor mitigations for vulnerabilities in online services are applied within two weeks of release when vulnerabilities are assessed as non-critical…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1126,8 +1126,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1656",
+          "current_state": "GAP",
           "evidence_quote": "Application control is implemented on non-internet-facing servers.",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1139,8 +1139,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1247",
+          "current_state": "GAP",
           "evidence_quote": "Unneeded user accounts, components, services and functionality of server applications are disabled or removed",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1152,8 +1152,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-0401",
+          "current_state": "GAP",
           "evidence_quote": "Secure by Design and Secure by Default principles and practices, including secure programming practices and either memory-safe programming languages or less preferably…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-software-development",
           "maturity_level": "N/A",
@@ -1166,8 +1166,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1796",
+          "current_state": "GAP",
           "evidence_quote": "Files containing executable content are digitally signed by a certificate with a verifiable chain of trust as part of software development",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-software-development",
           "maturity_level": "N/A",
@@ -1182,8 +1182,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1730",
+          "current_state": "PARTIAL",
           "evidence_quote": "A software bill of materials is produced and made available to consumers of software",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-software-development",
           "maturity_level": "N/A",
@@ -1194,8 +1194,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1256",
+          "current_state": "PARTIAL",
           "evidence_quote": "File-based access controls are applied to database files.",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-database-systems",
           "maturity_level": "N/A",
@@ -1206,8 +1206,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1275",
+          "current_state": "PARTIAL",
           "evidence_quote": "All queries to databases from software are filtered for legitimate content and correct syntax",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-database-systems",
           "maturity_level": "N/A",
@@ -1219,8 +1219,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1181",
+          "current_state": "GAP",
           "evidence_quote": "Networks are segregated into multiple network zones according to the criticality of servers, services and data",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-networking",
           "maturity_level": "N/A",
@@ -1234,8 +1234,8 @@
           ]
         },
         {
-          "anz_state": "PENDING",
           "code": "ISM-1211",
+          "current_state": "PENDING",
           "evidence_quote": "System administrators perform system administration activities in accordance with the system's change and configuration management plan",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-networking",
           "maturity_level": "N/A",
@@ -1246,8 +1246,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1437",
+          "current_state": "PARTIAL",
           "evidence_quote": "Cloud service providers are used for hosting online services",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cloud-computing",
           "maturity_level": "N/A",
@@ -1260,8 +1260,8 @@
           ]
         },
         {
-          "anz_state": "PENDING",
           "code": "ISM-1192",
+          "current_state": "PENDING",
           "evidence_quote": "Gateways inspect and filter data flows at the transport and above network layers",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-gateways",
           "maturity_level": "N/A",
@@ -1273,8 +1273,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-0421",
+          "current_state": "PARTIAL",
           "evidence_quote": "Passphrases used for single-factor authentication on non-classified, OFFICIAL: Sensitive and PROTECTED systems are at least 4 random words with a total minimum length of 15…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-communications-infrastructure",
           "maturity_level": "N/A",
@@ -1285,8 +1285,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1304",
+          "current_state": "PARTIAL",
           "evidence_quote": "Default user accounts or credentials for network devices, including for any pre-configured user accounts, are changed, disabled or removed",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-communications-infrastructure",
           "maturity_level": "N/A",
@@ -1297,8 +1297,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-1405",
+          "current_state": "GAP",
           "evidence_quote": "A centralised event logging facility is implemented",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-incidents",
           "maturity_level": "N/A",
@@ -1313,8 +1313,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-0043",
+          "current_state": "PARTIAL",
           "evidence_quote": "Systems have a cybersecurity incident response plan that covers the following:",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-incidents",
           "maturity_level": "N/A",
@@ -1326,8 +1326,8 @@
           ]
         },
         {
-          "anz_state": "PENDING",
           "code": "ISM-0140",
+          "current_state": "PENDING",
           "evidence_quote": "Cybersecurity incidents are reported to ASD as soon as possible after they occur or are discovered",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-incidents",
           "maturity_level": "N/A",
@@ -1338,8 +1338,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1404",
+          "current_state": "PARTIAL",
           "evidence_quote": "Unprivileged access to systems and applications is disabled after 45 days of inactivity",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-incidents",
           "maturity_level": "N/A",
@@ -1350,8 +1350,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-0252",
+          "current_state": "GAP",
           "evidence_quote": "Cybersecurity awareness training is undertaken annually by all personnel and covers:",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-personnel-security",
           "maturity_level": "N/A",
@@ -1362,8 +1362,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-0027",
+          "current_state": "PARTIAL",
           "evidence_quote": "System owners obtain authorisation to operate each non-classified, OFFICIAL: Sensitive, PROTECTED and SECRET system from its authorising officer based on the acceptance of…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-governance",
           "maturity_level": "N/A",
@@ -1373,8 +1373,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1570",
+          "current_state": "PARTIAL",
           "evidence_quote": "Outsourced cloud service providers and their non-classified, OFFICIAL: Sensitive, PROTECTED and SECRET cloud services undergo an IRAP assessment, using the latest release of…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-governance",
           "maturity_level": "N/A",
@@ -1385,8 +1385,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-0039",
+          "current_state": "GAP",
           "evidence_quote": "A cybersecurity strategy is developed, implemented and maintained",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-governance",
           "maturity_level": "N/A",
@@ -1399,8 +1399,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ISM-0363",
+          "current_state": "GAP",
           "evidence_quote": "Media destruction processes, and supporting media destruction procedures, are developed, implemented and maintained",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cryptography",
           "maturity_level": "N/A",
@@ -1411,8 +1411,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1452",
+          "current_state": "PARTIAL",
           "evidence_quote": "A supply chain risk assessment is performed for suppliers of applications, IT equipment, OT equipment and services in order to assess the impact to a system's security risk…",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-governance",
           "maturity_level": "N/A",
@@ -1424,8 +1424,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ISM-1707",
+          "current_state": "PARTIAL",
           "evidence_quote": "Privileged user accounts (excluding backup administrator accounts) are prevented from modifying and deleting backups",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-system-hardening",
           "maturity_level": "N/A",
@@ -1438,8 +1438,8 @@
       ],
       "cisa-ztmm-v2": [
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Identity",
+          "current_state": "GAP",
           "evidence_quote": "All resource authentication and authorization are dynamic and strictly enforced before access is allowed.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Identity",
@@ -1460,8 +1460,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Identity-Federation",
+          "current_state": "GAP",
           "evidence_quote": "Many enterprises will deploy ZTA components that require federation between identity providers.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Identity",
@@ -1474,8 +1474,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Workload-mTLS",
+          "current_state": "GAP",
           "evidence_quote": "Service mesh and similar overlays can enforce per-request authorization and mutual authentication between microservices.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-204D/final",
           "maturity_level": "Pillar-Workload",
@@ -1489,8 +1489,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ZT-Pillar-Workload-CICD",
+          "current_state": "PARTIAL",
           "evidence_quote": "Pipelines should treat all secrets and signing keys as short-lived and brokered through a centrally managed service.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-204D/final",
           "maturity_level": "Pillar-Workload",
@@ -1503,8 +1503,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Workload-Runtime",
+          "current_state": "GAP",
           "evidence_quote": "The enterprise monitors and measures the integrity and security posture of all owned and associated assets.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Workload",
@@ -1517,8 +1517,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ZT-Pillar-Device",
+          "current_state": "PARTIAL",
           "evidence_quote": "No resource is inherently trusted; the enterprise evaluates the security posture of the asset.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Device",
@@ -1530,8 +1530,8 @@
           ]
         },
         {
-          "anz_state": "PENDING",
           "code": "ZT-Pillar-Network",
+          "current_state": "PENDING",
           "evidence_quote": "All communication is secured regardless of network location.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Network",
@@ -1544,8 +1544,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Data",
+          "current_state": "GAP",
           "evidence_quote": "All data sources and computing services are considered resources.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Data",
@@ -1562,8 +1562,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Visibility-Analytics",
+          "current_state": "GAP",
           "evidence_quote": "The enterprise collects information about asset security posture, network traffic and access requests to improve its security posture.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Visibility-Analytics",
@@ -1578,8 +1578,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Visibility-NHIDR",
+          "current_state": "GAP",
           "evidence_quote": "Continuous, dynamic monitoring of assets detects compromise and informs policy.",
           "evidence_url": "https://csrc.nist.gov/pubs/sp/1800/35/final",
           "maturity_level": "Pillar-Visibility-Analytics",
@@ -1591,8 +1591,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Automation-Orchestration",
+          "current_state": "GAP",
           "evidence_quote": "Automation and orchestration allow the enterprise to maintain a consistent security posture as the environment changes.",
           "evidence_url": "https://csrc.nist.gov/pubs/sp/1800/35/final",
           "maturity_level": "Pillar-Automation-Orchestration",
@@ -1607,8 +1607,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "ZT-Pillar-Governance",
+          "current_state": "GAP",
           "evidence_quote": "The policy engine ultimately decides; access decisions are logged for analysis.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
           "maturity_level": "Pillar-Governance",
@@ -1625,8 +1625,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "ZT-Pillar-Governance-PQC",
+          "current_state": "PARTIAL",
           "evidence_quote": "Organizations should plan a transition to post-quantum cryptography that maintains crypto-agility.",
           "evidence_url": "https://csrc.nist.gov/publications/detail/sp/1800-38/draft",
           "maturity_level": "Pillar-Governance",
@@ -1639,8 +1639,8 @@
       ],
       "essential-8": [
         {
-          "anz_state": "GAP",
           "code": "E8-RAP-ML1",
+          "current_state": "GAP",
           "evidence_quote": "Requests for privileged access to systems and applications are validated when first requested.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML1",
@@ -1656,8 +1656,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-RAP-ML2",
+          "current_state": "GAP",
           "evidence_quote": "Privileged accounts (excluding privileged service accounts) are prevented from accessing the internet, email and web services.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML2",
@@ -1678,8 +1678,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-RAP-ML3",
+          "current_state": "GAP",
           "evidence_quote": "Secure Admin Workstations are used in the performance of administrative activities.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML3",
@@ -1698,8 +1698,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-RAP-SVC",
+          "current_state": "GAP",
           "evidence_quote": "Credentials for local administrator accounts and service accounts are long, unique, unpredictable and managed.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML2",
@@ -1717,8 +1717,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-RAP-BREAKGLASS",
+          "current_state": "PARTIAL",
           "evidence_quote": "Credentials for break glass accounts are long, unique, unpredictable and managed.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML3",
@@ -1731,8 +1731,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-RAP-LOG",
+          "current_state": "GAP",
           "evidence_quote": "Privileged access events are centrally logged and protected from unauthorised modification and deletion.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML2",
@@ -1746,8 +1746,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-MFA-ML1",
+          "current_state": "PARTIAL",
           "evidence_quote": "Multi-factor authentication is used by users when accessing internet-facing services that process, store or communicate sensitive data.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML1",
@@ -1760,8 +1760,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-MFA-ML2",
+          "current_state": "GAP",
           "evidence_quote": "Multi-factor authentication is used to authenticate privileged users of systems.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML2",
@@ -1778,8 +1778,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-MFA-ML3",
+          "current_state": "GAP",
           "evidence_quote": "Multi-factor authentication used for authenticating users of systems is phishing-resistant.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML3",
@@ -1795,8 +1795,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-MFA-WORKLOAD",
+          "current_state": "GAP",
           "evidence_quote": "Multi-factor authentication uses either: something users have and something users know, or something users have that is unlocked by something users know or are.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML2",
@@ -1813,8 +1813,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-AC-ML1",
+          "current_state": "GAP",
           "evidence_quote": "Application control is implemented on workstations and internet-facing servers and restricts the execution of executables, software libraries, scripts and installers.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML1",
@@ -1828,8 +1828,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-AC-ML2",
+          "current_state": "GAP",
           "evidence_quote": "Microsoft's recommended application blocklist is implemented; application control rulesets are validated on an annual or more frequent basis.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML2",
@@ -1842,8 +1842,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-AC-ML3",
+          "current_state": "GAP",
           "evidence_quote": "Microsoft's vulnerable driver blocklist is implemented; application control events are centrally logged and protected from unauthorised modification.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML3",
@@ -1855,8 +1855,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-PA-ML1",
+          "current_state": "GAP",
           "evidence_quote": "Patches for vulnerabilities in office productivity suites, web browsers, email clients, PDF software and security products are applied within two weeks of release.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML1",
@@ -1868,8 +1868,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-PA-ML2",
+          "current_state": "GAP",
           "evidence_quote": "Patches for critical vulnerabilities are applied within 48 hours of release when vendors assess vulnerabilities as critical or working exploits exist.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML2",
@@ -1882,8 +1882,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-POS-ML1",
+          "current_state": "PARTIAL",
           "evidence_quote": "Patches, updates or other vendor mitigations for vulnerabilities in operating systems of internet-facing servers and network devices are applied within two weeks.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML1",
@@ -1895,8 +1895,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-POS-ML2",
+          "current_state": "PARTIAL",
           "evidence_quote": "Patches for vulnerabilities in operating systems assessed as critical or for which working exploits exist are applied within 48 hours.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML2",
@@ -1908,8 +1908,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-POS-FIRMWARE",
+          "current_state": "PARTIAL",
           "evidence_quote": "Patches, updates or other vendor mitigations for vulnerabilities in network devices, firmware and operating systems are applied within one month.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML2",
@@ -1922,8 +1922,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-UAH",
+          "current_state": "GAP",
           "evidence_quote": "User application hardening is configured to prevent execution of unneeded features such as Adobe Flash, advertisements and Java content.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "N/A",
@@ -1935,8 +1935,8 @@
           ]
         },
         {
-          "anz_state": "UNKNOWN",
           "code": "E8-MAC",
+          "current_state": "UNKNOWN",
           "evidence_quote": "Microsoft Office macros are blocked from making Win32 API calls.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "N/A",
@@ -1946,8 +1946,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-RB-ML1",
+          "current_state": "GAP",
           "evidence_quote": "Backups of important data, software and configuration settings are performed and retained with a frequency and retention timeframe in accordance with business requirements.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML1",
@@ -1960,8 +1960,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-RB-ML2",
+          "current_state": "PARTIAL",
           "evidence_quote": "Unprivileged accounts cannot access backups belonging to other accounts; only backup administrators can modify backup sets.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML2",
@@ -1974,8 +1974,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-RB-ML3",
+          "current_state": "PARTIAL",
           "evidence_quote": "Unprivileged accounts and privileged accounts (excluding backup break glass accounts) are prevented from modifying or deleting any backups.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model-changes",
           "maturity_level": "ML3",
@@ -1987,8 +1987,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "E8-RB-KEYS",
+          "current_state": "PARTIAL",
           "evidence_quote": "Backups of important data, software and configuration settings are tested and synchronised in a coordinated manner.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML2",
@@ -2001,8 +2001,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "E8-MATURITY-SCORECARD",
+          "current_state": "GAP",
           "evidence_quote": "Maturity levels One, Two and Three are intended to mitigate increasing levels of tradecraft (tools, tactics, techniques and procedures) and targeting.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "ML1;ML2;ML3",
@@ -2019,8 +2019,8 @@
           ]
         },
         {
-          "anz_state": "UNKNOWN",
           "code": "E8-RAP-NHI-GAP",
+          "current_state": "UNKNOWN",
           "evidence_quote": "Essential Eight controls focus on user accounts and do not enumerate machine identities; gap acknowledged by ASD ISM mapping document.",
           "evidence_url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
           "maturity_level": "N/A",
@@ -2032,8 +2032,8 @@
       ],
       "mitre-attack": [
         {
-          "anz_state": "GAP",
           "code": "T1552.001",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may search local file systems and remote file shares for files containing insecurely stored credentials.",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/001/",
           "maturity_level": "MATURITY-3",
@@ -2049,8 +2049,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1552.002",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may search the Registry on compromised systems for insecurely stored credentials.",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/002/",
           "maturity_level": "MATURITY-3",
@@ -2064,8 +2064,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1552.003",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may search the bash command history on compromised systems for insecurely stored credentials.",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/003/",
           "maturity_level": "MATURITY-2",
@@ -2079,8 +2079,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1552.004",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may search for private key certificate files on compromised systems for insecurely stored credentials.",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/004/",
           "maturity_level": "MATURITY-4",
@@ -2096,8 +2096,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1552.005",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may attempt to access the Cloud Instance Metadata API to collect credentials and other sensitive data.",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/005/",
           "maturity_level": "MATURITY-3",
@@ -2112,8 +2112,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1552.006",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may attempt to find unsecured credentials in Group Policy Preferences (GPP).",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/006/",
           "maturity_level": "MATURITY-2",
@@ -2126,8 +2126,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1552.007",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may gather credentials via APIs within a containers environment.",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/007/",
           "maturity_level": "MATURITY-3",
@@ -2141,8 +2141,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1552.008",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may directly collect unsecured credentials stored or passed through user communication services.",
           "evidence_url": "https://attack.mitre.org/techniques/T1552/008/",
           "maturity_level": "MATURITY-2",
@@ -2156,8 +2156,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1528",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries can steal application access tokens as a means of acquiring credentials to access remote systems and resources.",
           "evidence_url": "https://attack.mitre.org/techniques/T1528/",
           "maturity_level": "MATURITY-3",
@@ -2172,8 +2172,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1078.004",
+          "current_state": "GAP",
           "evidence_quote": "Valid accounts in cloud environments may allow adversaries to perform actions to achieve initial access maintain access and escalate privileges.",
           "evidence_url": "https://attack.mitre.org/techniques/T1078/004/",
           "maturity_level": "MATURITY-3",
@@ -2188,8 +2188,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1606.002",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may forge SAML tokens with any permissions claims and lifetimes if they possess a valid SAML token-signing certificate.",
           "evidence_url": "https://attack.mitre.org/techniques/T1606/002/",
           "maturity_level": "MATURITY-4",
@@ -2204,8 +2204,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1098.001",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may add adversary-controlled credentials to a cloud account to maintain persistent access.",
           "evidence_url": "https://attack.mitre.org/techniques/T1098/001/",
           "maturity_level": "MATURITY-3",
@@ -2220,8 +2220,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "T1199",
+          "current_state": "PARTIAL",
           "evidence_quote": "Adversaries may breach or otherwise leverage organizations who have access to intended victims.",
           "evidence_url": "https://attack.mitre.org/techniques/T1199/",
           "maturity_level": "MATURITY-3",
@@ -2237,8 +2237,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1539",
+          "current_state": "GAP",
           "evidence_quote": "An adversary may steal web application or service session cookies and use them to gain access to web applications.",
           "evidence_url": "https://attack.mitre.org/techniques/T1539/",
           "maturity_level": "MATURITY-2",
@@ -2251,8 +2251,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1556.006",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may disable or modify multi-factor authentication mechanisms.",
           "evidence_url": "https://attack.mitre.org/techniques/T1556/006/",
           "maturity_level": "MATURITY-3",
@@ -2266,8 +2266,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "T1566",
+          "current_state": "GAP",
           "evidence_quote": "Adversaries may send phishing messages to gain access to victim systems.",
           "evidence_url": "https://attack.mitre.org/techniques/T1566/",
           "maturity_level": "MATURITY-2",
@@ -2280,8 +2280,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-okta-2023-10",
+          "current_state": "GAP",
           "evidence_quote": "A service account stored within the system in question … signed into an employee's personal Google profile on the Chrome browser of their Okta-managed laptop.",
           "evidence_url": "https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-customer-support-system-and-okta",
           "maturity_level": "N/A",
@@ -2297,8 +2297,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-okta-2022-01",
+          "current_state": "GAP",
           "evidence_quote": "A 25-minute time-frame on January 21 2022 in which the threat actor had access to the Sitel support engineer's workstation.",
           "evidence_url": "https://sec.okta.com/articles/2022/04/okta-concludes-its-investigation-january-2022-compromise",
           "maturity_level": "N/A",
@@ -2313,8 +2313,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-cloudflare-2023-11",
+          "current_state": "GAP",
           "evidence_quote": "One service token and three service accounts that were not rotated were used by the threat actor … This was our mistake.",
           "evidence_url": "https://blog.cloudflare.com/thanksgiving-2023-security-incident",
           "maturity_level": "N/A",
@@ -2329,8 +2329,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-circleci-2023-01",
+          "current_state": "GAP",
           "evidence_quote": "An engineer's laptop was compromised … with malware … that was able to execute session cookie theft enabling them to impersonate the targeted employee.",
           "evidence_url": "https://circleci.com/blog/jan-4-2023-incident-report/",
           "maturity_level": "N/A",
@@ -2345,8 +2345,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-ia-2024-10",
+          "current_state": "GAP",
           "evidence_quote": "Our staff Zendesk email support history was accessed because the API tokens were not rotated.",
           "evidence_url": "https://blog.archive.org/2024/10/18/internet-archive-services-update-2024-10-17/",
           "maturity_level": "N/A",
@@ -2361,8 +2361,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-sourcegraph-2023-08",
+          "current_state": "GAP",
           "evidence_quote": "A site-admin access token … was accidentally committed to a public Sourcegraph pull request on July 14 2023.",
           "evidence_url": "https://about.sourcegraph.com/blog/security-update-august-2023",
           "maturity_level": "N/A",
@@ -2377,8 +2377,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "BREACH-lastpass-2022",
+          "current_state": "PARTIAL",
           "evidence_quote": "The threat actor was able to … target a senior DevOps engineer by exploiting vulnerable third-party software … and ultimately obtain access to the decrypted vault.",
           "evidence_url": "https://blog.lastpass.com/posts/2022/12/notice-of-recent-security-incident",
           "maturity_level": "N/A",
@@ -2393,8 +2393,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "BREACH-xz-utils-2024-03",
+          "current_state": "PARTIAL",
           "evidence_quote": "I extracted that script and ran it manually … and to my horror found that it was creating a new file in the build tree.",
           "evidence_url": "https://www.openwall.com/lists/oss-security/2024/03/29/4",
           "maturity_level": "N/A",
@@ -2408,8 +2408,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-solarwinds-2020",
+          "current_state": "GAP",
           "evidence_quote": "The actors … modify and add new federation trusts to existing tenants … and forge tokens for any user account.",
           "evidence_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a",
           "maturity_level": "N/A",
@@ -2426,8 +2426,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "BREACH-storm0558-2023-07",
+          "current_state": "PARTIAL",
           "evidence_quote": "A consumer key was leaked into a crash dump … which was subsequently exfiltrated by Storm-0558.",
           "evidence_url": "https://msrc.microsoft.com/blog/2023/09/results-of-major-technical-investigations-for-storm-0558-key-acquisition/",
           "maturity_level": "N/A",
@@ -2443,8 +2443,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-uber-2022-09",
+          "current_state": "GAP",
           "evidence_quote": "The contractor accepted one [MFA prompt] and the attacker successfully logged in … the attacker accessed several … hardcoded admin credentials.",
           "evidence_url": "https://www.uber.com/newsroom/security-update/",
           "maturity_level": "N/A",
@@ -2461,8 +2461,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-toyota-2022-10",
+          "current_state": "GAP",
           "evidence_quote": "A part of the source code … was mistakenly published on GitHub … and contained an access key … to the data server.",
           "evidence_url": "https://global.toyota/en/newsroom/corporate/38095972.html",
           "maturity_level": "N/A",
@@ -2478,8 +2478,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-sumologic-2023-11",
+          "current_state": "GAP",
           "evidence_quote": "Potentially compromised credential was used to access a Sumo Logic AWS account.",
           "evidence_url": "https://www.sumologic.com/security-response-center/security-incident-update/",
           "maturity_level": "N/A",
@@ -2493,8 +2493,8 @@
           ]
         },
         {
-          "anz_state": "PARTIAL",
           "code": "BREACH-moveit-2023",
+          "current_state": "PARTIAL",
           "evidence_quote": "CISA and the FBI … identified CVE-2023-34362 a structured-query-language injection vulnerability in Progress Software's managed file transfer (MFT) solution MOVEit Transfer.",
           "evidence_url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a",
           "maturity_level": "N/A",
@@ -2509,8 +2509,8 @@
           ]
         },
         {
-          "anz_state": "GAP",
           "code": "BREACH-snowflake-2024-06",
+          "current_state": "GAP",
           "evidence_quote": "These attacks … leveraged credentials previously purchased or obtained through infostealing malware … against accounts that … did not have multi-factor authentication enabled.",
           "evidence_url": "https://www.snowflake.com/en/blog/detecting-investigating-targeted-customer-attack-snowflake/",
           "maturity_level": "N/A",
