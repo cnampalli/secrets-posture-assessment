@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAssessment } from '../assessment/store';
 import { useToast } from './Toast';
 import { Badge, ToggleGroup } from './ui';
@@ -12,6 +12,7 @@ export function ScorePanel() {
   const toast = useToast();
   const uc = a.current;
   const [needRat, setNeedRat] = useState(false);
+  useEffect(() => { setNeedRat(false); }, [uc.uc_id]);
   const proposed = a.proposedOf(uc.uc_id);
   const final = a.finalOf(uc.uc_id);
   const r = a.responses[uc.uc_id];
