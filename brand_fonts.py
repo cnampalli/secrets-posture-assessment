@@ -26,8 +26,8 @@ _FONT_DIR = os.path.join(_HERE, "assets", "fonts")
 
 # (CSS family name, woff2 filename) — variable fonts, full 100–900 weight axis.
 _FACES = (
-    ("Fraunces", "fraunces.woff2"),
     ("Inter", "inter.woff2"),
+    ("Fraunces", "fraunces.woff2"),
     ("JetBrains Mono", "jetbrains-mono.woff2"),
 )
 

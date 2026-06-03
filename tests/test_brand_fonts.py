@@ -13,4 +13,5 @@ def test_fontface_css_embeds_three_base64_woff2():
     assert css.count("data:font/woff2;base64,") == 3
     for family in ("Fraunces", "Inter", "JetBrains Mono"):
         assert f"font-family:'{family}'" in css
+    assert css.count("font-weight:100 900") == 3
     assert not re.search(r"https?://", css)
