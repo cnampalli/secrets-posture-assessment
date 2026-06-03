@@ -8,6 +8,7 @@ export default defineConfig({
     cssCodeSplit: false,
     assetsInlineLimit: 100_000_000, // inline ALL assets (fonts) as base64
     chunkSizeWarningLimit: 100_000,
-    rollupOptions: { output: { inlineDynamicImports: true } },
+    // viteSingleFile already disables code-splitting, so inlineDynamicImports
+    // would be a redundant no-op (and emits a warning) — intentionally omitted.
   },
 });
