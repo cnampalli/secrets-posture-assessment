@@ -1,0 +1,9 @@
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-bg text-ink font-body antialiased; }
+  h1, h2, h3 { @apply font-display; letter-spacing: -0.01em; }
+}
