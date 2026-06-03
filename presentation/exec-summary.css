@@ -5,48 +5,42 @@
    Screen = dark/modern. Print = white/ink, controls hidden, all detail forced open.
    ============================================================================ */
 
-:root {
-  /* --- surfaces --- */
-  --bg:        #0a0e14;
-  --bg-elev:   #10161f;
-  --bg-card:   #121a25;
-  --bg-card-2: #161f2c;
+:root{
+  /* --bg, --ink, --muted, --faint, the state colours (--met/--partial/--gap/--pending)
+     and their -soft tints all come from the injected canonical Brass block. */
+  --bg-elev:   var(--bg2);
+  --bg-card:   var(--card);
+  --bg-card-2: var(--bg2);
 
-  /* --- text --- */
-  --ink:   #e9eff4;
-  --muted: #8b99a8;
-  --faint: #5a6878;
+  /* signal = Brass accent */
+  --signal:     var(--accent);
+  --signal-dim: #856a2b;
 
-  /* --- signal family --- */
-  --signal:     #c5f82a;   /* primary lime */
-  --signal-dim: #9ec01f;
+  /* state ink (base hues come from canonical) */
+  --met-ink:     #245a41;
+  --partial-ink: #7c5418;
+  --gap-ink:     #7e2626;
+  --pending-ink: #3a4154;
 
-  /* --- state colours --- */
-  --met:     #c5f82a;      /* lime    */
-  --partial: #ffb020;      /* amber   */
-  --gap:     #ff5b5b;      /* red     */
-  --pending: #5e7186;      /* slate   */
+  /* hairlines (warm) */
+  --line: rgba(154,123,50,.22);
+  --hair: rgba(35,31,26,.09);
+  --hair-strong: rgba(35,31,26,.15);
 
-  /* tinted backings for state surfaces (low-alpha so grayscale-print stays light) */
-  --met-soft:     rgba(197,248,42,.10);
-  --partial-soft: rgba(255,176,32,.10);
-  --gap-soft:     rgba(255,91,91,.11);
-  --pending-soft: rgba(94,113,134,.12);
+  /* warm-tinted elevation */
+  --shadow-sm: 0 1px 3px rgba(35,31,26,.07), 0 1px 2px rgba(35,31,26,.04);
+  --shadow-md: 0 6px 16px -6px rgba(35,31,26,.14), 0 2px 6px -4px rgba(35,31,26,.08);
+  --shadow-lg: 0 16px 40px -12px rgba(35,31,26,.20), 0 6px 16px -10px rgba(35,31,26,.12);
 
-  /* --- structure --- */
-  --line: rgba(197,248,42,.16);
-  --hair: rgba(255,255,255,.07);
-  --hair-strong: rgba(255,255,255,.12);
+  /* type — alias to canonical font tokens */
+  --disp: var(--font-display);
+  --mono: var(--font-mono);
+  --body: var(--font-body);
 
-  /* --- type --- */
-  --disp: 'Chakra Petch', ui-monospace, 'SF Mono', Menlo, monospace;
-  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-  --body: 'Spline Sans', system-ui, -apple-system, sans-serif;
-
-  /* --- rhythm --- */
-  --gut: clamp(20px, 4.5vw, 64px);          /* page side gutter */
-  --stack: clamp(48px, 7vw, 104px);         /* between major sections */
-  --radius: 16px;
+  /* layout / motion */
+  --gut: clamp(20px, 4.5vw, 64px);
+  --stack: clamp(48px, 7vw, 104px);
+  --radius: var(--radius-lg);
   --ease: cubic-bezier(.22,.61,.36,1);
 }
 
@@ -65,12 +59,12 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 
-  /* atmospheric depth: corner glows + faint engineering grid */
+  /* atmospheric depth: soft corner washes + faint engineering grid */
   background-image:
-    radial-gradient(140% 90% at 8% -8%, rgba(197,248,42,.10), transparent 46%),
-    radial-gradient(120% 80% at 100% 0%, rgba(94,113,134,.16), transparent 50%),
-    linear-gradient(var(--hair) 1px, transparent 1px),
-    linear-gradient(90deg, var(--hair) 1px, transparent 1px);
+    radial-gradient(120% 80% at 100% -6%, rgba(154,123,50,.06), transparent 52%),
+    radial-gradient(90% 70% at 0% 0%, rgba(13,151,163,.05), transparent 46%),
+    linear-gradient(rgba(20,33,52,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,33,52,.022) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 64px 64px, 64px 64px;
   background-attachment: fixed, fixed, fixed, fixed;
   background-position: 0 0, 0 0, -1px -1px, -1px -1px;
@@ -109,7 +103,7 @@ main > section {
   width: 6px; height: .82em;
   background: var(--signal);
   border-radius: 2px;
-  box-shadow: 0 0 14px rgba(197,248,42,.55);
+  box-shadow: 0 2px 6px -1px rgba(154,123,50,.45);
 }
 
 /* ---------------------------------------------------------------------------
@@ -152,7 +146,7 @@ main > section {
   width: 8px; height: 8px;
   background: var(--signal);
   border-radius: 50%;
-  box-shadow: 0 0 14px var(--signal);
+  box-shadow: 0 0 0 4px rgba(154,123,50,.14);
   animation: es-pulse 2.6s ease-in-out infinite;
 }
 
@@ -225,7 +219,7 @@ main > section {
   border-radius: 999px;
   border: 1px solid var(--hair-strong);
   color: var(--muted);
-  background: rgba(255,255,255,.025);
+  background: rgba(20,33,52,.03);
   white-space: nowrap;
 }
 .es-chip--framework {
@@ -234,7 +228,8 @@ main > section {
 }
 .es-chip--driver {
   color: var(--signal-dim);
-  border-color: rgba(197,248,42,.28);
+  border-color: rgba(154,123,50,.30);
+  background: rgba(154,123,50,.05);
   text-transform: none;
 }
 .es-chip--risk { color: var(--ink); }
@@ -253,11 +248,11 @@ main > section {
   border-radius: 50%;
   flex: 0 0 auto;
 }
-.es-chip--state.state-met     { color: var(--met);     border-color: rgba(197,248,42,.34); }
-.es-chip--state.state-partial { color: var(--partial); border-color: rgba(255,176,32,.34); }
-.es-chip--state.state-gap     { color: var(--gap);     border-color: rgba(255,91,91,.36); }
-.es-chip--state.state-pending { color: var(--pending); border-color: rgba(94,113,134,.4); }
-.es-chip--state.state-met::before     { background: var(--met);     box-shadow: 0 0 8px rgba(197,248,42,.6); }
+.es-chip--state.state-met     { color: var(--met-ink);     border-color: rgba(26,148,97,.34);  background: var(--met-soft); }
+.es-chip--state.state-partial { color: var(--partial-ink); border-color: rgba(214,133,12,.34); background: var(--partial-soft); }
+.es-chip--state.state-gap     { color: var(--gap-ink);     border-color: rgba(216,58,58,.34);  background: var(--gap-soft); }
+.es-chip--state.state-pending { color: var(--pending-ink); border-color: rgba(71,80,105,.4);  background: var(--pending-soft); }
+.es-chip--state.state-met::before     { background: var(--met); }
 .es-chip--state.state-partial::before { background: var(--partial); }
 .es-chip--state.state-gap::before     { background: var(--gap); }
 .es-chip--state.state-pending::before { background: var(--pending); }
@@ -285,10 +280,11 @@ main > section {
   min-height: clamp(150px, 17vw, 220px);
   padding: clamp(18px, 1.8vw, 26px);
   border-radius: var(--radius);
-  border: 1px solid var(--hair-strong);
+  border: 1px solid var(--hair);
   background:
-    linear-gradient(160deg, rgba(255,255,255,.02), transparent 70%),
+    linear-gradient(160deg, rgba(154,123,50,.045), transparent 58%),
     var(--bg-card);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   isolation: isolate;
   transition: transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
@@ -318,12 +314,12 @@ main > section {
 .es-tile:hover {
   transform: translateY(-4px);
   border-color: var(--hair-strong);
-  box-shadow: 0 18px 40px -22px rgba(0,0,0,.8);
+  box-shadow: var(--shadow-lg);
 }
-.es-tile.state-met:hover     { border-color: rgba(197,248,42,.45); }
-.es-tile.state-partial:hover { border-color: rgba(255,176,32,.45); }
-.es-tile.state-gap:hover     { border-color: rgba(255,91,91,.5); }
-.es-tile.state-pending:hover { border-color: rgba(94,113,134,.55); }
+.es-tile.state-met:hover     { border-color: rgba(26,148,97,.45); }
+.es-tile.state-partial:hover { border-color: rgba(214,133,12,.45); }
+.es-tile.state-gap:hover     { border-color: rgba(216,58,58,.5); }
+.es-tile.state-pending:hover { border-color: rgba(71,80,105,.55); }
 
 .es-tile__count {
   font-family: var(--disp);
@@ -365,9 +361,8 @@ main > section {
   padding: clamp(18px, 1.5vw, 24px);
   border-radius: var(--radius);
   border: 1px solid var(--hair);
-  background:
-    linear-gradient(165deg, rgba(255,255,255,.018), transparent 60%),
-    var(--bg-card);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
   transition: transform .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
 }
 .es-card::before {
@@ -387,7 +382,7 @@ main > section {
 .es-card:hover {
   transform: translateY(-3px);
   border-color: var(--hair-strong);
-  box-shadow: 0 16px 36px -24px rgba(0,0,0,.85);
+  box-shadow: var(--shadow-md);
 }
 
 .es-card__head {
@@ -426,8 +421,8 @@ main > section {
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--signal-dim);
-  background: transparent;
-  border: 1px solid rgba(197,248,42,.24);
+  background: rgba(154,123,50,.05);
+  border: 1px solid rgba(154,123,50,.26);
   border-radius: 8px;
   padding: 7px 13px 7px 12px;
   cursor: pointer;
@@ -446,8 +441,8 @@ main > section {
 .es-card__toggle[aria-expanded="true"]::after { content: "–"; }
 .es-card__toggle:hover {
   color: var(--signal);
-  border-color: rgba(197,248,42,.5);
-  background: rgba(197,248,42,.06);
+  border-color: rgba(154,123,50,.5);
+  background: rgba(154,123,50,.1);
 }
 
 /* detail panel — smooth grid-rows transition */
@@ -488,7 +483,7 @@ main > section {
   gap: 3px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(255,255,255,.022);
+  background: var(--bg-elev);
   border: 1px solid var(--hair);
 }
 .es-driver__code {
@@ -553,6 +548,7 @@ main > section {
   border-radius: var(--radius);
   border: 1px solid var(--hair);
   background: var(--bg-elev);
+  box-shadow: var(--shadow-sm);
 }
 .es-field {
   display: flex;
@@ -610,7 +606,7 @@ main > section {
 }
 .es-sort-toggle:hover {
   border-color: var(--line);
-  background: rgba(197,248,42,.05);
+  background: rgba(154,123,50,.05);
 }
 .es-sort-toggle[data-sort="effort"] { color: var(--partial); }
 .es-sort-toggle[data-sort="effort"]::before { color: var(--partial); }
@@ -718,9 +714,9 @@ select:focus-visible,
    =========================================================================== */
 @media print {
   :root {
-    --ink:   #14181d;
-    --muted: #3c4654;
-    --faint: #6b7682;
+    --ink:   #1a1612;
+    --muted: #4a443c;
+    --faint: #6f6a62;
     --bg-card: #ffffff;
     --hair: rgba(0,0,0,.14);
     --hair-strong: rgba(0,0,0,.24);
