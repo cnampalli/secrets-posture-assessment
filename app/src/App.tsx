@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { AssessmentProvider, useAssessment } from './assessment/store';
 import { Sidebar } from './components/Sidebar';
@@ -51,13 +51,18 @@ function Header() {
 }
 
 function Shell() {
+  const a = useAssessment();
+  const mainRef = useRef<HTMLElement>(null);
+  // Reset main-pane scroll to top whenever the active use case changes,
+  // so navigating from a deep scroll position doesn't land on a blank view.
+  useEffect(() => { mainRef.current?.scrollTo(0, 0); }, [a.current.uc_id]);
   return (
     <ToastProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen overflow-hidden flex flex-col">
         <Header />
         <div className="flex flex-1 min-h-0">
           <Sidebar />
-          <main className="flex-1 overflow-auto p-8 max-w-[920px]">
+          <main ref={mainRef} className="flex-1 overflow-auto p-8 max-w-[920px]">
             <UseCaseView />
           </main>
         </div>
