@@ -2,6 +2,8 @@ import { ThemeProvider } from './theme/ThemeProvider';
 import { AssessmentProvider, useAssessment } from './assessment/store';
 import { Sidebar } from './components/Sidebar';
 import { ThemeToggle } from './components/ThemeToggle';
+import { ToastProvider } from './components/Toast';
+import { UseCaseView } from './components/UseCaseView';
 import { RUBRIC } from './assessment/rubric';
 
 function Header() {
@@ -20,15 +22,17 @@ function Header() {
 
 function Shell() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <div className="flex flex-1 min-h-0">
-        <Sidebar />
-        <main className="flex-1 overflow-auto p-8 max-w-[920px]">
-          <p className="text-muted">Use-case view — Task 7.</p>
-        </main>
+    <ToastProvider>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex flex-1 min-h-0">
+          <Sidebar />
+          <main className="flex-1 overflow-auto p-8 max-w-[920px]">
+            <UseCaseView />
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }
 
