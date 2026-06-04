@@ -1,8 +1,9 @@
 import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
-import type { Answer, Response, State, UseCase } from './types';
+import type { Answer, Response, State, UseCase, EvidenceMeta } from './types';
 import { RUBRIC, byId } from './rubric';
-import { blankResponse, proposedFor, finalFor, scoredCount, buildRecord } from './record';
-import { loadResponses, saveResponses, importRecord } from './persistence';
+import { blankResponse, proposedFor, finalFor, scoredCount } from './record';
+import { loadResponses, saveResponses, importRecord, loadEvidence } from './persistence';
+import { putFile, deleteFile, getBlob, validateFile, genId, buildExportRecord, restoreEvidence } from './evidence';
 
 interface Api {
   current: UseCase; responses: Record<string, Response>; scored: number;
@@ -14,8 +15,11 @@ interface Api {
   setFinal: (v: State | '') => { needRationale: boolean };
   proposedOf: (uc_id: string) => State | null;
   finalOf: (uc_id: string) => State;
-  exportRecord: () => string;
-  importText: (text: string) => void;
+  evidenceFor: (uc_id: string) => EvidenceMeta[];
+  addEvidence: (files: FileList | File[]) => Promise<{ added: number; rejected: string[] }>;
+  removeEvidence: (id: string) => Promise<void>;
+  exportRecord: () => Promise<{ text: string; skipped: number }>;
+  importText: (text: string) => Promise<void>;
 }
 const Ctx = createContext<Api | null>(null);
 // Deterministic-friendly timestamp hook; real app uses Date, tests can ignore value.
@@ -26,7 +30,14 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [currentId, setCurrentId] = useState<string>(RUBRIC[0]?.uc_id ?? '');
   const ref = useRef(responses); ref.current = responses;
 
-  function persist(next: Record<string, Response>) { setResponses(next); saveResponses(next, now()); }
+  const [evidence, setEvidence] = useState<Record<string, EvidenceMeta[]>>(() => loadEvidence());
+  const evRef = useRef(evidence); evRef.current = evidence;
+
+  function persistAll(nextResp: Record<string, Response>, nextEv: Record<string, EvidenceMeta[]>) {
+    setResponses(nextResp); setEvidence(nextEv); saveResponses(nextResp, now(), nextEv);
+  }
+
+  function persist(next: Record<string, Response>) { persistAll(next, evRef.current); }
   function mutate(id: string, fn: (r: Response) => Response) {
     const cur = ref.current[id] ?? blankResponse();
     persist({ ...ref.current, [id]: fn({ ...cur, answers: { ...cur.answers } }) });
@@ -55,9 +66,36 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
     },
     proposedOf: (id) => { const uc = byId(id); const r = responses[id]; return uc && r ? proposedFor(uc, r) : (uc ? proposedFor(uc, blankResponse()) : null); },
     finalOf: (id) => { const uc = byId(id); return uc ? finalFor(uc, responses[id] ?? blankResponse()) : 'PENDING'; },
-    exportRecord: () => JSON.stringify(buildRecord(RUBRIC, ref.current, now()), null, 2),
-    importText: (text) => persist(importRecord(ref.current, text, id => !!byId(id))),
-  }), [responses, currentId]); // eslint-disable-line react-hooks/exhaustive-deps
+    evidenceFor: (id) => evidence[id] ?? [],
+    addEvidence: async (files) => {
+      const uc = currentId; const accepted: EvidenceMeta[] = []; const rejected: string[] = [];
+      for (const f of Array.from(files)) {
+        const v = validateFile(f);
+        if (!v.ok) { rejected.push(`${f.name} — ${v.reason}`); continue; }
+        const id = genId();
+        try { await putFile(id, f); accepted.push({ id, name: f.name, type: f.type, size: f.size, added: now() }); }
+        catch { rejected.push(`${f.name} — couldn't store`); }
+      }
+      if (accepted.length) persistAll(ref.current, { ...evRef.current, [uc]: [ ...(evRef.current[uc] ?? []), ...accepted ] });
+      return { added: accepted.length, rejected };
+    },
+    removeEvidence: async (id) => {
+      const uc = currentId;
+      await deleteFile(id).catch(() => {});
+      persistAll(ref.current, { ...evRef.current, [uc]: (evRef.current[uc] ?? []).filter(m => m.id !== id) });
+    },
+    exportRecord: async () => {
+      const { record, skipped } = await buildExportRecord(RUBRIC, ref.current, evRef.current, now(), getBlob);
+      return { text: JSON.stringify(record, null, 2), skipped };
+    },
+    importText: async (text) => {
+      const mergedResp = importRecord(ref.current, text, id => !!byId(id));
+      let parsed: { evidence?: unknown } = {};
+      try { parsed = JSON.parse(text); } catch { /* importRecord already validated/threw */ }
+      const { evidence: mergedEv } = await restoreEvidence(evRef.current, parsed.evidence ?? {}, id => !!byId(id));
+      persistAll(mergedResp, mergedEv);
+    },
+  }), [responses, currentId, evidence]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

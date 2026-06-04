@@ -13,11 +13,17 @@ function Header() {
   const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
 
-  function doExport() {
-    const blob = new Blob([a.exportRecord()], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a'); link.href = url; link.download = 'assessment-record.json'; link.click();
-    URL.revokeObjectURL(url);
+  async function doExport() {
+    try {
+      const { text, skipped } = await a.exportRecord();
+      const blob = new Blob([text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a'); link.href = url; link.download = 'assessment-record.json'; link.click();
+      URL.revokeObjectURL(url);
+      if (skipped) toast(`${skipped} file(s) couldn't be exported`);
+    } catch {
+      toast('Export failed — please try again');
+    }
   }
 
   return (
@@ -32,13 +38,9 @@ function Header() {
           const f = e.target.files?.[0];
           if (!f) return;
           const rd = new FileReader();
-          rd.onload = () => {
-            try {
-              a.importText(String(rd.result));
-              toast('Record imported');
-            } catch {
-              toast('Import failed — check the file');
-            }
+          rd.onload = async () => {
+            try { await a.importText(String(rd.result)); toast('Record imported'); }
+            catch { toast('Import failed — check the file'); }
           };
           rd.readAsText(f);
           e.currentTarget.value = '';
