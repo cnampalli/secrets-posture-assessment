@@ -1,4 +1,6 @@
 import { MAX_BYTES, ALLOWED_TYPES } from './types';
+import type { UseCase, Response, AssessmentRecord, EvidenceMeta, EvidenceExport } from './types';
+import { buildRecord } from './record';
 
 const DB_NAME = 'posture-evidence';
 const STORE = 'files';
@@ -96,4 +98,58 @@ export function genId(): string {
     return Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
   }
   return `${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`;
+}
+
+export type ExportRecord = Omit<AssessmentRecord, 'evidence'> & { evidence?: Record<string, EvidenceExport[]> };
+
+export async function buildExportRecord(
+  rubric: UseCase[], responses: Record<string, Response>,
+  evidence: Record<string, EvidenceMeta[]>, generated: string,
+  load: (id: string) => Promise<Blob | null> = getBlob,
+): Promise<{ record: ExportRecord; skipped: number }> {
+  const record = buildRecord(rubric, responses, generated) as ExportRecord;
+  let skipped = 0;
+  const ev: Record<string, EvidenceExport[]> = {};
+  for (const [uc, list] of Object.entries(evidence)) {
+    const out: EvidenceExport[] = [];
+    for (const m of list) {
+      const blob = await load(m.id);
+      if (!blob) { skipped++; continue; }
+      out.push({ ...m, data: await blobToBase64(blob) });
+    }
+    if (out.length) ev[uc] = out;
+  }
+  if (Object.keys(ev).length) record.evidence = ev;
+  return { record, skipped };
+}
+
+export async function restoreEvidence(
+  current: Record<string, EvidenceMeta[]>,
+  parsed: unknown,
+  knownId: (id: string) => boolean,
+): Promise<{ evidence: Record<string, EvidenceMeta[]>; skipped: number }> {
+  const merged: Record<string, EvidenceMeta[]> = { ...current };
+  let skipped = 0;
+  const src = (parsed && typeof parsed === 'object') ? parsed as Record<string, unknown> : {};
+  for (const [uc, list] of Object.entries(src)) {
+    if (!knownId(uc) || !Array.isArray(list)) continue;
+    const metas: EvidenceMeta[] = [];
+    for (const e of list as EvidenceExport[]) {
+      if (!e || typeof e.data !== 'string' || typeof e.id !== 'string') { skipped++; continue; }
+      try {
+        await putFile(e.id, base64ToBlob(e.data, e.type || 'application/octet-stream'));
+        metas.push({ id: e.id, name: String(e.name ?? e.id), type: String(e.type ?? ''), size: Number(e.size ?? 0), added: String(e.added ?? '') });
+      } catch { skipped++; }
+    }
+    // Replace the uc's list only when we produced new metas, or the incoming list was
+    // intentionally empty. A non-empty list that yielded nothing (all malformed) keeps
+    // the existing evidence rather than silently destroying it.
+    if (metas.length || list.length === 0) {
+      for (const old of current[uc] ?? []) {
+        if (!metas.some(m => m.id === old.id)) await deleteFile(old.id).catch(() => {});
+      }
+      merged[uc] = metas;
+    }
+  }
+  return { evidence: merged, skipped };
 }

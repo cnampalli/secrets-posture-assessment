@@ -3,7 +3,9 @@ import { indexedDB } from 'fake-indexeddb';
 import {
   putFile, getBlob, deleteFile, blobToBase64, base64ToBlob,
   validateFile, humanSize, genId,
+  buildExportRecord, restoreEvidence,
 } from './evidence';
+import { RUBRIC } from './rubric';
 
 function fileOf(name: string, type: string, bytes = 10): File {
   return new File([new Uint8Array(bytes).fill(65)], name, { type });
@@ -49,4 +51,40 @@ test('humanSize formats bytes/KB/MB', () => {
 test('genId returns a unique non-empty string', () => {
   const a = genId(), b = genId();
   expect(a).toBeTruthy(); expect(typeof a).toBe('string'); expect(a).not.toBe(b);
+});
+
+test('buildExportRecord embeds base64 for stored blobs and reports skips', async () => {
+  const uc = RUBRIC[0].uc_id;
+  await putFile('e1', new Blob([new Uint8Array([9, 9, 9])], { type: 'application/pdf' }));
+  const evidence = { [uc]: [
+    { id: 'e1', name: 'a.pdf', type: 'application/pdf', size: 3, added: 'T' },
+    { id: 'missing', name: 'gone.pdf', type: 'application/pdf', size: 3, added: 'T' },
+  ]};
+  const { record, skipped } = await buildExportRecord(RUBRIC, {}, evidence, 'T', getBlob);
+  expect(skipped).toBe(1);
+  expect(record.evidence![uc]).toHaveLength(1);
+  expect(typeof (record.evidence![uc][0] as { data: string }).data).toBe('string');
+});
+
+test('restoreEvidence writes blobs to IDB, strips data, replaces per uc, returns skipped', async () => {
+  const uc = RUBRIC[0].uc_id;
+  const data = await blobToBase64(new Blob([new Uint8Array([1, 2])], { type: 'application/pdf' }));
+  const parsed = { [uc]: [{ id: 'r1', name: 'a.pdf', type: 'application/pdf', size: 2, added: 'T', data }] };
+  const { evidence, skipped } = await restoreEvidence({}, parsed, (id) => id === uc);
+  expect(skipped).toBe(0);
+  expect(evidence[uc]).toEqual([{ id: 'r1', name: 'a.pdf', type: 'application/pdf', size: 2, added: 'T' }]);
+  expect(await getBlob('r1')).not.toBeNull();
+  const res2 = await restoreEvidence({}, { 'NOPE': parsed[uc] }, (id) => id === uc);
+  expect(res2.evidence['NOPE']).toBeUndefined();
+});
+
+test('restoreEvidence keeps existing evidence when an incoming non-empty list is all malformed', async () => {
+  const uc = RUBRIC[0].uc_id;
+  await putFile('keep1', new Blob([new Uint8Array([5, 5])], { type: 'application/pdf' }));
+  const current = { [uc]: [{ id: 'keep1', name: 'keep.pdf', type: 'application/pdf', size: 2, added: 'T' }] };
+  const parsed = { [uc]: [{ id: 'bad', name: 'b.pdf', type: 'application/pdf', size: 1, added: 'T' /* no data */ }] };
+  const { evidence, skipped } = await restoreEvidence(current, parsed, (id) => id === uc);
+  expect(skipped).toBe(1);
+  expect(evidence[uc]).toEqual(current[uc]);        // prior evidence retained
+  expect(await getBlob('keep1')).not.toBeNull();    // prior blob NOT deleted
 });

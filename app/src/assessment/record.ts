@@ -1,4 +1,4 @@
-import type { UseCase, Response, State, AssessmentRecord } from './types';
+import type { UseCase, Response, State, AssessmentRecord, EvidenceMeta } from './types';
 import { deriveState } from './scoring';
 
 const SCHEMA = 'posture-assessment-record/v1' as const;
@@ -27,6 +27,7 @@ export function scoredCount(rubric: UseCase[], responses: Record<string, Respons
 
 export function buildRecord(
   rubric: UseCase[], responses: Record<string, Response>, generated: string,
+  evidence?: Record<string, EvidenceMeta[]>,
 ): AssessmentRecord {
   const out: AssessmentRecord = { schema: SCHEMA, generated, responses: {} };
   for (const uc of rubric) {
@@ -37,6 +38,11 @@ export function buildRecord(
       proposed_state: proposedFor(uc, r), final_state: finalFor(uc, r),
       overridden: !!r.overridden, rationale: r.rationale || '', confidence: r.confidence || 'MED',
     };
+  }
+  if (evidence) {
+    const ev: Record<string, EvidenceMeta[]> = {};
+    for (const [id, list] of Object.entries(evidence)) if (list && list.length) ev[id] = list;
+    if (Object.keys(ev).length) out.evidence = ev;
   }
   return out;
 }
