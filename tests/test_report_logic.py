@@ -60,6 +60,31 @@ def test_build_vendormix_includes_concentration_and_complementary():
     assert rec["add"] in ("Vendor B", "Vendor C")
 
 
+_CMP_REG = [
+    {"framework_slug": "e8", "control_code": "E8-1", "control_short_title": "MFA", "uc_ids": "UC-1;UC-2"},
+    {"framework_slug": "e8", "control_code": "E8-2", "control_short_title": "App", "uc_ids": "UC-3"},
+]
+_CMP_ANZ = [
+    {"uc_id": "UC-1", "current_state": "MET"}, {"uc_id": "UC-2", "current_state": "GAP"},
+    {"uc_id": "UC-3", "current_state": "MET"},
+]
+_CMP_LABELS = {"e8": ("Essential 8", "ACSC")}
+
+
+def test_build_compliance_shapes_frameworks_with_labels():
+    cmp = rl.build_compliance(_CMP_REG, _CMP_ANZ, _CMP_LABELS)
+    fw = {f["slug"]: f for f in cmp["frameworks"]}["e8"]
+    assert fw["label"] == "Essential 8"
+    assert fw["total"] == 2 and fw["met"] == 1
+    assert fw["met_pct"] == round(1 / 2, 4)
+
+
+def test_build_compliance_lists_gap_to_target():
+    cmp = rl.build_compliance(_CMP_REG, _CMP_ANZ, _CMP_LABELS)
+    codes = [g["code"] for g in cmp["gap_to_target"]]
+    assert "E8-1" in codes and "E8-2" not in codes        # E8-2 is MET
+
+
 def test_compute_meta_counts():
     m = rl.compute_meta(all_rows=[{"vendor_slug": "a"}, {"vendor_slug": "a"}],
                         ranked=[{"vendor_slug": "a"}], nhis=[{}, {}], ucs=[{}])

@@ -306,6 +306,7 @@ const REG = /*__REG__*/{};
 const REGDATA = /*__REGDATA__*/{};
 const RECDATA = /*__RECDATA__*/{};
 const VENDORMIX = /*__VENDORMIX__*/{};
+const COMPLIANCE = /*__COMPLIANCE__*/{};
 const META = /*__META__*/{};
 
 function esc(s){ if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -592,7 +593,44 @@ function renderRecommendations(){
        '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top" class="muted">'+esc(c.why)+'</td></tr>').join("")+
      '</tbody></table></div>';
   h+=vendorMixHtml();
+  h+=complianceHtml();
   el.innerHTML=h;
+}
+function complianceHtml(){
+  const cm=COMPLIANCE; if(!cm||!cm.frameworks||!cm.frameworks.length) return "";
+  const pct=x=>Math.round((x||0)*100)+'%';
+  let h='<div class="card" style="border-left:4px solid var(--l2)"><h3>Identity-control coverage indicator</h3>'+
+    '<p class="muted" style="font-size:11px">Share of each framework’s <b>identity-scoped</b> controls currently MET (a control is MET only when every mapped use case is MET). This is a coverage <i>indicator</i> against the identity slice of each framework — <b>not</b> a full-framework compliance score.</p>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
+    '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Framework</th>'+
+    '<th style="text-align:right;border-bottom:2px solid #ccc;padding:4px">MET</th>'+
+    '<th style="text-align:right;border-bottom:2px solid #ccc;padding:4px">Partial</th>'+
+    '<th style="text-align:right;border-bottom:2px solid #ccc;padding:4px">Gap</th>'+
+    '<th style="text-align:right;border-bottom:2px solid #ccc;padding:4px">Pending</th>'+
+    '<th style="text-align:right;border-bottom:2px solid #ccc;padding:4px">Coverage</th></tr></thead><tbody>'+
+    cm.frameworks.map(f=>'<tr>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee"><b>'+esc(f.label||f.slug)+'</b></td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:right">'+f.met+'/'+f.total+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:right">'+(f.partial||0)+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:right">'+(f.gap||0)+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:right">'+(f.pending||0)+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:right;font-weight:600">'+pct(f.met_pct)+'</td></tr>').join("")+
+    '</tbody></table></div>';
+  const g=(cm.gap_to_target||[]).slice(0,12);
+  if(g.length){
+    h+='<div class="card"><h3>Gap-to-target — controls to close first</h3>'+
+       '<p class="muted" style="font-size:11px">Identity-scoped controls not yet MET, worst first, with the use cases blocking each.</p>'+
+       '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
+       '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Control</th>'+
+       '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">State</th>'+
+       '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Blocking use cases</th></tr></thead><tbody>'+
+       g.map(c=>'<tr>'+
+         '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top">'+gloss(c.code)+(c.title?' <span class="muted">'+esc(c.title)+'</span>':'')+'</td>'+
+         '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top"><span class="'+cellClass(c.state==="MET"?"":c.state)+'">'+esc(c.state)+'</span></td>'+
+         '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top" class="muted">'+c.blocking_ucs.map(b=>gloss(b.uc)+' ('+esc(b.state)+')').join(', ')+'</td></tr>').join("")+
+       '</tbody></table></div>';
+  }
+  return h;
 }
 function vendorMixHtml(){
   const vm=VENDORMIX; if(!vm||!vm.cover) return "";

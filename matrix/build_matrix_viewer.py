@@ -74,17 +74,21 @@ _anchors = [s for s, (lay, t) in report_io.VENDOR_LAYER.items() if t == "cloud-n
 VENDORMIX = report_logic.build_vendormix(
     _inputs["ranked"], vendor_ownership, _anchors, report_io.SHORT)
 
+# ---- identity-control coverage indicator + gap-to-target (Phase 0, D3/D4) ----
+COMPLIANCE = report_logic.build_compliance(reg_rows, _inputs["anz"], framework_labels)
+
 # ---- render + write ----
 html = report_render.render({
     "ranked": _inputs["ranked"], "anz": _inputs["anz"], "ucs": _inputs["ucs"], "nhis": _inputs["nhis"],
     "glossary": GLOSSARY, "layer_label": report_io.LAYER_LABEL, "short": report_io.SHORT,
-    "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX, "meta": meta,
+    "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX,
+    "compliance": COMPLIANCE, "meta": meta,
 })
 
 if _ARGS.emit_data:
     with open(_ARGS.emit_data, "w", encoding="utf-8") as _ef:
-        json.dump({"REGDATA": REGDATA, "RECDATA": RECDATA, "VENDORMIX": VENDORMIX}, _ef,
-                  ensure_ascii=False, sort_keys=True)
+        json.dump({"REGDATA": REGDATA, "RECDATA": RECDATA, "VENDORMIX": VENDORMIX,
+                   "COMPLIANCE": COMPLIANCE}, _ef, ensure_ascii=False, sort_keys=True)
 
 with open(DST, "w", encoding="utf-8") as f:
     f.write(html)

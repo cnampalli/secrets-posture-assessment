@@ -5,6 +5,7 @@ GLOSSARY/meta structures the template consumes. No file or CSV access.
 """
 from collections import defaultdict
 
+import compliance as _cmp
 import optimizer as _opt
 import overlay as _ov
 import resilience as _rz
@@ -110,6 +111,29 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
         },
     }
     return REG, REGDATA
+
+
+INFORMATIVE_FRAMEWORKS = {"mitre-attack"}  # adversary TTPs — no "MET" notion
+
+
+def build_compliance(reg_rows, anz, framework_labels, gap_limit=15,
+                     exclude=INFORMATIVE_FRAMEWORKS):
+    """Identity-control coverage indicator (D3) + gap-to-target list (D4).
+
+    Separate additive model section. Coverage is against the identity-scoped
+    control set — an indicator, not a full-framework compliance score.
+    Informative frameworks (e.g. MITRE ATT&CK) are excluded: they are adversary
+    TTPs, not controls a posture can be "MET" against.
+    """
+    rows = [r for r in reg_rows if r.get("framework_slug") not in exclude]
+    ind = _cmp.coverage_indicator(rows, anz)
+    frameworks = sorted(
+        ({"slug": fw, "label": framework_labels.get(fw, (fw, ""))[0],
+          "subtitle": framework_labels.get(fw, (fw, ""))[1], **stats}
+         for fw, stats in ind.items()),
+        key=lambda d: (-d["met_pct"], d["slug"]))
+    return {"frameworks": frameworks,
+            "gap_to_target": _cmp.gap_to_target(rows, anz)[:gap_limit]}
 
 
 def build_vendormix(ranked, ownership, anchors, short):

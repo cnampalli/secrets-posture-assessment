@@ -34,6 +34,18 @@ def test_vendormix_section_emitted_with_concentration(tmp_path):
     assert new["RECDATA"] == BASELINE["RECDATA"]
 
 
+def test_compliance_section_emitted_excludes_informative(tmp_path):
+    new = _run(tmp_path)
+    cm = new["COMPLIANCE"]
+    slugs = {f["slug"] for f in cm["frameworks"]}
+    assert "mitre-attack" not in slugs           # adversary TTPs excluded
+    assert "apra-cps-234" in slugs
+    cps = next(f for f in cm["frameworks"] if f["slug"] == "apra-cps-234")
+    assert cps["total"] == (cps["met"] + cps["partial"] + cps["gap"]
+                            + cps["pending"] + cps.get("unknown", 0))
+    assert cm["gap_to_target"]                    # there are controls to close
+
+
 def test_financial_preset_scopes_frameworks(tmp_path):
     new = _run(tmp_path, "--preset", "financial")
     slugs = {f["slug"] for f in new["REGDATA"]["frameworks"]}
