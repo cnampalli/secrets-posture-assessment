@@ -65,6 +65,10 @@ def load_framework_labels(cfgdir):
     return _ov.load_framework_labels(os.path.join(cfgdir, "frameworks.yaml"))
 
 
+def load_vendor_ownership(cfgdir):
+    return _ov.load_vendor_ownership(os.path.join(cfgdir, "vendor-ownership.yaml"))
+
+
 def load_inputs(here, current_state_name):
     """Load the report inputs from <here>/*.csv. Returns a dict with
     all_rows, ranked, ucs, nhis, anz, reg_rows."""

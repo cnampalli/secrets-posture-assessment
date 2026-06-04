@@ -5,7 +5,9 @@ GLOSSARY/meta structures the template consumes. No file or CSV access.
 """
 from collections import defaultdict
 
+import optimizer as _opt
 import overlay as _ov
+import resilience as _rz
 
 APRA_FRAMEWORKS = {"apra-cps-234", "apra-cps-230", "apra-cpg-234"}
 STATE_RANK = {"GAP": 0, "PARTIAL": 1, "PENDING": 2, "MET": 3, "UNKNOWN": 9}
@@ -108,6 +110,47 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
         },
     }
     return REG, REGDATA
+
+
+def build_vendormix(ranked, ownership, anchors, short):
+    """Resilience-first vendor-mix + concentration model section (Phase 0).
+
+    Separate from RECDATA (which stays frozen) — assembles the optimizer +
+    parent-aware resilience analytics the report surfaces: minimal cover,
+    white-space (C3), parent concentration scorecard (E5), single-source
+    risk (E1, by parent), and data-driven complementary picks (C4).
+    """
+    cover = _opt.greedy_cover(ranked, ownership, resilience_first=True)
+    uc_total = len(cover["covered"]) + len(cover["uncovered"])
+
+    con = _rz.concentration(ranked, ownership)
+    concentration = sorted(
+        ({"parent": p, "name": short.get(p, p), "uc_count": c["uc_count"],
+          "share": c["share"], "brands": [short.get(b, b) for b in c["brands"]],
+          "sole_source_count": len(c["sole_source_ucs"]),
+          "sole_source_ucs": c["sole_source_ucs"]}
+         for p, c in con.items()),
+        key=lambda d: (-d["share"], -d["uc_count"], d["parent"]))
+
+    complementary = []
+    for a in anchors:
+        rec = _opt.complement(a, ranked)
+        if rec:
+            complementary.append({
+                "have": short.get(a, a), "add": short.get(rec["add"], rec["add"]),
+                "fills": rec["fills"], "still_open": rec["still_open"]})
+
+    return {
+        "cover": {
+            "chosen": [{"slug": s, "name": short.get(s, s)} for s in cover["chosen"]],
+            "covered_count": len(cover["covered"]), "uc_total": uc_total,
+            "white_space": cover["uncovered"], "steps": cover["steps"],
+        },
+        "portfolio": _opt.portfolio_concentration(cover["chosen"], ranked, ownership),
+        "concentration": concentration,
+        "single_source": _rz.single_source(ranked, ownership)["single_source"],
+        "complementary": complementary,
+    }
 
 
 def build_recdata(ranked, nhis, vendor_layer, short, vendor_residency, substrate_slug, engagement):

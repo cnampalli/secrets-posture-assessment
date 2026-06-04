@@ -68,16 +68,22 @@ RECDATA = report_logic.build_recdata(
     _inputs["ranked"], _inputs["nhis"], report_io.VENDOR_LAYER, report_io.SHORT,
     vendor_residency, report_io.SUBSTRATE_SLUG, ENGAGEMENT)
 
+# ---- resilience-first vendor-mix + concentration (Phase 0, parent-aware) ----
+vendor_ownership = report_io.load_vendor_ownership(_CFGDIR)
+_anchors = [s for s, (lay, t) in report_io.VENDOR_LAYER.items() if t == "cloud-native"]
+VENDORMIX = report_logic.build_vendormix(
+    _inputs["ranked"], vendor_ownership, _anchors, report_io.SHORT)
+
 # ---- render + write ----
 html = report_render.render({
     "ranked": _inputs["ranked"], "anz": _inputs["anz"], "ucs": _inputs["ucs"], "nhis": _inputs["nhis"],
     "glossary": GLOSSARY, "layer_label": report_io.LAYER_LABEL, "short": report_io.SHORT,
-    "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "meta": meta,
+    "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX, "meta": meta,
 })
 
 if _ARGS.emit_data:
     with open(_ARGS.emit_data, "w", encoding="utf-8") as _ef:
-        json.dump({"REGDATA": REGDATA, "RECDATA": RECDATA}, _ef,
+        json.dump({"REGDATA": REGDATA, "RECDATA": RECDATA, "VENDORMIX": VENDORMIX}, _ef,
                   ensure_ascii=False, sort_keys=True)
 
 with open(DST, "w", encoding="utf-8") as f:

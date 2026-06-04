@@ -22,6 +22,18 @@ def test_default_run_matches_frozen_baseline(tmp_path):
            == BASELINE["REGDATA"]
 
 
+def test_vendormix_section_emitted_with_concentration(tmp_path):
+    new = _run(tmp_path)
+    vm = new["VENDORMIX"]
+    # white-space (no NATIVE provider) surfaced for the consultant.
+    assert vm["cover"]["white_space"] == ["UC-N-005", "UC-N-012", "UC-N-015"]
+    # parent-aware concentration present; CyberArk is a multi-brand top parent.
+    cy = next(c for c in vm["concentration"] if c["parent"] == "cyberark")
+    assert len(cy["brands"]) >= 2 and cy["share"] >= 0.5
+    # RECDATA stays frozen — vendormix is additive, not a mutation.
+    assert new["RECDATA"] == BASELINE["RECDATA"]
+
+
 def test_financial_preset_scopes_frameworks(tmp_path):
     new = _run(tmp_path, "--preset", "financial")
     slugs = {f["slug"] for f in new["REGDATA"]["frameworks"]}

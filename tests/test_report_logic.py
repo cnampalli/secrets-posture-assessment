@@ -29,6 +29,37 @@ def test_build_glossary_empty_description_uses_short_name_only():
     assert g["NHI-3"] == "Svc"
 
 
+_VM_OWN = {"vA": {"parent": "P"}, "vB": {"parent": "P"}}
+_VM_RANKED = [
+    {"vendor_slug": "vA", "target_type": "UC-F", "target_id": "UC-1", "coverage": "NATIVE", "maturity": "3"},
+    {"vendor_slug": "vA", "target_type": "UC-F", "target_id": "UC-2", "coverage": "NATIVE", "maturity": "3"},
+    {"vendor_slug": "vA", "target_type": "UC-F", "target_id": "UC-3", "coverage": "NATIVE", "maturity": "3"},
+    {"vendor_slug": "vB", "target_type": "UC-F", "target_id": "UC-4", "coverage": "NATIVE", "maturity": "2"},
+    {"vendor_slug": "vC", "target_type": "UC-F", "target_id": "UC-4", "coverage": "NATIVE", "maturity": "2"},
+    {"vendor_slug": "vA", "target_type": "UC-F", "target_id": "UC-5", "coverage": "ADD-ON", "maturity": "1"},
+]
+_VM_SHORT = {"vA": "Vendor A", "vB": "Vendor B", "vC": "Vendor C"}
+
+
+def test_build_vendormix_reports_cover_and_whitespace():
+    vm = rl.build_vendormix(_VM_RANKED, _VM_OWN, anchors=["vA"], short=_VM_SHORT)
+    assert vm["cover"]["white_space"] == ["UC-5"]
+    assert vm["cover"]["covered_count"] == 4
+    assert vm["cover"]["uc_total"] == 5
+    # chosen carries display names alongside slugs
+    assert vm["cover"]["chosen"][0]["name"] == "Vendor A"
+
+
+def test_build_vendormix_includes_concentration_and_complementary():
+    vm = rl.build_vendormix(_VM_RANKED, _VM_OWN, anchors=["vA"], short=_VM_SHORT)
+    # concentration scorecard sorted by share desc; P (vA) is the top parent.
+    assert vm["concentration"][0]["parent"] == "P"
+    # data-driven complementary: have Vendor A -> add a UC-4 provider.
+    rec = vm["complementary"][0]
+    assert rec["have"] == "Vendor A"
+    assert rec["add"] in ("Vendor B", "Vendor C")
+
+
 def test_compute_meta_counts():
     m = rl.compute_meta(all_rows=[{"vendor_slug": "a"}, {"vendor_slug": "a"}],
                         ranked=[{"vendor_slug": "a"}], nhis=[{}, {}], ucs=[{}])
