@@ -18,9 +18,11 @@ from collections import Counter
 
 from questionnaire.record_state import resolve_state
 from questionnaire import roadmap_generator as rg
+import brand_fonts
+import brand_tokens
 
 _STATES = ("MET", "PARTIAL", "GAP", "PENDING")
-TOKENS = ("/*__CSS__*/", "/*__DATA__*/null", "/*__APP__*/")
+TOKENS = ("/*__FONTS__*/", "/*__TOKENS__*/", "/*__CSS__*/", "/*__DATA__*/null", "/*__APP__*/")
 
 
 class ExecSummaryError(Exception):
@@ -33,12 +35,14 @@ def snapshot_counts(record):
     return {s: c.get(s, 0) for s in _STATES}
 
 
-def inject(template, css, data, app):
-    """Replace the three injection tokens; raise if any is missing."""
+def inject(template, css, data, app, fonts="", tokens=""):
+    """Replace the injection tokens; raise if any is missing."""
     for tok in TOKENS:
         if tok not in template:
             raise ExecSummaryError(f"template missing injection token: {tok}")
     return (template
+            .replace("/*__FONTS__*/", fonts)
+            .replace("/*__TOKENS__*/", tokens)
             .replace("/*__CSS__*/", css)
             .replace("/*__DATA__*/null", json.dumps(data, ensure_ascii=False))
             .replace("/*__APP__*/", app))
@@ -69,7 +73,8 @@ def build(record_path, out_path=None, preset="financial", frameworks=None, clien
     template = open(os.path.join(here, "exec-summary-template.html"), encoding="utf-8").read()
     css = open(os.path.join(here, "exec-summary.css"), encoding="utf-8").read()
     app = open(os.path.join(here, "exec-summary.js"), encoding="utf-8").read()
-    html = inject(template, css, data, app)
+    html = inject(template, css, data, app,
+                  fonts=brand_fonts.fontface_css(), tokens=brand_tokens.tokens_css())
     with open(out_path, "w", encoding="utf-8") as fh:
         fh.write(html)
     print(f"Wrote {out_path} ({os.path.getsize(out_path)} bytes; "

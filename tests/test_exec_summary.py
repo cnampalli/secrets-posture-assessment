@@ -17,9 +17,14 @@ def test_snapshot_counts_xyz():
 
 
 def test_inject_replaces_tokens():
-    tmpl = "<style>/*__CSS__*/</style><script>window.__EXEC_DATA__ = /*__DATA__*/null;</script><script>/*__APP__*/</script>"
-    out = es.inject(tmpl, "BODY{}", {"a": 1}, "console.log(1)")
+    tmpl = ("<style>/*__FONTS__*/\n/*__TOKENS__*/\n/*__CSS__*/</style>"
+            "<script>window.__EXEC_DATA__ = /*__DATA__*/null;</script><script>/*__APP__*/</script>")
+    out = es.inject(tmpl, "BODY{}", {"a": 1}, "console.log(1)",
+                    fonts="@font-face{}", tokens=":root{--accent:#9a7b32}")
     assert "BODY{}" in out
+    assert "@font-face{}" in out
+    assert "--accent:#9a7b32" in out
+    assert "/*__FONTS__*/" not in out and "/*__TOKENS__*/" not in out
     assert '"a": 1' in out or '"a":1' in out
     assert "/*__DATA__*/null" not in out
     assert "console.log(1)" in out
@@ -44,8 +49,11 @@ def test_build_self_contained_and_complete(tmp_path):
         re.search(r"window\.__EXEC_DATA__\s*=\s*(\{.*?\});", html, re.S).group(1))["menu"]["items"]]
     assert len(menu_ids) == 27
     assert "@media print" in html
+    # Fully offline: brand fonts are embedded as base64 woff2, so the output has
+    # NO external URLs at all (no Google Fonts link, no CDN) — firewall-proof.
     externals = re.findall(r'(?:src|href)\s*=\s*["\'](https?://[^"\']+)', html)
-    assert all("fonts.googleapis.com" in u or "fonts.gstatic.com" in u for u in externals), externals
+    assert externals == [], externals
+    assert "@font-face" in html and "data:font/woff2;base64," in html
 
 
 def test_build_is_byte_stable(tmp_path):

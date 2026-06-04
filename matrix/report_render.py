@@ -6,8 +6,14 @@ output is byte-identical.
 """
 import json
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+# Repo root on path so `brand_fonts` resolves when this runs as a script
+# (build_matrix_viewer.py adds matrix/ to sys.path[0], not the root).
+sys.path.insert(0, os.path.dirname(HERE))
+import brand_fonts
+import brand_tokens
 
 
 def load_template():
@@ -22,6 +28,8 @@ def render(model):
     regdata, recdata, meta.
     """
     return (load_template()
+            .replace("/*__FONTS__*/", brand_fonts.fontface_css())
+            .replace("/*__TOKENS__*/", brand_tokens.tokens_css())
             .replace("/*__DATA__*/[]", json.dumps(model["ranked"], ensure_ascii=False))
             .replace("/*__XYZ__*/[]", json.dumps(model["anz"], ensure_ascii=False))
             .replace("/*__UCS__*/[]", json.dumps(model["ucs"], ensure_ascii=False))

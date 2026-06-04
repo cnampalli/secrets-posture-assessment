@@ -1,0 +1,12 @@
+@import './tokens.css';
+@font-face { font-family:'Fraunces'; font-style:normal; font-weight:100 900; font-display:swap; src:url('../assets/fonts/fraunces.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:100 900; font-display:swap; src:url('../assets/fonts/inter.woff2') format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:100 900; font-display:swap; src:url('../assets/fonts/jetbrains-mono.woff2') format('woff2'); }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-bg text-ink font-body antialiased; }
+  h1, h2, h3 { @apply font-display; letter-spacing: -0.01em; }
+}
