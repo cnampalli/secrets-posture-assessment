@@ -3,6 +3,7 @@ import { useAssessment } from '../assessment/store';
 import { RUBRIC } from '../assessment/rubric';
 import { Badge, Button, Card, CardBody, ToggleGroup, Checkbox } from './ui';
 import { ScorePanel } from './ScorePanel';
+import { EvidencePanel } from './EvidencePanel';
 
 export function UseCaseView({ startId }: { startId?: string }) {
   const a = useAssessment();
@@ -45,6 +46,8 @@ export function UseCaseView({ startId }: { startId?: string }) {
       )}
 
       <ScorePanel />
+
+      <EvidencePanel />
 
       <div className="flex justify-between mt-6">
         <Button variant="outline" disabled={idx <= 0} onClick={() => a.go(RUBRIC[idx - 1].uc_id)}>← Previous</Button>
