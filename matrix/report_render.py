@@ -42,6 +42,7 @@ def render(model):
             .replace("/*__RECDATA__*/{}", json.dumps(model["recdata"], ensure_ascii=False))
             .replace("/*__VENDORMIX__*/{}", json.dumps(model.get("vendormix", {}), ensure_ascii=False))
             .replace("/*__COMPLIANCE__*/{}", json.dumps(model.get("compliance", {}), ensure_ascii=False))
+            .replace("/*__VENDORINTEL__*/{}", json.dumps(model.get("vendorintel", {}), ensure_ascii=False))
             .replace("/*__META__*/{}", json.dumps(model["meta"], ensure_ascii=False))
             .replace("__RV__", str(model["meta"]["ranked_vendors"]))
             .replace("__NHI__", str(model["meta"]["nhis"]))

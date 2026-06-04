@@ -307,6 +307,7 @@ const REGDATA = /*__REGDATA__*/{};
 const RECDATA = /*__RECDATA__*/{};
 const VENDORMIX = /*__VENDORMIX__*/{};
 const COMPLIANCE = /*__COMPLIANCE__*/{};
+const VENDORINTEL = /*__VENDORINTEL__*/{};
 const META = /*__META__*/{};
 
 function esc(s){ if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -593,8 +594,43 @@ function renderRecommendations(){
        '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top" class="muted">'+esc(c.why)+'</td></tr>').join("")+
      '</tbody></table></div>';
   h+=vendorMixHtml();
+  h+=vendorIntelHtml();
   h+=complianceHtml();
   el.innerHTML=h;
+}
+function vendorIntelHtml(){
+  const vi=VENDORINTEL; if(!vi||!vi.best_per_uc||!vi.best_per_uc.length) return "";
+  const covPill=c=>'<span class="'+cellClass(c)+'" style="padding:1px 6px;border-radius:3px;font-size:10.5px">'+covAbbr(c)+'</span>';
+  let h='<div class="card"><h3>Best vendor per use case — leading provider + differentiator</h3>'+
+    '<p class="muted" style="font-size:11px">The top provider for each use case (coverage strength, then maturity), with its cited evidence as the differentiator (B2/B3). A decision-support view — not a buy list.</p>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
+    '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Use case</th>'+
+    '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Leading vendor</th>'+
+    '<th style="text-align:center;border-bottom:2px solid #ccc;padding:4px">Cov</th>'+
+    '<th style="text-align:right;border-bottom:2px solid #ccc;padding:4px">Mat</th>'+
+    '<th style="text-align:right;border-bottom:2px solid #ccc;padding:4px">Alts</th>'+
+    '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Differentiator (cited)</th></tr></thead><tbody>'+
+    vi.best_per_uc.map(b=>'<tr>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top">'+gloss(b.uc)+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top"><b>'+esc(b.vendor)+'</b></td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:center;vertical-align:top">'+covPill(b.coverage)+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:right;vertical-align:top">'+b.maturity+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;text-align:right;vertical-align:top" class="muted">'+(b.alternatives||'—')+'</td>'+
+      '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top;font-size:11px" class="muted">'+esc(b.evidence)+'</td></tr>').join("")+
+    '</tbody></table></div>';
+  // Head-to-head of the chosen mix across P0 use cases (B4).
+  const hh=vi.head_to_head;
+  if(hh&&hh.uc_ids&&hh.uc_ids.length&&hh.vendors&&hh.vendors.length){
+    h+='<div class="card"><h3>Head-to-head — the chosen mix across P0 use cases</h3>'+
+       '<div class="gridwrap"><table class="vgrid"><thead><tr><th>Use case</th>'+
+       hh.vendors.map(s=>'<th>'+esc(SHORT[s]||s)+'</th>').join("")+'</tr></thead><tbody>'+
+       hh.uc_ids.map(u=>'<tr><th>'+esc(u)+'</th>'+
+         hh.vendors.map(s=>{const cell=(hh.grid[u]||{})[s];const c=cell?cell.coverage:"GAP";
+           return '<td class="'+cellClass(c)+'">'+covAbbr(c)+(cell&&cell.maturity?'<span class="matcell"> '+cell.maturity+'</span>':'')+'</td>';}).join("")+
+         '</tr>').join("")+
+       '</tbody></table></div></div>';
+  }
+  return h;
 }
 function complianceHtml(){
   const cm=COMPLIANCE; if(!cm||!cm.frameworks||!cm.frameworks.length) return "";

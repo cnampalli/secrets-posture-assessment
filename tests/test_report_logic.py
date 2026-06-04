@@ -85,6 +85,34 @@ def test_build_compliance_lists_gap_to_target():
     assert "E8-1" in codes and "E8-2" not in codes        # E8-2 is MET
 
 
+_VI_UCS = [
+    {"uc_id": "UC-1", "short_title": "One", "priority_fi": "P0"},
+    {"uc_id": "UC-2", "short_title": "Two", "priority_fi": "P1"},
+]
+_VI_RANKED = [
+    {"vendor_slug": "v1", "vendor_name": "V1", "target_type": "UC-F", "target_id": "UC-1", "coverage": "NATIVE", "maturity": "3", "evidence_quote": "ev1", "notes": ""},
+    {"vendor_slug": "v2", "vendor_name": "V2", "target_type": "UC-F", "target_id": "UC-1", "coverage": "ADD-ON", "maturity": "2", "evidence_quote": "", "notes": ""},
+    {"vendor_slug": "v1", "vendor_name": "V1", "target_type": "UC-F", "target_id": "UC-2", "coverage": "NATIVE", "maturity": "4", "evidence_quote": "", "notes": ""},
+]
+_VI_SHORT = {"v1": "Vee One", "v2": "Vee Two"}
+
+
+def test_build_vendor_intel_best_per_uc_with_evidence():
+    vi = rl.build_vendor_intel(_VI_RANKED, _VI_UCS, ["v1"], _VI_SHORT)
+    by_uc = {b["uc"]: b for b in vi["best_per_uc"]}
+    assert by_uc["UC-1"]["vendor"] == "Vee One"
+    assert by_uc["UC-1"]["coverage"] == "NATIVE" and by_uc["UC-1"]["maturity"] == 3
+    assert by_uc["UC-1"]["evidence"] == "ev1"        # B3 differentiator
+    assert by_uc["UC-1"]["alternatives"] == 1        # v2 is the other provider
+
+
+def test_build_vendor_intel_head_to_head_scopes_to_p0():
+    vi = rl.build_vendor_intel(_VI_RANKED, _VI_UCS, ["v1"], _VI_SHORT)
+    h = vi["head_to_head"]
+    assert h["uc_ids"] == ["UC-1"]                    # only P0
+    assert h["grid"]["UC-1"]["v1"]["maturity"] == 3
+
+
 def test_compute_meta_counts():
     m = rl.compute_meta(all_rows=[{"vendor_slug": "a"}, {"vendor_slug": "a"}],
                         ranked=[{"vendor_slug": "a"}], nhis=[{}, {}], ucs=[{}])

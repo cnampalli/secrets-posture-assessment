@@ -77,18 +77,24 @@ VENDORMIX = report_logic.build_vendormix(
 # ---- identity-control coverage indicator + gap-to-target (Phase 0, D3/D4) ----
 COMPLIANCE = report_logic.build_compliance(reg_rows, _inputs["anz"], framework_labels)
 
+# ---- vendor intelligence: best-vendor-per-UC + head-to-head (Phase 0, B2/B3/B4) ----
+_chosen = [c["slug"] for c in VENDORMIX["cover"]["chosen"]]
+VENDORINTEL = report_logic.build_vendor_intel(
+    _inputs["ranked"], _inputs["ucs"], _chosen, report_io.SHORT)
+
 # ---- render + write ----
 html = report_render.render({
     "ranked": _inputs["ranked"], "anz": _inputs["anz"], "ucs": _inputs["ucs"], "nhis": _inputs["nhis"],
     "glossary": GLOSSARY, "layer_label": report_io.LAYER_LABEL, "short": report_io.SHORT,
     "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX,
-    "compliance": COMPLIANCE, "meta": meta,
+    "compliance": COMPLIANCE, "vendorintel": VENDORINTEL, "meta": meta,
 })
 
 if _ARGS.emit_data:
     with open(_ARGS.emit_data, "w", encoding="utf-8") as _ef:
         json.dump({"REGDATA": REGDATA, "RECDATA": RECDATA, "VENDORMIX": VENDORMIX,
-                   "COMPLIANCE": COMPLIANCE}, _ef, ensure_ascii=False, sort_keys=True)
+                   "COMPLIANCE": COMPLIANCE, "VENDORINTEL": VENDORINTEL},
+                  _ef, ensure_ascii=False, sort_keys=True)
 
 with open(DST, "w", encoding="utf-8") as f:
     f.write(html)

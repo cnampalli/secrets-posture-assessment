@@ -9,6 +9,7 @@ import compliance as _cmp
 import optimizer as _opt
 import overlay as _ov
 import resilience as _rz
+import vendor_intel as _vi
 
 APRA_FRAMEWORKS = {"apra-cps-234", "apra-cps-230", "apra-cpg-234"}
 STATE_RANK = {"GAP": 0, "PARTIAL": 1, "PENDING": 2, "MET": 3, "UNKNOWN": 9}
@@ -134,6 +135,33 @@ def build_compliance(reg_rows, anz, framework_labels, gap_limit=15,
         key=lambda d: (-d["met_pct"], d["slug"]))
     return {"frameworks": frameworks,
             "gap_to_target": _cmp.gap_to_target(rows, anz)[:gap_limit]}
+
+
+def build_vendor_intel(ranked, ucs, chosen_slugs, short, evidence_len=160):
+    """Best-vendor-per-UC feature matrix (B2/B3) + head-to-head (B4).
+
+    best_per_uc: the leading provider for each UC with its coverage, maturity,
+    count of alternatives, and the evidence quote (the B3 differentiator).
+    head_to_head: a compact per-UC grid for the chosen vendor mix, scoped to
+    P0-priority UCs to stay legible.
+    """
+    best_per_uc = []
+    for u in ucs:
+        prov = _vi.best_for(u["uc_id"], ranked)
+        if not prov:
+            continue
+        top = prov[0]
+        best_per_uc.append({
+            "uc": u["uc_id"], "title": u.get("short_title", ""),
+            "vendor": short.get(top["vendor_slug"], top["vendor_name"]),
+            "coverage": top["coverage"], "maturity": top["maturity"],
+            "alternatives": len(prov) - 1,
+            "evidence": (top["evidence_quote"] or "")[:evidence_len],
+        })
+    p0 = [u["uc_id"] for u in ucs if u.get("priority_fi") == "P0"]
+    grid = _vi.head_to_head(chosen_slugs, ranked, uc_ids=p0) if p0 else {}
+    return {"best_per_uc": best_per_uc,
+            "head_to_head": {"uc_ids": p0, "vendors": chosen_slugs, "grid": grid}}
 
 
 def build_vendormix(ranked, ownership, anchors, short):

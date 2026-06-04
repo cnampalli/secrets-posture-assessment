@@ -46,6 +46,15 @@ def test_compliance_section_emitted_excludes_informative(tmp_path):
     assert cm["gap_to_target"]                    # there are controls to close
 
 
+def test_vendorintel_section_emitted(tmp_path):
+    new = _run(tmp_path)
+    vi = new["VENDORINTEL"]
+    assert len(vi["best_per_uc"]) >= 40           # a leading vendor for ~every UC
+    by_uc = {b["uc"]: b for b in vi["best_per_uc"]}
+    assert by_uc["UC-F-001"]["coverage"] in ("NATIVE", "ADD-ON", "PARTNER")
+    assert vi["head_to_head"]["uc_ids"]           # P0 use cases scoped in
+
+
 def test_financial_preset_scopes_frameworks(tmp_path):
     new = _run(tmp_path, "--preset", "financial")
     slugs = {f["slug"] for f in new["REGDATA"]["frameworks"]}
