@@ -21,4 +21,21 @@ export interface AssessmentRecord {
     proposed_state: State | null; final_state: State; overridden: boolean;
     rationale: string; confidence: 'LOW' | 'MED' | 'HIGH';
   }>;
+  evidence?: Record<string, EvidenceMeta[]>;
 }
+
+export interface EvidenceMeta { id: string; name: string; type: string; size: number; added: string; }
+export type EvidenceExport = EvidenceMeta & { data: string }; // base64 (no data: URI prefix)
+
+export const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+export const ALLOWED_TYPES = {
+  mime: [
+    'application/pdf',
+    'image/png', 'image/jpeg', 'image/webp',
+    'text/plain', 'text/csv',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  ] as string[],
+  ext: ['pdf','png','jpg','jpeg','webp','txt','csv','docx','xlsx','pptx'] as string[],
+};

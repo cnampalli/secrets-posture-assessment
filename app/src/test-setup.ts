@@ -1,3 +1,4 @@
+import 'fake-indexeddb/auto';
 import '@testing-library/jest-dom';
 
 // Node v26 exposes localStorage/sessionStorage as experimental globals but they
