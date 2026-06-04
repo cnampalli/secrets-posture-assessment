@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, test } from 'vitest';
 import { proposedFor, finalFor, scoredCount, buildRecord, blankResponse } from './record';
 import type { UseCase, Response } from './types';
+import { RUBRIC } from './rubric';
+import type { EvidenceMeta } from './types';
 
 const ladder: UseCase = {
   uc_id: 'UC-F-001', title: 'X', category: 'Functional', archetype: 'A1', archetype_name: 'A1',
@@ -42,4 +44,14 @@ describe('record model', () => {
       archetype: 'A1', proposed_state: 'GAP', final_state: 'GAP', overridden: false, rationale: 'r', confidence: 'MED',
     });
   });
+});
+
+test('buildRecord includes evidence metadata only when provided and non-empty', () => {
+  const ev: Record<string, EvidenceMeta[]> = {
+    [RUBRIC[0].uc_id]: [{ id: 'x', name: 'a.pdf', type: 'application/pdf', size: 5, added: '2026-06-05T00:00:00Z' }],
+  };
+  const withEv = buildRecord(RUBRIC, {}, 'T', ev);
+  expect(withEv.evidence).toEqual(ev);
+  expect('evidence' in buildRecord(RUBRIC, {}, 'T')).toBe(false);
+  expect('evidence' in buildRecord(RUBRIC, {}, 'T', {})).toBe(false);
 });
