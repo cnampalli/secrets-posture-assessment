@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { loadResponses, saveResponses, importRecord, STORE_KEY } from './persistence';
+import { describe, it, test, expect, beforeEach } from 'vitest';
+import { loadResponses, saveResponses, importRecord, loadEvidence, STORE_KEY } from './persistence';
 import { blankResponse } from './record';
-import type { Response } from './types';
+import { RUBRIC } from './rubric';
+import type { Response, EvidenceMeta } from './types';
 
 beforeEach(() => localStorage.clear());
 
@@ -26,4 +27,17 @@ describe('persistence', () => {
     expect(merged['UC-F-001'].final_state).toBe('GAP');     // incoming merged
     expect(() => importRecord(existing, JSON.stringify({ schema: 'wrong' }), () => true)).toThrow();
   });
+});
+
+test('saveResponses persists evidence metadata; loadEvidence reads it back', () => {
+  const ev: Record<string, EvidenceMeta[]> = {
+    [RUBRIC[0].uc_id]: [{ id: 'p1', name: 'a.pdf', type: 'application/pdf', size: 9, added: 'T' }],
+  };
+  saveResponses({}, 'T', ev);
+  expect(loadEvidence()).toEqual(ev);
+});
+
+test('loadEvidence returns {} when nothing stored', () => {
+  localStorage.clear();
+  expect(loadEvidence()).toEqual({});
 });

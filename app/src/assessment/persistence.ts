@@ -1,4 +1,4 @@
-import type { Response, State } from './types';
+import type { Response, State, EvidenceMeta } from './types';
 import { blankResponse, buildRecord } from './record';
 import { RUBRIC } from './rubric';
 
@@ -29,9 +29,25 @@ function rebuildResponses(stored: Record<string, unknown>): Record<string, Respo
   return out;
 }
 
-export function saveResponses(responses: Record<string, Response>, generated: string): void {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(buildRecord(RUBRIC, responses, generated))); }
+export function saveResponses(
+  responses: Record<string, Response>, generated: string,
+  evidence?: Record<string, EvidenceMeta[]>,
+): void {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(buildRecord(RUBRIC, responses, generated, evidence))); }
   catch { /* quota / unavailable — caller may toast */ }
+}
+
+export function loadEvidence(): Record<string, EvidenceMeta[]> {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return {};
+    const rec = JSON.parse(raw);
+    const ev = rec && rec.evidence;
+    if (!ev || typeof ev !== 'object') return {};
+    const out: Record<string, EvidenceMeta[]> = {};
+    for (const [id, list] of Object.entries(ev)) if (Array.isArray(list)) out[id] = list as EvidenceMeta[];
+    return out;
+  } catch { return {}; }
 }
 
 export function importRecord(
