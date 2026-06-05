@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Domain Vendor Map — Concentration &amp; Consolidation</title>
+<style>
+/*__FONTS__*/
+/*__TOKENS__*/
+body{font-family:var(--font-body,system-ui,sans-serif);margin:0;background:#faf9f7;color:#1a1a1a}
+.wrap{max-width:1100px;margin:0 auto;padding:28px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:#666;font-size:13px;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{text-align:left;border-bottom:1px solid #eee;padding:8px 10px;vertical-align:top}
+th{border-bottom:2px solid #ccc;font-size:12px}
+.chip{display:inline-block;background:#eef;border-radius:10px;padding:1px 8px;margin:1px 2px;font-size:11px}
+.hint{color:#777;font-size:11px}
+.star{color:#b8860b;font-weight:700}
+.muted{color:#888}
+.card{background:#fff;border:1px solid #eee;border-left:4px solid var(--l1,#446);border-radius:4px;padding:14px 16px;margin:16px 0}
+.card.risk{border-left-color:#a33}
+.card h3{margin:0 0 8px;font-size:15px}
+.card li{margin:6px 0}
+.note{color:#666;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Cross-Domain Vendor Map — by corporate parent</h1>
+  <div class="sub">One parent spanning multiple identity-security domains is both a consolidation opportunity and a concentration risk. Decision-support, not a buy list. Ownership data is point-in-time — re-verify before client use.</div>
+  <table id="map"><thead></thead><tbody></tbody></table>
+  <div id="panels"></div>
+</div>
+<script>
+const CROSSMAP = /*__CROSSMAP__*/{};
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function renderMap(){
+  const ds=CROSSMAP.domains||[], ps=CROSSMAP.parents||[];
+  document.querySelector("#map thead").innerHTML =
+    "<tr><th>Corporate parent</th>"+ds.map(d=>"<th>"+esc(d.label)+"</th>").join("")+"<th>Spans</th></tr>";
+  document.querySelector("#map tbody").innerHTML = ps.map(p=>{
+    const cells = ds.map(d=>{
+      const cell=p.by_domain[d.slug];
+      if(!cell) return '<td class="muted">—</td>';
+      const chips=cell.brands.map(b=>'<span class="chip">'+esc(b.name)+'</span>').join("");
+      return "<td>"+chips+'<div class="hint">NATIVE on '+esc(cell.native_ucs)+' UCs</div></td>';
+    }).join("");
+    const star=p.spans>=2?'<span class="star">★ </span>':"";
+    return "<tr><td><b>"+esc(p.parent)+"</b></td>"+cells+"<td>"+star+esc(p.spans)+"</td></tr>";
+  }).join("");
+}
+function renderPanels(){
+  const conc=CROSSMAP.concentration||[], cons=CROSSMAP.consolidation||[];
+  let h="";
+  if(conc.length){
+    h+='<div class="card risk"><h3>▶ Concentration (risk reading)</h3><ul>'+
+      conc.map(c=>"<li><b>"+esc(c.parent)+"</b> — "+esc(c.note)+"</li>").join("")+"</ul></div>";
+  }
+  if(cons.length){
+    h+='<div class="card"><h3>▶ Consolidation (opportunity reading)</h3><ul>'+
+      cons.map(c=>"<li><b>"+esc(c.parent)+"</b> — covers "+esc(c.domains)+" domains, "+
+        esc(c.native_ucs_total)+" NATIVE UCs total. "+esc(c.note)+"</li>").join("")+"</ul></div>";
+  }
+  if(!h) h='<p class="note">No parent spans more than one domain in the current data.</p>';
+  document.getElementById("panels").innerHTML=h;
+}
+renderMap();
+renderPanels();
+</script>
+</body>
+</html>
