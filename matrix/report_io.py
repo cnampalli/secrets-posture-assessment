@@ -75,6 +75,7 @@ def load_inputs(here, current_state_name=None, domain=SECRETS):
             "sensitivity": r.get("sensitivity_tag", "")} for r in read_csv(here, current_state_name)]
 
     reg_rows = read_csv(here, domain.regulatory_trace)
+    evidence_catalog = read_csv(here, "evidence-catalog.csv")   # optional per domain (secrets ships none)
 
     return {"all_rows": all_rows, "ranked": ranked, "ucs": ucs, "nhis": nhis,
-            "anz": anz, "reg_rows": reg_rows}
+            "anz": anz, "reg_rows": reg_rows, "evidence_catalog": evidence_catalog}

@@ -50,7 +50,62 @@ def compute_meta(all_rows, ranked, nhis, ucs):
             "total_rows": len(all_rows), "nhis": len(nhis), "ucs": len(ucs)}
 
 
-def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, available):
+_EVIDENCE_COMPLIANCE_ROLES = {"PRIMARY-LENS", "BACK-MAP"}
+
+
+def build_control_evidence(reg_rows, evidence_catalog):
+    """Resolve each control's regulatory evidence pack and the reverse
+    'one artifact -> many controls' index. Compliance-role rows only.
+
+    Returns {"by_control": {control_code: [item,...]}, "index": [item,...]} where
+    each item carries the catalog fields plus `satisfies` (sorted control codes that
+    reference it); index items also carry `uc_count` (distinct UCs across those
+    controls). Empty/absent catalog -> empty maps (the secrets domain ships none)."""
+    catalog = {(r.get("ev_id") or "").strip(): r for r in (evidence_catalog or [])
+               if (r.get("ev_id") or "").strip()}
+    if not catalog:
+        return {"by_control": {}, "index": []}
+
+    ev_controls = defaultdict(set)      # ev_id -> {control_code,...}
+    ev_ucs = defaultdict(set)           # ev_id -> {uc_id,...}
+    control_evids = defaultdict(list)   # control_code -> [ev_id,...] (dedup, in row order)
+    for r in reg_rows:
+        if (r.get("framework_role") or "").strip() not in _EVIDENCE_COMPLIANCE_ROLES:
+            continue
+        cc = (r.get("control_code") or "").strip()
+        ucs_here = [u.strip() for u in (r.get("uc_ids") or "").split(";") if u.strip()]
+        for ev in (e.strip() for e in (r.get("evidence_item_ids") or "").split(";") if e.strip()):
+            if ev not in catalog:
+                continue            # the F-gate guarantees resolution; skip defensively
+            ev_controls[ev].add(cc)
+            ev_ucs[ev].update(ucs_here)
+            if ev not in control_evids[cc]:
+                control_evids[cc].append(ev)
+
+    def item(ev):
+        r = catalog[ev]
+        return {"ev_id": ev, "requirement": r.get("requirement", ""),
+                "dimension": (r.get("dimension") or "").strip(),
+                "tier": (r.get("tier") or "").strip(),
+                "example_artifact": r.get("example_artifact", ""),
+                "sensitivity_tag": r.get("sensitivity_tag", ""),
+                "satisfies": sorted(ev_controls[ev])}
+
+    def primary_first(ev):
+        return (0 if (catalog[ev].get("tier") or "").strip() == "primary" else 1, ev)
+
+    by_control = {cc: [item(e) for e in sorted(evids, key=primary_first)]
+                  for cc, evids in control_evids.items()}
+    index = []
+    for ev in sorted(ev_controls, key=lambda e: (-len(ev_controls[e]), e)):
+        it = item(ev)
+        it["uc_count"] = len(ev_ucs[ev])
+        index.append(it)
+    return {"by_control": by_control, "index": index}
+
+
+def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, available,
+                  evidence_catalog=None):
     """Returns (REG, REGDATA): the per-UC APRA/ISM chips and the
     Framework -> Control -> UC -> Vendor-evidence cascade data."""
     reg = defaultdict(lambda: {"APRA": set(), "ISM": set()})
@@ -80,10 +135,12 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
             "evidence_url": r.get("evidence_url", ""),
             "evidence_quote": (r.get("evidence_quote") or "")[:300],
         })
+    evidence = build_control_evidence(reg_rows, evidence_catalog)
     for fw, controls in framework_controls.items():
         for c in controls:
             states = [state_by_uc.get(u, "UNKNOWN") for u in c["uc_ids"]]
             c["current_state"] = min(states, key=lambda s: STATE_RANK.get(s, 9)) if states else "UNKNOWN"
+            c["evidence"] = evidence["by_control"].get(c["code"], [])
     vendor_uc = defaultdict(list)
     for r in ranked:
         if r["target_type"] not in UC_TYPES:
@@ -103,6 +160,7 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
                         "subtitle": framework_labels.get(s, (s, ""))[1],
                         "control_count": len(framework_controls[s])} for s in fw_order],
         "controls": framework_controls, "ucs": uc_index, "vendor_uc": dict(vendor_uc),
+        "evidence_index": evidence["index"],
         "framework_selection": {
             "selected": list(engagement.selected) if not engagement.is_default else list(available),
             "overlays": list(engagement.overlays),

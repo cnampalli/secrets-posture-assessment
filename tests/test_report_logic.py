@@ -134,3 +134,56 @@ def test_compute_meta_counts():
     assert m["total_rows"] == 2
     assert m["ranked_rows"] == 1
     assert m["ranked_vendors"] == 1
+
+
+# --- regulatory evidence packs in the compliance-trace model ----------------
+
+_EV_REG = [
+    {"framework_slug": "asd-ism", "framework_role": "BACK-MAP", "control_code": "ISM-1619",
+     "uc_ids": "UC-P-001;UC-P-006", "evidence_item_ids": "EV-A;EV-SHARED"},
+    {"framework_slug": "apra-cps-234", "framework_role": "BACK-MAP", "control_code": "CPS234-§21(b)",
+     "uc_ids": "UC-P-001", "evidence_item_ids": "EV-SHARED"},
+    {"framework_slug": "asd-ism", "framework_role": "BACK-MAP", "control_code": "ISM-9999",
+     "uc_ids": "UC-P-002", "evidence_item_ids": ""},                       # no pack
+    {"framework_slug": "mitre-attack", "framework_role": "ADVERSARY-LENS", "control_code": "T-1",
+     "uc_ids": "UC-P-001", "evidence_item_ids": "EV-A"},                   # adversary -> ignored
+]
+_EV_CAT = [
+    {"ev_id": "EV-A", "requirement": "register of vaulted accounts", "dimension": "coverage",
+     "tier": "primary", "example_artifact": "e.g. export", "sensitivity_tag": "[INTERNAL]",
+     "citation_keys": "c1"},
+    {"ev_id": "EV-SHARED", "requirement": "rotation policy", "dimension": "depth",
+     "tier": "primary", "example_artifact": "", "sensitivity_tag": "[SENSITIVE]", "citation_keys": "c2"},
+]
+
+
+def test_control_evidence_resolves_items_per_control():
+    ev = rl.build_control_evidence(_EV_REG, _EV_CAT)
+    items = {e["ev_id"]: e for e in ev["by_control"]["ISM-1619"]}
+    assert set(items) == {"EV-A", "EV-SHARED"}
+    assert items["EV-A"]["requirement"] == "register of vaulted accounts"
+    assert items["EV-A"]["tier"] == "primary"
+    assert items["EV-A"]["sensitivity_tag"] == "[INTERNAL]"
+
+
+def test_control_evidence_reverse_satisfies_lists_all_controls():
+    ev = rl.build_control_evidence(_EV_REG, _EV_CAT)
+    shared = next(e for e in ev["by_control"]["CPS234-§21(b)"] if e["ev_id"] == "EV-SHARED")
+    assert shared["satisfies"] == ["CPS234-§21(b)", "ISM-1619"]   # sorted, both controls
+
+
+def test_control_evidence_index_dedupes_and_counts_ucs():
+    idx = {e["ev_id"]: e for e in rl.build_control_evidence(_EV_REG, _EV_CAT)["index"]}
+    assert set(idx) == {"EV-A", "EV-SHARED"}
+    # EV-SHARED is referenced by ISM-1619 (UC-P-001;UC-P-006) and CPS234-§21(b) (UC-P-001)
+    assert idx["EV-SHARED"]["satisfies"] == ["CPS234-§21(b)", "ISM-1619"]
+    assert idx["EV-SHARED"]["uc_count"] == 2                       # UC-P-001, UC-P-006 (deduped)
+    assert idx["EV-A"]["uc_count"] == 2
+
+
+def test_control_evidence_skips_adversary_and_handles_empty_catalog():
+    ev = rl.build_control_evidence(_EV_REG, _EV_CAT)
+    assert "T-1" not in ev["by_control"]                          # adversary-lens excluded
+    assert ev["by_control"].get("ISM-9999", []) == []             # control with no pack
+    empty = rl.build_control_evidence(_EV_REG, [])
+    assert empty["by_control"] == {} and empty["index"] == []     # no catalog -> nothing
