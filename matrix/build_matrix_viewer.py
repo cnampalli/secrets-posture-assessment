@@ -28,20 +28,26 @@ import report_io
 import report_logic
 import report_render
 
-DOMAIN = domains.SECRETS                       # Phase 1: the active domain descriptor
 HERE = os.path.dirname(os.path.abspath(__file__))
-DST = os.path.join(HERE, "matrix-viewer.html")
 _CFGDIR = os.path.join(HERE, "config")
 
-_ap = argparse.ArgumentParser(description="Build the secrets-management report.")
+_ap = argparse.ArgumentParser(description="Build a domain's vendor-selection report.")
+_ap.add_argument("--domain", default="secrets", choices=sorted(domains.DOMAINS),
+                 help="which domain descriptor to build (default: secrets)")
 _ap.add_argument("--config", help="path to an engagement.yaml")
 _ap.add_argument("--preset", help="named preset (financial|government|retail|baseline)")
 _ap.add_argument("--frameworks", help="comma-separated framework slugs (overrides primary)")
 _ap.add_argument("--emit-data", help="(test hook) also dump {REGDATA,RECDATA} JSON to this path")
-_ap.add_argument("--current-state", default="current-state.csv",
+_ap.add_argument("--current-state", default=None,
                  help="current-state CSV the report scores against (a questionnaire export via "
-                      "questionnaire/report_adapter.py). Default keeps existing behaviour.")
+                      "questionnaire/report_adapter.py). Default: the domain's default file.")
 _ARGS, _ = _ap.parse_known_args()
+
+DOMAIN = domains.DOMAINS[_ARGS.domain]         # the active domain descriptor
+# Secrets keeps its canonical output path (and frozen snapshot); other domains
+# write a self-contained report beside their data.
+DST = (os.path.join(HERE, "matrix-viewer.html") if DOMAIN.slug == "secrets"
+       else os.path.join(DOMAIN.data_dir, f"{DOMAIN.slug}-report.html"))
 
 # ---- load inputs + config ----
 _inputs = report_io.load_inputs(DOMAIN.data_dir, _ARGS.current_state, DOMAIN)
@@ -66,9 +72,12 @@ REG, REGDATA = report_logic.build_regdata(
     framework_labels, ENGAGEMENT, available)
 GLOSSARY = report_logic.build_glossary(_inputs["nhis"], _inputs["ucs"])
 meta = report_logic.compute_meta(_inputs["all_rows"], _inputs["ranked"], _inputs["nhis"], _inputs["ucs"])
-RECDATA = report_logic.build_recdata(
+# Legacy RECDATA is the frozen, secrets-specific recommendations section; new
+# domains render the domain-agnostic VENDORMIX/COMPLIANCE/VENDORINTEL instead.
+RECDATA = (report_logic.build_recdata(
     _inputs["ranked"], _inputs["nhis"], DOMAIN.vendor_layer, DOMAIN.short,
     vendor_residency, DOMAIN.substrate_slug, ENGAGEMENT)
+    if DOMAIN.legacy_recdata else {})
 
 # ---- resilience-first vendor-mix + concentration (Phase 0, parent-aware) ----
 vendor_ownership = report_io.load_vendor_ownership(_CFGDIR)
@@ -91,7 +100,7 @@ html = report_render.render({
     "glossary": GLOSSARY, "layer_label": DOMAIN.layer_label, "short": DOMAIN.short,
     "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX,
     "compliance": COMPLIANCE, "vendorintel": VENDORINTEL, "meta": meta,
-    "domain_meta": DOMAIN.report_meta(),
+    "domain_meta": DOMAIN.report_meta(), "domain_content": DOMAIN.report_content(),
 })
 
 if _ARGS.emit_data:

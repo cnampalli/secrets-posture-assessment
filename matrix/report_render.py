@@ -32,6 +32,7 @@ def render(model):
     fails fast instead of silently rendering the wrong vocabulary.
     """
     dm = model["domain_meta"]
+    dc = model["domain_content"]
     return (load_template()
             .replace("/*__FONTS__*/", brand_fonts.fontface_css())
             .replace("/*__TOKENS__*/", brand_tokens.tokens_css())
@@ -49,11 +50,16 @@ def render(model):
             .replace("/*__COMPLIANCE__*/{}", json.dumps(model.get("compliance", {}), ensure_ascii=False))
             .replace("/*__VENDORINTEL__*/{}", json.dumps(model.get("vendorintel", {}), ensure_ascii=False))
             .replace("/*__META__*/{}", json.dumps(model["meta"], ensure_ascii=False))
+            .replace("/*__VALUECFG__*/{}", json.dumps(dc["value_content"], ensure_ascii=False))
             .replace("__DOMAIN_TITLE__", dm["title"])
             .replace("__DOMAIN_HEADING__", dm["heading"])
             .replace("__SUBSTRATE_NOTE__", dm["substrate_note"])
             .replace("__OBJECT_PLURAL__", dm["object_plural"])
             .replace("__OBJECT_SINGULAR__", dm["object_singular"])
+            .replace("__POSTURE_NOUN__", dc["posture_noun"])
+            .replace("__OBJECT_PICKER__", dc["object_picker"])
+            .replace("__SUBSTRATE_CARD_DISPLAY__", dc["substrate_card_display"])
+            .replace("__SUBSTRATE_EXCL__", dc["substrate_exclusion_note"])
             .replace("__RV__", str(model["meta"]["ranked_vendors"]))
             .replace("__NHI__", str(model["meta"]["nhis"]))
             .replace("__UC__", str(model["meta"]["ucs"])))

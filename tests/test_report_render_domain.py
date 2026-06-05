@@ -16,6 +16,9 @@ def _minimal_model(domain_meta):
         "reg": {}, "regdata": {}, "recdata": {},
         "meta": {"ranked_vendors": 0, "nhis": 0, "ucs": 0},
         "domain_meta": domain_meta,
+        "domain_content": {"posture_noun": "secrets", "object_picker": "machine identity",
+                           "substrate_card_display": "", "substrate_exclusion_note": "",
+                           "value_content": {}},
     }
 
 
