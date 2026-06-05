@@ -52,3 +52,23 @@ def test_render_requires_domain_meta():
     del model["domain_meta"]
     with pytest.raises(KeyError):
         report_render.render(model)
+
+
+def test_domain_label_containing_a_count_token_is_not_mangled():
+    # Phase 1 #4: count tokens (__RV__/__NHI__/__UC__) must be substituted in the
+    # SAME pass as the label tokens. Otherwise a domain whose heading legitimately
+    # contains a "__RV__"-style sequence gets clobbered by the later count replace.
+    model = _minimal_model(_full_domain_meta(heading="Vendor __RV__ Edition"))
+    model["meta"] = {"ranked_vendors": 7, "nhis": 0, "ucs": 0}
+    html = report_render.render(model)
+    assert "Vendor __RV__ Edition" in html      # injected literal survives verbatim
+    assert "Vendor 7 Edition" not in html        # NOT rewritten by the count substitution
+
+
+def test_domain_label_containing_another_label_token_is_not_mangled():
+    # Same single-pass guarantee across label tokens: a title containing
+    # __OBJECT_PLURAL__ must not be rewritten by the object-plural substitution.
+    model = _minimal_model(_full_domain_meta(title="The __OBJECT_PLURAL__ Report"))
+    html = report_render.render(model)
+    assert "The __OBJECT_PLURAL__ Report" in html
+    assert "The PLURAL-SENTINEL Report" not in html
