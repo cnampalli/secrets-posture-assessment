@@ -1,0 +1,79 @@
+# Privileged Access Management domain descriptor (Phase 1 #8 — config, not code).
+# Loaded by matrix.domains.load_domain(); must stay exactly equal to the historical
+# Python PAM descriptor (guarded by tests/test_domain_yaml.py).
+slug: "pam"
+label: "Privileged Access Management"
+data_dir: "domains/pam"             # relative to matrix/ (HERE)
+
+# CSV filenames (relative to data_dir)
+vendor_capabilities: "vendor-capabilities.csv"
+use_cases: "use-cases.csv"
+identity_catalog: "identity-catalog.csv"
+regulatory_trace: "regulatory-trace.csv"
+default_current_state: "current-state.csv"
+
+# vendor classification maps (slug -> [layer, tier])
+vendor_layer:
+  cyberark-pam: ["L1", "suite"]
+  delinea: ["L1", "suite"]
+  beyondtrust: ["L1", "suite"]
+  one-identity-safeguard: ["L1", "suite"]
+  wallix-bastion: ["L1", "suite"]
+  teleport: ["L2", "modern-access"]
+
+short:
+  cyberark-pam: "CyberArk"
+  delinea: "Delinea"
+  beyondtrust: "BeyondTrust"
+  one-identity-safeguard: "One Identity"
+  wallix-bastion: "WALLIX"
+  teleport: "Teleport"
+
+layer_label:
+  L1: "L1 · PAM platforms (vault / session control / brokering) — NATIVE = first-party privileged-access capability"
+  L2: "L2 · Modern identity-native infrastructure access — NATIVE = ephemeral, certificate-based access (not classic vaulting)"
+
+substrate_slug: ""
+
+# analysis policy
+anchors_tier: "suite"
+informative_frameworks: []
+legacy_recdata: false
+
+# report labels
+report_title: "Privileged Access Management — Vendor-Selection Report"
+report_heading: "Privileged Access Management — Vendor Selection"
+object_singular: "privileged identity"
+object_plural: "privileged identities"
+substrate_note: ""
+
+# per-domain body copy (content blocks)
+posture_noun: "privileged-access"
+object_picker: "privileged identity"
+substrate_exclusion_note: ""
+substrate_table_note: ""
+kpi_object_label: "privileged identities"
+layer_groups:
+  - ["L1", "PAM platforms"]
+  - ["L2", "Modern access"]
+
+card_copy:
+  rec_l1_label: "PAM platform"
+  rec_l2_complement: "Pair with"
+  rec_l2_label: "L2 modern access"
+  layer_note: "A modern-access tool (L2) complements a PAM platform (L1) — different models, often deployed together. "
+  posture_legend_suffix: " — assessed baseline (template; run the questionnaire to populate posture)."
+
+value_content:
+  outcomes:
+    - ["hard", "Rationalise tooling spend", "The vendor matrix exposes overlapping PAM / session / vaulting tools running in parallel and gives a layer-scoped consolidation path.", "Tool count &darr; · avoided licence + procurement effort"]
+    - ["hours", "Audit &amp; compliance efficiency", "A pre-built control-evidence pack (3-click framework &rarr; control &rarr; use case &rarr; evidence) answers APRA / ISM privileged-access audits and cuts findings.", "Audit hours &darr; · findings &darr; · avoided enforcement"]
+    - ["risk", "Lower expected breach loss", "Closing prioritised privileged-access gaps (standing privilege, shared admin credentials) reduces the probability × impact of a privileged-account compromise.", "Gaps closed · risk-adjusted expected-loss &darr;"]
+    - ["kpi", "Reduce operational toil", "Just-in-time elevation, session brokering and automated credential rotation remove manual privileged-access handling and standing-privilege incidents.", "Manual elevations &darr; · privileged incidents &darr;"]
+  kpis:
+    - ["Privileged-account inventory", "% of privileged accounts discovered &amp; owner-attested", "Discovery / attestation use cases", "per cycle"]
+    - ["Standing-privilege reduction", "% of privileged access brokered just-in-time", "JIT / ZSP use cases", "monthly"]
+    - ["Gap-closure rate", "assessed GAP / PARTIAL &rarr; MET over time", "this assessment baseline", "per cycle"]
+    - ["Session coverage", "% of privileged sessions isolated &amp; recorded", "Session-management use cases", "continuous"]
+    - ["Tool consolidation", "count of overlapping PAM / session tools", "vendor matrix", "per cycle"]
+  roi_events: "one privileged-account compromise, one regulatory enforcement action, or one duplicated PAM platform"

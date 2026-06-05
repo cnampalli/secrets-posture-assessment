@@ -294,13 +294,6 @@
       <ul class="gaplist" id="pendinglist"></ul>
     </div>
   </div>
-  <div class="card" style="border-left:4px solid var(--l0);display:none">
-    <h3><span class="lchip L0">L0</span> Crypto-substrate dependency (not ranked)</h3>
-    <p class="muted">The vault is unsealed / key-rooted by an HSM substrate beneath it — a
-    <b>dependency, not a vendor in this comparison</b> (ADR-007). XYZ's live decision is the
-    <b>Thales SafeNet Luna → Fortanix DSM</b> migration. Evaluate as crypto infrastructure
-    (FIPS 140-3, IRAP, PQC, vault PKCS#11), not against the vaults ranked here.</p>
-  </div>
 </section>
 
 <section id="view-uc" class="view">
@@ -657,54 +650,9 @@ HEADERS.forEach(h=>h.addEventListener("click",()=>{ const k=h.dataset.key; if(so
   }
 })();
 
-// ---- Recommendations tab (residency-first, layer-scoped) ----
-function recChip(res, irap){
-  const m={"AU-RESIDENT":["AU-resident","#1a7f37"],"CONDITIONAL":["AU conditional","#9a6700"],"SAAS-ONLY":["SaaS-only","#b35900"]};
-  const x=m[res]||[res,"#555"];
-  const ir = irap==="YES"?" · IRAP ✓":(irap==="PARTIAL"?" · IRAP ~":" · no IRAP");
-  return '<span style="display:inline-block;padding:1px 7px;border-radius:10px;color:#fff;font-size:10px;font-weight:600;background:'+x[1]+'">'+esc(x[0])+ir+'</span>';
-}
-function recVendorRow(v, metric){
-  const lay=VLAYER[v.slug]||"";
-  return '<div style="padding:7px 0;border-bottom:1px solid #eee">'+
-    '<span class="lchip '+lay+'">'+lay+'</span> <b>'+esc(v.name)+'</b> '+
-    '<span class="muted" style="font-size:11px">('+esc(v.tier)+')</span> '+recChip(v.residency,v.irap)+
-    '<div class="muted" style="font-size:11px;margin-top:2px">'+metric+
-    ' · '+v.nhi_native+'/'+RECDATA.coverage_proof.nhi_total+' identities NATIVE'+(v.nhi_gap?' · '+v.nhi_gap+' gaps':'')+'</div>'+
-    (v.res_note?'<div style="font-size:11px;color:#666;margin-top:2px">'+esc(v.res_note)+'</div>':'')+'</div>';
-}
 function renderRecommendations(){
   const el=document.getElementById("rec-body"); if(!el) return;
   let h="";
-  if(RECDATA.coverage_proof){            // legacy secrets-specific recommendations (frozen; secrets-only)
-  const cp=RECDATA.coverage_proof;
-  h+='<div class="card" style="border-left:4px solid var(--l1)"><h3>Why a stack, not a single vendor</h3>'+
-     '<p>No single vendor covers all '+META.ucs+' use cases. The strongest Layer-1 vault is NATIVE on only <b>'+cp.max_l1_nhi+' of '+cp.nhi_total+'</b> identity types — and a Layer-1 vault cannot <i>discover / govern</i> identities, while a Layer-2 tool cannot <i>broker</i> secrets. So compose across layers; rank within a layer (ADR-007). Large enterprises deliberately run best-of-breed for exactly this reason.</p></div>';
-  h+='<div class="card"><h3><span class="lchip L1">L1</span> Secrets management — top picks (AU-residency first)</h3>'+
-     '<p class="muted" style="font-size:11px">'+esc(LAYER_LABEL.L1)+'</p>'+
-     RECDATA.l1_secrets.map(v=>recVendorRow(v, v.secrets_native+'/'+v.secrets_total+' secrets-mgmt use cases NATIVE')).join("")+'</div>';
-  h+='<div class="card"><h3><span class="lchip L1">L1</span> PKI / machine-identity (certificates) — a distinct discipline</h3>'+
-     '<p class="muted" style="font-size:11px">Certificate &amp; key lifecycle that most vaults do not own.</p>'+
-     RECDATA.pki_mim.map(v=>recVendorRow(v, v.secrets_native+'/'+v.secrets_total+' secrets-mgmt use cases NATIVE')).join("")+'</div>';
-  h+='<div class="card"><h3><span class="lchip L2">L2</span> NHI discovery / governance — top picks (residency first)</h3>'+
-     '<p class="muted" style="font-size:11px">'+esc(LAYER_LABEL.L2)+'</p>'+
-     '<p class="note">Every Layer-2 vendor is SaaS-only with no AU region / IRAP today — material under APRA CPS 234 §22 / CPS 230 §39. Treat as an observability / governance overlay above an AU-resident vault; pursue BYOC or an AU-residency commitment before production. Human-workforce IGA (SailPoint, Saviynt, Okta IGA) is a separate adjacent market — evaluate it on its own if workforce-identity governance is in scope.</p>'+
-     RECDATA.l2_governance.map(v=>recVendorRow(v, v.gov_native+'/'+v.gov_total+' governance use cases NATIVE')).join("")+'</div>';
-  h+='<div class="card" style="border-left:4px solid var(--l2)"><h3>Top 4 recommendations — by role, not a league table</h3>'+
-     RECDATA.top_picks.map((p,i)=>'<div style="padding:7px 0;border-bottom:1px solid #eee"><b>'+(i+1)+'. '+esc(p.role)+'</b> → <b>'+esc(p.pick)+'</b> '+recChip(p.residency,p.irap)+
-       '<div style="font-size:11px;color:#666;margin-top:2px">'+esc(p.why)+'</div></div>').join("")+
-     '<p class="note">Plus a paired <span class="lchip L0">L0</span> crypto substrate ('+esc(RECDATA.substrate.name)+') beneath the vault — a dependency, not a ranked pick (ADR-007).</p></div>';
-  h+='<div class="card"><h3>Complementary stack — if you already run X, add Y</h3>'+
-     '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
-     '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">You already have</th>'+
-     '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Add to complement</th>'+
-     '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Why</th></tr></thead><tbody>'+
-     RECDATA.complementary.map(c=>'<tr>'+
-       '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top"><b>'+esc(c.have)+'</b></td>'+
-       '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top">'+esc(c.add)+'</td>'+
-       '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top" class="muted">'+esc(c.why)+'</td></tr>').join("")+
-     '</tbody></table></div>';
-  }
   h+=vendorMixHtml();
   h+=vendorIntelHtml();
   h+=complianceHtml();

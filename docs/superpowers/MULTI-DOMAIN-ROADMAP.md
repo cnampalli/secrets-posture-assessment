@@ -1,6 +1,6 @@
 # Multi-Domain Identity-Security Instrument — Roadmap & Resume
 
-_Last updated: 2026-06-05. This is the durable resume doc — read it first in a new session._
+_Last updated: 2026-06-06. This is the durable resume doc — read it first in a new session._
 
 ## Vision (one paragraph)
 The repo's "core database" is a generic, evidence-cited **compliance-and-vendor matrix engine**, not a
@@ -17,7 +17,7 @@ is summarised here.
 |---|---|---|
 | **0** | Vendor-mix optimizer (C1–C4), parent-aware concentration + ownership graph (E1–E5), vendor intelligence (B2/B3/B4), identity-control coverage indicator + gap-to-target (D3/D4), provenance gate (F1–F4) | ✅ DONE — merged (PR #13) |
 | **0.5** | PAM spike: validate "shared engine + per-domain model" abstraction | ✅ DONE — abstraction holds (see `spikes/pam/SPIKE-FINDINGS.md`) |
-| **1** | Generalize the engine: per-domain `Domain` descriptor + config-driven report | 🟡 slices 1–2 + #3/#5 DONE; **#1 body-prose + #4/#8 open** (below) |
+| **1** | Generalize the engine: per-domain `Domain` descriptor + config-driven report | ✅ DONE — slices 1–2, #1 body-prose, #3/#5, #4, #8, #1-residual all closed → **PR #17** (`feat/phase1`, off `main`; secrets byte-identical, suite 210 green) |
 | **2** | Promote PAM to a real offering + cross-domain consolidation/concentration view (X1–X2) | ✅ DONE — PAM domain fully stood up; **cross-domain consolidation view built** (`build_cross_domain.py` → `cross-domain-report.html`; CyberArk flagged spanning 2/2; runtime-verified, suite 197 green) |
 | **3** | IGA / SailPoint as a *scoped* offering (process-shaped — own model, judgment-heavy) | ⬜ |
 | **4** | Workforce IAM / CIAM — **demand-pulled only** (analyst-owned space) | ⬜ |
@@ -40,19 +40,21 @@ is summarised here.
   ⇒ all contracts valid.
 - Tests: full suite green (187). Data gate clean (both domains).
 
-## Remaining Phase 1 work (do these first / alongside Phase 2)
-Tracked in `docs/superpowers/phase1-code-review-2026-06-05.md`:
-- **#1 (big, OPEN) Body prose still secrets-specific** — `report-template.html` JS still hardcodes "L1 Secrets
-  management / L2 NHI governance", "secrets-mgmt use cases NATIVE", the L0 substrate card, "Pick a machine
-  identity", APRA-L2 caveat (~85 strings / ~25 JS functions — see the inventory in the body-prose task). Move
-  to **per-domain content blocks** (`__DOMAIN_CONFIG__` JSON injected from the `Domain` descriptor; secrets
-  values = exact current strings so the secrets report stays byte-identical). Now has a real PAM domain to
-  validate against. This is the gate to a correct non-secrets report.
-- **#3/#5 ✅ DONE** — `render()` consumes `Domain.report_meta()`; dict-drift + secrets-vocab fallbacks gone
-  (commit `2cecd07`).
-- **#4** single-pass / escaped token substitution (label tokens currently replaced before count tokens).
-- **#8** load `Domain` from YAML (project convention) instead of a Python descriptor.
-- **(new) provenance gate is now domain-aware** — `validate_data.py --data-dir <dir>` (commit `875cd1d`).
+## Phase 1 work — ✅ ALL CLOSED (PR #17, branch `feat/phase1` off `main`)
+Originally tracked in `docs/superpowers/phase1-code-review-2026-06-05.md`:
+- **#1 Body prose → per-domain content blocks ✅** — posture noun, identity picker, L0 substrate card,
+  compliance-trace note, and the whole business-value tab moved to `Domain.report_content()`. Secrets
+  byte-identical; PAM has no visible secrets vocabulary.
+- **#1-residual ✅** — the gated secrets *source* (Fortanix L0 card + legacy `renderRecommendations`
+  block/`recChip`/`recVendorRow`) is now *removed* (not just `display:none`) for non-secrets domains via
+  `__SUBSTRATE_CARD__`/`__LEGACY_REC__` template regions resolved in `render()`. `pam-report.html` sheds 52
+  lines of residue.
+- **#3/#5 ✅** — `render()` consumes `Domain.report_meta()`; dict-drift + secrets-vocab fallbacks gone.
+- **#4 ✅** — single-pass regex token substitution; a domain label containing a `__RV__`-style token can no
+  longer be mangled by a later replace.
+- **#8 ✅** — `Domain` loads from `matrix/config/domains/*.yaml` (`load_domain`/`load_domains`); ~150 lines of
+  Python data literals deleted; adding a domain = dropping a YAML.
+- **(new) provenance gate is now domain-aware** — `validate_data.py --data-dir <dir>`.
 
 ## Phase 2 — DONE (merged to `main`)
 Merged via **PR #15** (merge commit `42a1e75`, 2026-06-05). Work below is on `main`; suite 198 green.

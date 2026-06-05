@@ -233,6 +233,7 @@
       <ul class="gaplist" id="pendinglist"></ul>
     </div>
   </div>
+<!--__SUBSTRATE_CARD_START__-->
   <div class="card" style="border-left:4px solid var(--l0);__SUBSTRATE_CARD_DISPLAY__">
     <h3><span class="lchip L0">L0</span> Crypto-substrate dependency (not ranked)</h3>
     <p class="muted">The vault is unsealed / key-rooted by an HSM substrate beneath it — a
@@ -240,6 +241,7 @@
     <b>Thales SafeNet Luna → Fortanix DSM</b> migration. Evaluate as crypto infrastructure
     (FIPS 140-3, IRAP, PQC, vault PKCS#11), not against the vaults ranked here.</p>
   </div>
+<!--__SUBSTRATE_CARD_END__-->
 </section>
 
 <section id="view-uc" class="view">
@@ -596,6 +598,7 @@ HEADERS.forEach(h=>h.addEventListener("click",()=>{ const k=h.dataset.key; if(so
   }
 })();
 
+/*__LEGACY_REC_START__*/
 // ---- Recommendations tab (residency-first, layer-scoped) ----
 function recChip(res, irap){
   const m={"AU-RESIDENT":["AU-resident","#1a7f37"],"CONDITIONAL":["AU conditional","#9a6700"],"SAAS-ONLY":["SaaS-only","#b35900"]};
@@ -612,9 +615,11 @@ function recVendorRow(v, metric){
     ' · '+v.nhi_native+'/'+RECDATA.coverage_proof.nhi_total+' identities NATIVE'+(v.nhi_gap?' · '+v.nhi_gap+' gaps':'')+'</div>'+
     (v.res_note?'<div style="font-size:11px;color:#666;margin-top:2px">'+esc(v.res_note)+'</div>':'')+'</div>';
 }
+/*__LEGACY_REC_END__*/
 function renderRecommendations(){
   const el=document.getElementById("rec-body"); if(!el) return;
   let h="";
+  /*__LEGACY_REC_START__*/
   if(RECDATA.coverage_proof){            // legacy secrets-specific recommendations (frozen; secrets-only)
   const cp=RECDATA.coverage_proof;
   h+='<div class="card" style="border-left:4px solid var(--l1)"><h3>Why a stack, not a single vendor</h3>'+
@@ -644,6 +649,7 @@ function renderRecommendations(){
        '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top" class="muted">'+esc(c.why)+'</td></tr>').join("")+
      '</tbody></table></div>';
   }
+  /*__LEGACY_REC_END__*/
   h+=vendorMixHtml();
   h+=vendorIntelHtml();
   h+=complianceHtml();

@@ -6,6 +6,7 @@ output is byte-identical.
 """
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +22,20 @@ def load_template():
         return fh.read()
 
 
+def _apply_region(html, name, keep):
+    """Resolve a template region delimited by `__name_START__` … `__name_END__`
+    marker lines (Phase 1 #1-residual). `keep=True` strips just the marker lines,
+    leaving the content byte-identical; `keep=False` removes the whole region so a
+    non-applicable domain doesn't even ship the source (e.g. secrets recommendation
+    JS / the Fortanix L0 card never appear in a PAM report)."""
+    marker = lambda tag: re.compile(r"^[^\n]*__" + name + "_" + tag + r"__[^\n]*\n", re.M)
+    if keep:
+        return marker("END").sub("", marker("START").sub("", html))
+    region = re.compile(
+        r"^[^\n]*__" + name + r"_START__.*?__" + name + r"_END__[^\n]*\n", re.S | re.M)
+    return region.sub("", html)
+
+
 def render(model):
     """Assemble the final report HTML.
 
@@ -34,7 +49,13 @@ def render(model):
     """
     dm = model["domain_meta"]
     dc = model["domain_content"]
-    return (load_template()
+    # Resolve the domain-gated source regions first: applicable domains keep the
+    # content (markers stripped → byte-identical); others have it removed entirely.
+    template = _apply_region(load_template(), "SUBSTRATE_CARD", keep=dc["has_substrate"])
+    template = _apply_region(template, "LEGACY_REC", keep=dc["legacy_recdata"])
+    # Then the delimited JSON/CSS injections (each `/*__X__*/[]`/`{}` placeholder is
+    # distinct and carries model data, not user-facing prose).
+    html = (template
             .replace("/*__FONTS__*/", brand_fonts.fontface_css())
             .replace("/*__TOKENS__*/", brand_tokens.tokens_css())
             .replace("/*__DATA__*/[]", json.dumps(model["ranked"], ensure_ascii=False))
@@ -55,17 +76,27 @@ def render(model):
             .replace("/*__DOMAINCFG__*/{}", json.dumps(
                 {"kpi_object_label": dc["kpi_object_label"], "layer_groups": dc["layer_groups"],
                  "card": dc["card_copy"]},
-                ensure_ascii=False))
-            .replace("__DOMAIN_TITLE__", dm["title"])
-            .replace("__DOMAIN_HEADING__", dm["heading"])
-            .replace("__SUBSTRATE_NOTE__", dm["substrate_note"])
-            .replace("__OBJECT_PLURAL__", dm["object_plural"])
-            .replace("__OBJECT_SINGULAR__", dm["object_singular"])
-            .replace("__POSTURE_NOUN__", dc["posture_noun"])
-            .replace("__OBJECT_PICKER__", dc["object_picker"])
-            .replace("__SUBSTRATE_CARD_DISPLAY__", dc["substrate_card_display"])
-            .replace("__SUBSTRATE_EXCL__", dc["substrate_exclusion_note"])
-            .replace("__SUBSTRATE_TABLE_NOTE__", dc["substrate_table_note"])
-            .replace("__RV__", str(model["meta"]["ranked_vendors"]))
-            .replace("__NHI__", str(model["meta"]["nhis"]))
-            .replace("__UC__", str(model["meta"]["ucs"])))
+                ensure_ascii=False)))
+
+    # Then the bare `__X__` label/count tokens in a SINGLE pass (Phase 1 #4): a
+    # value injected here (e.g. a heading legitimately containing "__RV__") is never
+    # re-scanned by a later replace, so it can't be mangled. Keys read eagerly so a
+    # domain missing a label still fails fast (KeyError) rather than rendering blank.
+    tokens = {
+        "__DOMAIN_TITLE__": dm["title"],
+        "__DOMAIN_HEADING__": dm["heading"],
+        "__SUBSTRATE_NOTE__": dm["substrate_note"],
+        "__OBJECT_PLURAL__": dm["object_plural"],
+        "__OBJECT_SINGULAR__": dm["object_singular"],
+        "__POSTURE_NOUN__": dc["posture_noun"],
+        "__OBJECT_PICKER__": dc["object_picker"],
+        "__SUBSTRATE_CARD_DISPLAY__": dc["substrate_card_display"],
+        "__SUBSTRATE_EXCL__": dc["substrate_exclusion_note"],
+        "__SUBSTRATE_TABLE_NOTE__": dc["substrate_table_note"],
+        "__RV__": str(model["meta"]["ranked_vendors"]),
+        "__NHI__": str(model["meta"]["nhis"]),
+        "__UC__": str(model["meta"]["ucs"]),
+    }
+    # Longest token first so no token that is a substring of another is matched early.
+    pattern = re.compile("|".join(re.escape(k) for k in sorted(tokens, key=len, reverse=True)))
+    return pattern.sub(lambda m: tokens[m.group(0)], html)
