@@ -19,7 +19,8 @@ def _minimal_model(domain_meta):
         "domain_content": {"posture_noun": "secrets", "object_picker": "machine identity",
                            "substrate_card_display": "", "substrate_exclusion_note": "",
                            "substrate_table_note": "", "kpi_object_label": "identities",
-                           "layer_groups": [], "card_copy": {}, "value_content": {}},
+                           "layer_groups": [], "card_copy": {}, "value_content": {},
+                           "has_substrate": True, "legacy_recdata": True},
     }
 
 
@@ -72,3 +73,47 @@ def test_domain_label_containing_another_label_token_is_not_mangled():
     html = report_render.render(model)
     assert "The __OBJECT_PLURAL__ Report" in html
     assert "The PLURAL-SENTINEL Report" not in html
+
+
+# Phase 1 #1-residual: gated secrets-specific source must be ABSENT (not just
+# display:none / runtime-skipped) for non-secrets domains — and no raw region
+# markers may leak into any rendered output.
+
+def test_non_legacy_domain_omits_secrets_recommendation_block():
+    model = _minimal_model(_full_domain_meta())
+    model["domain_content"]["legacy_recdata"] = False
+    html = report_render.render(model)
+    assert "RECDATA.coverage_proof" not in html          # secrets if-block gone from source
+    assert "Secrets management — top picks" not in html
+    assert "__LEGACY_REC_START__" not in html            # marker must not leak
+    # the generic function shell + tail still render for every domain
+    assert "function renderRecommendations()" in html
+    assert "vendorMixHtml()" in html
+
+
+def test_legacy_domain_keeps_secrets_recommendation_block_without_markers():
+    model = _minimal_model(_full_domain_meta())
+    model["domain_content"]["legacy_recdata"] = True
+    html = report_render.render(model)
+    assert "RECDATA.coverage_proof" in html
+    assert "Secrets management — top picks" in html
+    assert "__LEGACY_REC_START__" not in html            # markers stripped, content kept
+    assert "__LEGACY_REC_END__" not in html
+
+
+def test_non_substrate_domain_omits_l0_crypto_card():
+    model = _minimal_model(_full_domain_meta())
+    model["domain_content"]["has_substrate"] = False
+    html = report_render.render(model)
+    assert "Fortanix DSM" not in html
+    assert "Crypto-substrate dependency" not in html
+    assert "__SUBSTRATE_CARD_START__" not in html
+
+
+def test_substrate_domain_keeps_l0_crypto_card_without_markers():
+    model = _minimal_model(_full_domain_meta())
+    model["domain_content"]["has_substrate"] = True
+    html = report_render.render(model)
+    assert "Crypto-substrate dependency" in html
+    assert "__SUBSTRATE_CARD_START__" not in html
+    assert "__SUBSTRATE_CARD_END__" not in html

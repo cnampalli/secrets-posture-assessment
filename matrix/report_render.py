@@ -22,6 +22,20 @@ def load_template():
         return fh.read()
 
 
+def _apply_region(html, name, keep):
+    """Resolve a template region delimited by `__name_START__` … `__name_END__`
+    marker lines (Phase 1 #1-residual). `keep=True` strips just the marker lines,
+    leaving the content byte-identical; `keep=False` removes the whole region so a
+    non-applicable domain doesn't even ship the source (e.g. secrets recommendation
+    JS / the Fortanix L0 card never appear in a PAM report)."""
+    marker = lambda tag: re.compile(r"^[^\n]*__" + name + "_" + tag + r"__[^\n]*\n", re.M)
+    if keep:
+        return marker("END").sub("", marker("START").sub("", html))
+    region = re.compile(
+        r"^[^\n]*__" + name + r"_START__.*?__" + name + r"_END__[^\n]*\n", re.S | re.M)
+    return region.sub("", html)
+
+
 def render(model):
     """Assemble the final report HTML.
 
@@ -35,9 +49,13 @@ def render(model):
     """
     dm = model["domain_meta"]
     dc = model["domain_content"]
-    # First the delimited JSON/CSS injections (each `/*__X__*/[]`/`{}` placeholder is
+    # Resolve the domain-gated source regions first: applicable domains keep the
+    # content (markers stripped → byte-identical); others have it removed entirely.
+    template = _apply_region(load_template(), "SUBSTRATE_CARD", keep=dc["has_substrate"])
+    template = _apply_region(template, "LEGACY_REC", keep=dc["legacy_recdata"])
+    # Then the delimited JSON/CSS injections (each `/*__X__*/[]`/`{}` placeholder is
     # distinct and carries model data, not user-facing prose).
-    html = (load_template()
+    html = (template
             .replace("/*__FONTS__*/", brand_fonts.fontface_css())
             .replace("/*__TOKENS__*/", brand_tokens.tokens_css())
             .replace("/*__DATA__*/[]", json.dumps(model["ranked"], ensure_ascii=False))

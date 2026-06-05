@@ -96,6 +96,10 @@ class Domain:
             "layer_groups": [list(g) for g in self.layer_groups],   # vgrid column-group [code,label] pairs
             "card_copy": self.card_copy,                   # uc/identity card + posture-legend prose
             "value_content": self.value_content,
+            # Region gates (Phase 1 #1-residual): the secrets-specific source blocks are
+            # *removed* — not merely hidden — for domains that don't use them.
+            "has_substrate": bool(self.substrate_slug),    # keep the L0 crypto-substrate card?
+            "legacy_recdata": self.legacy_recdata,         # keep the frozen secrets recommendation block?
         }
 
 
