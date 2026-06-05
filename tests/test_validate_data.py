@@ -91,6 +91,25 @@ def test_main_exit_zero_on_clean():
     assert vd.main(["--root", str(ROOT)]) == 0
 
 
+def test_validate_all_accepts_external_data_dir(tmp_path):
+    # The gate must validate a non-default domain data dir (e.g. matrix/domains/pam),
+    # resolving the shared cross-domain config from <root>/matrix/config. Copying the
+    # clean secrets data into an arbitrary dir and validating it there must stay clean.
+    ddir = tmp_path / "pam"
+    ddir.mkdir()
+    for p in (ROOT / "matrix").glob("*.csv"):
+        shutil.copy(p, ddir / p.name)
+    assert vd.validate_all(root=str(ROOT), data_dir=str(ddir)) == []
+
+
+def test_main_accepts_data_dir_flag(tmp_path):
+    ddir = tmp_path / "pam"
+    ddir.mkdir()
+    for p in (ROOT / "matrix").glob("*.csv"):
+        shutil.copy(p, ddir / p.name)
+    assert vd.main(["--root", str(ROOT), "--data-dir", str(ddir)]) == 0
+
+
 def test_validate_all_catches_injected_break(tmp_path):
     src = ROOT / "matrix"
     dst = tmp_path / "matrix"

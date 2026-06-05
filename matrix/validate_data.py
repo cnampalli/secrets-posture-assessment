@@ -214,9 +214,14 @@ def check_data_provenance(trace, provenance):
     return errs
 
 
-def validate_all(root="."):
-    """Run all checks against the matrix data under <root>/matrix; return all violations."""
-    m = os.path.join(root, "matrix")
+def validate_all(root=".", data_dir=None):
+    """Run all checks against a domain's five CSVs; return all violations.
+
+    `data_dir` is where the domain's CSVs live (default `<root>/matrix`, the
+    secrets domain). The provenance config (control-ID registry + data-provenance
+    manifest) is cross-domain and always resolved from `<root>/matrix/config`.
+    """
+    m = data_dir or os.path.join(root, "matrix")
     use_cases = load_csv(os.path.join(m, "use-cases.csv"))
     current = load_csv(os.path.join(m, "current-state.csv"))
     trace = load_csv(os.path.join(m, "regulatory-trace.csv"))
@@ -246,8 +251,9 @@ def validate_all(root="."):
     errs += validate_referential(use_cases, current, trace, identity, vendor_files)
     errs += check_no_legacy_token(current, identity)
 
-    # provenance gate (theme F): control-ID registry + citations + data-provenance
-    cfg = os.path.join(m, "config")
+    # provenance gate (theme F): control-ID registry + citations + data-provenance.
+    # Config is cross-domain — always from <root>/matrix/config, not the data dir.
+    cfg = os.path.join(root, "matrix", "config")
     registry = load_yaml(os.path.join(cfg, "control-id-registry.yaml"))
     provenance = load_yaml(os.path.join(cfg, "data-provenance.yaml"))
     errs += check_control_id_registry(trace, registry)
@@ -260,8 +266,10 @@ def validate_all(root="."):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Validate the matrix CSV data contracts.")
     ap.add_argument("--root", default=".", help="repo root (default: cwd)")
+    ap.add_argument("--data-dir", default=None,
+                    help="domain data dir holding the five CSVs (default: <root>/matrix)")
     args = ap.parse_args(argv)
-    violations = validate_all(args.root)
+    violations = validate_all(args.root, data_dir=args.data_dir)
     for v in violations:
         print(v)
     if violations:

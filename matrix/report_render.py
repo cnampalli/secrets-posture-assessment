@@ -25,9 +25,15 @@ def render(model):
     """Assemble the final report HTML.
 
     model keys: ranked, anz, ucs, nhis, glossary, layer_label, short, reg,
-    regdata, recdata, vendormix, compliance, vendorintel, domain_meta, meta.
+    regdata, recdata, vendormix, compliance, vendorintel, domain_meta,
+    domain_content, meta.
+
+    `domain_meta` is a domain's `report_meta()` token map; its labels are read
+    by required key (no secrets-vocab fallback) so a domain missing a label
+    fails fast instead of silently rendering the wrong vocabulary.
     """
-    dm = model.get("domain_meta", {})
+    dm = model["domain_meta"]
+    dc = model["domain_content"]
     return (load_template()
             .replace("/*__FONTS__*/", brand_fonts.fontface_css())
             .replace("/*__TOKENS__*/", brand_tokens.tokens_css())
@@ -45,11 +51,21 @@ def render(model):
             .replace("/*__COMPLIANCE__*/{}", json.dumps(model.get("compliance", {}), ensure_ascii=False))
             .replace("/*__VENDORINTEL__*/{}", json.dumps(model.get("vendorintel", {}), ensure_ascii=False))
             .replace("/*__META__*/{}", json.dumps(model["meta"], ensure_ascii=False))
-            .replace("__DOMAIN_TITLE__", dm.get("title", ""))
-            .replace("__DOMAIN_HEADING__", dm.get("heading", ""))
-            .replace("__SUBSTRATE_NOTE__", dm.get("substrate_note", ""))
-            .replace("__OBJECT_PLURAL__", dm.get("object_plural", "identities"))
-            .replace("__OBJECT_SINGULAR__", dm.get("object_singular", "identity"))
+            .replace("/*__VALUECFG__*/{}", json.dumps(dc["value_content"], ensure_ascii=False))
+            .replace("/*__DOMAINCFG__*/{}", json.dumps(
+                {"kpi_object_label": dc["kpi_object_label"], "layer_groups": dc["layer_groups"],
+                 "card": dc["card_copy"]},
+                ensure_ascii=False))
+            .replace("__DOMAIN_TITLE__", dm["title"])
+            .replace("__DOMAIN_HEADING__", dm["heading"])
+            .replace("__SUBSTRATE_NOTE__", dm["substrate_note"])
+            .replace("__OBJECT_PLURAL__", dm["object_plural"])
+            .replace("__OBJECT_SINGULAR__", dm["object_singular"])
+            .replace("__POSTURE_NOUN__", dc["posture_noun"])
+            .replace("__OBJECT_PICKER__", dc["object_picker"])
+            .replace("__SUBSTRATE_CARD_DISPLAY__", dc["substrate_card_display"])
+            .replace("__SUBSTRATE_EXCL__", dc["substrate_exclusion_note"])
+            .replace("__SUBSTRATE_TABLE_NOTE__", dc["substrate_table_note"])
             .replace("__RV__", str(model["meta"]["ranked_vendors"]))
             .replace("__NHI__", str(model["meta"]["nhis"]))
             .replace("__UC__", str(model["meta"]["ucs"])))

@@ -194,7 +194,7 @@
   <h2>Where XYZ stands today</h2>
   <div class="kpis" id="kpis"></div>
   <div class="posture">
-    <b>XYZ secrets posture — __UC__ use cases scored</b>
+    <b>XYZ __POSTURE_NOUN__ posture — __UC__ use cases scored</b>
     <div class="bar" id="posture-bar"></div>
     <div class="legend" id="posture-legend"></div>
     <div class="adj" id="posture-adj" style="display:none"></div>
@@ -214,7 +214,7 @@
       <ul class="gaplist" id="pendinglist"></ul>
     </div>
   </div>
-  <div class="card" style="border-left:4px solid var(--l0);">
+  <div class="card" style="border-left:4px solid var(--l0);__SUBSTRATE_CARD_DISPLAY__">
     <h3><span class="lchip L0">L0</span> Crypto-substrate dependency (not ranked)</h3>
     <p class="muted">The vault is unsealed / key-rooted by an HSM substrate beneath it — a
     <b>dependency, not a vendor in this comparison</b> (ADR-007). XYZ's live decision is the
@@ -230,7 +230,7 @@
 </section>
 
 <section id="view-nhi" class="view">
-  <h2>Pick a machine identity → which vendors handle it, by layer</h2>
+  <h2>Pick a __OBJECT_PICKER__ → which vendors handle it, by layer</h2>
   <div style="margin-bottom:12px;"><label class="muted">Identity&nbsp;</label><select id="nhi-select" style="min-width:380px;max-width:100%"></select></div>
   <div id="nhi-card"></div>
 </section>
@@ -244,7 +244,7 @@
     <div class="casc-col"><div class="col-head">Use case</div><div class="scroll" id="casc-uc"></div></div>
     <div class="casc-col"><div class="col-head">Vendor evidence</div><div class="scroll" id="casc-vendor"></div></div>
   </div>
-  <p class="note">Vendor evidence is the 18 ranked vendors (Fortanix excluded per ADR-007). State dot = worst XYZ state across the control's use cases (GAP &gt; PARTIAL &gt; PENDING &gt; MET).</p>
+  <p class="note">Vendor evidence is the __RV__ ranked vendors__SUBSTRATE_EXCL__. State dot = worst XYZ state across the control's use cases (GAP &gt; PARTIAL &gt; PENDING &gt; MET).</p>
 </section>
 
 <section id="view-rec" class="view">
@@ -290,7 +290,7 @@
     <tbody id="matrix-body"></tbody>
   </table>
   </div>
-  <p class="note">Fortanix DSM (Layer-0 substrate) is excluded here per ADR-007 — see the XYZ-posture tab. Scroll the table sideways to see all columns.</p>
+  <p class="note">__SUBSTRATE_TABLE_NOTE__Scroll the table sideways to see all columns.</p>
 </section>
 
 </main>
@@ -309,6 +309,8 @@ const VENDORMIX = /*__VENDORMIX__*/{};
 const COMPLIANCE = /*__COMPLIANCE__*/{};
 const VENDORINTEL = /*__VENDORINTEL__*/{};
 const META = /*__META__*/{};
+const VALUECFG = /*__VALUECFG__*/{};
+const DOMAINCFG = /*__DOMAINCFG__*/{};
 
 function esc(s){ if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function gloss(code){ const d=GLOSSARY[code]; const t=esc(code); return d?'<span class="gloss" title="'+esc(d)+'">'+t+'</span>':t; }
@@ -341,7 +343,7 @@ NAVBTNS.forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
 // ---- vendor-as-columns coverage/maturity grid ----
 function vgrid(targetId){
   let html="";
-  [["L1","Secrets management"],["L2","NHI governance"]].forEach(([L,lbl])=>{
+  (DOMAINCFG.layer_groups||[]).forEach(([L,lbl])=>{
     const entries = VENDOR_SLUGS.filter(s=>VLAYER[s]===L)
       .map(s=>({slug:s, r:DATA.find(d=>d.vendor_slug===s && d.target_id===targetId)}))
       .filter(e=>e.r)
@@ -366,8 +368,8 @@ function recommend(targetId){
   const l1=fit.find(r=>r.layer==="L1"), l2=fit.find(r=>r.layer==="L2");
   if(!l1 && !l2) return "No vendor offers first-class coverage here — a structural market gap.";
   let s="";
-  if(l1) s='Best fit: <b>'+esc(l1.vendor_name)+'</b> — '+esc(l1.coverage)+', maturity '+esc(l1.maturity)+' (L1 secrets management).';
-  if(l2) s+=(s?" ":"")+'Complement above the vault with <b>'+esc(l2.vendor_name)+'</b> ('+esc(l2.coverage)+', m'+esc(l2.maturity)+', L2 governance).';
+  if(l1) s='Best fit: <b>'+esc(l1.vendor_name)+'</b> — '+esc(l1.coverage)+', maturity '+esc(l1.maturity)+' (L1 '+DOMAINCFG.card.rec_l1_label+').';
+  if(l2) s+=(s?" ":"")+DOMAINCFG.card.rec_l2_complement+' <b>'+esc(l2.vendor_name)+'</b> ('+esc(l2.coverage)+', m'+esc(l2.maturity)+', '+DOMAINCFG.card.rec_l2_label+').';
   return s;
 }
 
@@ -380,7 +382,7 @@ function regChips(uc){
 // ---- dashboard ----
 function renderDashboard(){
   document.getElementById("kpis").innerHTML =
-    [["ranked vendors",META.ranked_vendors],["machine identities",META.nhis],["use cases",META.ucs]]
+    [["ranked vendors",META.ranked_vendors],[DOMAINCFG.kpi_object_label,META.nhis],["use cases",META.ucs]]
     .map(([l,n])=>'<div class="kpi"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>').join("");
   const order=["MET","PARTIAL","GAP","PENDING"];
   const base={MET:0,PARTIAL:0,GAP:0,PENDING:0}, adj={MET:0,PARTIAL:0,GAP:0,PENDING:0};
@@ -390,7 +392,7 @@ function renderDashboard(){
     const pct=(100*base[s]/total).toFixed(1);
     return '<span class="seg-'+s+'" style="width:'+pct+'%" title="'+s+' '+base[s]+'">'+(base[s]>=2?base[s]:"")+'</span>'; }).join("");
   document.getElementById("posture-legend").innerHTML = order.map(s=>'<span class="pill pill-'+s+'">'+s+'</span> <b>'+base[s]+'</b> &nbsp;').join("")+
-    ' — assessed baseline. 0 MET reflects the dominant finding: with no inventory layer, XYZ cannot quantify "working" as "met".';
+    DOMAINCFG.card.posture_legend_suffix;
   const adjEl=document.getElementById("posture-adj");
   const nOv=Object.keys(OV).length;
   if(nOv){ adjEl.style.display="block";
@@ -439,7 +441,7 @@ function renderUCCard(id){
       regChips(id)+'</div>'+
     '<div class="card"><h3>Recommendation &amp; vendor coverage</h3>'+
       '<div class="reco">'+recommend(id)+'</div>'+ vgrid(id)+
-      '<p class="note">A discovery tool (L2) complements a vault (L1) — it does not replace it. NAT=NATIVE · ADD=add-on · PTR=partner · —=gap.</p></div>'+
+      '<p class="note">'+DOMAINCFG.card.layer_note+'NAT=NATIVE · ADD=add-on · PTR=partner · —=gap.</p></div>'+
     '<div class="card anz-card"><h3>Where XYZ stands</h3>'+anzHtml+'</div>';
 }
 
@@ -565,8 +567,10 @@ function recVendorRow(v, metric){
     (v.res_note?'<div style="font-size:11px;color:#666;margin-top:2px">'+esc(v.res_note)+'</div>':'')+'</div>';
 }
 function renderRecommendations(){
-  const el=document.getElementById("rec-body"); if(!el||!RECDATA.coverage_proof) return;
-  const cp=RECDATA.coverage_proof; let h="";
+  const el=document.getElementById("rec-body"); if(!el) return;
+  let h="";
+  if(RECDATA.coverage_proof){            // legacy secrets-specific recommendations (frozen; secrets-only)
+  const cp=RECDATA.coverage_proof;
   h+='<div class="card" style="border-left:4px solid var(--l1)"><h3>Why a stack, not a single vendor</h3>'+
      '<p>No single vendor covers all '+META.ucs+' use cases. The strongest Layer-1 vault is NATIVE on only <b>'+cp.max_l1_nhi+' of '+cp.nhi_total+'</b> identity types — and a Layer-1 vault cannot <i>discover / govern</i> identities, while a Layer-2 tool cannot <i>broker</i> secrets. So compose across layers; rank within a layer (ADR-007). Large enterprises deliberately run best-of-breed for exactly this reason.</p></div>';
   h+='<div class="card"><h3><span class="lchip L1">L1</span> Secrets management — top picks (AU-residency first)</h3>'+
@@ -593,6 +597,7 @@ function renderRecommendations(){
        '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top">'+esc(c.add)+'</td>'+
        '<td style="padding:5px;border-bottom:1px solid #eee;vertical-align:top" class="muted">'+esc(c.why)+'</td></tr>').join("")+
      '</tbody></table></div>';
+  }
   h+=vendorMixHtml();
   h+=vendorIntelHtml();
   h+=complianceHtml();
@@ -736,20 +741,11 @@ function renderValue(){
   const loop=steps.map(s=>'<div class="step"><div class="num">'+s[0]+'</div><b>'+esc(s[1])+'</b><span class="d">'+s[2]+'</span></div>').join('<div class="loparrow">&rarr;</div>');
 
   const LBL={hard:"Hard $",hours:"Hours",risk:"Risk",kpi:"KPI"};
-  const outcomes=[
-    ["hard","Rationalise tooling spend","The vendor matrix exposes overlapping vault / secrets tools running in parallel and gives a layer-scoped consolidation path.","Tool count &darr; · avoided licence + procurement effort"],
-    ["hours","Audit &amp; compliance efficiency","A pre-built control-evidence pack (3-click framework &rarr; control &rarr; use case &rarr; evidence) answers APRA / ISM audits and cuts findings.","Audit hours &darr; · findings &darr; · avoided enforcement"],
-    ["risk","Lower expected breach loss","Closing prioritised credential-access gaps (MITRE T1552) reduces the probability × impact of a machine-identity breach.","Gaps closed · risk-adjusted expected-loss &darr;"],
-    ["kpi","Reduce operational toil","Dynamic credentials, just-in-time access and automated rotation remove manual secret handling and rotation-driven incidents.","Manual rotations &darr; · credential incidents &darr;"]];
+  const outcomes=VALUECFG.outcomes||[];
   const ocards=outcomes.map(o=>'<div class="card ocard"><h3><span class="vtag '+o[0]+'">'+LBL[o[0]]+'</span> '+o[1]+'</h3>'+
     '<div class="mech">'+o[2]+'</div><div class="measure"><b>Measured by:</b> '+o[3]+'</div></div>').join("");
 
-  const kpis=[
-    ["NHI inventory completeness","% of machine identities discovered &amp; owner-attested","Inventory / attestation use cases","per cycle"],
-    ["Rotation coverage &amp; freshness","% of secrets under managed rotation within SLA","Rotation / lifecycle use cases","monthly"],
-    ["Gap-closure rate","assessed GAP / PARTIAL &rarr; MET over time","this assessment baseline","per cycle"],
-    ["Plaintext secrets in repos","secrets detected in source &amp; history","pre-commit + history-scan use cases","continuous"],
-    ["Tool consolidation","count of overlapping secrets / vault tools","vendor matrix","per cycle"]];
+  const kpis=VALUECFG.kpis||[];
   const kpirows=kpis.map(k=>'<tr><td><b>'+k[0]+'</b></td><td class="muted">'+k[1]+'</td><td class="muted">'+k[2]+'</td><td class="mono">'+k[3]+'</td></tr>').join("");
 
   document.getElementById("value-body").innerHTML =
@@ -759,7 +755,7 @@ function renderValue(){
     '<div class="grid2">'+ocards+'</div>'+
     '<h3 class="vsec">How it&rsquo;s measured — KPIs (underpinned by '+nf+' non-functional use cases)</h3>'+
     '<div class="card"><table class="kpitable"><thead><tr><th>KPI</th><th>What it measures</th><th>Source</th><th>Cadence</th></tr></thead><tbody>'+kpirows+'</tbody></table></div>'+
-    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — one credential-driven breach, one regulatory enforcement action, or one duplicated vault platform — typically exceeds the whole assessment cost by an order of magnitude. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>';
+    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — '+VALUECFG.roi_events+' — typically exceeds the whole assessment cost by an order of magnitude. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>';
 }
 
 renderDashboard();

@@ -58,3 +58,50 @@ def test_secrets_report_labels_reproduce_current_text():
     assert d.object_singular == "identity"      # nav: "By identity"
     assert d.object_plural == "identities"      # subtitle: "… identities …"
     assert d.substrate_note == " (+ a Layer-0 crypto-substrate dependency)"
+
+
+def test_secrets_uses_legacy_recdata_pam_does_not():
+    # The legacy RECDATA recommendations (build_recdata) are secrets-specific and
+    # frozen; non-secrets domains render the domain-agnostic Phase 0 sections instead.
+    assert domains.SECRETS.legacy_recdata is True
+    assert domains.PAM.legacy_recdata is False
+
+
+def test_pam_domain_registered_and_substrateless():
+    assert domains.DOMAINS["pam"] is domains.PAM
+    d = domains.PAM
+    assert d.substrate_slug == ""            # PAM has no L0 crypto substrate
+    assert d.substrate_note == ""            # so no subtitle parenthetical
+    assert d.informative_frameworks == frozenset()   # PAM trace has no mitre-attack lens
+
+
+def test_pam_vendor_layer_and_anchors():
+    d = domains.PAM
+    # every vendor in the PAM capability data must be mapped (loader errors otherwise)
+    assert set(d.vendor_layer) == {"cyberark-pam", "delinea", "beyondtrust",
+                                   "one-identity-safeguard", "wallix-bastion", "teleport"}
+    # anchors seed the complement view — the established suites, not the modern challenger
+    anchors = {s for s, (lay, t) in d.vendor_layer.items() if t == d.anchors_tier}
+    assert "teleport" not in anchors and len(anchors) == 5
+    assert d.short["cyberark-pam"] == "CyberArk"
+
+
+def test_pam_report_labels():
+    d = domains.PAM
+    assert "Privileged Access" in d.report_title
+    assert d.object_singular == "privileged identity"
+    assert d.object_plural == "privileged identities"
+
+
+def test_report_meta_is_single_source_token_map():
+    # Phase 1 #3: the report-label token map is built in ONE place (off the
+    # descriptor), so the orchestrator can't hand-assemble a drifting dict and
+    # render() has an explicit contract to read from.
+    d = domains.SECRETS
+    assert d.report_meta() == {
+        "title": d.report_title,
+        "heading": d.report_heading,
+        "object_singular": d.object_singular,
+        "object_plural": d.object_plural,
+        "substrate_note": d.substrate_note,
+    }
