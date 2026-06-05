@@ -46,3 +46,22 @@ def test_gap_to_target_sorted_worst_first():
     gaps = cp.gap_to_target(REG_ROWS, ANZ, framework="e8")
     # GAP (E8-1) before PARTIAL (E8-3); MET control E8-2 absent.
     assert [g["code"] for g in gaps] == ["E8-1", "E8-3"]
+
+
+# --- regression: an UNASSESSED mapped UC must block MET and surface as a gap (review #1) ---
+_REG_UNK = [{"framework_slug": "e8", "control_code": "E8-9", "control_short_title": "x",
+             "uc_ids": "UC-1;UC-2"}]
+_ANZ_PARTIAL = [{"uc_id": "UC-1", "current_state": "MET"}]   # UC-2 not assessed -> UNKNOWN
+
+
+def test_unassessed_mapped_uc_does_not_count_as_met():
+    ind = cp.coverage_indicator(_REG_UNK, _ANZ_PARTIAL)["e8"]
+    assert ind["met"] == 0                       # data-absence must not inflate coverage
+    assert ind["total"] == 1
+
+
+def test_unassessed_mapped_uc_surfaces_in_gap_to_target():
+    gaps = cp.gap_to_target(_REG_UNK, _ANZ_PARTIAL, framework="e8")
+    assert [g["code"] for g in gaps] == ["E8-9"]
+    blocking = {b["uc"] for b in gaps[0]["blocking_ucs"]}
+    assert "UC-2" in blocking                     # the unassessed UC is named as blocking

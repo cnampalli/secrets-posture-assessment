@@ -12,8 +12,7 @@ NOT a recommendation engine: it is blind to price, contracts, stack fit, and
 support. Output is "candidate portfolios to interrogate", not "buy this".
 """
 import resilience as rz
-
-_UC_TYPES = ("UC-F", "UC-N")
+from matrix_vocab import UC_TYPES as _UC_TYPES
 
 
 def vendor_uc_coverage(ranked, coverage="NATIVE"):

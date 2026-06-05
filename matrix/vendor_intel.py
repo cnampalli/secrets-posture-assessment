@@ -4,9 +4,9 @@ Operates on the `ranked` row shape report_logic consumes. "Best for X" ranks the
 actual providers of a target (UC / NHI / control-mapped UC) by coverage strength
 then maturity; head-to-head builds a per-UC comparison grid for a vendor subset.
 """
-COVERAGE_RANK = {"NATIVE": 0, "ADD-ON": 1, "PARTNER": 2, "GAP": 3, "N/A": 4}
+from matrix_vocab import COVERAGE_ORDER as COVERAGE_RANK, UC_TYPES as _UC_TYPES
+
 _PROVIDER = {"NATIVE", "ADD-ON", "PARTNER"}
-_UC_TYPES = ("UC-F", "UC-N")
 
 
 def _mat(r):

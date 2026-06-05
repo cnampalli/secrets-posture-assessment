@@ -8,8 +8,7 @@ second-sources, or the CPS 230 concentration signal inverts.
 `ownership` is injected (dependency-injection, like vendor_residency): a
 {vendor_slug: {"parent": <slug>, ...}} map. Unlisted vendors are their own parent.
 """
-
-_UC_TYPES = ("UC-F", "UC-N")
+from matrix_vocab import UC_TYPES as _UC_TYPES
 
 
 def parent_of(slug, ownership):

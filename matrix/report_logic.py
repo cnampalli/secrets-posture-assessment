@@ -10,10 +10,9 @@ import optimizer as _opt
 import overlay as _ov
 import resilience as _rz
 import vendor_intel as _vi
+from matrix_vocab import COVERAGE_ORDER as ORDER, STATE_RANK, UC_TYPES
 
 APRA_FRAMEWORKS = {"apra-cps-234", "apra-cps-230", "apra-cpg-234"}
-STATE_RANK = {"GAP": 0, "PARTIAL": 1, "PENDING": 2, "MET": 3, "UNKNOWN": 9}
-ORDER = {"NATIVE": 0, "ADD-ON": 1, "PARTNER": 2, "GAP": 3, "N/A": 4}
 
 # UC capability domains (from use-cases.csv) used to score domain strength.
 REC_UC_DOMAIN = {
@@ -87,7 +86,7 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
             c["current_state"] = min(states, key=lambda s: STATE_RANK.get(s, 9)) if states else "UNKNOWN"
     vendor_uc = defaultdict(list)
     for r in ranked:
-        if r["target_type"] not in ("UC-F", "UC-N"):
+        if r["target_type"] not in UC_TYPES:
             continue
         vendor_uc[r["target_id"]].append({
             "vendor_name": r["vendor_name"], "coverage": r["coverage"],
@@ -213,7 +212,7 @@ def build_recdata(ranked, nhis, vendor_layer, short, vendor_residency, substrate
         rows = [r for r in ranked if r["vendor_slug"] == slug]
 
         def dom(ucset):
-            sel = [r for r in rows if r["target_type"] in ("UC-F", "UC-N") and r["target_id"] in ucset]
+            sel = [r for r in rows if r["target_type"] in UC_TYPES and r["target_id"] in ucset]
             nat = [r for r in sel if r["coverage"] == "NATIVE"]
             mats = [int(r["maturity"]) for r in nat if str(r["maturity"]).isdigit()]
             return len(nat), len(sel), (round(sum(mats) / len(mats), 1) if mats else 0)

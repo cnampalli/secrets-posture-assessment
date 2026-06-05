@@ -4,10 +4,11 @@ Coverage is computed against the *identity-scoped* control set in
 regulatory-trace.csv — deliberately not the full GRC control set of each
 framework. Outputs are a coverage INDICATOR, not a compliance score.
 
-A control's state is the worst state among its mapped use cases (GAP < PARTIAL <
-PENDING < MET), so a control is MET only when every mapped UC is MET.
+A control's state is the worst state among its mapped use cases, so a control is
+MET only when every mapped UC is MET. An unassessed mapped UC (UNKNOWN) ranks
+below MET, so it blocks MET and surfaces in gap-to-target rather than being ignored.
 """
-STATE_RANK = {"GAP": 0, "PARTIAL": 1, "PENDING": 2, "MET": 3, "UNKNOWN": 9}
+from matrix_vocab import STATE_RANK
 
 
 def _state_by_uc(anz):
