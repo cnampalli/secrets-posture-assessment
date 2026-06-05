@@ -18,7 +18,7 @@ is summarised here.
 | **0** | Vendor-mix optimizer (C1–C4), parent-aware concentration + ownership graph (E1–E5), vendor intelligence (B2/B3/B4), identity-control coverage indicator + gap-to-target (D3/D4), provenance gate (F1–F4) | ✅ DONE — merged (PR #13) |
 | **0.5** | PAM spike: validate "shared engine + per-domain model" abstraction | ✅ DONE — abstraction holds (see `spikes/pam/SPIKE-FINDINGS.md`) |
 | **1** | Generalize the engine: per-domain `Domain` descriptor + config-driven report | 🟡 slices 1–2 + #3/#5 DONE; **#1 body-prose + #4/#8 open** (below) |
-| **2** | Promote PAM to a real offering + cross-domain consolidation/concentration view (X1–X2) | 🟡 IN PROGRESS — real PAM **data layer complete + gate-clean**; descriptor+wiring+body-prose next |
+| **2** | Promote PAM to a real offering + cross-domain consolidation/concentration view (X1–X2) | 🟡 IN PROGRESS — **PAM domain fully stood up** (data + descriptor + `--domain` build + generalized report, all gate-clean); **cross-domain consolidation view (X1–X2) remains** |
 | **3** | IGA / SailPoint as a *scoped* offering (process-shaped — own model, judgment-heavy) | ⬜ |
 | **4** | Workforce IAM / CIAM — **demand-pulled only** (analyst-owned space) | ⬜ |
 | **5** | Consulting-instrument wrap: multi-engagement workspace, current-state import, anonymized benchmark | ⬜ |
@@ -63,25 +63,26 @@ Branch: **`feat/phase1-remainder`** (not yet pushed/PR'd).
   registry-verified controls), `current-state.csv` (PENDING template — no client PAM assessment).
 - `validate_data.py --data-dir matrix/domains/pam` ⇒ **All CSV data contracts valid.**
 
-**NEXT — make the PAM report build correctly (2 intertwined slices):**
-1. **#6 — `PAM` `Domain` descriptor + `--domain` build wiring.** Add `PAM` to `matrix/domains.py`
-   (data_dir=`matrix/domains/pam`; `short` map; `vendor_layer` — propose L1=established suites
-   {cyberark-pam, delinea, beyondtrust, one-identity-safeguard, wallix-bastion}, L2=modern access
-   {teleport}; `substrate_slug=""` (PAM has **no** L0 crypto substrate — handle empty-substrate path in
-   `build_recdata`); `anchors_tier`; PAM `layer_label`; report labels). Register in `DOMAINS`. Add a
-   `--domain` flag to `build_matrix_viewer.py` (default secrets) writing a PAM-specific output file.
-   ⚠️ Watch: `build_recdata` substrate handling with empty `substrate_slug`; `informative_frameworks=∅`
-   (PAM trace has no mitre-attack).
-2. **#7 — Phase 1 #1 body-prose generalization** (the gate). ~85 secrets-specific strings across ~25 JS
-   functions in `report-template.html` → `__DOMAIN_CONFIG__` JSON injected from the descriptor; secrets
-   values = exact current strings (secrets report stays **byte-identical**); PAM report has no secrets
-   vocabulary below the fold. Hotspots: L0 crypto-substrate card, the L1/L2 layer cards + caveats, the
-   business-value loop + KPIs, the concentration note. Validate by building the PAM report and confirming
-   no "vault / NHI / Fortanix / machine identity / APRA-L2" leaks.
+**DONE — PAM report builds correctly (#6 + #7):**
+- `PAM` `Domain` descriptor (L1 = 5 established suites, L2 = Teleport, `substrate_slug=""`, PAM labels +
+  per-domain `value_content`) registered; `--domain` flag on `build_matrix_viewer.py` (default secrets)
+  → writes `matrix/domains/pam/pam-report.html`.
+- Legacy secrets-specific RECDATA **gated** to secrets (`legacy_recdata` flag) — `renderRecommendations`
+  restructured so the domain-agnostic VENDORMIX/COMPLIANCE/VENDORINTEL sections always render.
+- Body prose → per-domain **content blocks** (`Domain.report_content()`): posture noun, identity picker,
+  L0 substrate card (hidden when no substrate), compliance-trace vendor-count note, and the whole
+  business-value tab (outcomes / KPIs / ROI). Secrets report **byte-identical**; PAM report has **no
+  visible secrets vocabulary**; suite 191 green; both data gates clean.
+- ⚠️ Minor residual (not visible, source-cleanliness): the runtime-gated legacy `renderRecommendations`
+  JS still contains secrets string literals, and the `display:none` L0 card keeps Fortanix text in PAM
+  source. Optional follow-up: extract the legacy block / L0 card to a per-domain content block so they're
+  absent (not just hidden) for non-secrets domains. **Recommend a browser open of `pam-report.html` to
+  eyeball all tabs** (static greps pass; no live render done).
 
-**THEN — the moat:** cross-domain consolidation/concentration view (CyberArk spans secrets+PAM; one parent
-= concentration *across* domains — the spike already confirmed `cyberark-pam` rolls up to the same
-`cyberark` parent that dominates secrets).
+**NEXT — the moat (X1–X2):** cross-domain consolidation/concentration view. CyberArk spans secrets+PAM;
+one parent = concentration *across* domains (the ownership graph already rolls `cyberark-pam` up to the
+same `cyberark` parent that dominates secrets). Also still open from Phase 1: **#4** single-pass token
+escaping, **#8** load `Domain` from YAML.
 
 ## Hazards to respect (from Risks & Guardrails)
 - **Data decay** — vendor/framework data is point-in-time; the provenance gate + as-of dating exist for this.
