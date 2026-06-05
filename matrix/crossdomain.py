@@ -15,6 +15,48 @@ def _native_ucs(rows):
                 if r.get("coverage") == "NATIVE" and r.get("target_type") in UC_TYPES})
 
 
+def _label(domains, slug):
+    return next((d["label"] for d in domains if d["slug"] == slug), slug)
+
+
+def _concentration(parents, domains):
+    """Parents present in >1 domain — the risk reading."""
+    n = len(domains)
+    out = []
+    for p in parents:
+        if p["spans"] < 2:
+            continue
+        present = ", ".join(_label(domains, s) for s in p["domains_present"])
+        out.append({
+            "parent": p["parent"],
+            "spans": p["spans"],
+            "domains_present": p["domains_present"],
+            "brands_total": sum(len(v["brands"]) for v in p["by_domain"].values()),
+            "note": (f"Spans {p['spans']}/{n} assessed domains ({present}). A 'second source' in one "
+                     "domain and the platform in another can be the same ultimate parent — not "
+                     "independent (CPS 230 service-provider concentration). Ownership is point-in-time; "
+                     "re-verify before client use."),
+        })
+    return out
+
+
+def _consolidation(parents):
+    """Same spanning parents, ranked by cross-domain breadth — the opportunity reading."""
+    out = []
+    for p in parents:
+        if p["spans"] < 2:
+            continue
+        out.append({
+            "parent": p["parent"],
+            "domains": p["spans"],
+            "native_ucs_total": sum(v["native_ucs"] for v in p["by_domain"].values()),
+            "note": (f"One parent covers needs across {p['spans']} domains "
+                     "→ fewer vendors / contracts to manage (decision-support, not a buy list)."),
+        })
+    out.sort(key=lambda x: (-x["domains"], -x["native_ucs_total"], x["parent"]))
+    return out
+
+
 def build_crossmap(domains_data, ownership):
     """Build the cross-domain model.
 
@@ -49,4 +91,6 @@ def build_crossmap(domains_data, ownership):
         })
     parents.sort(key=lambda x: (-x["spans"], x["parent"]))
 
-    return {"domains": domains, "parents": parents}
+    return {"domains": domains, "parents": parents,
+            "concentration": _concentration(parents, domains),
+            "consolidation": _consolidation(parents)}

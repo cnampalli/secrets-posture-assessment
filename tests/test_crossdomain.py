@@ -32,3 +32,34 @@ def test_parent_rollup_spans_and_native_ucs():
     bt = next(p for p in m["parents"] if p["parent"] == "beyondtrust")
     assert bt["spans"] == 1
     assert m["parents"][0]["parent"] == "cyberark"
+
+
+def test_concentration_only_lists_spanning_parents():
+    m = crossdomain.build_crossmap(_domains_data(), OWN)
+    conc = m["concentration"]
+    assert [c["parent"] for c in conc] == ["cyberark"]      # only spans>=2
+    c = conc[0]
+    assert c["spans"] == 2 and c["brands_total"] == 2       # Conjur + CyberArk PAM
+    assert "CPS 230" in c["note"]
+
+
+def test_consolidation_ranks_spanning_parents_by_breadth():
+    m = crossdomain.build_crossmap(_domains_data(), OWN)
+    cons = m["consolidation"]
+    assert [c["parent"] for c in cons] == ["cyberark"]
+    assert cons[0]["domains"] == 2
+    assert cons[0]["native_ucs_total"] == 3                 # 2 (secrets) + 1 (pam)
+
+
+def test_single_domain_only_yields_empty_panels():
+    one = [{"slug": "secrets", "label": "Secrets",
+            "ranked": [_row("hashicorp-vault", "Vault", "UC-F-001", "NATIVE")]}]
+    m = crossdomain.build_crossmap(one, {})
+    assert m["concentration"] == [] and m["consolidation"] == []
+
+
+def test_empty_domain_does_not_error():
+    data = [{"slug": "secrets", "label": "Secrets", "ranked": []},
+            {"slug": "pam", "label": "PAM", "ranked": []}]
+    m = crossdomain.build_crossmap(data, {})
+    assert m["parents"] == [] and m["concentration"] == [] and m["consolidation"] == []
