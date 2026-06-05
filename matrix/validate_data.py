@@ -33,6 +33,13 @@ VALID_STATES = {"MET", "PARTIAL", "GAP", "PENDING", "NA"}
 VALID_ROLES = {"PRIMARY-LENS", "BACK-MAP", "ADVERSARY-LENS"}
 SENTINELS = {"MISSING-UC", "MISSING-NHI"}
 
+# --- evidence-pack gate (regulatory-driven evidence packs) ---
+# Evidence packs are a compliance-evidence concept, so refs are collected only
+# from compliance-role rows; ADVERSARY-LENS rows are skipped.
+EVIDENCE_COMPLIANCE_ROLES = {"PRIMARY-LENS", "BACK-MAP"}
+VALID_EVIDENCE_DIMENSIONS = {"coverage", "enforcement", "depth", "cadence", "governance", "exception"}
+VALID_EVIDENCE_TIERS = {"primary", "follow-up"}
+
 # --- provenance gate (theme F) ---
 PROVIDER_COVERAGE = {"NATIVE", "ADD-ON", "PARTNER"}      # claims that need a source
 VALID_SOURCE_TIERS = {"PRIMARY", "ANALYST", "CONSENSUS"}
@@ -214,6 +221,42 @@ def check_data_provenance(trace, provenance):
     return errs
 
 
+def check_evidence_packs(trace, catalog):
+    """Regulatory-driven evidence-pack gate. Validates that every `evidence_item_ids`
+    referenced by a compliance-role control row resolves to an `ev_id` in the evidence
+    catalog and that each referenced item carries a citation; also enum-checks every
+    catalog item's `dimension`/`tier`. The `evidence_item_ids` column is optional —
+    rows without it are skipped, so domains with no packs stay clean."""
+    errs = []
+    by_id = {(r.get("ev_id") or "").strip(): r for r in catalog}
+
+    # enum checks across the whole catalog (a malformed item is wrong regardless of use)
+    for r in catalog:
+        ev = (r.get("ev_id") or "").strip()
+        dim = (r.get("dimension") or "").strip()
+        tier = (r.get("tier") or "").strip()
+        if dim and dim not in VALID_EVIDENCE_DIMENSIONS:
+            errs.append(f"evidence-catalog.csv: invalid dimension '{dim}' (item {ev})")
+        if tier and tier not in VALID_EVIDENCE_TIERS:
+            errs.append(f"evidence-catalog.csv: invalid tier '{tier}' (item {ev})")
+
+    # reference resolution + citation, collected only from compliance-role rows
+    for row in trace:
+        if (row.get("framework_role") or "").strip() not in EVIDENCE_COMPLIANCE_ROLES:
+            continue
+        cc = row.get("control_code", "?")
+        for ev in _ids(row.get("evidence_item_ids")):
+            item = by_id.get(ev)
+            if item is None:
+                errs.append(f"regulatory-trace.csv: evidence_item_ids '{ev}' (control {cc}) "
+                            f"not in evidence-catalog.csv")
+                continue
+            if not (item.get("citation_keys") or "").strip():
+                errs.append(f"evidence-catalog.csv: item '{ev}' (referenced by control {cc}) "
+                            f"has no citation_keys")
+    return errs
+
+
 def validate_all(root=".", data_dir=None):
     """Run all checks against a domain's five CSVs; return all violations.
 
@@ -260,6 +303,11 @@ def validate_all(root=".", data_dir=None):
     for name, rows in vendor_files:
         errs += check_provider_claims_cited(name, rows)
     errs += check_data_provenance(trace, provenance)
+
+    # evidence-pack gate: only runs when the domain ships an evidence catalog.
+    catalog_path = os.path.join(m, "evidence-catalog.csv")
+    if os.path.exists(catalog_path):
+        errs += check_evidence_packs(trace, load_csv(catalog_path))
     return errs
 
 

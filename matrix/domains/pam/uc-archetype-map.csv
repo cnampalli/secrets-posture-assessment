@@ -1,0 +1,4 @@
+uc_id,archetype_id,params,notes
+UC-P-001,A4,"credential_type=privileged account passwords, keys and A2A credentials;nhi_population=in-scope privileged accounts;sla=rotation on schedule and on check-in/release",Privileged credential vaulting & rotation
+UC-P-002,A1,"control=privileged session brokering through an isolation proxy;nhi_population=privileged sessions to in-scope targets;scope=all in-scope privileged targets",Privileged session isolation / proxy
+UC-P-003,A3,"capability=privileged session recording with searchable command metadata;nhi_population=privileged sessions to in-scope targets;config_target=tamper-evident retention with high-risk-command flagging",Privileged session recording & audit

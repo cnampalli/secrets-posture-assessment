@@ -206,3 +206,68 @@ def test_data_provenance_flags_invalid_tier():
 def test_data_provenance_clean():
     trace = [{"framework_slug": "asd-ism", "control_code": "ISM-0027"}]
     assert vd.check_data_provenance(trace, _PROV) == []
+
+
+# --- evidence-pack gate (regulatory-driven evidence packs) -----------------
+
+def _trace_row(**kw):
+    base = {"framework_slug": "asd-ism", "framework_role": "BACK-MAP",
+            "control_code": "ISM-1304", "uc_ids": "UC-P-001", "evidence_item_ids": ""}
+    base.update(kw)
+    return base
+
+
+def _cat_row(**kw):
+    base = {"ev_id": "EV-PAM-VAULT-REGISTER", "requirement": "a register of vaulted accounts",
+            "dimension": "coverage", "tier": "primary", "example_artifact": "",
+            "sensitivity_tag": "", "citation_keys": "cyberark-pam-2025"}
+    base.update(kw)
+    return base
+
+
+def test_evidence_packs_clean():
+    trace = [_trace_row(evidence_item_ids="EV-PAM-VAULT-REGISTER")]
+    catalog = [_cat_row()]
+    assert vd.check_evidence_packs(trace, catalog) == []
+
+
+def test_evidence_packs_broken_reference():
+    trace = [_trace_row(evidence_item_ids="EV-PAM-VAULT-REGISTER;EV-PAM-GHOST")]
+    catalog = [_cat_row()]
+    errs = vd.check_evidence_packs(trace, catalog)
+    assert any("EV-PAM-GHOST" in e for e in errs)
+    assert all("EV-PAM-VAULT-REGISTER" not in e for e in errs)
+
+
+def test_evidence_packs_uncited_referenced_item_flagged():
+    trace = [_trace_row(evidence_item_ids="EV-PAM-VAULT-REGISTER")]
+    catalog = [_cat_row(citation_keys="")]
+    errs = vd.check_evidence_packs(trace, catalog)
+    assert any("EV-PAM-VAULT-REGISTER" in e and "citation" in e.lower() for e in errs)
+
+
+def test_evidence_packs_invalid_dimension_flagged():
+    trace = [_trace_row(evidence_item_ids="EV-PAM-VAULT-REGISTER")]
+    catalog = [_cat_row(dimension="bogus")]
+    assert any("bogus" in e for e in vd.check_evidence_packs(trace, catalog))
+
+
+def test_evidence_packs_invalid_tier_flagged():
+    trace = [_trace_row(evidence_item_ids="EV-PAM-VAULT-REGISTER")]
+    catalog = [_cat_row(tier="headline")]
+    assert any("headline" in e for e in vd.check_evidence_packs(trace, catalog))
+
+
+def test_evidence_packs_skips_adversary_lens_rows():
+    # an ADVERSARY-LENS row's evidence refs are not collected (packs are compliance-only)
+    trace = [_trace_row(framework_role="ADVERSARY-LENS", evidence_item_ids="EV-PAM-GHOST")]
+    catalog = [_cat_row()]
+    assert vd.check_evidence_packs(trace, catalog) == []
+
+
+def test_evidence_packs_optional_when_no_refs():
+    # rows without evidence_item_ids must not trip the gate (column is optional)
+    trace = [_trace_row(), {"framework_slug": "asd-ism", "framework_role": "BACK-MAP",
+                            "control_code": "ISM-1619", "uc_ids": "UC-P-001"}]
+    catalog = [_cat_row()]
+    assert vd.check_evidence_packs(trace, catalog) == []
