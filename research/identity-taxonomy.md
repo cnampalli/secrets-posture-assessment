@@ -310,11 +310,14 @@ These axes feed CSV columns and PRD §7 "what good looks like" tables.
 - **Governance maturity:** LOW–MEDIUM (mature audit, weak rotation).
 - **Citations:** [ibm-racf-2024], [ibm-icsf-2024].
 
-### NHI-023 — Database encryption / TDE master key identity `[UNCOMMON]`
-- **What it is:** The key (and its custodian identity) used by TDE
-  for SQL Server, Oracle TDE, PostgreSQL pgcrypto, AlwaysEncrypted
-  CMK, MongoDB CSFLE. Lives in KMS / HSM, but the "owner" identity is
-  usually a service account.
+### NHI-023 — Database encryption key-custodian principal (TDE/CMK) `[UNCOMMON]`
+- **What it is:** The non-human **KMS/HSM custodian principal** that
+  controls TDE/CMK master keys for SQL Server, Oracle TDE, PostgreSQL
+  pgcrypto, AlwaysEncrypted, MongoDB CSFLE.
+- **NPE conformance `[CREDENTIAL-NOT-IDENTITY]`:** the master *key
+  itself is a managed secret, not an identity* (NIST NPE / OWASP). This
+  row models the controlling principal, not the key — re-worded
+  2026-06-03 per the regulator audit.
 - **Where it appears:** Every regulated database.
 - **Typical secrets / credentials:** KMS CMK ARN + KMS key policy,
   HSM partition credential, Always Encrypted CMK in Azure KV.
@@ -322,10 +325,14 @@ These axes feed CSV columns and PRD §7 "what good looks like" tables.
 - **Governance maturity:** MEDIUM.
 - **Citations:** [nist-sp-800-57-2020], [aws-kms-tde-2024].
 
-### NHI-024 — HSM / KMS operator / break-glass identity `[UNCOMMON]`
-- **What it is:** The high-privilege identities that administer the
+### NHI-024 — HSM/KMS operator (HUMAN-privileged — out of NHI scope) `[UNCOMMON]`
+- **What it is:** Privileged **human** operators administering the
   HSM (CloudHSM, Thales Luna, nCipher nShield, Entrust, Utimaco) or
-  the KMS control plane. Often quorum-protected (M-of-N).
+  the KMS control plane, usually quorum-protected (M-of-N).
+- **NPE conformance `[HUMAN-IDENTITY]`:** reclassified **human** per
+  NIST NPE ("not a human actor"); PED keys / smartcards are held by
+  people. The non-human KMS auto-unseal principal is **NHI-035**.
+  Retained for FK traceability; governed via UC-N-010.
 - **Where it appears:** PCI cryptographic boundary, root-of-trust
   ceremonies, post-quantum migration prep.
 - **Typical secrets / credentials:** PED keys, smartcards, quorum
@@ -335,10 +342,14 @@ These axes feed CSV columns and PRD §7 "what good looks like" tables.
 - **Citations:** [thales-luna-roles-2024],
   [aws-cloudhsm-users-2024].
 
-### NHI-025 — Certificate authority operator identity `[UNCOMMON]`
-- **What it is:** Roles in private CA (Microsoft ADCS, EJBCA, Venafi
-  TPP/TLSPC, Keyfactor Command, AWS Private CA, GCP CAS) — RA, CA
-  admin, auditor, enrolment agent.
+### NHI-025 — Private-CA operator roles (HUMAN — out of NHI scope) `[UNCOMMON]`
+- **What it is:** Privileged **human** PKI roles in private CA
+  (Microsoft ADCS, EJBCA, Venafi TPP/TLSPC, Keyfactor Command, AWS
+  Private CA, GCP CAS) — RA, CA admin, auditor, enrolment agent.
+- **NPE conformance `[HUMAN-IDENTITY]`:** reclassified **human** per
+  NIST NPE; the non-human **issuing-CA signing identity** is the true
+  NHI (mesh CA = **NHI-017**). Retained for FK traceability; governed
+  via UC-N-010.
 - **Where it appears:** Internal PKI, ACME endpoints, EST/SCEP for
   IoT, mTLS issuance.
 - **Typical secrets / credentials:** Smartcard-bound admin certs,
@@ -384,9 +395,13 @@ These axes feed CSV columns and PRD §7 "what good looks like" tables.
 - **Governance maturity:** MEDIUM (regulator-driven).
 - **Citations:** [acccdr-2024], [fapi2-baseline-2024].
 
-### NHI-029 — Service-account-as-human (shared functional ID) `[UNCOMMON]`
-- **What it is:** AD / IdP account used by multiple humans AND
-  scripts; common in legacy ops and outsourced run teams.
+### NHI-029 — Shared functional service account (human-used NHI) `[UNCOMMON]`
+- **What it is:** A non-human service account whose **risk is
+  concurrent use by multiple humans AND scripts** — the OWASP
+  **NHI10:2025 "Human Use of NHI"** anti-pattern; common in legacy ops
+  and outsourced run teams.
+- **NPE conformance `[HUMAN-USE-ANTIPATTERN]`:** the account is an NHI;
+  the human use is the governance defect, not a second identity class.
 - **Where it appears:** Unix `oracle`, `sapadm`, `weblogic`; Windows
   `svc_batch`; shared Tableau / Power BI service users.
 - **Typical secrets / credentials:** Long passwords, SSH keys in
@@ -444,11 +459,15 @@ These axes feed CSV columns and PRD §7 "what good looks like" tables.
 - **Governance maturity:** LOW.
 - **Citations:** [cisa-default-creds-2024], [nist-sp-800-213-2021].
 
-### NHI-034 — Quantum-resistant / hybrid-PKI rotation identity `[UNCOMMON]`
-- **What it is:** Identities involved in post-quantum (NIST PQC: ML-KEM,
-  ML-DSA, SLH-DSA) and hybrid-cert rollouts: dual-signed certificates,
-  PQC-capable CAs and HSMs. Not yet operationally common but on every
-  Tier-1 bank's 2026–2028 roadmap.
+### NHI-034 — Post-quantum / hybrid-PKI crypto-agility attribute `[UNCOMMON]`
+- **What it is:** **Not a distinct identity** — a **cross-cutting
+  crypto-migration attribute** of existing PKI identities (NHI-006,
+  NHI-017, NHI-025) during post-quantum (NIST PQC: ML-KEM, ML-DSA,
+  SLH-DSA) and hybrid-cert rollouts: dual-signed certificates,
+  PQC-capable CAs and HSMs. On every Tier-1 bank's 2026–2028 roadmap.
+- **NPE conformance `[CROSS-CUTTING-ATTRIBUTE]`:** dual-signed certs are
+  *credentials, not actors*; tracked as a lifecycle attribute via
+  UC-N-013 rather than a standalone NHI.
 - **Where it appears:** Internal PKI roadmaps, regulator briefings
   (APRA, ASD, NIST), payment-rail working groups.
 - **Typical secrets / credentials:** Hybrid X.509 (classical + PQC),
@@ -545,17 +564,24 @@ Doppler, Infisical SaaS, 1Password) need explicit data-flow analysis
   for v0.1 or defer to v1.0 supply-chain track?
 - How do we treat **mainframe (NHI-022)** — first-class column in
   the dual matrix, or appendix?
-- Where do **HSM operator (NHI-024)** and **CA operator (NHI-025)**
-  identities live: secrets-management PRD, or a sibling PKI/HSM PRD?
+- ~~Where do **HSM operator (NHI-024)** and **CA operator (NHI-025)**
+  identities live~~ — **Resolved 2026-06-03 (regulator audit):** both
+  are **human** identities per NIST NPE → flagged `HUMAN-IDENTITY`, out
+  of strict NHI scope; the non-human counterparts are NHI-035 (KMS) and
+  NHI-017 (mesh CA). See
+  [`matrix/REGULATOR-AUDIT-2026-06-03.md`](../matrix/REGULATOR-AUDIT-2026-06-03.md).
 - Should **forgotten / orphaned (NHI-037)** be a row, or a
   cross-cutting maturity dimension?
 - Do **vault-internal identities (NHI-035)** get evaluated against
   the same matrix as the products under evaluation?
-- **PQC (NHI-034)** — explicit roadmap item in v0.1 or v1.0?
+- ~~**PQC (NHI-034)** — explicit roadmap item in v0.1 or v1.0?~~ —
+  **Resolved 2026-06-03:** not a distinct identity; reclassified as a
+  `CROSS-CUTTING-ATTRIBUTE` of PKI identities, tracked via UC-N-013.
 - Treatment of **Open Banking / FAPI 2.0 (NHI-028)** identities given
   ACCC CDR sectoral expansion to non-bank lenders in 2026.
-- Confirm classification of **service-account-as-human (NHI-029)** —
-  is it NHI scope or IGA scope?
+- ~~Confirm classification of **service-account-as-human (NHI-029)**~~ —
+  **Resolved 2026-06-03:** it is an NHI; the human use is the OWASP
+  NHI10:2025 anti-pattern, flagged `HUMAN-USE-ANTIPATTERN`.
 
 ## 7. Citations
 

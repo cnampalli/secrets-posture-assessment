@@ -65,7 +65,9 @@ For each:
 - **Acceptance criteria:** ≤ 3 bullets, testable.
 - **NHIs in scope:** `NHI-001, NHI-007, …` (reference IDs).
 - **Outcome lens (Essential 8 + ZT):** which E8 control area / ZT pillar.
-- **Back-map (where it lands in CPS 234 / ISM / CSF):** key codes.
+- **Back-map (CPS 234 / CPS 230 / CPG 234 / ISM):** codes that **must already
+  exist as a `control_code` in `matrix/regulatory-trace.csv`** — derive them from
+  that file's `uc_ids` column, do **not** invent. **No NIST CSF** (deferred per ADR-003).
 - **Priority (FI default):** P0 / P1 / P2.
 - **Citations / inspiration:** primary source URLs.
 
@@ -100,8 +102,22 @@ uc_id,category,short_title,story,acceptance_criteria,nhis_in_scope,outcome_lens,
 - `nhis_in_scope` — semicolon-separated NHI IDs.
 - `outcome_lens` — semicolon-separated; values like `E8-AppControl` /
   `ZT-Pillar-Identity` / `ZT-Pillar-Device` / etc.
-- `backmap_codes` — semicolon-separated; e.g., `CPS234-§28a;ISM-S0381;CSF-PR.AC-1`.
+- `backmap_codes` — semicolon-separated; **every code MUST resolve to a
+  `control_code` in `matrix/regulatory-trace.csv`**, e.g.
+  `CPS234-§21;CPS234-§27(d);CPG234-Att-C;ISM-1619`. Note CPS 234 sub-clauses use
+  the normalised paren form (`§21(a)`, `§27(d)`, `§35(a)`); the (a)–(e) items
+  belong to **§27**, not §28 — **`§28a/b/c` and `§35c` do not exist**. **Do not
+  emit `CSF-*` codes** (NIST CSF 2.0 is deferred per ADR-003).
 - `priority_fi` — `P0` / `P1` / `P2`.
+
+> **Back-map integrity (MANDATORY).** The `backmap_codes` column is a denormalised
+> view of `matrix/regulatory-trace.csv`. Generate it **by reversing that file's
+> `uc_ids` column** (BACK-MAP tier = `apra-cps-234` / `apra-cps-230` /
+> `apra-cpg-234` / `asd-ism`). Never hand-author control codes from memory — the
+> ISM IDs and CPS 234 clause numbers were corrected mid-project, and earlier drafts
+> carried wrong ISM IDs (e.g. ISM-1546), fabricated APRA sub-clauses (`§28a`), and
+> now-deferred CSF codes. After writing, run `python3 matrix/validate_data.py` and
+> confirm every back-map code resolves. See `matrix/REGULATOR-AUDIT-2026-06-03.md` Part 4.
 
 ## Token budget
 
@@ -109,7 +125,8 @@ uc_id,category,short_title,story,acceptance_criteria,nhis_in_scope,outcome_lens,
 
 ## Sources to draw from (primary)
 
-- CPS 234, ASD ISM, Essential 8 maturity, NIST CSF 2.0 (for back-mapping).
+- CPS 234, CPS 230, CPG 234, ASD ISM, Essential 8 maturity (for back-mapping).
+  **NIST CSF 2.0 is DEFERRED out of v0.1 per ADR-003 — do NOT emit `CSF-*` codes.**
 - NIST SP 800-207 ZT pillars (for outcome lens).
 - OWASP Secrets Management Cheat Sheet.
 - CSA NHI Working Group risk catalog.
@@ -135,6 +152,8 @@ heuristics. Flush completed UC blocks and CSV rows first.
 - ≥ 30 UCs total (18 functional minimum + 12 non-functional minimum).
 - Both user-supplied seeds appear as UCs (e.g., `UC-F-001 / UC-N-001`).
 - Every UC references ≥ 1 NHI ID.
-- Every UC has an outcome-lens tag AND a back-map code.
+- Every UC has an outcome-lens tag AND ≥1 back-map code, and **every back-map code
+  resolves to a `control_code` in `matrix/regulatory-trace.csv`** (no `CSF-*`, no
+  fabricated sub-clauses like `§28a`). Confirm via `python3 matrix/validate_data.py`.
 - CSV parses cleanly.
 - ≥ 1 functional + 1 non-functional UC per NHI bucket (no NHI orphans).

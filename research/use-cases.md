@@ -4,6 +4,17 @@
 **Author:** Use Case Catalog Builder sub-agent (Opus 4.7), 2026-05-21.
 **Version:** v0.1.
 
+> **⚠️ Back-map supersession (2026-06-03 regulator audit).** The inline
+> per-UC **"Back-map:"** lines below are **superseded and must not be cited**.
+> They were written 2026-05-21 and predate (a) the **2026-05-24 ASD ISM
+> rebuild** (so they carry old wrong ISM IDs, e.g. ISM-1546/ISM-0974), (b) the
+> **NIST CSF 2.0 deferral** (ADR-003 — `CSF-*` codes are out of v0.1 scope),
+> and (c) the **CPS 234 clause normalisation** (`§28a/b/c`, `§35b/c` are not
+> real clauses; §27 carries the (a)-(e) sub-items). The **authoritative,
+> verified** UC→control back-map is now `matrix/use-cases.csv:backmap_codes`
+> (regenerated from `matrix/regulatory-trace.csv`), with full bidirectional
+> consistency. See [`matrix/REGULATOR-AUDIT-2026-06-03.md`](../matrix/REGULATOR-AUDIT-2026-06-03.md) Part 4.
+
 ---
 
 ## 1. Methodology

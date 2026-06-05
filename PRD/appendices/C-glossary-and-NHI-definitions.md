@@ -22,6 +22,16 @@ OWASP Secrets Management Cheat Sheet. Each definition below is the
 follow the link for the full per-NHI lifecycle / trust-anchor / typical-
 credential / governance-maturity card.
 
+> **NPE-conformance audit (2026-06-03).** Per
+> [`matrix/REGULATOR-AUDIT-2026-06-03.md`](../../matrix/REGULATOR-AUDIT-2026-06-03.md),
+> all 37 rows were tested against the **NIST/CNSSI Non-Person Entity** definition
+> ("acts in cyberspace, but is not a human actor") and **OWASP NHI 2025** (keys/tokens
+> are credentials an NHI *uses*, not NHIs). 32 rows are `CONFORMANT`; five carry a
+> non-conformance flag and have been re-worded: **NHI-023** (key, not identity),
+> **NHI-024 / NHI-025** (human operators, reclassified out of NHI scope), **NHI-034**
+> (cross-cutting attribute, not an entity), **NHI-029** (human-use anti-pattern). IDs are
+> unchanged so all downstream references remain valid.
+
 ### C.1.1 COMMON identities (NHI-001..014)
 
 - **NHI-001 — Cloud IAM principal `[COMMON]`.** A workload-bound
@@ -124,20 +134,27 @@ credential / governance-maturity card.
   IDs, IMS dependent regions, batch-scheduler IDs (Control-M, OPCA);
   AS/400 / IBM i profiles. STATIC; rotation requires change windows.
   Material at the FI.
-- **NHI-023 — Database encryption / TDE master-key identity
-  `[UNCOMMON]`.** The key (and custodian) used by TDE for SQL Server,
-  Oracle TDE, PostgreSQL pgcrypto, AlwaysEncrypted CMK, MongoDB
-  CSFLE. Lives in KMS / HSM; custodian is usually a service account.
-- **NHI-024 — HSM / KMS operator / break-glass identity `[UNCOMMON]`.**
-  The high-privilege identities that administer the HSM (CloudHSM,
-  Thales Luna, Fortanix DSM, nCipher nShield, Entrust, Utimaco) or
-  the KMS control plane. Quorum-protected (M-of-N). PED keys,
-  smartcards, Shamir shares.
-- **NHI-025 — Certificate authority operator identity `[UNCOMMON]`.**
-  Roles in private CA (Microsoft ADCS, EJBCA, Venafi TPP/TLSPC,
-  Keyfactor Command, AWS Private CA, GCP CAS) — RA, CA admin,
-  auditor, enrolment agent. Smartcard-bound admin certs, CA private
-  keys in HSM, ACME EAB keys.
+- **NHI-023 — Database encryption key-custodian principal (TDE/CMK)
+  `[UNCOMMON]`.** The non-human KMS/HSM **custodian principal** that
+  controls TDE/CMK master keys for SQL Server, Oracle TDE, PostgreSQL
+  pgcrypto, AlwaysEncrypted, MongoDB CSFLE. The master **key itself is a
+  managed secret, not an identity** (NIST NPE / OWASP) — this row is the
+  controlling principal, not the key. `[npe_conformance: CREDENTIAL-NOT-IDENTITY]`
+- **NHI-024 — HSM/KMS operator (HUMAN-privileged — out of NHI scope)
+  `[UNCOMMON]`.** Privileged **human** operators administering the HSM
+  (CloudHSM, Thales Luna, Fortanix DSM, nCipher nShield, Entrust,
+  Utimaco) or KMS control plane under M-of-N quorum (PED keys,
+  smartcards, Shamir shares). **Reclassified human** per NIST NPE ("not
+  a human actor"); the non-human auto-unseal principal is NHI-035.
+  Retained for FK traceability; governed via UC-N-010.
+  `[npe_conformance: HUMAN-IDENTITY]`
+- **NHI-025 — Private-CA operator roles (HUMAN — out of NHI scope)
+  `[UNCOMMON]`.** Privileged **human** PKI roles in private CA
+  (Microsoft ADCS, EJBCA, Venafi TPP/TLSPC, Keyfactor Command, AWS
+  Private CA, GCP CAS) — RA, CA admin, auditor, enrolment agent.
+  **Reclassified human** per NIST NPE; the non-human **issuing-CA
+  signing identity** is the true NHI (mesh CA = NHI-017). Retained for
+  FK traceability; governed via UC-N-010. `[npe_conformance: HUMAN-IDENTITY]`
 - **NHI-026 — Backup / DR agent identity `[UNCOMMON]`.** NetBackup,
   Commvault, Veeam, Rubrik, Cohesity, Druva agent identities with
   cross-system read access. Prime ransomware target. STATIC; LOW
@@ -152,10 +169,13 @@ credential / governance-maturity card.
   banks, fintechs and CDR data recipients. Open Banking, payment rails
   (PEXA, NPP), Swift, ASX. mTLS certs + sender-constrained tokens +
   SSAs + DPoP keys. Regulator-driven maturity.
-- **NHI-029 — Service-account-as-human (shared functional ID)
-  `[UNCOMMON]`.** AD / IdP account used by multiple humans AND scripts;
-  common in legacy ops and outsourced run teams (`oracle`, `sapadm`,
-  `weblogic`, `svc_batch`, shared Tableau / Power BI). LOW maturity.
+- **NHI-029 — Shared functional service account (human-used NHI)
+  `[UNCOMMON]`.** A non-human service account (`oracle`, `sapadm`,
+  `weblogic`, `svc_batch`, shared Tableau / Power BI) whose **risk is
+  concurrent use by multiple humans AND scripts** — the OWASP
+  **NHI10:2025 "Human Use of NHI"** anti-pattern. Common in legacy ops
+  and outsourced run teams. LOW maturity.
+  `[npe_conformance: HUMAN-USE-ANTIPATTERN]`
 - **NHI-030 — Browser / SaaS extension and OAuth-app identity
   `[UNCOMMON]`.** Third-party apps installed into Google Workspace,
   M365, Salesforce, Slack, GitHub Apps — operating with delegated
@@ -175,11 +195,14 @@ credential / governance-maturity card.
   peripheral, kiosk identities — historically authenticated via
   default credentials. SNMPv3 creds, 802.1X EAP-TLS certs, default
   admin creds (a very common gap).
-- **NHI-034 — Quantum-resistant / hybrid-PKI rotation identity
-  `[UNCOMMON]`.** Identities involved in post-quantum (NIST PQC:
-  ML-KEM, ML-DSA, SLH-DSA) and hybrid-cert rollouts — dual-signed
-  certificates, PQC-capable CAs and HSMs. On every Tier-1 bank's
-  2026–2028 roadmap.
+- **NHI-034 — Post-quantum / hybrid-PKI crypto-agility attribute
+  `[UNCOMMON]`.** **Not a distinct identity** — a **cross-cutting
+  crypto-migration attribute** of existing PKI identities (NHI-006,
+  NHI-017, NHI-025) during post-quantum (NIST PQC: ML-KEM, ML-DSA,
+  SLH-DSA) and hybrid-cert rollouts (dual-signed certs, PQC-capable
+  CAs and HSMs). Dual-signed certs are **credentials, not actors**. On
+  every Tier-1 bank's 2026–2028 roadmap; tracked via UC-N-013.
+  `[npe_conformance: CROSS-CUTTING-ATTRIBUTE]`
 - **NHI-035 — Vault-internal / secrets-broker identity `[UNCOMMON]`.**
   The vault's own service identities — auto-unseal KMS principals,
   replication tokens, Performance / DR Replication identities, agent /

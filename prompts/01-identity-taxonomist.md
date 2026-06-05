@@ -19,6 +19,32 @@ XYZ secrets-management PRD. Two buckets:
 
 This taxonomy seeds the columns of the dual matrix and §7 of the PRD.
 
+## What counts as an NHI (MANDATORY definition gate)
+
+Anchor every row to the **official** definitions, not vendor marketing:
+
+- **NIST / CNSSI 4009-2015 — Non-Person Entity (NPE):** "an entity with a digital
+  identity that *acts in cyberspace, but is not a human actor*."
+- **OWASP NHI (2025):** NHIs are software / workload / service identities **not
+  intrinsically tied to a human**; they *use* credentials (passwords, certificates,
+  tokens, **keys**) — a key/token is **a credential, not an identity**. Human use of
+  an NHI is the OWASP **NHI10:2025** risk, not a separate identity class.
+
+Apply three litmus tests to every candidate and record the verdict in `npe_conformance`:
+
+1. **Acts AND non-human?** If the actor is a person (HSM/KMS operators, CA RA/admin,
+   break-glass quorum holders), it is a **HUMAN** identity → tag `HUMAN-IDENTITY`; keep
+   only for traceability and scope its governance to the human-IAM / PAM track. The
+   non-human counterpart (e.g. the KMS auto-unseal principal, the issuing-CA signing
+   identity) is the real NHI.
+2. **Identity, not credential?** A cryptographic / TDE / master key is a **secret** —
+   model the controlling *principal*, not the key. Tag a conflation `CREDENTIAL-NOT-IDENTITY`.
+3. **A distinct entity, not a programme/attribute?** Crypto-agility / PQC migration
+   spans existing PKI identities and is **not its own NHI** → tag `CROSS-CUTTING-ATTRIBUTE`.
+
+Conforming rows are `CONFORMANT`; a non-human account whose defining risk is human use is
+`HUMAN-USE-ANTIPATTERN`. Full worked findings: `matrix/REGULATOR-AUDIT-2026-06-03.md` Part 2.
+
 ## Inputs
 
 - `prompts/README.md` (invariants).
@@ -76,19 +102,30 @@ sovereignty.]
 Columns (header row exactly):
 
 ```
-nhi_id,bucket,short_name,description,typical_secrets,lifecycle,governance_maturity,sources_at_anz_likely,citation_keys
+nhi_id,bucket,short_name,description,typical_secrets,lifecycle,governance_maturity,sources_likely,citation_keys,npe_conformance
 ```
 
 - `nhi_id` — `NHI-001`, `NHI-002`, … stable, zero-padded.
 - `bucket` — `COMMON` | `UNCOMMON`.
 - `lifecycle` — `EPHEMERAL` | `SHORT-LIVED` | `LONG-LIVED` | `STATIC`.
 - `governance_maturity` — `LOW` | `MEDIUM` | `HIGH`.
-- `sources_at_anz_likely` — `Y` / `N` / `MAYBE` based on FI norms (not
-  confidential XYZ knowledge — base on public banking patterns).
+- `sources_likely` — `Y` / `N` / `MAYBE` based on FI norms (not confidential
+  XYZ knowledge — base on public banking patterns). **(Column was renamed from
+  the legacy `sources_at_anz_likely`; the validator rejects the old name.)**
 - `citation_keys` — semicolon-separated BibTeX keys.
+- `npe_conformance` — verdict from the definition gate above: `CONFORMANT` |
+  `HUMAN-IDENTITY` | `CREDENTIAL-NOT-IDENTITY` | `CROSS-CUTTING-ATTRIBUTE` |
+  `HUMAN-USE-ANTIPATTERN`. **Do not delete or renumber existing `nhi_id`s — they
+  are foreign keys referenced across the matrices, UCs and PRD; fix meaning, not IDs.**
 
 ## Sources to cite (primary)
 
+- **NIST / CNSSI 4009 Non-Person Entity (NPE) definition** — `csrc.nist.gov/glossary/term/non_person_entity` (the definitional anchor).
+- **OWASP Non-Human Identities Top 10 (2025)** — `owasp.org/www-project-non-human-identities-top-10/2025/`.
+- **NHIMG (Non-Human Identity Management Group)** — leading independent NHI authority;
+  originated the NHI Top-10 OWASP standardised. Its **three-elements** model (consumer =
+  the identity · secret = the credential · entitlements = the permissions) is the litmus
+  for "is this row a *consumer*, or just a secret/programme?". `nhimg.org`.
 - CSA Non-Human Identity Working Group taxonomy publications.
 - Gartner Machine Identity Management Market Guide (public abstracts).
 - SPIFFE / SPIRE specifications.
@@ -125,6 +162,9 @@ Flush completed sections of `identity-taxonomy.md` and completed rows of
 ## Acceptance criteria
 
 - ≥ 25 NHI types total (12 common + 13 uncommon minimum).
+- **Every row carries an `npe_conformance` verdict** from the definition gate;
+  human-operator, key-not-identity, and PQC-migration rows are tagged accordingly
+  (not silently listed as clean NHIs).
 - Every row in the markdown has a stable `NHI-<ID>` matching the CSV.
 - Every claim carries either a citation URL or a tag.
 - CSV parses cleanly (UTF-8, no embedded newlines in cells, commas

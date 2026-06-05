@@ -11,13 +11,16 @@
 ## Parameters (caller fills these in the Agent prompt header before dispatch)
 
 - `FRAMEWORK_NAME` — one of: `Essential 8`, `NIST SP 800-207 Zero Trust`,
-  `APRA CPS 234`, `ASD ISM`, `NIST CSF 2.0`.
+  `APRA CPS 234`, `APRA CPS 230`, `APRA CPG 234`, `ASD ISM`.
+  **⛔ `NIST CSF 2.0` is DEFERRED out of v0.1 per ADR-003 — do NOT dispatch a
+  mapper for it and do NOT emit `CSF-*` control codes into `regulatory-trace.csv`.
+  Revisit only at v1.0.**
 - `FRAMEWORK_SLUG` — kebab-case (`essential-8` / `nist-sp-800-207-zt` /
-  `apra-cps-234` / `asd-ism` / `nist-csf-2.0`).
+  `apra-cps-234` / `apra-cps-230` / `apra-cpg-234` / `asd-ism`).
 - `FRAMEWORK_PRIMARY_URL` — official URL (from
   `reference-external-frameworks` memory entry).
 - `FRAMEWORK_ROLE` — `PRIMARY-LENS` (Essential 8, NIST ZT) or
-  `BACK-MAP` (CPS 234, ISM, CSF 2.0).
+  `BACK-MAP` (CPS 234, CPS 230, CPG 234, ISM).
 
 ## Objective
 
@@ -69,7 +72,7 @@ For each control code:
 - **NHIs especially relevant:** `NHI-XXX, …`.
 - **Evidence quote (≤ 30 words):** verbatim from primary source.
 - **Maturity level (if applicable):** ML1 / ML2 / ML3 for Essential 8;
-  CSF tiers / NIST ZT pillars / CPS 234 paragraphs.
+  NIST ZT pillars / CPS 234 paragraphs.
 
 ## 4. Reverse map: UCs missing coverage (≤ 200 words)
 Which UCs in `research/use-cases.md` are not mapped to any control in
@@ -109,9 +112,11 @@ framework_slug,framework_role,control_code,control_short_title,uc_ids,nhi_ids,ma
 Primary sources only. Government / standards-body URLs.
 - ASD Essential 8: `cyber.gov.au` (maturity model + ML1/2/3 detail pages).
 - NIST SP 800-207: `csrc.nist.gov/publications/detail/sp/800-207/final`.
-- APRA CPS 234: `apra.gov.au/prudential-standard-cps-234`.
-- ASD ISM: `cyber.gov.au` (Information Security Manual).
-- NIST CSF 2.0: `nist.gov/cyberframework` and `csrc.nist.gov`.
+- APRA CPS 234: `apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf`.
+- APRA CPS 230: `apra.gov.au` (Prudential Standard CPS 230 Operational Risk Management PDF).
+- APRA CPG 234: `apra.gov.au/sites/default/files/cpg_234_information_security_june_2019_1.pdf`.
+- ASD ISM: `cyber.gov.au` (Information Security Manual) — verify IDs against `ismcontrol.xyz`.
+- NIST CSF 2.0: **DEFERRED (ADR-003)** — not mapped at v0.1.
 
 No vendor blog mappings, no consultancy-blog mappings.
 
