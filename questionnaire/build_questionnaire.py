@@ -19,9 +19,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 METH = os.path.join(os.path.dirname(HERE), "methodology")
 
 
-def build(out_path=None):
+def build(out_path=None, data_dir=None):
     out_path = str(out_path) if out_path else os.path.join(HERE, "questionnaire.html")
-    rubric = rubric_loader.load_rubric(METH)
+    rubric = rubric_loader.load_rubric(METH, data_dir=str(data_dir) if data_dir else None)
     template = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
     scoring = open(os.path.join(HERE, "scoring.js"), encoding="utf-8").read()
     app = open(os.path.join(HERE, "app.js"), encoding="utf-8").read()
@@ -39,4 +39,10 @@ def build(out_path=None):
 
 
 if __name__ == "__main__":
-    build()
+    import argparse
+    ap = argparse.ArgumentParser(description="Build a self-contained questionnaire HTML.")
+    ap.add_argument("--data-dir", default=None,
+                    help="domain data dir (e.g. matrix/domains/pam); default = methodology-only (secrets)")
+    ap.add_argument("--out", default=None, help="output HTML path")
+    args = ap.parse_args()
+    build(out_path=args.out, data_dir=args.data_dir)
