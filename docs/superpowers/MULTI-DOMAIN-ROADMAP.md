@@ -36,7 +36,7 @@ is summarised here.
 - Tests: full suite green (181). Data gate clean.
 
 ## Remaining Phase 1 work (do these first / alongside Phase 2)
-Tracked in `notes/phase1-defects-2026-06-05.md`:
+Tracked in `docs/superpowers/phase1-code-review-2026-06-05.md`:
 - **#1 (big) Body prose still secrets-specific** — `report-template.html` JS still hardcodes "L1 Secrets
   management / L2 NHI governance", "secrets-mgmt use cases NATIVE", the L0 substrate card, "Pick a machine
   identity", APRA-L2 caveat. Move to **per-domain content blocks**. Best done WITH a real non-secrets domain

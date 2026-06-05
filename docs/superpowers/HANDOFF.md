@@ -1,3 +1,10 @@
+> **CURRENT RESUME POINT (2026-06-05):** the multi-domain vendor-selection program — see
+> **`docs/superpowers/MULTI-DOMAIN-ROADMAP.md`** (status board + remaining phases) and **ADR-018**.
+> Phases 0 / 0.5 / 1(slices 1–2) merged to `main`; next = Phase 1 remainder + Phase 2 (real PAM domain).
+> The Brass Editorial handoff below is historical (that work is merged).
+
+---
+
 # HANDOFF — Brass Editorial UI rebuild (pause 2026-06-03)
 
 **Resume point:** Plans 1 (foundation) + 2 (questionnaire) are **done and committed** on
