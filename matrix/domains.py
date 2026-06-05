@@ -132,6 +132,9 @@ class Domain:
     posture_noun: str = "identity"          # dashboard: "XYZ <posture_noun> posture — N use cases scored"
     object_picker: str = "identity"         # identity tab: "Pick a <object_picker> → …"
     substrate_exclusion_note: str = ""      # compliance-trace note: "(<substrate> excluded per ADR-007)"
+    substrate_table_note: str = ""          # browse-all note about the excluded substrate
+    kpi_object_label: str = "identities"    # dashboard KPI tile: "N <kpi_object_label>"
+    layer_groups: tuple = ()                # vgrid column groups: ((code,label), …) per layer
     value_content: dict = field(default_factory=dict)   # business-value tab: outcomes/kpis/roi_events
 
     def report_meta(self):
@@ -159,6 +162,9 @@ class Domain:
             "object_picker": self.object_picker,
             "substrate_card_display": "" if self.substrate_slug else "display:none",
             "substrate_exclusion_note": self.substrate_exclusion_note,
+            "substrate_table_note": self.substrate_table_note,
+            "kpi_object_label": self.kpi_object_label,     # KPI tile: "N <kpi_object_label>"
+            "layer_groups": [list(g) for g in self.layer_groups],   # vgrid column-group [code,label] pairs
             "value_content": self.value_content,
         }
 
@@ -186,6 +192,9 @@ SECRETS = Domain(
     posture_noun="secrets",
     object_picker="machine identity",
     substrate_exclusion_note=" (Fortanix excluded per ADR-007)",
+    substrate_table_note="Fortanix DSM (Layer-0 substrate) is excluded here per ADR-007 — see the XYZ-posture tab. ",
+    kpi_object_label="machine identities",
+    layer_groups=(("L1", "Secrets management"), ("L2", "NHI governance")),
     value_content=_SECRETS_VALUE,
     legacy_recdata=True,
 )
@@ -235,6 +244,9 @@ PAM = Domain(
     substrate_note="",
     posture_noun="privileged-access",
     object_picker="privileged identity",
+    substrate_table_note="",                 # PAM has no excluded substrate
+    kpi_object_label="privileged identities",
+    layer_groups=(("L1", "PAM platforms"), ("L2", "Modern access")),
     value_content=_PAM_VALUE,
     legacy_recdata=False,
 )

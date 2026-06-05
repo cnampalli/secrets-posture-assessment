@@ -290,7 +290,7 @@
     <tbody id="matrix-body"></tbody>
   </table>
   </div>
-  <p class="note">Fortanix DSM (Layer-0 substrate) is excluded here per ADR-007 — see the XYZ-posture tab. Scroll the table sideways to see all columns.</p>
+  <p class="note">__SUBSTRATE_TABLE_NOTE__Scroll the table sideways to see all columns.</p>
 </section>
 
 </main>
@@ -310,6 +310,7 @@ const COMPLIANCE = /*__COMPLIANCE__*/{};
 const VENDORINTEL = /*__VENDORINTEL__*/{};
 const META = /*__META__*/{};
 const VALUECFG = /*__VALUECFG__*/{};
+const DOMAINCFG = /*__DOMAINCFG__*/{};
 
 function esc(s){ if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function gloss(code){ const d=GLOSSARY[code]; const t=esc(code); return d?'<span class="gloss" title="'+esc(d)+'">'+t+'</span>':t; }
@@ -342,7 +343,7 @@ NAVBTNS.forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
 // ---- vendor-as-columns coverage/maturity grid ----
 function vgrid(targetId){
   let html="";
-  [["L1","Secrets management"],["L2","NHI governance"]].forEach(([L,lbl])=>{
+  (DOMAINCFG.layer_groups||[]).forEach(([L,lbl])=>{
     const entries = VENDOR_SLUGS.filter(s=>VLAYER[s]===L)
       .map(s=>({slug:s, r:DATA.find(d=>d.vendor_slug===s && d.target_id===targetId)}))
       .filter(e=>e.r)
@@ -381,7 +382,7 @@ function regChips(uc){
 // ---- dashboard ----
 function renderDashboard(){
   document.getElementById("kpis").innerHTML =
-    [["ranked vendors",META.ranked_vendors],["machine identities",META.nhis],["use cases",META.ucs]]
+    [["ranked vendors",META.ranked_vendors],[DOMAINCFG.kpi_object_label,META.nhis],["use cases",META.ucs]]
     .map(([l,n])=>'<div class="kpi"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>').join("");
   const order=["MET","PARTIAL","GAP","PENDING"];
   const base={MET:0,PARTIAL:0,GAP:0,PENDING:0}, adj={MET:0,PARTIAL:0,GAP:0,PENDING:0};
