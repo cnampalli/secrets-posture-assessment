@@ -18,7 +18,7 @@ is summarised here.
 | **0** | Vendor-mix optimizer (C1–C4), parent-aware concentration + ownership graph (E1–E5), vendor intelligence (B2/B3/B4), identity-control coverage indicator + gap-to-target (D3/D4), provenance gate (F1–F4) | ✅ DONE — merged (PR #13) |
 | **0.5** | PAM spike: validate "shared engine + per-domain model" abstraction | ✅ DONE — abstraction holds (see `spikes/pam/SPIKE-FINDINGS.md`) |
 | **1** | Generalize the engine: per-domain `Domain` descriptor + config-driven report | 🟡 slices 1–2 + #3/#5 DONE; **#1 body-prose + #4/#8 open** (below) |
-| **2** | Promote PAM to a real offering + cross-domain consolidation/concentration view (X1–X2) | 🟡 IN PROGRESS — **PAM domain fully stood up** (data + descriptor + `--domain` build + generalized report, all gate-clean); **cross-domain consolidation view (X1–X2) remains** |
+| **2** | Promote PAM to a real offering + cross-domain consolidation/concentration view (X1–X2) | ✅ DONE — PAM domain fully stood up; **cross-domain consolidation view built** (`build_cross_domain.py` → `cross-domain-report.html`; CyberArk flagged spanning 2/2; runtime-verified, suite 197 green) |
 | **3** | IGA / SailPoint as a *scoped* offering (process-shaped — own model, judgment-heavy) | ⬜ |
 | **4** | Workforce IAM / CIAM — **demand-pulled only** (analyst-owned space) | ⬜ |
 | **5** | Consulting-instrument wrap: multi-engagement workspace, current-state import, anonymized benchmark | ⬜ |
@@ -79,10 +79,16 @@ Branch: **`feat/phase1-remainder`** (not yet pushed/PR'd).
   absent (not just hidden) for non-secrets domains. **Recommend a browser open of `pam-report.html` to
   eyeball all tabs** (static greps pass; no live render done).
 
-**NEXT — the moat (X1–X2):** cross-domain consolidation/concentration view. CyberArk spans secrets+PAM;
-one parent = concentration *across* domains (the ownership graph already rolls `cyberark-pam` up to the
-same `cyberark` parent that dominates secrets). Also still open from Phase 1: **#4** single-pass token
-escaping, **#8** load `Domain` from YAML.
+**DONE — the moat (X1–X2):** cross-domain consolidation/concentration view, built via subagent-driven
+development (spec + plan in `docs/superpowers/`). New: `matrix/crossdomain.py` (pure rollup-by-parent +
+concentration/consolidation panels), `cross_render.py` + `cross-domain-template.html`,
+`build_cross_domain.py` → `matrix/cross-domain-report.html`. Generic over `domains.DOMAINS` (new domains
+appear automatically). Today's signal: **CyberArk spans 2/2** (Conjur/PAM/Venafi/Entro in secrets + CyberArk
+PAM). Runtime-verified (0 JS errors); suite 197 green.
+
+**Still open (Phase 1 minors + PR #15 follow-ups):** #4 single-pass token escaping, #8 load `Domain` from
+YAML; plus the code-review follow-ups recorded below (PARTIAL coverage state, `</script>`-hardening sweep,
+evidence-URL HTTP-200 sweep, etc.).
 
 ## Code-review follow-ups (PR #15 — 3 parallel reviewers, no Critical/blocking issues)
 Fixed in-PR: visible secrets prose in `recommend()`/uc-card note/posture-legend (Important #2,
