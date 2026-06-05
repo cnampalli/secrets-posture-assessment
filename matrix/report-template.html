@@ -145,6 +145,25 @@
   .ctrlhdr{background:var(--accent-tint);border:1px solid var(--accent-border);border-radius:var(--r-sm);padding:9px 11px;margin-bottom:8px;}
   .subtle{font-size:10px;color:var(--muted);font-family:var(--font-mono);}
   .quotebox{font-size:10px;color:var(--muted);font-style:italic;line-height:1.45;border-left:3px solid var(--accent);padding-left:8px;margin-top:5px;}
+  .ctrl-ev{margin-top:8px;border-top:1px dashed var(--accent-border);padding-top:7px;}
+  .ev-cap{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+  .ev-item{padding:5px 0;border-bottom:1px dotted var(--border);}
+  .ev-item:last-child{border-bottom:0;}
+  .ev-tier{font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;padding:1px 5px;border-radius:8px;margin-right:5px;}
+  .ev-tier.primary{background:var(--accent-tint);color:var(--accent);border:1px solid var(--accent-border);}
+  .ev-tier.followup{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+  .ev-req{font-size:11px;color:var(--ink);display:inline;}
+  .ev-eg{font-size:9.5px;color:var(--muted);margin-top:2px;}
+  .ev-tags{margin-top:3px;display:flex;flex-wrap:wrap;gap:4px;}
+  .ev-chip{font-size:9px;font-family:var(--font-mono);padding:1px 5px;border-radius:8px;border:1px solid var(--border);color:var(--muted);}
+  .ev-chip.ctrl{color:#1f5e3f;border-color:#bfe0cd;background:#eef7f1;}
+  .ev-chip.sens{color:#8a4b12;border-color:#e7cba3;background:#fdf6ec;}
+  .ev-index{margin-top:16px;border:1px solid var(--border);border-radius:var(--r-sm);padding:13px 15px;background:var(--surface);}
+  .ev-index h3{font-size:13px;margin:0 0 3px;}
+  .ev-index .ix-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:7px 0;border-bottom:1px dotted var(--border);align-items:start;}
+  .ev-index .ix-row:last-child{border-bottom:0;}
+  .ev-index .ix-controls{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:50%;}
+  .ev-index .ix-count{font-size:10px;color:var(--muted);white-space:nowrap;margin-top:3px;}
   .vrow2{display:grid;grid-template-columns:26px 1fr 74px;gap:6px;padding:6px 4px;border-bottom:1px dotted var(--border);align-items:start;}
   .vrow2 .m{font-weight:700;text-align:center;color:var(--accent);font-family:var(--font-mono);} .vrow2 .vq{grid-column:1/4;font-size:10px;color:var(--muted);font-style:italic;line-height:1.4;}
   .placeholder{padding:22px;color:var(--faint);font-style:italic;text-align:center;}
@@ -245,6 +264,7 @@
     <div class="casc-col"><div class="col-head">Vendor evidence</div><div class="scroll" id="casc-vendor"></div></div>
   </div>
   <p class="note">Vendor evidence is the __RV__ ranked vendors__SUBSTRATE_EXCL__. State dot = worst XYZ state across the control's use cases (GAP &gt; PARTIAL &gt; PENDING &gt; MET).</p>
+  <div id="ev-index" class="ev-index" style="display:none"></div>
 </section>
 
 <section id="view-rec" class="view">
@@ -506,6 +526,19 @@ HEADERS.forEach(h=>h.addEventListener("click",()=>{ const k=h.dataset.key; if(so
   const cFw=document.getElementById("casc-fw"), cCtrl=document.getElementById("casc-ctrl"),
     cUc=document.getElementById("casc-uc"), cV=document.getElementById("casc-vendor");
   if(!cFw) return;
+  // regulatory evidence pack helpers (inert when a domain ships no evidence catalog)
+  function evChip(c){return '<span class="ev-chip ctrl" title="evidences this control">'+esc(c)+'</span>';}
+  function evTier(t){return '<span class="ev-tier '+(t==="primary"?"primary":"followup")+'">'+(t==="primary"?"primary":"follow-up")+'</span>';}
+  function evItemHtml(e){
+    return '<div class="ev-item">'+evTier(e.tier)+'<span class="ev-req">'+esc(e.requirement)+'</span>'+
+      (e.example_artifact?'<div class="ev-eg">'+esc(e.example_artifact)+'</div>':"")+
+      '<div class="ev-tags">'+(e.satisfies||[]).map(evChip).join("")+
+      (e.sensitivity_tag?'<span class="ev-chip sens">'+esc(e.sensitivity_tag)+'</span>':"")+'</div></div>';
+  }
+  function evPack(items){
+    if(!items||!items.length) return "";
+    return '<div class="ctrl-ev"><div class="ev-cap">Evidence to collect</div>'+items.map(evItemHtml).join("")+'</div>';
+  }
   cFw.innerHTML = REGDATA.frameworks.map(fw=>'<div class="item" data-fw="'+esc(fw.slug)+'">'+
     '<div style="font-weight:600">'+esc(fw.label)+'</div><div class="subtle">'+fw.control_count+' controls · '+esc(fw.subtitle)+'</div></div>').join("");
   function showControls(fw){
@@ -526,7 +559,8 @@ HEADERS.forEach(h=>h.addEventListener("click",()=>{ const k=h.dataset.key; if(so
       (c.maturity_level?'<span class="ml">'+esc(c.maturity_level)+'</span>':"")+
       '<div style="font-size:11px;font-weight:600;margin-top:2px">'+esc(c.title)+'</div>'+
       (c.evidence_quote?'<div class="quotebox">"'+esc(c.evidence_quote)+'"</div>':"")+
-      (c.evidence_url&&/^https?:/i.test(c.evidence_url)?'<div style="margin-top:4px;font-size:10px"><a href="'+esc(c.evidence_url)+'" target="_blank" rel="noopener">source standard ↗</a></div>':"")+'</div>';
+      (c.evidence_url&&/^https?:/i.test(c.evidence_url)?'<div style="margin-top:4px;font-size:10px"><a href="'+esc(c.evidence_url)+'" target="_blank" rel="noopener">source standard ↗</a></div>':"")+
+      evPack(c.evidence)+'</div>';
     let body=c.uc_ids.map(uid=>{ const u=REGDATA.ucs[uid]||{};
       return '<div class="item" data-uc="'+esc(uid)+'"><span class="ctrlcode">'+esc(uid)+'</span> '+
         '<span class="ustate '+(u.state||"UNKNOWN")+'">'+(u.state||"?")+'</span>'+
@@ -548,6 +582,18 @@ HEADERS.forEach(h=>h.addEventListener("click",()=>{ const k=h.dataset.key; if(so
   cCtrl.addEventListener("click",e=>{ const it=e.target.closest(".item"); if(it){ const a=cFw.querySelector(".item.active"); showUcs(a?a.dataset.fw:REGDATA.frameworks[0].slug, it.dataset.code); } });
   cUc.addEventListener("click",e=>{ const it=e.target.closest(".item"); if(it&&it.dataset.uc) showVendors(it.dataset.uc); });
   const def=cFw.querySelector('[data-fw="apra-cps-234"]'); if(def) def.click(); else if(cFw.firstChild) cFw.firstChild.click();
+
+  // reverse view: one artifact -> many controls. Hidden when no evidence catalog (secrets).
+  const ixBox=document.getElementById("ev-index"), ix=REGDATA.evidence_index||[];
+  if(ixBox && ix.length){
+    ixBox.style.display="block";
+    ixBox.innerHTML='<h3>Evidence index — one artifact, many controls</h3>'+
+      '<p class="subtle" style="margin:0 0 8px">Each artifact a client provides, and the regulatory controls it closes. Collect once, satisfy many.</p>'+
+      ix.map(e=>'<div class="ix-row"><div>'+evTier(e.tier)+'<span class="ev-req">'+esc(e.requirement)+'</span>'+
+        (e.sensitivity_tag?' <span class="ev-chip sens">'+esc(e.sensitivity_tag)+'</span>':"")+'</div>'+
+        '<div><div class="ix-controls">'+(e.satisfies||[]).map(evChip).join("")+'</div>'+
+        '<div class="ix-count">closes '+(e.satisfies||[]).length+' control(s) · '+(e.uc_count||0)+' UCs</div></div></div>').join("");
+  }
 })();
 
 // ---- Recommendations tab (residency-first, layer-scoped) ----

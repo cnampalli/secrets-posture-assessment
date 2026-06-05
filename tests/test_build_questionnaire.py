@@ -22,3 +22,14 @@ def test_build_default_output_path():
     out = bq.build()
     p = pathlib.Path(out)
     assert p.exists() and p.name == "questionnaire.html"
+
+
+def test_build_pam_domain_bakes_evidence(tmp_path):
+    out = tmp_path / "pam.html"
+    bq.build(out_path=out, data_dir=ROOT / "matrix" / "domains" / "pam")
+    html = out.read_text(encoding="utf-8")
+    assert html.count("UC-P-001") >= 1
+    assert "UC-F-001" not in html                      # SECRETS rubric not used
+    assert "EV-PAM-VAULT-ROTATION-POLICY" in html      # evidence baked into the rubric JSON
+    assert "register of in-scope privileged accounts" in html  # a requirement string
+    assert "/*__RUBRIC__*/[]" not in html

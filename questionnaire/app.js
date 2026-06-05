@@ -9,6 +9,7 @@ const RUBRIC_BY_ID = Object.fromEntries(RUBRIC.map(u => [u.uc_id, u]));
 let responses = {};
 let current = RUBRIC[0] ? RUBRIC[0].uc_id : null;
 const uiOpen = {};
+const evOpen = {};   // per-question follow-up evidence drill-down
 
 function blankResponse() { return {answers: {}, overridden: false, final_state: null, rationale: "", confidence: "MED"}; }
 function resp(id) { return (responses[id] = responses[id] || blankResponse()); }
@@ -58,6 +59,36 @@ function buildRecord() {
   return out;
 }
 
+/* ---- evidence packs (regulatory-driven) ---- */
+function evItem(e) {
+  let h = '<div class="ev-item"><span class="tier ' + (e.tier === "primary" ? "primary" : "followup") + '">' +
+    (e.tier === "primary" ? "primary" : "follow-up") + '</span><div class="ev-body">' +
+    '<div class="ev-req">' + esc(e.requirement) + "</div>";
+  if (e.example_artifact) h += '<div class="ev-eg">' + esc(e.example_artifact) + "</div>";
+  h += '<div class="ev-meta">';
+  (e.satisfies || []).forEach(c => h += '<span class="ev-tag ctrl" title="evidences this control">' + esc(c) + "</span>");
+  if (e.sensitivity_tag) h += '<span class="ev-tag sens">' + esc(e.sensitivity_tag) + "</span>";
+  return h + "</div></div></div>";
+}
+function evPack(q) {
+  const items = q.evidence || [];
+  if (!items.length) return "";
+  const prim = items.filter(e => e.tier === "primary");
+  const head = prim.length ? prim : items;            // show all as headline if none tagged primary
+  const extra = prim.length ? items.filter(e => e.tier !== "primary") : [];
+  let h = '<div class="ev-pack"><div class="ev-cap">Evidence to ask for</div>';
+  head.forEach(e => h += evItem(e));
+  if (extra.length) {
+    const open = evOpen[q.qid];
+    h += '<span class="ev-more" onclick="App.toggleEv(\'' + q.qid + '\')">' +
+      (open ? "▾ hide follow-up evidence" : "▸ if you need to probe further (" + extra.length + ")") + "</span>" +
+      '<div class="ev-followups ' + (open ? "open" : "") + '">';
+    extra.forEach(e => h += evItem(e));
+    h += "</div>";
+  }
+  return h + "</div>";
+}
+
 /* ---- rendering ---- */
 function renderRail() {
   const groups = {};
@@ -99,8 +130,15 @@ function renderMain() {
         (q.informs_state === "GAP_PARTIAL" ? "gp" : "pm") + '">' + (q.informs_state === "GAP_PARTIAL" ? "GAP ↔ PARTIAL" : "PARTIAL ↔ MET") + "</span></div>" +
         "<p>" + esc(q.text) + "</p><div class=\"seg\">" +
         ["yes", "no", "na"].map(v => '<button data-v="' + v + '" class="' + (a === v ? "on" : "") + '" onclick="App.answer(\'' + q.qid + '\',\'' + v + '\')">' + v.toUpperCase() + "</button>").join("") +
-        "</div></div>";
+        "</div>" + evPack(q) + "</div>";
     });
+  }
+
+  const additional = uc.evidence_additional || [];
+  if (additional.length) {
+    h += '<div class="ev-additional"><div class="ev-cap">Additional evidence for compliance</div>';
+    additional.forEach(e => h += evItem(e));
+    h += "</div>";
   }
 
   const proposed = proposedFor(uc), final = finalFor(uc);
@@ -135,6 +173,7 @@ const App = {
   answer(qid, v) { const a = resp(current).answers; a[qid] = (a[qid] === v ? undefined : v); if (a[qid] === undefined) delete a[qid]; save(); render(); },
   check(sid, on) { resp(current).answers[sid] = on; save(); renderRail(); },
   toggleOvr() { uiOpen[current] = !uiOpen[current]; renderMain(); },
+  toggleEv(qid) { evOpen[qid] = !evOpen[qid]; renderMain(); },
   setRationale(v) { resp(current).rationale = v; save(); },
   setConf(c) { resp(current).confidence = c; save(); renderMain(); },
   setFinal(v) {

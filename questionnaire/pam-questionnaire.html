@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Posture Assessment Instrument</title>
+<style>
+  :root{--ink:#1a1d21;--muted:#5b6470;--line:#e2e6ea;--paper:#f6f7f9;--card:#fff;
+    --gap:#c0392b;--partial:#c97a14;--met:#2e7d52;--pending:#7a8593;--na:#9aa3ad;--accent:#2a4d8f}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper)}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;margin:0}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  header{display:flex;align-items:center;gap:18px;padding:12px 22px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  header h1{font-size:17px}
+  .grow{flex:1}
+  .btn{font:13px/1 inherit;padding:9px 14px;border-radius:5px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .wrap{display:grid;grid-template-columns:268px 1fr;min-height:calc(100vh - 53px)}
+  nav{background:var(--card);border-right:1px solid var(--line);padding:12px 0;overflow:auto}
+  .rail-grp{font:11px/1 sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 18px 6px}
+  .rail-item{display:flex;align-items:center;gap:10px;padding:8px 18px;cursor:pointer;border-left:3px solid transparent}
+  .rail-item:hover{background:var(--paper)}
+  .rail-item.active{background:#eef3fb;border-left-color:var(--accent)}
+  .rail-item .t{font-size:12.5px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rail-item .mono{font-size:12px;color:var(--muted)}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--pending);flex:none}
+  .dot.GAP{background:var(--gap)}.dot.PARTIAL{background:var(--partial)}.dot.MET{background:var(--met)}.dot.NA{background:var(--na)}
+  main{padding:28px 38px;max-width:880px}
+  .crumb{font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  .uc-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .uc-head h2{font-size:23px}
+  .arch-badge{font:11px/1 sans-serif;color:var(--accent);background:#eef3fb;border:1px solid #d3e0f5;padding:5px 9px;border-radius:20px}
+  .uc-sub{color:var(--muted);font-size:13px;margin:2px 0 22px}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:15px 18px;margin-bottom:11px}
+  .qmeta{display:flex;gap:8px;margin-bottom:8px}
+  .pill{font:10.5px/1 sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--paper);border:1px solid var(--line);padding:4px 7px;border-radius:12px}
+  .pill.gp{color:#8a4b12;border-color:#e7cba3;background:#fdf6ec}
+  .pill.pm{color:#1f5e3f;border-color:#bfe0cd;background:#eef7f1}
+  .q p{margin:0 0 12px;font-size:15px}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .seg button{font:13px/1 inherit;padding:8px 16px;border:0;background:#fff;cursor:pointer;color:var(--muted);border-right:1px solid var(--line)}
+  .seg button:last-child{border-right:0}
+  .seg button.on[data-v=yes]{background:var(--met);color:#fff}
+  .seg button.on[data-v=no]{background:var(--gap);color:#fff}
+  .seg button.on[data-v=na]{background:var(--na);color:#fff}
+  .ev-pack{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+  .ev-cap{font:10.5px/1 sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  .ev-item{display:flex;gap:9px;align-items:flex-start;padding:6px 0}
+  .ev-item .tier{font:9.5px/1.5 sans-serif;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border-radius:10px;flex:none;margin-top:1px}
+  .ev-item .tier.primary{background:#eef3fb;color:var(--accent);border:1px solid #d3e0f5}
+  .ev-item .tier.followup{background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+  .ev-body{flex:1}
+  .ev-req{font-size:13.5px;color:var(--ink)}
+  .ev-eg{font-size:12px;color:var(--muted);margin-top:2px}
+  .ev-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+  .ev-tag{font:10px/1.4 ui-monospace,monospace;padding:2px 6px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--muted)}
+  .ev-tag.ctrl{color:#1f5e3f;border-color:#bfe0cd;background:#eef7f1}
+  .ev-tag.sens{color:#8a4b12;border-color:#e7cba3;background:#fdf6ec}
+  .ev-more{font-size:12px;color:var(--accent);cursor:pointer;user-select:none;margin-top:6px;display:inline-block}
+  .ev-followups{display:none;margin-top:2px;padding-left:6px;border-left:2px solid var(--line)}
+  .ev-followups.open{display:block}
+  .ev-additional{background:#fbfcfd;border:1px dashed var(--line);border-radius:8px;padding:12px 16px;margin-bottom:11px}
+  .bespoke{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:15px 18px;margin-bottom:11px}
+  .bespoke label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14px}
+  .bespoke .ev{font-size:12px;color:var(--muted);margin-left:26px}
+  .score{position:sticky;bottom:0;margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;box-shadow:0 -6px 18px rgba(20,30,50,.05)}
+  .score-row{display:flex;align-items:center;gap:16px}
+  .state-chip{font-family:Georgia,serif;font-size:20px;font-weight:600;padding:8px 18px;border-radius:7px;color:#fff;min-width:118px;text-align:center}
+  .state-chip.GAP{background:var(--gap)}.state-chip.PARTIAL{background:var(--partial)}.state-chip.MET{background:var(--met)}.state-chip.PENDING{background:var(--pending)}.state-chip.NA{background:var(--na)}
+  .why{font-size:13px;color:var(--muted);flex:1}.why b{color:var(--ink)}
+  .ovr-toggle{font-size:13px;color:var(--accent);cursor:pointer;user-select:none}
+  .ovr{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:none}
+  .ovr.open{display:block}
+  .ovr label{font-size:12.5px;color:var(--muted);display:block;margin-bottom:5px}
+  .ovr textarea{width:100%;min-height:54px;border:1px solid var(--line);border-radius:6px;padding:9px;font:13.5px/1.45 inherit;resize:vertical}
+  .ovr textarea.need{border-color:var(--gap);background:#fdeeea}
+  .ovr-grid{display:flex;gap:24px;align-items:flex-end;margin-top:12px}
+  .conf{display:flex;gap:6px}
+  .conf button{font:12px/1 inherit;padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;color:var(--muted)}
+  .conf button.on{border-color:var(--accent);background:#eef3fb;color:var(--accent);font-weight:600}
+  .ovr-final select{padding:7px;border:1px solid var(--line);border-radius:5px;font:13px inherit}
+  .navrow{display:flex;justify-content:space-between;margin-top:22px}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1a1d21;color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:.95}
+</style>
+</head>
+<body>
+<header>
+  <h1>Posture Assessment Instrument</h1>
+  <span class="mono" id="progress" style="font-size:12px;color:var(--muted)"></span>
+  <span class="grow"></span>
+  <input type="file" id="importFile" accept="application/json" style="display:none">
+  <button class="btn ghost" onclick="document.getElementById('importFile').click()">⤒ Import</button>
+  <button class="btn" onclick="App.exportRecord()">⤓ Export record</button>
+</header>
+<div class="wrap"><nav id="rail"></nav><main id="main"></main></div>
+<div class="toast" id="toast"></div>
+<script>
+// Mirror of methodology/scoring.py — keep in lockstep via scoring-vectors.json.
+function deriveState(questions, answers) {
+  const vals = questions.map(q => [q.informs_state, answers[q.qid] ?? null]);
+  if (vals.length && vals.every(([, v]) => v === "na")) return "NA";
+  if (vals.some(([, v]) => v !== "yes" && v !== "no" && v !== "na")) return "PENDING";
+  if (vals.some(([inf, v]) => inf === "GAP_PARTIAL" && v === "no")) return "GAP";
+  if (vals.some(([inf, v]) => inf === "PARTIAL_MET" && v === "no")) return "PARTIAL";
+  return "MET";
+}
+if (typeof module !== "undefined" && module.exports) module.exports = { deriveState };
+
+const RUBRIC = [{"uc_id": "UC-P-001", "title": "Privileged credential vaulting & rotation", "category": "Functional", "archetype": "A4", "archetype_name": "Lifecycle Automation", "kind": "ladder", "questions": [{"qid": "A4-Q1", "dimension": "coverage", "informs_state": "GAP_PARTIAL", "text": "Is any lifecycle phase for privileged account passwords, keys and A2A credentials automated?", "evidence": [{"ev_id": "EV-PAM-CRED-ELIM-REGISTER", "requirement": "A register of in-scope privileged accounts confirming default and static shared credentials have been changed, vaulted or removed.", "dimension": "coverage", "tier": "primary", "example_artifact": "e.g., a vault onboarded-accounts export listing account, credential type and status", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["asd-ism-comms-2025", "cyberark-pam-2025"], "satisfies": ["ISM-1304"]}, {"ev_id": "EV-PAM-JIT-GRANTS", "requirement": "Evidence that privileged access is granted just-in-time and time-bound rather than held as standing privilege.", "dimension": "coverage", "tier": "follow-up", "example_artifact": "e.g., a just-in-time elevation policy and a sample of time-bound grants with expiry", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["acsc-e8-mm-nov2023", "gartner-pam-mq-2024"], "satisfies": ["E8-RAP-ML2"]}, {"ev_id": "EV-PAM-NO-PLAINTEXT-SECRETS", "requirement": "Evidence that no plaintext privileged credentials persist in scripts, configuration or source.", "dimension": "coverage", "tier": "follow-up", "example_artifact": "e.g., a secret-scan report over scripts and configuration showing no privileged plaintext secrets", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["owasp-sm-cheatsheet-2024", "cyberark-pam-2025"], "satisfies": ["CPS234-§21(b)"]}]}, {"qid": "A4-Q2", "dimension": "depth", "informs_state": "PARTIAL_MET", "text": "Are issuance, rotation AND revocation all automated within rotation on schedule and on check-in/release?", "evidence": [{"ev_id": "EV-PAM-SVCACCT-MANAGED", "requirement": "Evidence that privileged service-account credentials are managed and rotated (e.g. group Managed Service Accounts or broker-managed leases) rather than static shared passwords.", "dimension": "depth", "tier": "primary", "example_artifact": "e.g., a gMSA configuration or a service-account rotation report", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["asd-ism-ia-2025", "acsc-e8-ism-mapping-2023"], "satisfies": ["ISM-1619"]}, {"ev_id": "EV-PAM-VAULT-ROTATION-POLICY", "requirement": "The credential vaulting and rotation policy showing privileged credentials are rotated on schedule and on check-in/release, commensurate with the criticality of the protected assets.", "dimension": "depth", "tier": "primary", "example_artifact": "e.g., the vault rotation policy document or platform configuration export", "sensitivity_tag": "[SENSITIVE]", "citation_keys": ["apra-cps-234-2019", "cyberark-pam-2025"], "satisfies": ["CPS234-§21(b)", "ISM-1619"]}]}, {"qid": "A4-Q3", "dimension": "enforcement", "informs_state": "PARTIAL_MET", "text": "Are automation failures alerted to on-call?", "evidence": [{"ev_id": "EV-PAM-PRIV-SEPARATION", "requirement": "Evidence that privileged accounts are separated from standard accounts and prevented from accessing the internet, email and web services.", "dimension": "enforcement", "tier": "primary", "example_artifact": "e.g., the privileged-account policy and an internet/email/web block ruleset with the covered-account list", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["acsc-e8-2023", "acsc-e8-mm-nov2023"], "satisfies": ["E8-RAP-ML2"]}, {"ev_id": "EV-PAM-ROTATION-FAILURE-ALERT", "requirement": "Evidence that automated credential-rotation failures raise an alert to an on-call owner.", "dimension": "enforcement", "tier": "follow-up", "example_artifact": "e.g., a rotation-failure alert rule and a sample alert or ticket", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["cyberark-pam-2025"], "satisfies": ["ISM-1619"]}]}], "evidence_additional": []}, {"uc_id": "UC-P-002", "title": "Privileged session isolation / proxy", "category": "Functional", "archetype": "A1", "archetype_name": "Preventive Guardrail", "kind": "ladder", "questions": [{"qid": "A1-Q1", "dimension": "coverage", "informs_state": "GAP_PARTIAL", "text": "Is privileged session brokering through an isolation proxy deployed at all relevant gates for privileged sessions to in-scope targets?", "evidence": [{"ev_id": "EV-PAM-CRED-ELIM-REGISTER", "requirement": "A register of in-scope privileged accounts confirming default and static shared credentials have been changed, vaulted or removed.", "dimension": "coverage", "tier": "primary", "example_artifact": "e.g., a vault onboarded-accounts export listing account, credential type and status", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["asd-ism-comms-2025", "cyberark-pam-2025"], "satisfies": ["ISM-1304"]}, {"ev_id": "EV-PAM-JIT-GRANTS", "requirement": "Evidence that privileged access is granted just-in-time and time-bound rather than held as standing privilege.", "dimension": "coverage", "tier": "follow-up", "example_artifact": "e.g., a just-in-time elevation policy and a sample of time-bound grants with expiry", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["acsc-e8-mm-nov2023", "gartner-pam-mq-2024"], "satisfies": ["E8-RAP-ML2"]}]}, {"qid": "A1-Q2", "dimension": "enforcement", "informs_state": "PARTIAL_MET", "text": "Is privileged session brokering through an isolation proxy enforced in blocking mode (not detect-only) across all in-scope privileged targets?", "evidence": [{"ev_id": "EV-PAM-PRIV-SEPARATION", "requirement": "Evidence that privileged accounts are separated from standard accounts and prevented from accessing the internet, email and web services.", "dimension": "enforcement", "tier": "primary", "example_artifact": "e.g., the privileged-account policy and an internet/email/web block ruleset with the covered-account list", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["acsc-e8-2023", "acsc-e8-mm-nov2023"], "satisfies": ["E8-RAP-ML2"]}]}, {"qid": "A1-Q3", "dimension": "exception", "informs_state": "PARTIAL_MET", "text": "Are bypasses controlled by a registered exception with owner and expiry?"}], "evidence_additional": []}, {"uc_id": "UC-P-003", "title": "Privileged session recording & audit", "category": "Functional", "archetype": "A3", "archetype_name": "Capability Adoption", "kind": "ladder", "questions": [{"qid": "A3-Q1", "dimension": "coverage", "informs_state": "GAP_PARTIAL", "text": "Is privileged session recording with searchable command metadata available in production for privileged sessions to in-scope targets?", "evidence": [{"ev_id": "EV-PAM-CENTRAL-SESSION-LOG", "requirement": "Evidence that privileged sessions and access events are captured to a centralised logging facility with searchable metadata.", "dimension": "coverage", "tier": "primary", "example_artifact": "e.g., the centralised session-recording or log store and a searchable-index sample", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["asd-ism-incidents-2025", "gartner-pam-mq-2024"], "satisfies": ["ISM-1405"]}, {"ev_id": "EV-PAM-CRED-ELIM-REGISTER", "requirement": "A register of in-scope privileged accounts confirming default and static shared credentials have been changed, vaulted or removed.", "dimension": "coverage", "tier": "primary", "example_artifact": "e.g., a vault onboarded-accounts export listing account, credential type and status", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["asd-ism-comms-2025", "cyberark-pam-2025"], "satisfies": ["ISM-1304"]}]}, {"qid": "A3-Q2", "dimension": "depth", "informs_state": "PARTIAL_MET", "text": "What share of privileged sessions to in-scope targets actually uses privileged session recording with searchable command metadata (vs shelf-ware)?", "evidence": [{"ev_id": "EV-PAM-LOG-TAMPER-EVIDENT", "requirement": "Evidence that privileged access logs and session recordings are protected from unauthorised modification or deletion and retained per policy.", "dimension": "depth", "tier": "primary", "example_artifact": "e.g., an immutable-storage/WORM configuration and the retention policy for session recordings", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["acsc-e8-2023", "asd-ism-incidents-2025"], "satisfies": ["E8-RAP-LOG"]}, {"ev_id": "EV-PAM-HIGHRISK-CMD-FLAGGING", "requirement": "Evidence that high-risk privileged commands are flagged for review within recorded sessions.", "dimension": "depth", "tier": "follow-up", "example_artifact": "e.g., the command-flagging ruleset and a sample flagged-session review", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["gartner-pam-mq-2024", "cyberark-pam-2025"], "satisfies": ["CPS234-§22"]}]}, {"qid": "A3-Q3", "dimension": "depth", "informs_state": "PARTIAL_MET", "text": "Does the configuration meet tamper-evident retention with high-risk-command flagging?", "evidence": [{"ev_id": "EV-PAM-LOG-TAMPER-EVIDENT", "requirement": "Evidence that privileged access logs and session recordings are protected from unauthorised modification or deletion and retained per policy.", "dimension": "depth", "tier": "primary", "example_artifact": "e.g., an immutable-storage/WORM configuration and the retention policy for session recordings", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["acsc-e8-2023", "asd-ism-incidents-2025"], "satisfies": ["E8-RAP-LOG"]}, {"ev_id": "EV-PAM-HIGHRISK-CMD-FLAGGING", "requirement": "Evidence that high-risk privileged commands are flagged for review within recorded sessions.", "dimension": "depth", "tier": "follow-up", "example_artifact": "e.g., the command-flagging ruleset and a sample flagged-session review", "sensitivity_tag": "[INTERNAL]", "citation_keys": ["gartner-pam-mq-2024", "cyberark-pam-2025"], "satisfies": ["CPS234-§22"]}]}], "evidence_additional": []}];
+/* Variant-A wizard. Engine: deriveState() (inlined from scoring.js).
+   Rich record is the single source of truth; autosaved to localStorage. */
+const STORE_KEY = "posture-assessment-record/v1";
+const SCHEMA = "posture-assessment-record/v1";
+const STATES = ["GAP", "PARTIAL", "MET", "PENDING", "NA"];
+const RUBRIC_BY_ID = Object.fromEntries(RUBRIC.map(u => [u.uc_id, u]));
+
+// responses[uc_id] = {answers:{}, overridden:bool, final_state:str|null, rationale:str, confidence:str}
+let responses = {};
+let current = RUBRIC[0] ? RUBRIC[0].uc_id : null;
+const uiOpen = {};
+const evOpen = {};   // per-question follow-up evidence drill-down
+
+function blankResponse() { return {answers: {}, overridden: false, final_state: null, rationale: "", confidence: "MED"}; }
+function resp(id) { return (responses[id] = responses[id] || blankResponse()); }
+
+function loadSaved() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) { const rec = JSON.parse(raw); if (rec && rec.responses) responses = rec.responses; }
+  } catch (e) { /* ignore corrupt autosave */ }
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(buildRecord())); }
+  catch (e) { toast("Autosave unavailable"); }
+}
+
+function proposedFor(uc) {
+  if (uc.kind === "bespoke") return null;          // A0 manual
+  return deriveState(uc.questions, resp(uc.uc_id).answers);
+}
+function finalFor(uc) {
+  const r = resp(uc.uc_id);
+  if (r.overridden && r.final_state) return r.final_state;
+  const p = proposedFor(uc);
+  return p || r.final_state || "PENDING";
+}
+function whyFor(uc) {
+  const r = resp(uc.uc_id);
+  if (uc.kind === "bespoke") return "Bespoke (A0) — choose the posture state below and add a rationale";
+  const p = proposedFor(uc), a = r.answers, qs = uc.questions;
+  if (p === "PENDING") { const n = qs.filter(q => !["yes","no","na"].includes(a[q.qid])).length; return n + " of " + qs.length + " question(s) unanswered"; }
+  if (p === "NA") return "All criteria marked not-applicable";
+  if (p === "GAP") { const q = qs.find(q => q.informs_state === "GAP_PARTIAL" && a[q.qid] === "no"); return "GAP↔PARTIAL question is No (" + q.qid + ", " + q.dimension + ")"; }
+  if (p === "PARTIAL") { const q = qs.find(q => q.informs_state === "PARTIAL_MET" && a[q.qid] === "no"); return "A PARTIAL↔MET question is No (" + q.qid + ", " + q.dimension + ")"; }
+  return "All criteria satisfied across every dimension";
+}
+
+function buildRecord() {
+  const out = {schema: SCHEMA, generated: new Date().toISOString(), responses: {}};
+  RUBRIC.forEach(uc => {
+    const r = responses[uc.uc_id]; if (!r) return;
+    out.responses[uc.uc_id] = {
+      archetype: uc.archetype, answers: r.answers,
+      proposed_state: proposedFor(uc), final_state: finalFor(uc),
+      overridden: !!r.overridden, rationale: r.rationale || "", confidence: r.confidence || "MED"
+    };
+  });
+  return out;
+}
+
+/* ---- evidence packs (regulatory-driven) ---- */
+function evItem(e) {
+  let h = '<div class="ev-item"><span class="tier ' + (e.tier === "primary" ? "primary" : "followup") + '">' +
+    (e.tier === "primary" ? "primary" : "follow-up") + '</span><div class="ev-body">' +
+    '<div class="ev-req">' + esc(e.requirement) + "</div>";
+  if (e.example_artifact) h += '<div class="ev-eg">' + esc(e.example_artifact) + "</div>";
+  h += '<div class="ev-meta">';
+  (e.satisfies || []).forEach(c => h += '<span class="ev-tag ctrl" title="evidences this control">' + esc(c) + "</span>");
+  if (e.sensitivity_tag) h += '<span class="ev-tag sens">' + esc(e.sensitivity_tag) + "</span>";
+  return h + "</div></div></div>";
+}
+function evPack(q) {
+  const items = q.evidence || [];
+  if (!items.length) return "";
+  const prim = items.filter(e => e.tier === "primary");
+  const head = prim.length ? prim : items;            // show all as headline if none tagged primary
+  const extra = prim.length ? items.filter(e => e.tier !== "primary") : [];
+  let h = '<div class="ev-pack"><div class="ev-cap">Evidence to ask for</div>';
+  head.forEach(e => h += evItem(e));
+  if (extra.length) {
+    const open = evOpen[q.qid];
+    h += '<span class="ev-more" onclick="App.toggleEv(\'' + q.qid + '\')">' +
+      (open ? "▾ hide follow-up evidence" : "▸ if you need to probe further (" + extra.length + ")") + "</span>" +
+      '<div class="ev-followups ' + (open ? "open" : "") + '">';
+    extra.forEach(e => h += evItem(e));
+    h += "</div>";
+  }
+  return h + "</div>";
+}
+
+/* ---- rendering ---- */
+function renderRail() {
+  const groups = {};
+  RUBRIC.forEach(u => (groups[u.category] = groups[u.category] || []).push(u));
+  let h = "";
+  for (const g in groups) {
+    h += '<div class="rail-grp">' + g + "</div>";
+    groups[g].forEach(u => {
+      h += '<div class="rail-item ' + (u.uc_id === current ? "active" : "") + '" onclick="App.go(\'' + u.uc_id + '\')">' +
+        '<span class="dot ' + finalFor(u) + '"></span><span class="t">' + esc(u.title) + '</span>' +
+        '<span class="mono">' + u.uc_id + "</span></div>";
+    });
+  }
+  document.getElementById("rail").innerHTML = h;
+  const scored = RUBRIC.filter(u => { const p = proposedFor(u); const r = responses[u.uc_id];
+    return (p && p !== "PENDING") || (u.kind === "bespoke" && r && r.final_state); }).length;
+  document.getElementById("progress").textContent = scored + " / " + RUBRIC.length + " scored";
+}
+
+function renderMain() {
+  const uc = RUBRIC_BY_ID[current]; if (!uc) return;
+  const r = resp(uc.uc_id);
+  let h = '<div class="crumb">' + uc.category + " · use case</div>" +
+    '<div class="uc-head"><h2>' + esc(uc.title) + '</h2><span class="arch-badge mono">' + uc.archetype + " · " + esc(uc.archetype_name) + "</span></div>" +
+    '<div class="uc-sub mono">' + uc.uc_id + "</div>";
+
+  if (uc.kind === "bespoke") {
+    h += '<div class="bespoke"><div class="qmeta"><span class="pill">bespoke criteria (A0) — guidance</span></div>';
+    uc.sub_criteria.forEach(sc => {
+      const on = r.answers[sc.sub_id] === true;
+      h += '<label><input type="checkbox" ' + (on ? "checked" : "") + ' onchange="App.check(\'' + sc.sub_id + '\',this.checked)">' +
+        "<span>" + esc(sc.sub_criterion) + "<div class=\"ev\">" + esc(sc.question) + " — <i>" + esc(sc.evidence) + "</i></div></span></label>";
+    });
+    h += "</div>";
+  } else {
+    uc.questions.forEach(q => {
+      const a = r.answers[q.qid] || "";
+      h += '<div class="q"><div class="qmeta"><span class="pill">' + q.dimension + '</span><span class="pill ' +
+        (q.informs_state === "GAP_PARTIAL" ? "gp" : "pm") + '">' + (q.informs_state === "GAP_PARTIAL" ? "GAP ↔ PARTIAL" : "PARTIAL ↔ MET") + "</span></div>" +
+        "<p>" + esc(q.text) + "</p><div class=\"seg\">" +
+        ["yes", "no", "na"].map(v => '<button data-v="' + v + '" class="' + (a === v ? "on" : "") + '" onclick="App.answer(\'' + q.qid + '\',\'' + v + '\')">' + v.toUpperCase() + "</button>").join("") +
+        "</div>" + evPack(q) + "</div>";
+    });
+  }
+
+  const additional = uc.evidence_additional || [];
+  if (additional.length) {
+    h += '<div class="ev-additional"><div class="ev-cap">Additional evidence for compliance</div>';
+    additional.forEach(e => h += evItem(e));
+    h += "</div>";
+  }
+
+  const proposed = proposedFor(uc), final = finalFor(uc);
+  const drawerOpen = uiOpen[uc.uc_id] || uc.kind === "bespoke";   // A0 state UI is always visible
+  h += '<div class="score"><div class="score-row">' +
+    '<span class="state-chip ' + final + '">' + final + "</span>" +
+    '<span class="why"><b>' + (uc.kind === "bespoke" ? "State." : "Proposed.") + "</b> " + whyFor(uc) + "</span>" +
+    (uc.kind === "bespoke" ? "" : '<span class="ovr-toggle" onclick="App.toggleOvr()">' + (uiOpen[uc.uc_id] ? "▾ hide" : "▸ override / confidence") + "</span>") + "</div>" +
+    '<div class="ovr ' + (drawerOpen ? "open" : "") + '">' +
+    "<label>" + (uc.kind === "bespoke" ? "Posture state — assessor judgment (rationale required)" : "Override rationale (required to change the proposed state)") + "</label>" +
+    '<textarea id="rat" oninput="App.setRationale(this.value)">' + esc(r.rationale) + "</textarea>" +
+    '<div class="ovr-grid"><div><label>Confidence</label><div class="conf">' +
+    ["LOW", "MED", "HIGH"].map(c => '<button class="' + (r.confidence === c ? "on" : "") + '" onclick="App.setConf(\'' + c + '\')">' + c + "</button>").join("") +
+    "</div></div><div><label>Final state</label> " +
+    '<select onchange="App.setFinal(this.value)"><option value="">' + (proposed ? "(proposed: " + proposed + ")" : "(choose)") + "</option>" +
+    STATES.map(s => '<option value="' + s + '" ' + (r.final_state === s ? "selected" : "") + ">" + s + "</option>").join("") +
+    "</select></div></div></div></div>";
+
+  const idx = RUBRIC.findIndex(u => u.uc_id === current);
+  h += '<div class="navrow"><button class="btn ghost" ' + (idx === 0 ? "disabled" : "") +
+    ' onclick="App.go(RUBRIC[' + (idx - 1) + ']&&RUBRIC[' + (idx - 1) + '].uc_id)">← Previous</button>' +
+    '<button class="btn" onclick="App.go(RUBRIC[' + (idx + 1) + ']&&RUBRIC[' + (idx + 1) + '].uc_id)">Save &amp; next →</button></div>';
+  document.getElementById("main").innerHTML = h;
+}
+
+function render() { renderRail(); renderMain(); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c])); }
+function toast(m) { const t = document.getElementById("toast"); t.textContent = m; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1600); }
+
+const App = {
+  go(id) { if (id) { current = id; render(); window.scrollTo(0, 0); } },
+  answer(qid, v) { const a = resp(current).answers; a[qid] = (a[qid] === v ? undefined : v); if (a[qid] === undefined) delete a[qid]; save(); render(); },
+  check(sid, on) { resp(current).answers[sid] = on; save(); renderRail(); },
+  toggleOvr() { uiOpen[current] = !uiOpen[current]; renderMain(); },
+  toggleEv(qid) { evOpen[qid] = !evOpen[qid]; renderMain(); },
+  setRationale(v) { resp(current).rationale = v; save(); },
+  setConf(c) { resp(current).confidence = c; save(); renderMain(); },
+  setFinal(v) {
+    const uc = RUBRIC_BY_ID[current], r = resp(current);
+    if (!v) { r.overridden = false; r.final_state = null; save(); render(); return; }
+    const proposed = proposedFor(uc);
+    // A0 (bespoke) has no proposed state — setting it is a judgment call that requires a rationale.
+    const needsRationale = uc.kind === "bespoke" ? true : (proposed && v !== proposed);
+    if (needsRationale && !(r.rationale || "").trim()) {
+      uiOpen[current] = true; renderMain();
+      const ta = document.getElementById("rat"); if (ta) ta.classList.add("need");
+      toast(uc.kind === "bespoke" ? "Rationale required to set an A0 state" : "Rationale required to override"); return;
+    }
+    r.overridden = uc.kind === "bespoke" ? true : (v !== proposed);
+    r.final_state = v; save(); render();
+  },
+  exportRecord() {
+    const blob = new Blob([JSON.stringify(buildRecord(), null, 2)], {type: "application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "assessment-record.json"; a.click(); toast("Record exported");
+  },
+  importRecord(text) {
+    let rec; try { rec = JSON.parse(text); } catch (e) { toast("Import failed: invalid JSON"); return; }
+    if (!rec || rec.schema !== SCHEMA) { toast("Import failed: unrecognised schema"); return; }
+    const incoming = rec.responses || {};
+    // Merge (not replace): UCs absent from the file keep their current session answers.
+    Object.keys(incoming).forEach(id => {
+      if (!RUBRIC_BY_ID[id]) return;
+      const s = incoming[id] || {};
+      const answers = (s.answers && typeof s.answers === "object") ? s.answers : {};
+      const final_state = STATES.includes(s.final_state) ? s.final_state : null;
+      responses[id] = {answers: answers, overridden: !!s.overridden,
+        final_state: final_state, rationale: s.rationale || "", confidence: s.confidence || "MED"};
+    });
+    save(); render(); toast("Record imported");
+  }
+};
+
+document.getElementById("importFile").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader(); rd.onload = () => App.importRecord(rd.result); rd.readAsText(f); e.target.value = "";
+});
+
+loadSaved();
+render();
+
+</script>
+</body>
+</html>

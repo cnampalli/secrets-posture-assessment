@@ -69,7 +69,7 @@ ENGAGEMENT = _ec.resolve(
 # ---- build the model (report_logic) ----
 REG, REGDATA = report_logic.build_regdata(
     reg_rows, _inputs["anz"], _inputs["ucs"], _inputs["ranked"],
-    framework_labels, ENGAGEMENT, available)
+    framework_labels, ENGAGEMENT, available, _inputs["evidence_catalog"])
 GLOSSARY = report_logic.build_glossary(_inputs["nhis"], _inputs["ucs"])
 meta = report_logic.compute_meta(_inputs["all_rows"], _inputs["ranked"], _inputs["nhis"], _inputs["ucs"])
 # Legacy RECDATA is the frozen, secrets-specific recommendations section; new
