@@ -34,3 +34,12 @@ def test_data_filenames_present():
     assert d.identity_catalog == "identity-catalog.csv"
     assert d.regulatory_trace == "regulatory-trace.csv"
     assert d.default_current_state == "current-state.csv"
+
+
+def test_secrets_report_labels_reproduce_current_text():
+    d = domains.SECRETS
+    assert d.report_title == "XYZ Secrets-Management — Stakeholder Report (PRD v0.1)"
+    assert d.report_heading == "XYZ Secrets-Management — Stakeholder Report"
+    assert d.object_singular == "identity"      # nav: "By identity"
+    assert d.object_plural == "identities"      # subtitle: "… identities …"
+    assert d.substrate_note == " (+ a Layer-0 crypto-substrate dependency)"

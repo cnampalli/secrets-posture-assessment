@@ -71,6 +71,12 @@ class Domain:
     # analysis policy
     anchors_tier: str                       # vendor tier that seeds complementary picks
     informative_frameworks: frozenset = field(default_factory=frozenset)
+    # report labels (domain-identifying copy in the template)
+    report_title: str = ""
+    report_heading: str = ""
+    object_singular: str = "identity"       # nav noun, e.g. "By identity"
+    object_plural: str = "identities"       # subtitle noun
+    substrate_note: str = ""                # subtitle parenthetical when a substrate exists
 
 
 SECRETS = Domain(
@@ -88,6 +94,11 @@ SECRETS = Domain(
     substrate_slug=_SECRETS_SUBSTRATE,
     anchors_tier="cloud-native",
     informative_frameworks=frozenset({"mitre-attack"}),
+    report_title="XYZ Secrets-Management — Stakeholder Report (PRD v0.1)",
+    report_heading="XYZ Secrets-Management — Stakeholder Report",
+    object_singular="identity",
+    object_plural="identities",
+    substrate_note=" (+ a Layer-0 crypto-substrate dependency)",
 )
 
 DOMAINS = {SECRETS.slug: SECRETS}
