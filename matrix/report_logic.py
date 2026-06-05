@@ -113,17 +113,15 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
     return REG, REGDATA
 
 
-INFORMATIVE_FRAMEWORKS = {"mitre-attack"}  # adversary TTPs — no "MET" notion
-
-
-def build_compliance(reg_rows, anz, framework_labels, gap_limit=15,
-                     exclude=INFORMATIVE_FRAMEWORKS):
+def build_compliance(reg_rows, anz, framework_labels, gap_limit=15, exclude=frozenset()):
     """Identity-control coverage indicator (D3) + gap-to-target list (D4).
 
     Separate additive model section. Coverage is against the identity-scoped
     control set — an indicator, not a full-framework compliance score.
-    Informative frameworks (e.g. MITRE ATT&CK) are excluded: they are adversary
-    TTPs, not controls a posture can be "MET" against.
+    `exclude` is the set of informative frameworks (e.g. MITRE ATT&CK — adversary
+    TTPs, not controls a posture can be "MET" against); the caller supplies it
+    from the domain descriptor (domain.informative_frameworks) — it is not
+    hardcoded here, so each domain owns its own informative set.
     """
     rows = [r for r in reg_rows if r.get("framework_slug") not in exclude]
     ind = _cmp.coverage_indicator(rows, anz)

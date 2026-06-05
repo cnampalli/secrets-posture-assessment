@@ -1,9 +1,9 @@
 """Report input loading: CSVs + config-driven residency/label loads.
 
 The I/O layer of the report build. Reads a domain's catalog CSVs into the plain
-structures the logic layer consumes. Vendor classification maps + filenames now
-live in the per-domain descriptor (domains.py); the secrets maps are re-exported
-here for back-compat with existing callers.
+structures the logic layer consumes. Vendor classification maps + filenames live
+in the per-domain descriptor (domains.py) — access them via the Domain, e.g.
+domains.SECRETS.vendor_layer.
 """
 import csv
 import os
@@ -11,8 +11,6 @@ import sys
 
 import overlay as _ov
 from domains import SECRETS
-# Back-compat re-exports (existing code references report_io.VENDOR_LAYER, etc.).
-from domains import LAYER_LABEL, SHORT, SUBSTRATE_SLUG, VENDOR_LAYER  # noqa: F401
 
 
 def read_csv(here, name):

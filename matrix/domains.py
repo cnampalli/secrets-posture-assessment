@@ -11,6 +11,18 @@ from dataclasses import dataclass, field
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+
+class _FrozenDict(dict):
+    """A read-only dict: a Domain's maps can't be mutated in place, so a new
+    domain built by copy-edit (`dict(SECRETS.vendor_layer)`) can't silently
+    corrupt the source. Still a `dict` subclass, so json.dumps serialises it."""
+
+    def _ro(self, *_a, **_k):
+        raise TypeError("Domain maps are read-only; copy with dict(...) to derive a new domain")
+
+    __setitem__ = __delitem__ = update = setdefault = pop = popitem = clear = _ro
+
+
 # --- secrets / NHI domain constants (moved verbatim from report_io) ---
 _SECRETS_SUBSTRATE = "fortanix-dsm"
 
@@ -88,9 +100,9 @@ SECRETS = Domain(
     identity_catalog="identity-catalog.csv",
     regulatory_trace="regulatory-trace.csv",
     default_current_state="current-state.csv",
-    vendor_layer=_SECRETS_VENDOR_LAYER,
-    short=_SECRETS_SHORT,
-    layer_label=_SECRETS_LAYER_LABEL,
+    vendor_layer=_FrozenDict(_SECRETS_VENDOR_LAYER),
+    short=_FrozenDict(_SECRETS_SHORT),
+    layer_label=_FrozenDict(_SECRETS_LAYER_LABEL),
     substrate_slug=_SECRETS_SUBSTRATE,
     anchors_tier="cloud-native",
     informative_frameworks=frozenset({"mitre-attack"}),
@@ -102,9 +114,3 @@ SECRETS = Domain(
 )
 
 DOMAINS = {SECRETS.slug: SECRETS}
-
-# Back-compat aliases (report_io re-exports these so existing references resolve).
-VENDOR_LAYER = _SECRETS_VENDOR_LAYER
-SHORT = _SECRETS_SHORT
-LAYER_LABEL = _SECRETS_LAYER_LABEL
-SUBSTRATE_SLUG = _SECRETS_SUBSTRATE

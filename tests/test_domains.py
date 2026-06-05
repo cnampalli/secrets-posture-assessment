@@ -1,5 +1,20 @@
 """Phase 1: per-domain descriptor — the secrets domain expressed as config."""
+import pytest
+
 import domains
+
+
+def test_secrets_maps_are_immutable_but_copyable():
+    d = domains.SECRETS
+    # in-place mutation of a domain's maps must fail (no silent cross-domain corruption)
+    with pytest.raises((TypeError, AttributeError)):
+        d.vendor_layer["x"] = ("L9", "z")
+    with pytest.raises((TypeError, AttributeError)):
+        d.short["x"] = "X"
+    # building a new domain from a copy still works
+    m = dict(d.vendor_layer)
+    m["x"] = ("L9", "z")
+    assert m["x"] == ("L9", "z") and "x" not in d.vendor_layer
 
 
 def test_registry_has_secrets():
