@@ -54,8 +54,8 @@ Tracked in `docs/superpowers/phase1-code-review-2026-06-05.md`:
 - **#8** load `Domain` from YAML (project convention) instead of a Python descriptor.
 - **(new) provenance gate is now domain-aware** — `validate_data.py --data-dir <dir>` (commit `875cd1d`).
 
-## Phase 2 — IN PROGRESS (resume here)
-Branch: **`feat/phase1-remainder`** (not yet pushed/PR'd).
+## Phase 2 — DONE (merged to `main`)
+Merged via **PR #15** (merge commit `42a1e75`, 2026-06-05). Work below is on `main`; suite 198 green.
 
 **DONE — real PAM data layer** (`matrix/domains/pam/`, all gate-clean, committed):
 - `identity-catalog.csv` (20 `PID-*` privileged-identity types), `use-cases.csv` (17 `UC-P-*`),
