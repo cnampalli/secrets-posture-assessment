@@ -1,0 +1,12 @@
+uc_id,category,short_title,priority_fi
+UC-P-001,FUNCTIONAL,Privileged credential vaulting & rotation,P0
+UC-P-002,FUNCTIONAL,Privileged session isolation / proxy,P0
+UC-P-003,FUNCTIONAL,Privileged session recording & audit,P1
+UC-P-004,FUNCTIONAL,Just-in-time elevation / zero standing privilege,P0
+UC-P-005,FUNCTIONAL,Privileged & local-admin account discovery,P1
+UC-P-006,FUNCTIONAL,Application-to-application credential brokering,P1
+UC-P-007,FUNCTIONAL,MFA for privileged access,P0
+UC-P-008,FUNCTIONAL,Break-glass / emergency access,P1
+UC-P-009,FUNCTIONAL,Endpoint privilege management (EPM),P1
+UC-P-010,NON_FUNCTIONAL,Privileged-access threat analytics,P2
+UC-P-011,NON_FUNCTIONAL,Secretless workload attestation for privileged workloads,P2

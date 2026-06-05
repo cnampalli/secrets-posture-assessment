@@ -1,0 +1,5 @@
+framework_slug,control_code,control_short_title,uc_ids
+essential-8,E8-RAP-ML1,Restrict admin privileges — baseline,UC-P-001;UC-P-002;UC-P-004
+essential-8,E8-RAP-ML2,Restrict admin privileges — ML2,UC-P-004;UC-P-009
+essential-8,E8-MFA-ML1,Multi-factor authentication,UC-P-007
+apra-cps-234,CPS234-§21,Access controls,UC-P-001;UC-P-002;UC-P-007
