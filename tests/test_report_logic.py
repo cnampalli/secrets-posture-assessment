@@ -85,6 +85,19 @@ def test_build_compliance_lists_gap_to_target():
     assert "E8-1" in codes and "E8-2" not in codes        # E8-2 is MET
 
 
+def test_build_compliance_exclusion_is_caller_driven_not_hardcoded():
+    # report_logic no longer hardcodes the informative-framework list; the caller
+    # (the domain descriptor) supplies it. Default = exclude nothing.
+    reg = [{"framework_slug": "mitre-attack", "control_code": "T1", "control_short_title": "x", "uc_ids": "UC-1"},
+           {"framework_slug": "e8", "control_code": "E8-1", "control_short_title": "y", "uc_ids": "UC-1"}]
+    anz = [{"uc_id": "UC-1", "current_state": "GAP"}]
+    labels = {"e8": ("E8", ""), "mitre-attack": ("ATT&CK", "")}
+    default = {f["slug"] for f in rl.build_compliance(reg, anz, labels)["frameworks"]}
+    assert "mitre-attack" in default                      # not excluded by default anymore
+    scoped = {f["slug"] for f in rl.build_compliance(reg, anz, labels, exclude={"mitre-attack"})["frameworks"]}
+    assert "mitre-attack" not in scoped                   # caller's exclude is honoured
+
+
 _VI_UCS = [
     {"uc_id": "UC-1", "short_title": "One", "priority_fi": "P0"},
     {"uc_id": "UC-2", "short_title": "Two", "priority_fi": "P1"},

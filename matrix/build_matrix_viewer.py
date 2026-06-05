@@ -22,11 +22,13 @@ import json
 import os
 import pathlib
 
+import domains
 import engagement_config as _ec
 import report_io
 import report_logic
 import report_render
 
+DOMAIN = domains.SECRETS                       # Phase 1: the active domain descriptor
 HERE = os.path.dirname(os.path.abspath(__file__))
 DST = os.path.join(HERE, "matrix-viewer.html")
 _CFGDIR = os.path.join(HERE, "config")
@@ -42,7 +44,7 @@ _ap.add_argument("--current-state", default="current-state.csv",
 _ARGS, _ = _ap.parse_known_args()
 
 # ---- load inputs + config ----
-_inputs = report_io.load_inputs(HERE, _ARGS.current_state)
+_inputs = report_io.load_inputs(DOMAIN.data_dir, _ARGS.current_state, DOMAIN)
 reg_rows = _inputs["reg_rows"]
 vendor_residency = report_io.load_vendor_residency(_CFGDIR)
 framework_labels = report_io.load_framework_labels(_CFGDIR)
@@ -65,29 +67,35 @@ REG, REGDATA = report_logic.build_regdata(
 GLOSSARY = report_logic.build_glossary(_inputs["nhis"], _inputs["ucs"])
 meta = report_logic.compute_meta(_inputs["all_rows"], _inputs["ranked"], _inputs["nhis"], _inputs["ucs"])
 RECDATA = report_logic.build_recdata(
-    _inputs["ranked"], _inputs["nhis"], report_io.VENDOR_LAYER, report_io.SHORT,
-    vendor_residency, report_io.SUBSTRATE_SLUG, ENGAGEMENT)
+    _inputs["ranked"], _inputs["nhis"], DOMAIN.vendor_layer, DOMAIN.short,
+    vendor_residency, DOMAIN.substrate_slug, ENGAGEMENT)
 
 # ---- resilience-first vendor-mix + concentration (Phase 0, parent-aware) ----
 vendor_ownership = report_io.load_vendor_ownership(_CFGDIR)
-_anchors = [s for s, (lay, t) in report_io.VENDOR_LAYER.items() if t == "cloud-native"]
+_anchors = [s for s, (lay, t) in DOMAIN.vendor_layer.items() if t == DOMAIN.anchors_tier]
 VENDORMIX = report_logic.build_vendormix(
-    _inputs["ranked"], vendor_ownership, _anchors, report_io.SHORT)
+    _inputs["ranked"], vendor_ownership, _anchors, DOMAIN.short)
 
 # ---- identity-control coverage indicator + gap-to-target (Phase 0, D3/D4) ----
-COMPLIANCE = report_logic.build_compliance(reg_rows, _inputs["anz"], framework_labels)
+COMPLIANCE = report_logic.build_compliance(
+    reg_rows, _inputs["anz"], framework_labels, exclude=DOMAIN.informative_frameworks)
 
 # ---- vendor intelligence: best-vendor-per-UC + head-to-head (Phase 0, B2/B3/B4) ----
 _chosen = [c["slug"] for c in VENDORMIX["cover"]["chosen"]]
 VENDORINTEL = report_logic.build_vendor_intel(
-    _inputs["ranked"], _inputs["ucs"], _chosen, report_io.SHORT)
+    _inputs["ranked"], _inputs["ucs"], _chosen, DOMAIN.short)
 
 # ---- render + write ----
 html = report_render.render({
     "ranked": _inputs["ranked"], "anz": _inputs["anz"], "ucs": _inputs["ucs"], "nhis": _inputs["nhis"],
-    "glossary": GLOSSARY, "layer_label": report_io.LAYER_LABEL, "short": report_io.SHORT,
+    "glossary": GLOSSARY, "layer_label": DOMAIN.layer_label, "short": DOMAIN.short,
     "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX,
     "compliance": COMPLIANCE, "vendorintel": VENDORINTEL, "meta": meta,
+    "domain_meta": {
+        "title": DOMAIN.report_title, "heading": DOMAIN.report_heading,
+        "object_singular": DOMAIN.object_singular, "object_plural": DOMAIN.object_plural,
+        "substrate_note": DOMAIN.substrate_note,
+    },
 })
 
 if _ARGS.emit_data:
