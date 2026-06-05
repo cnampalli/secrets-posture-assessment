@@ -153,12 +153,12 @@ def load_domain(path):
 _DOMAIN_ORDER = ("secrets", "pam")
 
 
-def load_domains(dir=_DOMAIN_DIR):
+def load_domains(directory=_DOMAIN_DIR):
     """Discover and load every `config/domains/*.yaml` descriptor, ordered by
     `_DOMAIN_ORDER` first (the established offerings) then alphabetically."""
     doms = [
-        load_domain(os.path.join(dir, fn))
-        for fn in sorted(os.listdir(dir))
+        load_domain(os.path.join(directory, fn))
+        for fn in sorted(os.listdir(directory))
         if fn.endswith((".yaml", ".yml"))
     ]
     doms.sort(key=lambda d: (
