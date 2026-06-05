@@ -19,6 +19,21 @@ def _label(domains, slug):
     return next((d["label"] for d in domains if d["slug"] == slug), slug)
 
 
+# Corporate parents that are not themselves a vendor brand in the data need a curated label.
+_PARENT_DISPLAY = {"cyberark": "CyberArk", "ibm": "IBM"}
+
+
+def _display(parent, by_domain):
+    """Human display name for a parent so the report never shows a raw slug: a self-parent
+    vendor uses its own brand name; a known corporate parent uses a curated label; else the
+    slug is title-cased."""
+    for dom in by_domain.values():
+        for b in dom["brands"]:
+            if b["slug"] == parent:
+                return b["name"]
+    return _PARENT_DISPLAY.get(parent, parent.replace("-", " ").title())
+
+
 def _concentration(parents, domains):
     """Parents present in >1 domain — the risk reading."""
     n = len(domains)
@@ -29,6 +44,7 @@ def _concentration(parents, domains):
         present = ", ".join(_label(domains, s) for s in p["domains_present"])
         out.append({
             "parent": p["parent"],
+            "display": p["display"],
             "spans": p["spans"],
             "domains_present": p["domains_present"],
             "brands_total": sum(len(v["brands"]) for v in p["by_domain"].values()),
@@ -48,6 +64,7 @@ def _consolidation(parents):
             continue
         out.append({
             "parent": p["parent"],
+            "display": p["display"],
             "domains": p["spans"],
             "native_ucs_total": sum(v["native_ucs"] for v in p["by_domain"].values()),
             "note": (f"One parent covers needs across {p['spans']} domains "
@@ -85,6 +102,7 @@ def build_crossmap(domains_data, ownership):
             }
         parents.append({
             "parent": p,
+            "display": _display(p, by_domain),
             "by_domain": by_domain,
             "spans": len(by_domain),
             "domains_present": [d["slug"] for d in domains if d["slug"] in by_domain],

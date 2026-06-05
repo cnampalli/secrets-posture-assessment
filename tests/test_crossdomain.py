@@ -34,6 +34,17 @@ def test_parent_rollup_spans_and_native_ucs():
     assert m["parents"][0]["parent"] == "cyberark"
 
 
+def test_parents_carry_display_names():
+    m = crossdomain.build_crossmap(_domains_data(), OWN)
+    disp = {p["parent"]: p["display"] for p in m["parents"]}
+    assert disp["cyberark"] == "CyberArk"           # corporate parent (no brand slug == parent)
+    assert disp["beyondtrust"] == "BeyondTrust"     # self-parent → its own brand name
+    assert disp["hashicorp-vault"] == "Vault"       # self-parent → brand name from the data
+    # the panel entries carry the display name too (so the report never shows a raw slug)
+    assert m["concentration"][0]["display"] == "CyberArk"
+    assert m["consolidation"][0]["display"] == "CyberArk"
+
+
 def test_concentration_only_lists_spanning_parents():
     m = crossdomain.build_crossmap(_domains_data(), OWN)
     conc = m["concentration"]
