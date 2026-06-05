@@ -25,7 +25,7 @@ def render(model):
     """Assemble the final report HTML.
 
     model keys: ranked, anz, ucs, nhis, glossary, layer_label, short, reg,
-    regdata, recdata, meta.
+    regdata, recdata, vendormix, meta.
     """
     return (load_template()
             .replace("/*__FONTS__*/", brand_fonts.fontface_css())
@@ -40,6 +40,9 @@ def render(model):
             .replace("/*__REG__*/{}", json.dumps(model["reg"], ensure_ascii=False))
             .replace("/*__REGDATA__*/{}", json.dumps(model["regdata"], ensure_ascii=False))
             .replace("/*__RECDATA__*/{}", json.dumps(model["recdata"], ensure_ascii=False))
+            .replace("/*__VENDORMIX__*/{}", json.dumps(model.get("vendormix", {}), ensure_ascii=False))
+            .replace("/*__COMPLIANCE__*/{}", json.dumps(model.get("compliance", {}), ensure_ascii=False))
+            .replace("/*__VENDORINTEL__*/{}", json.dumps(model.get("vendorintel", {}), ensure_ascii=False))
             .replace("/*__META__*/{}", json.dumps(model["meta"], ensure_ascii=False))
             .replace("__RV__", str(model["meta"]["ranked_vendors"]))
             .replace("__NHI__", str(model["meta"]["nhis"]))

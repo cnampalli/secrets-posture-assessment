@@ -11,7 +11,10 @@ import argparse
 import csv
 import glob
 import os
+import re
 import sys
+
+import yaml
 
 CORE_REQUIRED = {
     "use-cases.csv": ("uc_id", "category", "short_title", "story", "acceptance_criteria",
@@ -30,10 +33,24 @@ VALID_STATES = {"MET", "PARTIAL", "GAP", "PENDING", "NA"}
 VALID_ROLES = {"PRIMARY-LENS", "BACK-MAP", "ADVERSARY-LENS"}
 SENTINELS = {"MISSING-UC", "MISSING-NHI"}
 
+# --- provenance gate (theme F) ---
+PROVIDER_COVERAGE = {"NATIVE", "ADD-ON", "PARTNER"}      # claims that need a source
+VALID_SOURCE_TIERS = {"PRIMARY", "ANALYST", "CONSENSUS"}
+INFERENCE_TAGS = ("[INDUSTRY-CONSENSUS]", "[CONSENSUS]", "[INFERRED]", "[INFER")
+PROVENANCE_EXTRA_KEYS = ("vendor-capabilities",)         # non-framework data sources
+
 
 def load_csv(path):
     with open(path, newline="", encoding="utf-8") as fh:
         return list(csv.DictReader(fh))
+
+
+def load_yaml(path):
+    """Load a YAML mapping; return {} if the file is absent."""
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        return yaml.safe_load(fh) or {}
 
 
 def _ids(value):
@@ -133,6 +150,70 @@ def check_no_legacy_token(current_state, identity):
     return errs
 
 
+def check_control_id_registry(trace, registry):
+    """F3 anti-fabrication gate: every (framework, control_code) in the trace must be
+    in the verified registry, or the build fails. Optional per-framework `pattern`
+    adds a structural check. A missing/empty registry is itself a violation."""
+    if not registry:
+        return ["control-id-registry.yaml: missing or empty — F3 control-ID gate cannot run"]
+    errs = []
+    for r in trace:
+        fw = (r.get("framework_slug") or "").strip()
+        cc = (r.get("control_code") or "").strip()
+        entry = registry.get(fw)
+        if not entry:
+            errs.append(f"regulatory-trace.csv: framework '{fw}' has no control-id-registry entry "
+                        f"(control {cc})")
+            continue
+        allowed = set(entry.get("controls") or [])
+        if cc not in allowed:
+            errs.append(f"regulatory-trace.csv: control_code '{cc}' (framework {fw}) is NOT in the "
+                        f"verified registry — possible fabrication/typo; verify and register it")
+        pat = entry.get("pattern")
+        if pat and cc and not re.match(pat, cc):
+            errs.append(f"regulatory-trace.csv: control_code '{cc}' (framework {fw}) does not match "
+                        f"verified pattern {pat}")
+    return errs
+
+
+def check_provider_claims_cited(name, rows):
+    """F2 gate: a capability claim (NATIVE/ADD-ON/PARTNER) must carry a source —
+    an evidence_url, a citation_key, or an explicit inference tag in notes."""
+    errs = []
+    for r in rows:
+        if (r.get("coverage") or "").strip() not in PROVIDER_COVERAGE:
+            continue
+        url = (r.get("evidence_url") or "").strip()
+        cit = (r.get("citation_keys") or "").strip()
+        notes = r.get("notes") or ""
+        if url or cit or any(t in notes for t in INFERENCE_TAGS):
+            continue
+        errs.append(f"{name}: uncited {r.get('coverage')} claim (target {r.get('target_id', '?')}, "
+                    f"vendor {r.get('vendor_slug', '?')}) — no evidence_url, citation_keys, or inference tag")
+    return errs
+
+
+def check_data_provenance(trace, provenance):
+    """F1/F4 gate: every framework in the trace and each non-framework data source must
+    have a provenance entry with a non-empty as_of and a valid source_tier."""
+    if not provenance:
+        return ["data-provenance.yaml: missing or empty — F1/F2 provenance gate cannot run"]
+    needed = {(r.get("framework_slug") or "").strip() for r in trace} | set(PROVENANCE_EXTRA_KEYS)
+    errs = []
+    for key in sorted(k for k in needed if k):
+        e = provenance.get(key)
+        if not e:
+            errs.append(f"data-provenance.yaml: missing provenance entry for '{key}'")
+            continue
+        if not str(e.get("as_of", "")).strip():
+            errs.append(f"data-provenance.yaml: '{key}' missing as_of date")
+        tier = (e.get("source_tier") or "").strip()
+        if tier not in VALID_SOURCE_TIERS:
+            errs.append(f"data-provenance.yaml: '{key}' invalid/missing source_tier '{tier}' "
+                        f"(expected one of {sorted(VALID_SOURCE_TIERS)})")
+    return errs
+
+
 def validate_all(root="."):
     """Run all checks against the matrix data under <root>/matrix; return all violations."""
     m = os.path.join(root, "matrix")
@@ -164,6 +245,15 @@ def validate_all(root="."):
 
     errs += validate_referential(use_cases, current, trace, identity, vendor_files)
     errs += check_no_legacy_token(current, identity)
+
+    # provenance gate (theme F): control-ID registry + citations + data-provenance
+    cfg = os.path.join(m, "config")
+    registry = load_yaml(os.path.join(cfg, "control-id-registry.yaml"))
+    provenance = load_yaml(os.path.join(cfg, "data-provenance.yaml"))
+    errs += check_control_id_registry(trace, registry)
+    for name, rows in vendor_files:
+        errs += check_provider_claims_cited(name, rows)
+    errs += check_data_provenance(trace, provenance)
     return errs
 
 

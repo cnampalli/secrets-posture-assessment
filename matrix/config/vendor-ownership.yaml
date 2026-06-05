@@ -1,0 +1,53 @@
+# Vendor corporate-ownership map — parent-aware concentration analysis (resilience theme E1.5).
+#
+# Purpose: collapse sibling brands under one ultimate parent so the
+# substitutability / concentration math does not count them as independent
+# second-sources (a CPS 230 service-provider-concentration requirement).
+#
+# Schema per entry:
+#   parent      ultimate parent vendor_slug (or a parent-entity slug). REQUIRED.
+#   confidence  HIGH | MEDIUM | LOW — verification confidence. REQUIRED for acquisitions.
+#   as_of       date the ownership fact became true (YYYY-MM or YYYY-MM-DD). Optional.
+#   source      where to verify (domain/newsroom). Optional.
+#   note        human context.
+#
+# Vendors NOT listed here are their own parent (handled by resilience.parent_of).
+# POINT-IN-TIME SNAPSHOT — M&A changes. VERIFY against primary sources before client use.
+
+cyberark-conjur:
+  parent: cyberark
+  confidence: HIGH
+  note: CyberArk's own product (Conjur secrets broker).
+
+cyberark-pam:
+  parent: cyberark
+  confidence: HIGH
+  note: CyberArk's own product (Privileged Access Manager).
+
+venafi:
+  parent: cyberark
+  as_of: 2024-10-01
+  confidence: HIGH
+  source: cyberark.com (newsroom)
+  note: >-
+    CyberArk completed its acquisition of Venafi (machine-identity / PKI) in
+    Oct 2024 (~US$1.54B). Verify exact release before publishing to a client.
+
+entro-security:
+  parent: cyberark
+  as_of: 2025-02
+  confidence: MEDIUM
+  source: cyberark.com (newsroom)
+  note: >-
+    CyberArk announced acquisition of Entro Security (NHI/secrets security) in
+    early 2025. MEDIUM confidence — verify close date and scope before client use.
+
+hashicorp-vault-enterprise:
+  parent: ibm
+  as_of: 2025-02-27
+  confidence: HIGH
+  source: newsroom.ibm.com
+  note: >-
+    IBM completed its acquisition of HashiCorp in Feb 2025 (~US$6.4B). No other
+    HashiCorp brand in this vendor set, so this does not collapse a sibling here,
+    but it matters for cross-portfolio parent concentration. Verify before client use.

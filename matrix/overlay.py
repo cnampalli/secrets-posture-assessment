@@ -21,6 +21,15 @@ def load_vendor_residency(path):
     return _load_yaml(path)
 
 
+def load_vendor_ownership(path):
+    """Return {slug: {parent, confidence, as_of, source, note}} verbatim.
+
+    Drives parent-aware concentration analysis (resilience.py). Unlisted
+    vendors are treated as their own parent by the consumer.
+    """
+    return _load_yaml(path)
+
+
 def vendor_sort_key(weight, residency, capability_keys):
     """Compose a sort key placing residency rank per the configured weight.
 

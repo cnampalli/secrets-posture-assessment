@@ -22,6 +22,39 @@ def test_default_run_matches_frozen_baseline(tmp_path):
            == BASELINE["REGDATA"]
 
 
+def test_vendormix_section_emitted_with_concentration(tmp_path):
+    new = _run(tmp_path)
+    vm = new["VENDORMIX"]
+    # white-space (no NATIVE provider) surfaced for the consultant.
+    assert vm["cover"]["white_space"] == ["UC-N-005", "UC-N-012", "UC-N-015"]
+    # parent-aware concentration present; CyberArk is a multi-brand top parent.
+    cy = next(c for c in vm["concentration"] if c["parent"] == "cyberark")
+    assert len(cy["brands"]) >= 2 and cy["share"] >= 0.5
+    # RECDATA stays frozen — vendormix is additive, not a mutation.
+    assert new["RECDATA"] == BASELINE["RECDATA"]
+
+
+def test_compliance_section_emitted_excludes_informative(tmp_path):
+    new = _run(tmp_path)
+    cm = new["COMPLIANCE"]
+    slugs = {f["slug"] for f in cm["frameworks"]}
+    assert "mitre-attack" not in slugs           # adversary TTPs excluded
+    assert "apra-cps-234" in slugs
+    cps = next(f for f in cm["frameworks"] if f["slug"] == "apra-cps-234")
+    assert cps["total"] == (cps["met"] + cps["partial"] + cps["gap"]
+                            + cps["pending"] + cps.get("unknown", 0))
+    assert cm["gap_to_target"]                    # there are controls to close
+
+
+def test_vendorintel_section_emitted(tmp_path):
+    new = _run(tmp_path)
+    vi = new["VENDORINTEL"]
+    assert len(vi["best_per_uc"]) >= 40           # a leading vendor for ~every UC
+    by_uc = {b["uc"]: b for b in vi["best_per_uc"]}
+    assert by_uc["UC-F-001"]["coverage"] in ("NATIVE", "ADD-ON", "PARTNER")
+    assert vi["head_to_head"]["uc_ids"]           # P0 use cases scoped in
+
+
 def test_financial_preset_scopes_frameworks(tmp_path):
     new = _run(tmp_path, "--preset", "financial")
     slugs = {f["slug"] for f in new["REGDATA"]["frameworks"]}

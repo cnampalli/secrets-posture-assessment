@@ -5,11 +5,14 @@ GLOSSARY/meta structures the template consumes. No file or CSV access.
 """
 from collections import defaultdict
 
+import compliance as _cmp
+import optimizer as _opt
 import overlay as _ov
+import resilience as _rz
+import vendor_intel as _vi
+from matrix_vocab import COVERAGE_ORDER as ORDER, STATE_RANK, UC_TYPES
 
 APRA_FRAMEWORKS = {"apra-cps-234", "apra-cps-230", "apra-cpg-234"}
-STATE_RANK = {"GAP": 0, "PARTIAL": 1, "PENDING": 2, "MET": 3, "UNKNOWN": 9}
-ORDER = {"NATIVE": 0, "ADD-ON": 1, "PARTNER": 2, "GAP": 3, "N/A": 4}
 
 # UC capability domains (from use-cases.csv) used to score domain strength.
 REC_UC_DOMAIN = {
@@ -83,7 +86,7 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
             c["current_state"] = min(states, key=lambda s: STATE_RANK.get(s, 9)) if states else "UNKNOWN"
     vendor_uc = defaultdict(list)
     for r in ranked:
-        if r["target_type"] not in ("UC-F", "UC-N"):
+        if r["target_type"] not in UC_TYPES:
             continue
         vendor_uc[r["target_id"]].append({
             "vendor_name": r["vendor_name"], "coverage": r["coverage"],
@@ -110,6 +113,97 @@ def build_regdata(reg_rows, anz, ucs, ranked, framework_labels, engagement, avai
     return REG, REGDATA
 
 
+INFORMATIVE_FRAMEWORKS = {"mitre-attack"}  # adversary TTPs — no "MET" notion
+
+
+def build_compliance(reg_rows, anz, framework_labels, gap_limit=15,
+                     exclude=INFORMATIVE_FRAMEWORKS):
+    """Identity-control coverage indicator (D3) + gap-to-target list (D4).
+
+    Separate additive model section. Coverage is against the identity-scoped
+    control set — an indicator, not a full-framework compliance score.
+    Informative frameworks (e.g. MITRE ATT&CK) are excluded: they are adversary
+    TTPs, not controls a posture can be "MET" against.
+    """
+    rows = [r for r in reg_rows if r.get("framework_slug") not in exclude]
+    ind = _cmp.coverage_indicator(rows, anz)
+    frameworks = sorted(
+        ({"slug": fw, "label": framework_labels.get(fw, (fw, ""))[0],
+          "subtitle": framework_labels.get(fw, (fw, ""))[1], **stats}
+         for fw, stats in ind.items()),
+        key=lambda d: (-d["met_pct"], d["slug"]))
+    return {"frameworks": frameworks,
+            "gap_to_target": _cmp.gap_to_target(rows, anz)[:gap_limit]}
+
+
+def build_vendor_intel(ranked, ucs, chosen_slugs, short, evidence_len=160):
+    """Best-vendor-per-UC feature matrix (B2/B3) + head-to-head (B4).
+
+    best_per_uc: the leading provider for each UC with its coverage, maturity,
+    count of alternatives, and the evidence quote (the B3 differentiator).
+    head_to_head: a compact per-UC grid for the chosen vendor mix, scoped to
+    P0-priority UCs to stay legible.
+    """
+    best_per_uc = []
+    for u in ucs:
+        prov = _vi.best_for(u["uc_id"], ranked)
+        if not prov:
+            continue
+        top = prov[0]
+        best_per_uc.append({
+            "uc": u["uc_id"], "title": u.get("short_title", ""),
+            "vendor": short.get(top["vendor_slug"], top["vendor_name"]),
+            "coverage": top["coverage"], "maturity": top["maturity"],
+            "alternatives": len(prov) - 1,
+            "evidence": (top["evidence_quote"] or "")[:evidence_len],
+        })
+    p0 = [u["uc_id"] for u in ucs if u.get("priority_fi") == "P0"]
+    grid = _vi.head_to_head(chosen_slugs, ranked, uc_ids=p0) if p0 else {}
+    return {"best_per_uc": best_per_uc,
+            "head_to_head": {"uc_ids": p0, "vendors": chosen_slugs, "grid": grid}}
+
+
+def build_vendormix(ranked, ownership, anchors, short):
+    """Resilience-first vendor-mix + concentration model section (Phase 0).
+
+    Separate from RECDATA (which stays frozen) — assembles the optimizer +
+    parent-aware resilience analytics the report surfaces: minimal cover,
+    white-space (C3), parent concentration scorecard (E5), single-source
+    risk (E1, by parent), and data-driven complementary picks (C4).
+    """
+    cover = _opt.greedy_cover(ranked, ownership, resilience_first=True)
+    uc_total = len(cover["covered"]) + len(cover["uncovered"])
+
+    con = _rz.concentration(ranked, ownership)
+    concentration = sorted(
+        ({"parent": p, "name": short.get(p, p), "uc_count": c["uc_count"],
+          "share": c["share"], "brands": [short.get(b, b) for b in c["brands"]],
+          "sole_source_count": len(c["sole_source_ucs"]),
+          "sole_source_ucs": c["sole_source_ucs"]}
+         for p, c in con.items()),
+        key=lambda d: (-d["share"], -d["uc_count"], d["parent"]))
+
+    complementary = []
+    for a in anchors:
+        rec = _opt.complement(a, ranked)
+        if rec:
+            complementary.append({
+                "have": short.get(a, a), "add": short.get(rec["add"], rec["add"]),
+                "fills": rec["fills"], "still_open": rec["still_open"]})
+
+    return {
+        "cover": {
+            "chosen": [{"slug": s, "name": short.get(s, s)} for s in cover["chosen"]],
+            "covered_count": len(cover["covered"]), "uc_total": uc_total,
+            "white_space": cover["uncovered"], "steps": cover["steps"],
+        },
+        "portfolio": _opt.portfolio_concentration(cover["chosen"], ranked, ownership),
+        "concentration": concentration,
+        "single_source": _rz.single_source(ranked, ownership)["single_source"],
+        "complementary": complementary,
+    }
+
+
 def build_recdata(ranked, nhis, vendor_layer, short, vendor_residency, substrate_slug, engagement):
     secrets_ucs = set(REC_UC_DOMAIN["secrets"])
     gov_ucs = set(REC_UC_DOMAIN["governance"])
@@ -118,7 +212,7 @@ def build_recdata(ranked, nhis, vendor_layer, short, vendor_residency, substrate
         rows = [r for r in ranked if r["vendor_slug"] == slug]
 
         def dom(ucset):
-            sel = [r for r in rows if r["target_type"] in ("UC-F", "UC-N") and r["target_id"] in ucset]
+            sel = [r for r in rows if r["target_type"] in UC_TYPES and r["target_id"] in ucset]
             nat = [r for r in sel if r["coverage"] == "NATIVE"]
             mats = [int(r["maturity"]) for r in nat if str(r["maturity"]).isdigit()]
             return len(nat), len(sel), (round(sum(mats) / len(mats), 1) if mats else 0)
