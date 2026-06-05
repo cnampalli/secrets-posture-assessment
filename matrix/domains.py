@@ -90,6 +90,22 @@ class Domain:
     object_plural: str = "identities"       # subtitle noun
     substrate_note: str = ""                # subtitle parenthetical when a substrate exists
 
+    def report_meta(self):
+        """The domain-identifying token map the report template consumes.
+
+        Built in one place (off the descriptor) so the orchestrator can't
+        hand-assemble a drifting dict and `render()` has an explicit contract:
+        a new domain that omits a field fails fast rather than silently
+        rendering secrets vocabulary.
+        """
+        return {
+            "title": self.report_title,
+            "heading": self.report_heading,
+            "object_singular": self.object_singular,
+            "object_plural": self.object_plural,
+            "substrate_note": self.substrate_note,
+        }
+
 
 SECRETS = Domain(
     slug="secrets",

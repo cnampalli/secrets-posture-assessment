@@ -58,3 +58,17 @@ def test_secrets_report_labels_reproduce_current_text():
     assert d.object_singular == "identity"      # nav: "By identity"
     assert d.object_plural == "identities"      # subtitle: "… identities …"
     assert d.substrate_note == " (+ a Layer-0 crypto-substrate dependency)"
+
+
+def test_report_meta_is_single_source_token_map():
+    # Phase 1 #3: the report-label token map is built in ONE place (off the
+    # descriptor), so the orchestrator can't hand-assemble a drifting dict and
+    # render() has an explicit contract to read from.
+    d = domains.SECRETS
+    assert d.report_meta() == {
+        "title": d.report_title,
+        "heading": d.report_heading,
+        "object_singular": d.object_singular,
+        "object_plural": d.object_plural,
+        "substrate_note": d.substrate_note,
+    }

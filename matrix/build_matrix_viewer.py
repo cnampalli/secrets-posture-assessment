@@ -91,11 +91,7 @@ html = report_render.render({
     "glossary": GLOSSARY, "layer_label": DOMAIN.layer_label, "short": DOMAIN.short,
     "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX,
     "compliance": COMPLIANCE, "vendorintel": VENDORINTEL, "meta": meta,
-    "domain_meta": {
-        "title": DOMAIN.report_title, "heading": DOMAIN.report_heading,
-        "object_singular": DOMAIN.object_singular, "object_plural": DOMAIN.object_plural,
-        "substrate_note": DOMAIN.substrate_note,
-    },
+    "domain_meta": DOMAIN.report_meta(),
 })
 
 if _ARGS.emit_data:
