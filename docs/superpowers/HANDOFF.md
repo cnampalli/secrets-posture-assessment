@@ -1,6 +1,26 @@
-> **CURRENT RESUME POINT (2026-06-05):** the multi-domain vendor-selection program — see
-> **`docs/superpowers/MULTI-DOMAIN-ROADMAP.md`** (status board + remaining phases) and **ADR-018**.
-> Phases 0 / 0.5 / 1(slices 1–2) merged to `main`; next = Phase 1 remainder + Phase 2 (real PAM domain).
+> **CURRENT RESUME POINT (2026-06-05 PM):** multi-domain vendor-selection program — read
+> **`docs/superpowers/MULTI-DOMAIN-ROADMAP.md`** first (status board + open items), then **ADR-018**
+> and the specs/plans under `docs/superpowers/`.
+>
+> **State:** Phases 0 / 0.5 / 1(slices 1–2) merged to `main`. **Phase 1 remainder + Phase 2 — DONE on
+> branch `feat/phase1-remainder` → PR #15 (OPEN, not yet merged).** That branch delivers: per-domain
+> `Domain` descriptor + `report_meta`/`report_content`; domain-aware provenance gate; the **real PAM
+> domain** (`matrix/domains/pam/` — 5 gate-clean CSVs, 6 vendors × 17 UCs cited, `--domain pam` build);
+> generalized report body prose (secrets byte-identical, PAM browser-verified); and the **cross-domain
+> consolidation view** (`matrix/build_cross_domain.py` → `cross-domain-report.html`; CyberArk spans 2/2).
+> Suite **198 green**; both data gates clean; all commits pushed to `origin/feat/phase1-remainder`.
+>
+> **Next session:** (1) review + merge **PR #15** (this project code-reviews before merge — a 3-reviewer
+> review + final cohesion review already ran; findings fixed or tracked). (2) Then the open follow-ups in
+> the roadmap: Phase 1 #4 (single-pass token escaping) / #8 (Domain-from-YAML); PR-review follow-ups
+> (PARTIAL vendor-coverage state, `</script>`-hardening sweep, evidence-URL HTTP-200 sweep, `maturity_level`
+> enum, source-cleanliness); then Phases 3–5 (IGA scoped → Workforce demand-pulled → consulting wrap).
+> Several follow-ups are independent → fan out as parallel worktree agents.
+>
+> **Recoverable anywhere:** everything is committed + pushed. On another machine: clone the repo, then
+> `git fetch && git checkout feat/phase1-remainder` (or `gh pr checkout 15`). The claude-mem observation
+> log + local auto-memory do NOT travel with git — the durable record IS these `docs/` files + the PR.
+>
 > The Brass Editorial handoff below is historical (that work is merged).
 
 ---
