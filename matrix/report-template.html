@@ -368,8 +368,8 @@ function recommend(targetId){
   const l1=fit.find(r=>r.layer==="L1"), l2=fit.find(r=>r.layer==="L2");
   if(!l1 && !l2) return "No vendor offers first-class coverage here — a structural market gap.";
   let s="";
-  if(l1) s='Best fit: <b>'+esc(l1.vendor_name)+'</b> — '+esc(l1.coverage)+', maturity '+esc(l1.maturity)+' (L1 secrets management).';
-  if(l2) s+=(s?" ":"")+'Complement above the vault with <b>'+esc(l2.vendor_name)+'</b> ('+esc(l2.coverage)+', m'+esc(l2.maturity)+', L2 governance).';
+  if(l1) s='Best fit: <b>'+esc(l1.vendor_name)+'</b> — '+esc(l1.coverage)+', maturity '+esc(l1.maturity)+' (L1 '+DOMAINCFG.card.rec_l1_label+').';
+  if(l2) s+=(s?" ":"")+DOMAINCFG.card.rec_l2_complement+' <b>'+esc(l2.vendor_name)+'</b> ('+esc(l2.coverage)+', m'+esc(l2.maturity)+', '+DOMAINCFG.card.rec_l2_label+').';
   return s;
 }
 
@@ -392,7 +392,7 @@ function renderDashboard(){
     const pct=(100*base[s]/total).toFixed(1);
     return '<span class="seg-'+s+'" style="width:'+pct+'%" title="'+s+' '+base[s]+'">'+(base[s]>=2?base[s]:"")+'</span>'; }).join("");
   document.getElementById("posture-legend").innerHTML = order.map(s=>'<span class="pill pill-'+s+'">'+s+'</span> <b>'+base[s]+'</b> &nbsp;').join("")+
-    ' — assessed baseline. 0 MET reflects the dominant finding: with no inventory layer, XYZ cannot quantify "working" as "met".';
+    DOMAINCFG.card.posture_legend_suffix;
   const adjEl=document.getElementById("posture-adj");
   const nOv=Object.keys(OV).length;
   if(nOv){ adjEl.style.display="block";
@@ -441,7 +441,7 @@ function renderUCCard(id){
       regChips(id)+'</div>'+
     '<div class="card"><h3>Recommendation &amp; vendor coverage</h3>'+
       '<div class="reco">'+recommend(id)+'</div>'+ vgrid(id)+
-      '<p class="note">A discovery tool (L2) complements a vault (L1) — it does not replace it. NAT=NATIVE · ADD=add-on · PTR=partner · —=gap.</p></div>'+
+      '<p class="note">'+DOMAINCFG.card.layer_note+'NAT=NATIVE · ADD=add-on · PTR=partner · —=gap.</p></div>'+
     '<div class="card anz-card"><h3>Where XYZ stands</h3>'+anzHtml+'</div>';
 }
 

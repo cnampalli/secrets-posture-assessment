@@ -25,7 +25,8 @@ def render(model):
     """Assemble the final report HTML.
 
     model keys: ranked, anz, ucs, nhis, glossary, layer_label, short, reg,
-    regdata, recdata, vendormix, compliance, vendorintel, domain_meta, meta.
+    regdata, recdata, vendormix, compliance, vendorintel, domain_meta,
+    domain_content, meta.
 
     `domain_meta` is a domain's `report_meta()` token map; its labels are read
     by required key (no secrets-vocab fallback) so a domain missing a label
@@ -52,7 +53,8 @@ def render(model):
             .replace("/*__META__*/{}", json.dumps(model["meta"], ensure_ascii=False))
             .replace("/*__VALUECFG__*/{}", json.dumps(dc["value_content"], ensure_ascii=False))
             .replace("/*__DOMAINCFG__*/{}", json.dumps(
-                {"kpi_object_label": dc["kpi_object_label"], "layer_groups": dc["layer_groups"]},
+                {"kpi_object_label": dc["kpi_object_label"], "layer_groups": dc["layer_groups"],
+                 "card": dc["card_copy"]},
                 ensure_ascii=False))
             .replace("__DOMAIN_TITLE__", dm["title"])
             .replace("__DOMAIN_HEADING__", dm["heading"])

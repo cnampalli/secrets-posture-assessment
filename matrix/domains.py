@@ -99,6 +99,23 @@ _PAM_VALUE = {
 }
 
 
+# --- use-case / identity card + posture-legend copy (per-domain; renders on selection) ---
+_SECRETS_CARD = {
+    "rec_l1_label": "secrets management",
+    "rec_l2_complement": "Complement above the vault with",
+    "rec_l2_label": "L2 governance",
+    "layer_note": "A discovery tool (L2) complements a vault (L1) — it does not replace it. ",
+    "posture_legend_suffix": ' — assessed baseline. 0 MET reflects the dominant finding: with no inventory layer, XYZ cannot quantify "working" as "met".',
+}
+_PAM_CARD = {
+    "rec_l1_label": "PAM platform",
+    "rec_l2_complement": "Pair with",
+    "rec_l2_label": "L2 modern access",
+    "layer_note": "A modern-access tool (L2) complements a PAM platform (L1) — different models, often deployed together. ",
+    "posture_legend_suffix": " — assessed baseline (template; run the questionnaire to populate posture).",
+}
+
+
 @dataclass(frozen=True)
 class Domain:
     """Everything the engine needs to assess one domain. Data + config, no code."""
@@ -135,6 +152,7 @@ class Domain:
     substrate_table_note: str = ""          # browse-all note about the excluded substrate
     kpi_object_label: str = "identities"    # dashboard KPI tile: "N <kpi_object_label>"
     layer_groups: tuple = ()                # vgrid column groups: ((code,label), …) per layer
+    card_copy: dict = field(default_factory=dict)       # uc/identity card + posture-legend prose
     value_content: dict = field(default_factory=dict)   # business-value tab: outcomes/kpis/roi_events
 
     def report_meta(self):
@@ -165,6 +183,7 @@ class Domain:
             "substrate_table_note": self.substrate_table_note,
             "kpi_object_label": self.kpi_object_label,     # KPI tile: "N <kpi_object_label>"
             "layer_groups": [list(g) for g in self.layer_groups],   # vgrid column-group [code,label] pairs
+            "card_copy": self.card_copy,                   # uc/identity card + posture-legend prose
             "value_content": self.value_content,
         }
 
@@ -195,6 +214,7 @@ SECRETS = Domain(
     substrate_table_note="Fortanix DSM (Layer-0 substrate) is excluded here per ADR-007 — see the XYZ-posture tab. ",
     kpi_object_label="machine identities",
     layer_groups=(("L1", "Secrets management"), ("L2", "NHI governance")),
+    card_copy=_SECRETS_CARD,
     value_content=_SECRETS_VALUE,
     legacy_recdata=True,
 )
@@ -247,6 +267,7 @@ PAM = Domain(
     substrate_table_note="",                 # PAM has no excluded substrate
     kpi_object_label="privileged identities",
     layer_groups=(("L1", "PAM platforms"), ("L2", "Modern access")),
+    card_copy=_PAM_CARD,
     value_content=_PAM_VALUE,
     legacy_recdata=False,
 )
