@@ -117,3 +117,73 @@ def test_no_legacy_token_flags_old_headers():
     errs = vd.check_no_legacy_token(cur, idc)
     assert any("anz_state" in e for e in errs)
     assert any("sources_at_anz_likely" in e for e in errs)
+
+
+# ---- F3: control-ID verification registry gate ----
+_REGISTRY = {
+    "asd-ism": {"pattern": r"^ISM-\d{4}$", "controls": ["ISM-0027", "ISM-1139"]},
+    "essential-8": {"controls": ["E8-MFA-ML1"]},
+}
+
+
+def test_control_id_registry_flags_unregistered_code():
+    trace = [{"framework_slug": "asd-ism", "control_code": "ISM-9999"}]
+    errs = vd.check_control_id_registry(trace, _REGISTRY)
+    assert any("ISM-9999" in e for e in errs)
+
+
+def test_control_id_registry_passes_known_code():
+    trace = [{"framework_slug": "asd-ism", "control_code": "ISM-0027"}]
+    assert vd.check_control_id_registry(trace, _REGISTRY) == []
+
+
+def test_control_id_registry_flags_unknown_framework():
+    trace = [{"framework_slug": "nope", "control_code": "X-1"}]
+    assert any("nope" in e for e in vd.check_control_id_registry(trace, _REGISTRY))
+
+
+def test_control_id_registry_missing_registry_is_violation():
+    assert vd.check_control_id_registry([{"framework_slug": "x", "control_code": "y"}], {})
+
+
+# ---- F2: no uncited provider claims ----
+def test_provider_claims_cited_flags_uncited():
+    rows = [{"coverage": "NATIVE", "target_id": "UC-1", "vendor_slug": "v",
+             "evidence_url": "", "citation_keys": "", "notes": ""}]
+    assert any("uncited" in e.lower() for e in vd.check_provider_claims_cited("vc", rows))
+
+
+def test_provider_claims_cited_accepts_url_citation_or_tag():
+    base = {"coverage": "NATIVE", "target_id": "UC-1", "vendor_slug": "v",
+            "evidence_url": "", "citation_keys": "", "notes": ""}
+    assert vd.check_provider_claims_cited("vc", [{**base, "evidence_url": "http://x"}]) == []
+    assert vd.check_provider_claims_cited("vc", [{**base, "citation_keys": "k-2024"}]) == []
+    assert vd.check_provider_claims_cited("vc", [{**base, "notes": "[INDUSTRY-CONSENSUS] likely"}]) == []
+
+
+def test_provider_claims_cited_ignores_non_provider_rows():
+    rows = [{"coverage": "GAP", "target_id": "UC-1", "vendor_slug": "v",
+             "evidence_url": "", "citation_keys": "", "notes": ""}]
+    assert vd.check_provider_claims_cited("vc", rows) == []
+
+
+# ---- F1/F4: data-provenance manifest ----
+_PROV = {"asd-ism": {"as_of": "2026-05-24", "source_tier": "PRIMARY"},
+         "vendor-capabilities": {"as_of": "2025", "source_tier": "PRIMARY"}}
+
+
+def test_data_provenance_flags_missing_entry():
+    trace = [{"framework_slug": "essential-8", "control_code": "E8-1"}]
+    assert any("essential-8" in e for e in vd.check_data_provenance(trace, _PROV))
+
+
+def test_data_provenance_flags_invalid_tier():
+    trace = [{"framework_slug": "asd-ism", "control_code": "ISM-0027"}]
+    prov = {"asd-ism": {"as_of": "2026", "source_tier": "BOGUS"},
+            "vendor-capabilities": {"as_of": "2025", "source_tier": "PRIMARY"}}
+    assert any("source_tier" in e for e in vd.check_data_provenance(trace, prov))
+
+
+def test_data_provenance_clean():
+    trace = [{"framework_slug": "asd-ism", "control_code": "ISM-0027"}]
+    assert vd.check_data_provenance(trace, _PROV) == []

@@ -1,0 +1,75 @@
+# Verified control-ID registry — anti-fabrication gate (provenance theme F3).
+#
+# Every control_code in regulatory-trace.csv MUST appear under its framework here,
+# or validate_data.py FAILS the build. This freezes the *verified* control set so a
+# future edit cannot silently introduce a fabricated or mistyped control ID — the
+# exact failure this project hit once (≈80% of the original ISM IDs were wrong; see
+# matrix/ISM-CONTROL-VERIFICATION-2026-05-24.md + ISM-CORRECTED-MAPPING-2026-05-24.md).
+#
+# To add/repoint a control: verify it against the authoritative source below, then add
+# it here deliberately (with the verified date). Membership — not pattern — is the gate;
+# `pattern` is an extra structural check.
+
+asd-ism:
+  source: "https://ismcontrol.xyz/ (Current tag) + cyber.gov.au ASD ISM"
+  verified: 2026-05-24
+  pattern: '^ISM-\d{4}$'
+  controls: [ISM-0027, ISM-0039, ISM-0043, ISM-0140, ISM-0252, ISM-0363, ISM-0401,
+    ISM-0421, ISM-0457, ISM-0469, ISM-0471, ISM-0481, ISM-0507, ISM-1139, ISM-1173,
+    ISM-1181, ISM-1192, ISM-1211, ISM-1247, ISM-1256, ISM-1275, ISM-1304, ISM-1323,
+    ISM-1324, ISM-1401, ISM-1404, ISM-1405, ISM-1437, ISM-1452, ISM-1504, ISM-1570,
+    ISM-1611, ISM-1613, ISM-1619, ISM-1656, ISM-1690, ISM-1707, ISM-1730, ISM-1795,
+    ISM-1796, ISM-1917]
+
+essential-8:
+  source: "cyber.gov.au Essential Eight Maturity Model (Nov 2023)"
+  verified: 2026-05-24
+  pattern: '^E8-[A-Z0-9-]+$'
+  controls: [E8-AC-ML1, E8-AC-ML2, E8-AC-ML3, E8-MAC, E8-MATURITY-SCORECARD, E8-MFA-ML1,
+    E8-MFA-ML2, E8-MFA-ML3, E8-MFA-WORKLOAD, E8-PA-ML1, E8-PA-ML2, E8-POS-FIRMWARE,
+    E8-POS-ML1, E8-POS-ML2, E8-RAP-BREAKGLASS, E8-RAP-LOG, E8-RAP-ML1, E8-RAP-ML2,
+    E8-RAP-ML3, E8-RAP-NHI-GAP, E8-RAP-SVC, E8-RB-KEYS, E8-RB-ML1, E8-RB-ML2, E8-RB-ML3,
+    E8-UAH]
+
+cisa-ztmm-v2:
+  source: "cisa.gov Zero Trust Maturity Model v2.0 (pillars + cross-cutting)"
+  verified: 2026-05-24
+  pattern: '^ZT-Pillar-[A-Za-z0-9-]+$'
+  controls: [ZT-Pillar-Automation-Orchestration, ZT-Pillar-Data, ZT-Pillar-Device,
+    ZT-Pillar-Governance, ZT-Pillar-Governance-PQC, ZT-Pillar-Identity,
+    ZT-Pillar-Identity-Federation, ZT-Pillar-Network, ZT-Pillar-Visibility-Analytics,
+    ZT-Pillar-Visibility-NHIDR, ZT-Pillar-Workload-CICD, ZT-Pillar-Workload-Runtime,
+    ZT-Pillar-Workload-mTLS]
+
+apra-cps-234:
+  source: "apra.gov.au CPS 234 Information Security (section references)"
+  verified: 2026-05-24
+  pattern: '^CPS234-§\S+$'
+  controls: [CPS234-§13, CPS234-§14, CPS234-§15, CPS234-§16, CPS234-§17, CPS234-§18,
+    CPS234-§19, CPS234-§20, CPS234-§21, CPS234-§21(a), CPS234-§21(b), CPS234-§21(c),
+    CPS234-§21(d), CPS234-§22, CPS234-§23, CPS234-§24, CPS234-§26, CPS234-§27,
+    CPS234-§27(d), CPS234-§28, CPS234-§30, CPS234-§32, CPS234-§34, CPS234-§35, CPS234-§36]
+
+apra-cps-230:
+  source: "apra.gov.au CPS 230 Operational Risk Management (section references)"
+  verified: 2026-05-24
+  pattern: '^CPS230-§\S+$'
+  controls: [CPS230-§15, CPS230-§25, CPS230-§42, CPS230-§47, CPS230-§54, CPS230-§59(b)]
+
+apra-cpg-234:
+  source: "apra.gov.au CPG 234 Information Security (attachment references)"
+  verified: 2026-05-24
+  pattern: '^CPG234-Att-[A-Z]$'
+  controls: [CPG234-Att-C, CPG234-Att-D, CPG234-Att-E]
+
+mitre-attack:
+  source: "attack.mitre.org (T-technique IDs) + public breach disclosures (BREACH-* case refs)"
+  verified: 2026-06-03
+  # No single pattern: T-technique IDs and internal breach-case references coexist.
+  controls: [T1078.004, T1098.001, T1199, T1528, T1539, T1552.001, T1552.002, T1552.003,
+    T1552.004, T1552.005, T1552.006, T1552.007, T1552.008, T1556.006, T1566, T1606.002,
+    BREACH-circleci-2023-01, BREACH-cloudflare-2023-11, BREACH-ia-2024-10,
+    BREACH-lastpass-2022, BREACH-moveit-2023, BREACH-okta-2022-01, BREACH-okta-2023-10,
+    BREACH-snowflake-2024-06, BREACH-solarwinds-2020, BREACH-sourcegraph-2023-08,
+    BREACH-storm0558-2023-07, BREACH-sumologic-2023-11, BREACH-toyota-2022-10,
+    BREACH-uber-2022-09, BREACH-xz-utils-2024-03]

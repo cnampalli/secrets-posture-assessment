@@ -1,0 +1,73 @@
+# Data provenance & freshness manifest (provenance theme F1/F2/F4).
+#
+# Source-level as-of dating + source tiering + refresh ownership. Every framework in
+# regulatory-trace.csv AND the vendor-capabilities data MUST have an entry here with a
+# non-empty `as_of` and a valid `source_tier`, or validate_data.py FAILS the build.
+#
+# This is deliberately SOURCE-level, not per-row: per-row capture dates across 1,597
+# vendor rows are a data-entry task for the engagement team, not something to fabricate.
+# The gate guarantees the boundary is declared and dated; refine to per-row when captured.
+#
+# source_tier: PRIMARY  = official / vendor first-party documentation
+#              ANALYST  = third-party analyst (Gartner / Forrester / KuppingerCole)
+#              CONSENSUS = industry consensus / inferred (lower confidence)
+# POINT-IN-TIME — re-verify per `refresh` before any client engagement. Frameworks and
+# vendor capabilities both drift; an undated claim is an unsupportable claim.
+
+asd-ism:
+  as_of: 2026-05-24
+  source_tier: PRIMARY
+  refresh: quarterly
+  owner: TBD
+  source: "ismcontrol.xyz (Current) + cyber.gov.au ASD ISM"
+  note: "Corrected mapping; confirm against the current cyber.gov.au ISM release before publishing."
+
+essential-8:
+  as_of: 2026-05-24
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "cyber.gov.au Essential Eight Maturity Model"
+
+cisa-ztmm-v2:
+  as_of: 2026-05-24
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "cisa.gov Zero Trust Maturity Model v2.0"
+
+apra-cps-234:
+  as_of: 2026-05-24
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "apra.gov.au CPS 234"
+
+apra-cps-230:
+  as_of: 2026-05-24
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "apra.gov.au CPS 230 (in force 2025)"
+
+apra-cpg-234:
+  as_of: 2026-05-24
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "apra.gov.au CPG 234 (guidance)"
+
+mitre-attack:
+  as_of: 2026-06-03
+  source_tier: CONSENSUS
+  refresh: as-needed
+  owner: TBD
+  source: "attack.mitre.org + public breach disclosures (informative lens)"
+
+vendor-capabilities:
+  as_of: "2025"
+  source_tier: PRIMARY
+  refresh: quarterly
+  owner: TBD
+  source: "per-row evidence_url / citation_keys (vendor first-party docs, 2024–2025)"
+  note: "Per-row capture dates not yet tracked. Vendor features change frequently — re-verify capability claims before client use; treat maturity scores as point-in-time."
