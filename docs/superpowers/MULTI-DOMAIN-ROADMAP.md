@@ -84,6 +84,19 @@ one parent = concentration *across* domains (the ownership graph already rolls `
 same `cyberark` parent that dominates secrets). Also still open from Phase 1: **#4** single-pass token
 escaping, **#8** load `Domain` from YAML.
 
+## Code-review follow-ups (PR #15 — 3 parallel reviewers, no Critical/blocking issues)
+Fixed in-PR: visible secrets prose in `recommend()`/uc-card note/posture-legend (Important #2,
+re-verified). Tracked (non-blocking):
+- **Important** — vendor coverage has no `PARTIAL` state, so genuine partial gaps (esp. One Identity /
+  WALLIX) sit as `ADD-ON` + low maturity + caveat. Mitigated (grid shows maturity beside coverage);
+  consider adding a `PARTIAL` coverage value or guaranteeing maturity+caveat render prominently.
+- **Minor** — `value_content`/`card_copy` dicts aren't `_FrozenDict`-protected (no active bug);
+  external per-vendor `vendor-capabilities-*.csv` glob lacks an automated test; L0 card is
+  `display:none`-hidden rather than omitted from non-substrate source; `json.dumps` injections aren't
+  `</script>`-escaped (first-party, defense-in-depth); run an HTTP-200 sweep over all 102 evidence_urls
+  before client delivery; `maturity_level` in regulatory-trace is free-text (not enum-validated);
+  `pam-report.html` lives in the data dir (generated-artifact layering smell).
+
 ## Hazards to respect (from Risks & Guardrails)
 - **Data decay** — vendor/framework data is point-in-time; the provenance gate + as-of dating exist for this.
   Re-verify before client use.
