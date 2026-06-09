@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { AssessmentProvider, useAssessment } from './store';
 import { RUBRIC } from './rubric';
+import { keyFor } from './persistence';
 
 beforeEach(() => localStorage.clear());
 
@@ -73,7 +74,7 @@ it('answering a ladder question updates derived state + persists', async () => {
       await userEvent.click(screen.getByText(`ans-${q.qid}`));
     }
     expect(['GAP', 'PARTIAL', 'MET', 'NA']).toContain(screen.getByTestId('final').textContent);
-    expect(localStorage.getItem('posture-assessment-record/v1')).toContain(RUBRIC[0].uc_id);
+    expect(localStorage.getItem(keyFor('secrets'))).toContain(RUBRIC[0].uc_id);
   }
   expect(firstLadder).toBeTruthy();
 });

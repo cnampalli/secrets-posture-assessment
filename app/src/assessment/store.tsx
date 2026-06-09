@@ -1,8 +1,9 @@
 import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Answer, Response, State, UseCase, EvidenceMeta } from './types';
 import { RUBRIC, byId } from './rubric';
+import { DEFAULT_DOMAIN } from './domains';
 import { blankResponse, proposedFor, finalFor, scoredCount } from './record';
-import { loadResponses, saveResponses, importRecord, loadEvidence } from './persistence';
+import { loadResponses, saveResponses, importRecord, loadEvidence, migrateLegacy } from './persistence';
 import { putFile, deleteFile, getBlob, validateFile, genId, buildExportRecord, restoreEvidence } from './evidence';
 
 interface Api {
@@ -26,15 +27,15 @@ const Ctx = createContext<Api | null>(null);
 const now = () => new Date().toISOString();
 
 export function AssessmentProvider({ children }: { children: ReactNode }) {
-  const [responses, setResponses] = useState<Record<string, Response>>(() => loadResponses());
+  const [responses, setResponses] = useState<Record<string, Response>>(() => { migrateLegacy(); return loadResponses(DEFAULT_DOMAIN); });
   const [currentId, setCurrentId] = useState<string>(RUBRIC[0]?.uc_id ?? '');
   const ref = useRef(responses); ref.current = responses;
 
-  const [evidence, setEvidence] = useState<Record<string, EvidenceMeta[]>>(() => loadEvidence());
+  const [evidence, setEvidence] = useState<Record<string, EvidenceMeta[]>>(() => loadEvidence(DEFAULT_DOMAIN));
   const evRef = useRef(evidence); evRef.current = evidence;
 
   function persistAll(nextResp: Record<string, Response>, nextEv: Record<string, EvidenceMeta[]>) {
-    setResponses(nextResp); setEvidence(nextEv); saveResponses(nextResp, now(), nextEv);
+    setResponses(nextResp); setEvidence(nextEv); saveResponses(DEFAULT_DOMAIN, RUBRIC, nextResp, now(), nextEv);
   }
 
   function persist(next: Record<string, Response>) { persistAll(next, evRef.current); }
