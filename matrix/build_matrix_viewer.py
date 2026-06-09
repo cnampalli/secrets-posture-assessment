@@ -105,6 +105,14 @@ else:
 COMPLIANCE = report_logic.build_compliance(
     reg_rows, _inputs["anz"], framework_labels, exclude=DOMAIN.informative_frameworks)
 
+# ---- curated Value Proposition view: board maturity + quick-wins + callouts ----
+# Quick-wins regulatory drivers are scoped to the engagement's framework selection
+# (informative/adversary frameworks are excluded inside regulatory_driver itself).
+_QW_SCOPE = (set(ENGAGEMENT.selected) if not ENGAGEMENT.is_default else set(available))
+POSTUREMATURITY = report_logic.build_posture_maturity(_inputs["anz"], _inputs["ucs"], DOMAIN.slug)
+QUICKWINS = report_logic.build_quick_wins(_inputs["anz"], _inputs["ucs"], reg_rows, _QW_SCOPE)
+VALUECALLOUTS = report_logic.build_value_callouts(reg_rows, _inputs["nhis"], IGAVFIT, VENDORMIX)
+
 # ---- render + write ----
 html = report_render.render({
     "ranked": _inputs["ranked"], "anz": _inputs["anz"], "ucs": _inputs["ucs"], "nhis": _inputs["nhis"],
@@ -112,13 +120,17 @@ html = report_render.render({
     "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX,
     "igavfit": IGAVFIT,
     "compliance": COMPLIANCE, "vendorintel": VENDORINTEL, "meta": meta,
+    "posturematurity": POSTUREMATURITY, "quickwins": QUICKWINS,
+    "valuecallouts": VALUECALLOUTS,
     "domain_meta": DOMAIN.report_meta(), "domain_content": DOMAIN.report_content(),
 })
 
 if _ARGS.emit_data:
     with open(_ARGS.emit_data, "w", encoding="utf-8") as _ef:
         json.dump({"REGDATA": REGDATA, "RECDATA": RECDATA, "VENDORMIX": VENDORMIX,
-                   "COMPLIANCE": COMPLIANCE, "VENDORINTEL": VENDORINTEL},
+                   "COMPLIANCE": COMPLIANCE, "VENDORINTEL": VENDORINTEL,
+                   "POSTUREMATURITY": POSTUREMATURITY, "QUICKWINS": QUICKWINS,
+                   "VALUECALLOUTS": VALUECALLOUTS},
                   _ef, ensure_ascii=False, sort_keys=True)
 
 with open(DST, "w", encoding="utf-8") as f:
