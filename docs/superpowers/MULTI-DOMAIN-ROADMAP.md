@@ -59,6 +59,15 @@ interactive UX, comparable depth, no domain looking like a stub. Added 2026-06-0
 **Acceptance:** a reviewer can pick "PAM" or "Secrets" in the live app and run a full posture assessment
 end-to-end in either, with the questionnaire depth and report both complete.
 
+**Deferred follow-ups (logged 2026-06-09; full detail under WS-3 in `meta/IMPROVEMENT-BACKLOG.md`):**
+- **Unscored-use-case navigation** — the last-use-case completion affordance (commit `9f8fe20`) shows
+  "X of N scored" but not *which* UCs are unscored, and offers no jump-to-finish link. Add clickable links
+  to the remaining unscored UCs.
+- **In-browser report generation** (roadmap option #3) — render the scored report from live answers in-app,
+  replacing the offline `report_adapter.py` → `build_matrix_viewer.py --current-state` CLI.
+- **PAM regulatory evidence packs in the React UI** — surface the per-question "what artifact proves this
+  control" hints (already in the PAM data) in the interactive app.
+
 ## What exists now (on `main`)
 - Engine: `matrix/optimizer.py`, `resilience.py`, `vendor_intel.py`, `compliance.py`, `matrix_vocab.py`,
   `report_logic.py` (build_vendormix / build_vendor_intel / build_compliance + legacy build_recdata).

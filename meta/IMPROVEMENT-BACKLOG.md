@@ -91,6 +91,18 @@ worksheet view, numeric quantitative inputs.
 - **Skills:** `frontend-design`, `gsd-ui-phase` (UI-SPEC) / `gsd-sketch` (throwaway mockup first),
   `superpowers:test-driven-development`, `gsd-ui-review`.
 
+**Deferred UX (React app — logged 2026-06-09):**
+- **Unscored-use-case navigation.** The completion affordance on the last use case shows the count
+  (e.g. "14 of 17 use cases scored") but does **not** tell the user *which* use cases are still
+  unscored, nor let them jump straight to one. Add a list/links of the remaining unscored UCs (click
+  → `go(uc_id)`) so a user can finish the gaps without hunting the sidebar. Sidebar already shows a
+  per-UC status dot; the data is `a.rubric` minus the scored ones (proposed state ≠ PENDING, or
+  bespoke with a final state — see `scoredCount` in `app/src/assessment/record.ts`). Small follow-up
+  to the completion affordance added in commit `9f8fe20` (`app/src/components/UseCaseView.tsx`).
+- **In-browser report generation** (= roadmap option #3): generate the scored HTML report from the
+  live answers in-app, instead of the offline `report_adapter.py` → `build_matrix_viewer.py
+  --current-state` CLI. Larger — the renderer is currently Python.
+
 ### WS-4 — End-to-end process doc (playbook) — **the consulting product** — ✅ DONE slice 1 (2026-05-30, branch ws4-methodology-playbook) — ✅ COMPLETE (3 slices)
 
 Delivered (slice 1): two methodology docs in `methodology/` — `PLAYBOOK.md` (consultant
