@@ -61,6 +61,10 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
     setResponses(nextResp); ref.current = nextResp;
     setEvidence(nextEv); evRef.current = nextEv;
     setCurrentId(nextView.rubric[0]?.uc_id ?? '');
+    // Deliberately NOT syncing viewRef/domainId here: the Api (and its mutate/persist
+    // closures) is useMemo'd on [domainId, view], so the next write can only fire after
+    // React re-renders with the new domain — at which point persistAll already targets
+    // the new namespace. Hand-syncing them here would be redundant; don't add it.
   }
 
   function persist(next: Record<string, Response>) { persistAll(next, evRef.current); }
