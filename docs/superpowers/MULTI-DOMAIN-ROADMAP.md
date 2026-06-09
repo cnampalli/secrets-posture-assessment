@@ -20,7 +20,7 @@ is summarised here.
 | **1** | Generalize the engine: per-domain `Domain` descriptor + config-driven report | ✅ DONE — slices 1–2, #1 body-prose, #3/#5, #4, #8, #1-residual all closed → **PR #17** (`feat/phase1`, off `main`; secrets byte-identical, suite 210 green) |
 | **2** | Promote PAM to a real offering + cross-domain consolidation/concentration view (X1–X2) | ✅ DONE — PAM domain fully stood up; **cross-domain consolidation view built** (`build_cross_domain.py` → `cross-domain-report.html`; CyberArk flagged spanning 2/2; runtime-verified, suite 197 green) |
 | **2.7** | **Both-domain demo parity** — app + questionnaires work seamlessly for BOTH PAM and Secrets posture assessment (gate before Phase 3) | ✅ DONE (2026-06-09) — PAM questionnaire depth (17 UCs), React app domain-aware (dropdown + per-domain isolation), both-domain smoke confirmed working. See "Phase 2.7" below |
-| **3** | IGA / SailPoint as a *scoped* offering (process-shaped — own model, judgment-heavy) | ⬜ — **unblocked** (2.7 gate cleared) |
+| **3** | IGA / SailPoint as a *scoped* offering (process-shaped — own model, judgment-heavy) | 🟦 SCOPING DONE — IGA scoping spike validates the hybrid model (process-maturity reuses the questionnaire/archetype engine unchanged; needs a bespoke light vendor-fit view, not the capability matrix). See `spikes/iga/SPIKE-FINDINGS.md`. Next: full Phase 3 (citation-backed data + vendor-fit view). |
 | **4** | Workforce IAM / CIAM — **demand-pulled only** (analyst-owned space) | ⬜ |
 | **5** | Consulting-instrument wrap: multi-engagement workspace, current-state import, anonymized benchmark | ⬜ |
 
