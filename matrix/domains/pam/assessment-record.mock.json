@@ -11,11 +11,11 @@
   "responses": {
     "UC-P-001": {
       "archetype": "A1",
-      "answers": {"vault-deployed": "yes", "rotation-on-policy": "partial", "plaintext-in-config": "some"},
-      "proposed_state": "PARTIAL",
-      "final_state": "PARTIAL",
+      "answers": {"vault-deployed": "yes", "rotation-on-policy": "yes", "plaintext-in-config": "none"},
+      "proposed_state": "MET",
+      "final_state": "MET",
       "overridden": false,
-      "rationale": "CyberArk vault holds Windows/AD privileged accounts but Unix/Linux and network-device passwords are onboarded inconsistently and several batch service accounts are still rotated by hand.",
+      "rationale": "The CyberArk vault holds Windows/AD, Unix/Linux and network-device privileged accounts with automated policy-based rotation; static plaintext privileged passwords have been remediated out of config across the in-scope estate.",
       "confidence": "HIGH",
       "sensitivity_tag": "PUBLIC"
     },
@@ -41,11 +41,11 @@
     },
     "UC-P-004": {
       "archetype": "A2",
-      "answers": {"standing-priv-removed": "no", "jit-coverage": "low"},
-      "proposed_state": "GAP",
-      "final_state": "GAP",
+      "answers": {"standing-priv-removed": "partial", "jit-coverage": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
       "overridden": false,
-      "rationale": "Most privileged roles still carry always-on standing membership; JIT elevation is piloted only for a handful of cloud admin groups, so zero-standing-privilege coverage is minimal.",
+      "rationale": "JIT elevation is now in production for cloud admin and the core Windows server estate with standing membership removed there, but a meaningful share of legacy on-prem and Unix roles still carry always-on privilege pending the next rollout wave.",
       "confidence": "HIGH",
       "sensitivity_tag": "PUBLIC"
     },
@@ -71,11 +71,11 @@
     },
     "UC-P-007": {
       "archetype": "A1",
-      "answers": {"mfa-at-proxy": "yes", "phishing-resistant-tier0": "partial"},
-      "proposed_state": "PARTIAL",
-      "final_state": "PARTIAL",
+      "answers": {"mfa-at-proxy": "yes", "phishing-resistant-tier0": "yes"},
+      "proposed_state": "MET",
+      "final_state": "MET",
       "overridden": false,
-      "rationale": "MFA is enforced at the PAM elevation point for all in-scope access, but phishing-resistant FIDO2 is rolled out to only part of the tier-0 administrator population.",
+      "rationale": "MFA is enforced at the PAM elevation point for all in-scope privileged access, and phishing-resistant FIDO2 is now mandated for the full tier-0 administrator population.",
       "confidence": "HIGH",
       "sensitivity_tag": "PUBLIC"
     },
@@ -111,11 +111,11 @@
     },
     "UC-P-011": {
       "archetype": "A1",
-      "answers": {"vendor-brokered": "yes", "standing-vendor-creds": "some"},
-      "proposed_state": "PARTIAL",
-      "final_state": "PARTIAL",
+      "answers": {"vendor-brokered": "yes", "standing-vendor-creds": "none"},
+      "proposed_state": "MET",
+      "final_state": "MET",
       "overridden": false,
-      "rationale": "Strategic vendors connect through the recorded PAM proxy with JIT grants, but a few legacy support arrangements still rely on standing VPN and shared admin credentials.",
+      "rationale": "Third-party and vendor support now connects exclusively through the recorded PAM proxy with just-in-time grants; legacy standing-VPN and shared admin credentials for vendors have been decommissioned.",
       "confidence": "HIGH",
       "sensitivity_tag": "PUBLIC"
     },

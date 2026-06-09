@@ -100,6 +100,36 @@ def test_posture_maturity_iga_unknown_id_bucketed_other():
     assert any(g["label"] == "Other" for g in m["groups"])
 
 
+def test_posture_maturity_pam_yields_nonempty_capability_groups():
+    # PAM has a bespoke MATURITY_GROUPS capability map -> the board per-group
+    # table must be non-empty (>= 2 groups) like secrets/IGA, not blank.
+    ucs = _ucs(("UC-P-001", "P0"), ("UC-P-002", "P0"),       # Credential & session control
+               ("UC-P-004", "P0"), ("UC-P-005", "P1"),       # Privilege governance
+               ("UC-P-006", "P1"), ("UC-P-011", "P1"),       # Workload & cloud access
+               ("UC-P-009", "P1"), ("UC-P-017", "P1"))       # Endpoint & threat analytics
+    anz = [{"uc_id": u["uc_id"], "current_state": "MET"} for u in ucs]
+    m = rl.build_posture_maturity(anz, ucs, "pam")
+    labels = {g["label"] for g in m["groups"]}
+    assert len(m["groups"]) >= 2
+    assert "Credential & session control" in labels
+    assert "Privilege governance" in labels
+    # every reported group is non-empty (has a band derived from real members)
+    assert all(g["band"] for g in m["groups"])
+
+
+def test_posture_maturity_unknown_domain_falls_back_to_category_groups():
+    # A domain with no bespoke map groups by the use-cases `category` column.
+    ucs = [{"uc_id": "UC-X-1", "priority_fi": "P1", "short_title": "a", "category": "FUNCTIONAL"},
+           {"uc_id": "UC-X-2", "priority_fi": "P1", "short_title": "b", "category": "FUNCTIONAL"},
+           {"uc_id": "UC-X-3", "priority_fi": "P1", "short_title": "c", "category": "NON_FUNCTIONAL"}]
+    anz = [{"uc_id": "UC-X-1", "current_state": "MET"},
+           {"uc_id": "UC-X-2", "current_state": "GAP"},
+           {"uc_id": "UC-X-3", "current_state": "MET"}]
+    m = rl.build_posture_maturity(anz, ucs, "some-new-domain")
+    labels = {g["label"] for g in m["groups"]}
+    assert "FUNCTIONAL" in labels and "NON_FUNCTIONAL" in labels
+
+
 # ---------------------------------------------------------------------------
 # build_quick_wins
 # ---------------------------------------------------------------------------
@@ -143,6 +173,16 @@ def test_quick_wins_carries_regulatory_driver_control_codes():
     assert "CPS234-1" in codes
     assert uc1["state"] in ("GAP", "PARTIAL")
     assert uc1["risk_band"] == "High"
+
+
+def test_quick_wins_omits_unbacked_effort_quadrant():
+    # Effort is not modelled (constant Med) -> the dead `quadrant` key must be gone
+    # so the view cannot imply a real risk x effort ranking.
+    wins = rl.build_quick_wins(_QW_ANZ, _QW_UCS, _QW_REG, _QW_SCOPE)
+    assert wins
+    assert all("quadrant" not in w for w in wins)
+    expected = {"uc_id", "short_title", "state", "risk_band", "regulatory_driver"}
+    assert all(set(w) == expected for w in wins)
 
 
 # ---------------------------------------------------------------------------

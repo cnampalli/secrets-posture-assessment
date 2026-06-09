@@ -25,6 +25,28 @@ REC_UC_DOMAIN = {
                    "UC-N-009", "UC-N-010", "UC-N-016", "UC-N-017", "UC-N-018", "UC-N-020"],
 }
 
+# Per-domain board-maturity capability groupings, keyed by domain slug. Each maps a
+# board-readable label -> the UC ids that constitute that capability area, so the
+# per-group maturity table has the same depth across domains. Domains absent here
+# fall back to grouping by the `category` column of their use-cases.csv (see
+# build_posture_maturity); IGA uses its bespoke id-range area map instead.
+MATURITY_GROUPS = {
+    "secrets": {
+        "Secrets lifecycle": REC_UC_DOMAIN["secrets"],
+        "Governance": REC_UC_DOMAIN["governance"],
+    },
+    "pam": {
+        "Credential & session control":
+            ["UC-P-001", "UC-P-002", "UC-P-003", "UC-P-007", "UC-P-008"],
+        "Privilege governance":
+            ["UC-P-004", "UC-P-005", "UC-P-010", "UC-P-014"],
+        "Workload & cloud access":
+            ["UC-P-006", "UC-P-011", "UC-P-012", "UC-P-013"],
+        "Endpoint & threat analytics":
+            ["UC-P-009", "UC-P-015", "UC-P-016", "UC-P-017"],
+    },
+}
+
 
 def build_glossary(nhis, ucs):
     g = {}
@@ -269,8 +291,11 @@ def build_posture_maturity(anz, ucs, domain_slug):
     Returns {overall_band, met_pct, counts{met,partial,gap,pending}, p0_open,
     groups:[{label, band, met_pct}], basis}. `basis` names this as a designed
     coverage-based convention (R2), not an external standard. Per-group breakdown:
-    IGA -> per governance AREA (id-range derived, R1); secrets/PAM -> REC_UC_DOMAIN
-    capability grouping. UCs outside any group still count in the overall roll-up."""
+    IGA -> per governance AREA (id-range derived, R1); a domain with a bespoke
+    MATURITY_GROUPS map -> that capability grouping; any other domain -> grouping
+    by the `category` column of use-cases.csv (honest fallback so every domain's
+    board table has real per-group depth). UCs outside any group still count in
+    the overall roll-up."""
     state_by_uc = {a["uc_id"]: a.get("current_state", "UNKNOWN") for a in anz}
     priority_by_uc = {u["uc_id"]: (u.get("priority_fi") or "").strip() for u in ucs}
     all_ids = [u["uc_id"] for u in ucs]
@@ -285,13 +310,25 @@ def build_posture_maturity(anz, ucs, domain_slug):
         labels_order = list(IGA_AREAS) + ["Other"]
         for uc_id in all_ids:
             grouped[_iga_area_for(uc_id)].append(uc_id)
-    else:
-        labels_order = list(REC_UC_DOMAIN.keys())
-        members = {lbl: set(ids) for lbl, ids in REC_UC_DOMAIN.items()}
+    elif domain_slug in MATURITY_GROUPS:
+        bespoke = MATURITY_GROUPS[domain_slug]
+        labels_order = list(bespoke.keys())
+        members = {lbl: set(ids) for lbl, ids in bespoke.items()}
         for uc_id in all_ids:
             for lbl, idset in members.items():
                 if uc_id in idset:
                     grouped[lbl].append(uc_id)
+    else:
+        # Honest fallback: group by the use-case `category` column so domains
+        # without a bespoke capability map still yield a non-empty board table.
+        cat_by_uc = {u["uc_id"]: (u.get("category") or "Other").strip() or "Other"
+                     for u in ucs}
+        labels_order = []
+        for uc_id in all_ids:
+            cat = cat_by_uc.get(uc_id, "Other")
+            if cat not in grouped:
+                labels_order.append(cat)
+            grouped[cat].append(uc_id)
 
     groups = []
     for lbl in labels_order:
@@ -308,12 +345,14 @@ def build_posture_maturity(anz, ucs, domain_slug):
 
 
 def build_quick_wins(anz, ucs, reg_rows, scope, limit=3):
-    """Top risk×effort 'Quick wins' for the value narrative (pure).
+    """Top 'priorities — highest risk first' for the value narrative (pure).
 
-    Reuses roadmap_generator's seed_risk / quadrant / regulatory_driver (single
-    source of truth). Filters `anz` to GAP/PARTIAL, effort defaults to 'Med',
-    returns the worst-risk-first top `limit` with their regulatory-driver control
-    codes. Each item: {uc_id, short_title, state, risk_band, regulatory_driver}."""
+    Reuses roadmap_generator's seed_risk / regulatory_driver (single source of
+    truth). Filters `anz` to GAP/PARTIAL, returns the worst-risk-first top `limit`
+    with their regulatory-driver control codes. Each item:
+    {uc_id, short_title, state, risk_band, regulatory_driver}. Effort is NOT
+    modelled here (the questionnaire does not capture it), so no effort/quadrant
+    is surfaced — the ranking is risk + regulatory-driver only, which are real."""
     # Reuse the roadmap_generator pure fns directly (single source of truth). It
     # lives in questionnaire/ and imports questionnaire.record_state, so the repo
     # root must be importable; ensure it without disturbing the matrix/ sys.path[0].
@@ -322,7 +361,7 @@ def build_quick_wins(anz, ucs, reg_rows, scope, limit=3):
     _root = _os2.path.dirname(_os2.path.dirname(_os2.path.abspath(__file__)))
     if _root not in _sys2.path:
         _sys2.path.append(_root)
-    from questionnaire.roadmap_generator import seed_risk, quadrant, regulatory_driver
+    from questionnaire.roadmap_generator import seed_risk, regulatory_driver
 
     uc_by_id = {u["uc_id"]: u for u in ucs}
     risk_order = {"High": 0, "Med": 1, "Low": 2}
@@ -338,7 +377,6 @@ def build_quick_wins(anz, ucs, reg_rows, scope, limit=3):
             "short_title": uc.get("short_title", a["uc_id"]),
             "state": state,
             "risk_band": risk,
-            "quadrant": quadrant(risk, "Med"),       # effort defaults to Med
             "regulatory_driver": regulatory_driver(a["uc_id"], reg_rows, scope),
         })
     # worst-risk-first; regulatory-driven before undriven; then deterministic by id.

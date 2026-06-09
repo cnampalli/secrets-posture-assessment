@@ -853,6 +853,18 @@ function renderValue(){
   const kpis=VALUECFG.kpis||[];
   const kpirows=kpis.map(k=>'<tr><td><b>'+k[0]+'</b></td><td class="muted">'+k[1]+'</td><td class="muted">'+k[2]+'</td><td class="mono">'+k[3]+'</td></tr>').join("");
 
+  // ---- 0. prominent illustrative banner at the TOP of the value view ----
+  // A CISO sees the board maturity band first; if the posture is a synthetic
+  // worked example we say so before any figure, not only in the caveats card.
+  // Reuses .roi-banner styling with an amber (partial-tint) inline override so it
+  // reads as a caution, distinct from the green ROI banner — no new CSS class.
+  const isIllustrative=(VALUECFG.caveats||[]).some(c=>/illustrative scenario/i.test(c));
+  const illustrativeBanner=isIllustrative?
+    '<div class="roi-banner" style="background:var(--partial-tint);border-color:#e2c48f;border-left-color:var(--partial);margin-top:0;margin-bottom:16px">'+
+    '<span class="pill pill-PARTIAL">Illustrative</span> &nbsp;'+
+    '<b style="color:var(--partial-ink)">Illustrative scenario — synthetic posture, not a client assessment.</b> '+
+    'The maturity band and figures below are a worked example to show the report&rsquo;s shape; replace them with a real assessment before acting on any number.</div>':"";
+
   // ---- 1. board maturity roll-up (designed coverage-based convention) ----
   const pm=POSTUREMATURITY||{};
   const BANDLBL={ML1:"ML1 · Foundational",ML2:"ML2 · Managed",ML3:"ML3 · Optimised"};
@@ -871,7 +883,7 @@ function renderValue(){
       '<p class="note" style="margin:6px 0 0">'+esc(pm.basis||"")+'</p></div>';
   }
 
-  // ---- 4. top quick wins (risk × effort, with control codes) ----
+  // ---- 4. top priorities (highest risk first, with control codes) ----
   const RISKPILL={High:"pill-GAP",Med:"pill-PARTIAL",Low:"pill-PENDING"};
   const qw=(QUICKWINS||[]).map(w=>{
     const codes=(w.regulatory_driver||[]).map(d=>'<span class="pill pill-PENDING">'+esc(d.control_code)+'</span>').join(" ")
@@ -881,9 +893,9 @@ function renderValue(){
       '<td><span class="pill '+(RISKPILL[w.risk_band]||"pill-PENDING")+'">'+esc(w.risk_band)+' risk</span></td>'+
       '<td>'+codes+'</td></tr>';}).join("");
   const quickHtml=qw?
-    '<h3 class="vsec">Top quick wins — highest risk, lowest effort</h3>'+
+    '<h3 class="vsec">Top priorities — highest risk first</h3>'+
     '<div class="card"><table class="kpitable"><thead><tr><th>Use case</th><th>State</th><th>Risk</th><th>Regulatory driver</th></tr></thead><tbody>'+qw+'</tbody></table>'+
-    '<p class="note" style="margin:6px 0 0">Effort defaults to Med; ranked worst-risk-first. Risk seeded from use-case priority — a roadmap starting point, not a fixed sequence.</p></div>':"";
+    '<p class="note" style="margin:6px 0 0">Ranked worst-risk-first; regulatory-driven items lead. Risk seeded from use-case priority — a roadmap starting point, not a fixed sequence. Effort is not modelled here.</p></div>':"";
 
   // ---- 5. three defensibility callouts (computed from the data) ----
   const co=VALUECALLOUTS||{};
@@ -912,6 +924,7 @@ function renderValue(){
     '<div class="card"><ul class="notes" style="margin:0">'+caveats.map(c=>'<li>'+c+'</li>').join("")+'</ul></div>':"";
 
   document.getElementById("value-body").innerHTML =
+    illustrativeBanner+
     maturityHtml+
     '<h3 class="vsec">Why it matters — where the return comes from</h3>'+
     '<div class="loop">'+loop+'</div>'+
@@ -921,7 +934,7 @@ function renderValue(){
     '<div class="card"><table class="kpitable"><thead><tr><th>KPI</th><th>What it measures</th><th>Source</th><th>Cadence</th></tr></thead><tbody>'+kpirows+'</tbody></table></div>'+
     quickHtml+
     calloutHtml+
-    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — '+VALUECFG.roi_events+' — typically exceeds the whole assessment cost by an order of magnitude. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>'+
+    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — '+VALUECFG.roi_events+' — can exceed the assessment cost many times over. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>'+
     caveatHtml;
 }
 

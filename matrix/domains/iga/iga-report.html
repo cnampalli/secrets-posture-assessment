@@ -394,7 +394,7 @@ const META = {"ranked_vendors": 0, "ranked_rows": 0, "total_rows": 0, "nhis": 13
 const VALUECFG = {"outcomes": [["hard", "Rationalise identity / IGA tooling", "The vendor matrix exposes overlapping lifecycle, certification, SoD and access-request tooling running in parallel and gives an area-scoped consolidation path across the four IGA suites.", "Tool count &darr; · avoided licence + procurement effort"], ["hours", "Audit &amp; compliance efficiency", "Pre-built access-review / SoD / certification evidence (3-click framework &rarr; control &rarr; use case &rarr; evidence) answers APRA CPS 234 &amp; SOX access-governance audits and cuts findings.", "Audit hours &darr; · findings &darr; · avoided enforcement"], ["risk", "Lower expected breach loss", "Closing orphan / dormant, excess-entitlement and toxic SoD-combination gaps reduces the probability × impact of account compromise and insider fraud.", "Gaps closed · risk-adjusted expected-loss &darr;"], ["kpi", "Reduce operational toil", "Automated joiner / mover / leaver and self-service access requests remove manual provisioning and shrink the de-provisioning backlog.", "Manual provisioning actions &darr; · leaver backlog &darr;"]], "kpis": [["Leaver de-provisioning SLA", "% of leaver access revoked within the agreed SLA", "Joiner/mover/leaver use cases", "continuous"], ["Access-certification completion", "% of scheduled access certifications completed on time", "Certification use cases", "per cycle"], ["Open SoD violations", "count of unremediated toxic entitlement combinations", "Segregation-of-duties use cases", "monthly"], ["Orphan / dormant accounts", "count of accounts with no owner or no recent activity", "Account-hygiene use cases", "per cycle"], ["Access-request cycle time", "median time from access request to fulfilment", "Access-request use cases", "continuous"]], "roi_events": "one access-related audit finding, one SoD / fraud control failure, or one orphaned-account compromise", "caveats": ["<b>Illustrative scenario, not a client assessment.</b> The posture states below are a worked example to show the report&rsquo;s shape — replace them with a real assessment before acting on any figure.", "<b>Maturity bands are a roadmap, not a benchmark.</b> The ML1/2/3 ladder is a designed coverage-based convention for tracking progress over time — it is not an external standard and not a peer comparison.", "<b>Vendor-fit reflects presence, not efficacy.</b> A NATIVE / PARTIAL rating means the capability exists at that grade, not that it is well-implemented in your environment — validate against your own requirements."]};
 const DOMAINCFG = {"kpi_object_label": "workforce identities & entitlements", "layer_groups": [["L1", "IGA platforms"]], "card": {"rec_l1_label": "IGA platform", "rec_l2_complement": "Pair with", "rec_l2_label": "complementary governance area", "layer_note": "IGA fit is assessed per governance area (lifecycle / certification / SoD / access requests) rather than as a single product score — no one suite leads every area. ", "posture_legend_suffix": " — assessed baseline (template; run the questionnaire to populate posture)."}};
 const POSTUREMATURITY = {"overall_band": "ML1", "met_pct": 0.1538, "counts": {"met": 2, "partial": 5, "gap": 5, "pending": 1}, "p0_open": 6, "groups": [{"label": "JML", "band": "ML1", "met_pct": 0.25}, {"label": "Certification", "band": "ML1", "met_pct": 0.0}, {"label": "SoD", "band": "ML1", "met_pct": 0.0}, {"label": "Role/Request", "band": "ML1", "met_pct": 0.3333}], "basis": "Designed coverage-based convention (ML1 foundational / ML2 managed / ML3 optimised), not an external standard: ML3 needs ≥75% MET with no open P0; ML2 needs ≥40% MET with no open P0 gap; any P0 gap caps at ML1."};
-const QUICKWINS = [{"uc_id": "UC-I-002", "short_title": "Mover access recalculation on transfer", "state": "GAP", "risk_band": "High", "quadrant": "Quick wins", "regulatory_driver": [{"framework_slug": "apra-cps234", "control_code": "CPS234-§21", "control_short_title": "Implementation of controls (commensurate / risk-tiered)"}, {"framework_slug": "iso-27001-2022", "control_code": "A.5.18", "control_short_title": "Access rights (provision / review / modify / remove) (quote withheld — secondary mirror; re-verify vs licensed ISO 27001:2022)"}, {"framework_slug": "nist-800-53r5", "control_code": "AC-2", "control_short_title": "Account Management (full account lifecycle)"}]}, {"uc_id": "UC-I-003", "short_title": "Timely leaver de-provisioning within SLA", "state": "PARTIAL", "risk_band": "High", "quadrant": "Quick wins", "regulatory_driver": [{"framework_slug": "apra-cps234", "control_code": "CPS234-§21", "control_short_title": "Implementation of controls (commensurate / risk-tiered)"}, {"framework_slug": "asd-ism", "control_code": "ISM-1591", "control_short_title": "Same-day access removal on loss of business requirement"}, {"framework_slug": "nist-800-53r5", "control_code": "AC-2", "control_short_title": "Account Management (full account lifecycle)"}]}, {"uc_id": "UC-I-005", "short_title": "Periodic access certification campaigns", "state": "PARTIAL", "risk_band": "High", "quadrant": "Quick wins", "regulatory_driver": [{"framework_slug": "apra-cps234", "control_code": "CPS234-§21", "control_short_title": "Implementation of controls (commensurate / risk-tiered)"}, {"framework_slug": "asd-ism", "control_code": "ISM-0407", "control_short_title": "Secure access record (including when access was last reviewed)"}, {"framework_slug": "iso-27001-2022", "control_code": "A.5.18", "control_short_title": "Access rights (provision / review / modify / remove) (quote withheld — secondary mirror; re-verify vs licensed ISO 27001:2022)"}]}];
+const QUICKWINS = [{"uc_id": "UC-I-002", "short_title": "Mover access recalculation on transfer", "state": "GAP", "risk_band": "High", "regulatory_driver": [{"framework_slug": "apra-cps234", "control_code": "CPS234-§21", "control_short_title": "Implementation of controls (commensurate / risk-tiered)"}, {"framework_slug": "iso-27001-2022", "control_code": "A.5.18", "control_short_title": "Access rights (provision / review / modify / remove) (quote withheld — secondary mirror; re-verify vs licensed ISO 27001:2022)"}, {"framework_slug": "nist-800-53r5", "control_code": "AC-2", "control_short_title": "Account Management (full account lifecycle)"}]}, {"uc_id": "UC-I-003", "short_title": "Timely leaver de-provisioning within SLA", "state": "PARTIAL", "risk_band": "High", "regulatory_driver": [{"framework_slug": "apra-cps234", "control_code": "CPS234-§21", "control_short_title": "Implementation of controls (commensurate / risk-tiered)"}, {"framework_slug": "asd-ism", "control_code": "ISM-1591", "control_short_title": "Same-day access removal on loss of business requirement"}, {"framework_slug": "nist-800-53r5", "control_code": "AC-2", "control_short_title": "Account Management (full account lifecycle)"}]}, {"uc_id": "UC-I-005", "short_title": "Periodic access certification campaigns", "state": "PARTIAL", "risk_band": "High", "regulatory_driver": [{"framework_slug": "apra-cps234", "control_code": "CPS234-§21", "control_short_title": "Implementation of controls (commensurate / risk-tiered)"}, {"framework_slug": "asd-ism", "control_code": "ISM-0407", "control_short_title": "Secure access record (including when access was last reviewed)"}, {"framework_slug": "iso-27001-2022", "control_code": "A.5.18", "control_short_title": "Access rights (provision / review / modify / remove) (quote withheld — secondary mirror; re-verify vs licensed ISO 27001:2022)"}]}];
 const VALUECALLOUTS = {"provenance": {"controls_with_source": 21, "total": 29}, "independence": {"mode": "vendor-fit", "native": 14, "partial": 2}, "currency": {"emerging_count": 2, "classes": ["Agentic-AI / autonomous agent", "OAuth app / consent-grant"]}};
 
 function esc(s){ if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -792,6 +792,18 @@ function renderValue(){
   const kpis=VALUECFG.kpis||[];
   const kpirows=kpis.map(k=>'<tr><td><b>'+k[0]+'</b></td><td class="muted">'+k[1]+'</td><td class="muted">'+k[2]+'</td><td class="mono">'+k[3]+'</td></tr>').join("");
 
+  // ---- 0. prominent illustrative banner at the TOP of the value view ----
+  // A CISO sees the board maturity band first; if the posture is a synthetic
+  // worked example we say so before any figure, not only in the caveats card.
+  // Reuses .roi-banner styling with an amber (partial-tint) inline override so it
+  // reads as a caution, distinct from the green ROI banner — no new CSS class.
+  const isIllustrative=(VALUECFG.caveats||[]).some(c=>/illustrative scenario/i.test(c));
+  const illustrativeBanner=isIllustrative?
+    '<div class="roi-banner" style="background:var(--partial-tint);border-color:#e2c48f;border-left-color:var(--partial);margin-top:0;margin-bottom:16px">'+
+    '<span class="pill pill-PARTIAL">Illustrative</span> &nbsp;'+
+    '<b style="color:var(--partial-ink)">Illustrative scenario — synthetic posture, not a client assessment.</b> '+
+    'The maturity band and figures below are a worked example to show the report&rsquo;s shape; replace them with a real assessment before acting on any number.</div>':"";
+
   // ---- 1. board maturity roll-up (designed coverage-based convention) ----
   const pm=POSTUREMATURITY||{};
   const BANDLBL={ML1:"ML1 · Foundational",ML2:"ML2 · Managed",ML3:"ML3 · Optimised"};
@@ -810,7 +822,7 @@ function renderValue(){
       '<p class="note" style="margin:6px 0 0">'+esc(pm.basis||"")+'</p></div>';
   }
 
-  // ---- 4. top quick wins (risk × effort, with control codes) ----
+  // ---- 4. top priorities (highest risk first, with control codes) ----
   const RISKPILL={High:"pill-GAP",Med:"pill-PARTIAL",Low:"pill-PENDING"};
   const qw=(QUICKWINS||[]).map(w=>{
     const codes=(w.regulatory_driver||[]).map(d=>'<span class="pill pill-PENDING">'+esc(d.control_code)+'</span>').join(" ")
@@ -820,9 +832,9 @@ function renderValue(){
       '<td><span class="pill '+(RISKPILL[w.risk_band]||"pill-PENDING")+'">'+esc(w.risk_band)+' risk</span></td>'+
       '<td>'+codes+'</td></tr>';}).join("");
   const quickHtml=qw?
-    '<h3 class="vsec">Top quick wins — highest risk, lowest effort</h3>'+
+    '<h3 class="vsec">Top priorities — highest risk first</h3>'+
     '<div class="card"><table class="kpitable"><thead><tr><th>Use case</th><th>State</th><th>Risk</th><th>Regulatory driver</th></tr></thead><tbody>'+qw+'</tbody></table>'+
-    '<p class="note" style="margin:6px 0 0">Effort defaults to Med; ranked worst-risk-first. Risk seeded from use-case priority — a roadmap starting point, not a fixed sequence.</p></div>':"";
+    '<p class="note" style="margin:6px 0 0">Ranked worst-risk-first; regulatory-driven items lead. Risk seeded from use-case priority — a roadmap starting point, not a fixed sequence. Effort is not modelled here.</p></div>':"";
 
   // ---- 5. three defensibility callouts (computed from the data) ----
   const co=VALUECALLOUTS||{};
@@ -851,6 +863,7 @@ function renderValue(){
     '<div class="card"><ul class="notes" style="margin:0">'+caveats.map(c=>'<li>'+c+'</li>').join("")+'</ul></div>':"";
 
   document.getElementById("value-body").innerHTML =
+    illustrativeBanner+
     maturityHtml+
     '<h3 class="vsec">Why it matters — where the return comes from</h3>'+
     '<div class="loop">'+loop+'</div>'+
@@ -860,7 +873,7 @@ function renderValue(){
     '<div class="card"><table class="kpitable"><thead><tr><th>KPI</th><th>What it measures</th><th>Source</th><th>Cadence</th></tr></thead><tbody>'+kpirows+'</tbody></table></div>'+
     quickHtml+
     calloutHtml+
-    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — '+VALUECFG.roi_events+' — typically exceeds the whole assessment cost by an order of magnitude. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>'+
+    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — '+VALUECFG.roi_events+' — can exceed the assessment cost many times over. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>'+
     caveatHtml;
 }
 
