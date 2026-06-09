@@ -20,3 +20,17 @@ it('answering ladder questions updates the proposed state chip', async () => {
   for (const b of yesButtons) await userEvent.click(b);
   expect(screen.getAllByText(/MET/).length).toBeGreaterThan(0);
 });
+
+it('offers an Export affordance on the last use case instead of a dead-end next', () => {
+  const last = RUBRIC[RUBRIC.length - 1];
+  render(<AssessmentProvider><UseCaseView startId={last.uc_id} /></AssessmentProvider>);
+  // the misleading disabled "Save & next" is replaced by an enabled export action
+  expect(screen.queryByRole('button', { name: /save & next/i })).toBeNull();
+  expect(screen.getByRole('button', { name: /export record/i })).toBeEnabled();
+});
+
+it('keeps Save & next on a non-last use case', () => {
+  render(<AssessmentProvider><UseCaseView startId={RUBRIC[0].uc_id} /></AssessmentProvider>);
+  expect(screen.getByRole('button', { name: /save & next/i })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /export record/i })).toBeNull();
+});

@@ -3,14 +3,18 @@ import { useAssessment } from '../assessment/store';
 import { Badge, Button, Card, CardBody, ToggleGroup, Checkbox } from './ui';
 import { ScorePanel } from './ScorePanel';
 import { EvidencePanel } from './EvidencePanel';
+import { useExportRecord } from './useExportRecord';
 
 export function UseCaseView({ startId }: { startId?: string }) {
   const a = useAssessment();
+  const doExport = useExportRecord();
   useEffect(() => { if (startId) a.go(startId); /* once */ }, [startId]); // eslint-disable-line
   const uc = a.current;
   const r = a.responses[uc.uc_id];
   const rubric = a.rubric;
   const idx = rubric.findIndex(u => u.uc_id === uc.uc_id);
+  const isLast = idx >= rubric.length - 1;
+  const allScored = a.scored === rubric.length;
 
   return (
     <div>
@@ -49,9 +53,24 @@ export function UseCaseView({ startId }: { startId?: string }) {
 
       <EvidencePanel />
 
+      {isLast && (
+        <div className="mt-8 rounded-sm border border-border bg-bg2 p-4">
+          <div className="font-display text-sm mb-1">
+            {allScored ? `✓ All ${rubric.length} use cases scored` : `${a.scored} of ${rubric.length} use cases scored`}
+          </div>
+          <p className="text-xs text-muted">
+            {allScored
+              ? 'You’ve reached the end of the questionnaire. Export your assessment record to take into the report.'
+              : 'This is the last use case. You can export now, or revisit any unscored use cases from the sidebar.'}
+          </p>
+        </div>
+      )}
+
       <div className="flex justify-between mt-6">
         <Button variant="outline" disabled={idx <= 0} onClick={() => a.go(rubric[idx - 1].uc_id)}>← Previous</Button>
-        <Button disabled={idx >= rubric.length - 1} onClick={() => a.go(rubric[idx + 1].uc_id)}>Save &amp; next →</Button>
+        {isLast
+          ? <Button onClick={doExport}>Export record →</Button>
+          : <Button onClick={() => a.go(rubric[idx + 1].uc_id)}>Save &amp; next →</Button>}
       </div>
     </div>
   );

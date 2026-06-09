@@ -7,24 +7,13 @@ import { ToastProvider, useToast } from './components/Toast';
 import { UseCaseView } from './components/UseCaseView';
 import { Button } from './components/ui';
 import { DomainPicker } from './components/DomainPicker';
+import { useExportRecord } from './components/useExportRecord';
 
 function Header() {
   const a = useAssessment();
   const toast = useToast();
+  const doExport = useExportRecord();
   const fileRef = useRef<HTMLInputElement>(null);
-
-  async function doExport() {
-    try {
-      const { text, skipped } = await a.exportRecord();
-      const blob = new Blob([text], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a'); link.href = url; link.download = `assessment-${a.domainId}.json`; link.click();
-      URL.revokeObjectURL(url);
-      if (skipped) toast(`${skipped} file(s) couldn't be exported`);
-    } catch {
-      toast('Export failed — please try again');
-    }
-  }
 
   return (
     <header className="h-14 flex items-center gap-3 px-5 border-b border-border bg-bg/80 backdrop-blur sticky top-0 z-20">
