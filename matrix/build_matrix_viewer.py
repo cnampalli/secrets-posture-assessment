@@ -79,26 +79,38 @@ RECDATA = (report_logic.build_recdata(
     vendor_residency, DOMAIN.substrate_slug, ENGAGEMENT)
     if DOMAIN.legacy_recdata else {})
 
-# ---- resilience-first vendor-mix + concentration (Phase 0, parent-aware) ----
-vendor_ownership = report_io.load_vendor_ownership(_CFGDIR)
-_anchors = [s for s, (lay, t) in DOMAIN.vendor_layer.items() if t == DOMAIN.anchors_tier]
-VENDORMIX = report_logic.build_vendormix(
-    _inputs["ranked"], vendor_ownership, _anchors, DOMAIN.short)
+# ---- vendor-fit view ----
+# IGA is process-shaped: it does NOT use the NATIVE/ADD-ON capability matrix.
+# It renders a bespoke per-AREA vendor-fit grid (iga-vendor-fit.csv) instead, so
+# the VENDORMIX / VENDORINTEL matrix builders are skipped (they'd run on empty
+# ranked data). Every matrix-using domain (secrets/PAM) is unchanged.
+_IS_IGA = DOMAIN.slug == "iga"
+if _IS_IGA:
+    IGAVFIT = report_logic.build_iga_vendor_fit(DOMAIN.data_dir)
+    VENDORMIX = {}
+    VENDORINTEL = {}
+else:
+    IGAVFIT = {}
+    # ---- resilience-first vendor-mix + concentration (Phase 0, parent-aware) ----
+    vendor_ownership = report_io.load_vendor_ownership(_CFGDIR)
+    _anchors = [s for s, (lay, t) in DOMAIN.vendor_layer.items() if t == DOMAIN.anchors_tier]
+    VENDORMIX = report_logic.build_vendormix(
+        _inputs["ranked"], vendor_ownership, _anchors, DOMAIN.short)
+    # ---- vendor intelligence: best-vendor-per-UC + head-to-head (Phase 0, B2/B3/B4) ----
+    _chosen = [c["slug"] for c in VENDORMIX["cover"]["chosen"]]
+    VENDORINTEL = report_logic.build_vendor_intel(
+        _inputs["ranked"], _inputs["ucs"], _chosen, DOMAIN.short)
 
 # ---- identity-control coverage indicator + gap-to-target (Phase 0, D3/D4) ----
 COMPLIANCE = report_logic.build_compliance(
     reg_rows, _inputs["anz"], framework_labels, exclude=DOMAIN.informative_frameworks)
-
-# ---- vendor intelligence: best-vendor-per-UC + head-to-head (Phase 0, B2/B3/B4) ----
-_chosen = [c["slug"] for c in VENDORMIX["cover"]["chosen"]]
-VENDORINTEL = report_logic.build_vendor_intel(
-    _inputs["ranked"], _inputs["ucs"], _chosen, DOMAIN.short)
 
 # ---- render + write ----
 html = report_render.render({
     "ranked": _inputs["ranked"], "anz": _inputs["anz"], "ucs": _inputs["ucs"], "nhis": _inputs["nhis"],
     "glossary": GLOSSARY, "layer_label": DOMAIN.layer_label, "short": DOMAIN.short,
     "reg": REG, "regdata": REGDATA, "recdata": RECDATA, "vendormix": VENDORMIX,
+    "igavfit": IGAVFIT,
     "compliance": COMPLIANCE, "vendorintel": VENDORINTEL, "meta": meta,
     "domain_meta": DOMAIN.report_meta(), "domain_content": DOMAIN.report_content(),
 })

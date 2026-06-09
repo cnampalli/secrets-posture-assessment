@@ -23,6 +23,12 @@ def build():
     domains_data = []
     for dom in domains.DOMAINS.values():
         inp = report_io.load_inputs(dom.data_dir, None, dom)
+        # Matrix-less domains (IGA ships a header-only vendor-capabilities.csv and uses
+        # a bespoke per-area vendor-fit model) have no ranked vendors and a disjoint
+        # vendor set, so they don't participate in the NATIVE/ADD-ON cross-domain
+        # spanning/concentration map. Skip them rather than rolling up an empty domain.
+        if not inp["ranked"]:
+            continue
         domains_data.append({"slug": dom.slug, "label": dom.label, "ranked": inp["ranked"]})
     model = crossdomain.build_crossmap(domains_data, ownership)
     with open(DST, "w", encoding="utf-8") as f:

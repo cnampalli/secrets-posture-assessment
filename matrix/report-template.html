@@ -98,6 +98,11 @@
   table.vgrid td.matcell{font-weight:700;color:var(--ink);}
   .cell-NATIVE{background:var(--native-tint);color:var(--met-ink);font-weight:700;} .cell-ADD-ON{background:var(--addon-tint);color:#9a4d12;}
   .cell-PARTNER{background:var(--partner-tint);color:#653699;} .cell-GAP{background:var(--gap-tint);color:var(--gap-ink);} .cell-NA{background:var(--na-tint);color:var(--na-ink,#5a6776);}
+  /*__IGA_VENDOR_FIT_START__*/
+  .fit{display:inline-block;padding:1px 7px;border-radius:3px;font-size:10.5px;font-weight:700;letter-spacing:.02em;}
+  .fit-NATIVE{background:var(--native-tint);color:var(--met-ink);} .fit-PARTIAL{background:var(--partial);color:#fff;} .fit-ADD-ON{background:var(--addon-tint);color:#9a4d12;}
+  a.cite{font-size:10.5px;color:var(--partner,#653699);text-decoration:none;} a.cite:hover{text-decoration:underline;}
+  /*__IGA_VENDOR_FIT_END__*/
   .chips{margin-top:8px;} .chips b{font-size:12px;}
   .chips span{display:inline-block;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--r-pill);padding:2px 9px;margin:2px 3px 2px 0;font-size:11px;}
   .anz-card{border-left:3px solid var(--partial);}
@@ -328,6 +333,9 @@ const REG = /*__REG__*/{};
 const REGDATA = /*__REGDATA__*/{};
 const RECDATA = /*__RECDATA__*/{};
 const VENDORMIX = /*__VENDORMIX__*/{};
+/*__IGA_VENDOR_FIT_START__*/
+const IGAVFIT = /*__IGAVFIT__*/{};
+/*__IGA_VENDOR_FIT_END__*/
 const COMPLIANCE = /*__COMPLIANCE__*/{};
 const VENDORINTEL = /*__VENDORINTEL__*/{};
 const META = /*__META__*/{};
@@ -650,7 +658,12 @@ function renderRecommendations(){
      '</tbody></table></div>';
   }
   /*__LEGACY_REC_END__*/
+  /*__VENDORMIX_REGION_START__*/
   h+=vendorMixHtml();
+  /*__VENDORMIX_REGION_END__*/
+  /*__IGA_VENDOR_FIT_START__*/
+  h+=igaVendorFitHtml();
+  /*__IGA_VENDOR_FIT_END__*/
   h+=vendorIntelHtml();
   h+=complianceHtml();
   el.innerHTML=h;
@@ -725,6 +738,7 @@ function complianceHtml(){
   }
   return h;
 }
+/*__VENDORMIX_REGION_START__*/
 function vendorMixHtml(){
   const vm=VENDORMIX; if(!vm||!vm.cover) return "";
   const pct=x=>Math.round((x||0)*100)+'%';
@@ -776,6 +790,38 @@ function vendorMixHtml(){
   }
   return h;
 }
+/*__VENDORMIX_REGION_END__*/
+/*__IGA_VENDOR_FIT_START__*/
+// IGA bespoke per-AREA vendor-fit grid (Phase 3). IGA is process-shaped, so the
+// NATIVE/ADD-ON capability matrix (vendorMixHtml) is gated OFF and replaced by
+// this small vendors × {JML, Certification, SoD, Role/Request} fit grid.
+function igaVendorFitHtml(){
+  const g=IGAVFIT; if(!g||!g.vendors||!g.vendors.length) return "";
+  const fitPill=f=>'<span class="fit fit-'+esc(f)+'">'+esc(f)+'</span>';
+  const cite=c=>{ const k=(c.citation_keys||"").split(";").filter(Boolean); const n=k.length;
+    return c.evidence_url?' <a class="cite" href="'+esc(c.evidence_url)+'" target="_blank" rel="noopener">cite'+(n>1?' ('+n+')':'')+'</a>':''; };
+  let h='<div class="card" style="border-left:4px solid var(--l1)"><h3>Vendor fit by governance area</h3>'+
+    '<p class="muted" style="font-size:11px">IGA is process-shaped, so vendors are assessed per <b>governance area</b> — not as a single NATIVE/ADD-ON product score. '+
+    'Fit is capability <i>presence</i> per vendor (from first-party docs where renderable), not an efficacy benchmark. '+
+    '<b>PARTIAL</b> verdicts are deliberate: a first-party capability exists but is materially constrained (e.g. scoped to one vendor\'s own access packages, not a general cross-application toxic-combination engine).</p>'+
+    '<p style="font-size:11px;margin:4px 0 10px">'+
+      fitPill("NATIVE")+' first-class, documented &nbsp; '+
+      fitPill("PARTIAL")+' present but constrained &nbsp; '+
+      fitPill("ADD-ON")+' separate module / add-on</p>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
+    '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Vendor</th>'+
+    g.areas.map(a=>'<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">'+esc(a)+'</th>').join("")+
+    '</tr></thead><tbody>'+
+    g.vendors.map(v=>'<tr>'+
+      '<td style="padding:6px 5px;border-bottom:1px solid #eee;vertical-align:top"><b>'+esc(v.vendor)+'</b></td>'+
+      g.areas.map(a=>{ const c=v.cells[a]||{}; return '<td style="padding:6px 5px;border-bottom:1px solid #eee;vertical-align:top">'+
+        fitPill(c.fit)+cite(c)+
+        '<div class="muted" style="font-size:11px;margin-top:3px">'+esc(c.justification||"")+'</div></td>'; }).join("")+
+      '</tr>').join("")+
+    '</tbody></table></div>';
+  return h;
+}
+/*__IGA_VENDOR_FIT_END__*/
 
 // ---- business value ----
 function renderValue(){

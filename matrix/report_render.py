@@ -53,6 +53,13 @@ def render(model):
     # content (markers stripped → byte-identical); others have it removed entirely.
     template = _apply_region(load_template(), "SUBSTRATE_CARD", keep=dc["has_substrate"])
     template = _apply_region(template, "LEGACY_REC", keep=dc["legacy_recdata"])
+    # IGA is process-shaped: it renders the bespoke per-AREA vendor-fit grid
+    # (model["igavfit"]) and gates OFF the NATIVE/ADD-ON capability matrix
+    # (VENDORMIX). secrets/PAM (no igavfit) keep the matrix and drop the IGA view.
+    # The two source regions are mutually exclusive — never both in one report.
+    is_iga = bool(model.get("igavfit"))
+    template = _apply_region(template, "IGA_VENDOR_FIT", keep=is_iga)
+    template = _apply_region(template, "VENDORMIX_REGION", keep=not is_iga)
     # Then the delimited JSON/CSS injections (each `/*__X__*/[]`/`{}` placeholder is
     # distinct and carries model data, not user-facing prose).
     html = (template
@@ -69,6 +76,7 @@ def render(model):
             .replace("/*__REGDATA__*/{}", json.dumps(model["regdata"], ensure_ascii=False))
             .replace("/*__RECDATA__*/{}", json.dumps(model["recdata"], ensure_ascii=False))
             .replace("/*__VENDORMIX__*/{}", json.dumps(model.get("vendormix", {}), ensure_ascii=False))
+            .replace("/*__IGAVFIT__*/{}", json.dumps(model.get("igavfit", {}), ensure_ascii=False))
             .replace("/*__COMPLIANCE__*/{}", json.dumps(model.get("compliance", {}), ensure_ascii=False))
             .replace("/*__VENDORINTEL__*/{}", json.dumps(model.get("vendorintel", {}), ensure_ascii=False))
             .replace("/*__META__*/{}", json.dumps(model["meta"], ensure_ascii=False))

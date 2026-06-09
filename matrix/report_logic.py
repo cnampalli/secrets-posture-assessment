@@ -3,6 +3,8 @@
 Turns the loaded inputs (+ the resolved engagement) into the REG/REGDATA/RECDATA/
 GLOSSARY/meta structures the template consumes. No file or CSV access.
 """
+import csv as _csv
+import os as _os
 from collections import defaultdict
 
 import compliance as _cmp
@@ -258,6 +260,54 @@ def build_vendormix(ranked, ownership, anchors, short):
         "single_source": _rz.single_source(ranked, ownership)["single_source"],
         "complementary": complementary,
     }
+
+
+# IGA is process-shaped: the NATIVE/ADD-ON per-use-case capability matrix
+# (build_vendormix) does NOT fit it. IGA is assessed per governance AREA instead.
+IGA_AREAS = ["JML", "Certification", "SoD", "Role/Request"]
+
+
+def build_iga_vendor_fit(data_dir, fit_csv="iga-vendor-fit.csv"):
+    """Bespoke per-AREA vendor-fit grid for IGA (Phase 3).
+
+    Reads `<data_dir>/iga-vendor-fit.csv` (cols: vendor, vendor_slug, area, fit,
+    justification, evidence_url, citation_keys) into an ordered vendors × areas
+    grid suitable for HTML rendering. fit ∈ {NATIVE, PARTIAL, ADD-ON}. Vendors
+    keep first-seen (data) order; areas are pinned to IGA_AREAS. Each cell carries
+    {fit, justification, evidence_url, citation_keys} — the honest PARTIAL
+    rationale and the Saviynt marketing-grade caveat survive verbatim.
+
+    This is the IGA analogue of build_vendormix; the two are mutually exclusive
+    (a domain renders one or the other, never both)."""
+    path = _os.path.join(data_dir, fit_csv)
+    with open(path, newline="", encoding="utf-8") as fh:
+        rows = list(_csv.DictReader(fh))
+
+    order = []                                  # vendors in first-seen order
+    cells = defaultdict(dict)                   # vendor -> {area -> cell}
+    slug_of = {}
+    for r in rows:
+        vendor = (r.get("vendor") or "").strip()
+        area = (r.get("area") or "").strip()
+        if not vendor or area not in IGA_AREAS:
+            continue
+        if vendor not in cells:
+            order.append(vendor)
+        slug_of.setdefault(vendor, (r.get("vendor_slug") or "").strip())
+        cells[vendor][area] = {
+            "fit": (r.get("fit") or "").strip(),
+            "justification": (r.get("justification") or "").strip(),
+            "evidence_url": (r.get("evidence_url") or "").strip(),
+            "citation_keys": (r.get("citation_keys") or "").strip(),
+        }
+
+    vendors = [{
+        "vendor": v, "vendor_slug": slug_of.get(v, ""),
+        "cells": {a: cells[v].get(a, {"fit": "", "justification": "",
+                                      "evidence_url": "", "citation_keys": ""})
+                  for a in IGA_AREAS},
+    } for v in order]
+    return {"areas": list(IGA_AREAS), "vendors": vendors}
 
 
 def build_recdata(ranked, nhis, vendor_layer, short, vendor_residency, substrate_slug, engagement):
