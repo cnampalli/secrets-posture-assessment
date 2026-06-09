@@ -61,8 +61,20 @@ export function UseCaseView({ startId }: { startId?: string }) {
           <p className="text-xs text-muted">
             {allScored
               ? 'You’ve reached the end of the questionnaire. Export your assessment record to take into the report.'
-              : 'This is the last use case. You can export now, or revisit any unscored use cases from the sidebar.'}
+              : 'This is the last use case. Jump to any unscored use case below to finish it, or export now.'}
           </p>
+          {!allScored && (
+            <ul className="mt-3 flex flex-col gap-1">
+              {a.unscored.map(u => (
+                <li key={u.uc_id}>
+                  <button type="button" onClick={() => a.go(u.uc_id)}
+                    className="text-left text-xs text-accent hover:underline">
+                    {u.uc_id} — {u.title || u.uc_id}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 

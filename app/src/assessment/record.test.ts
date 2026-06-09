@@ -1,5 +1,5 @@
 import { describe, it, expect, test } from 'vitest';
-import { proposedFor, finalFor, scoredCount, buildRecord, blankResponse } from './record';
+import { proposedFor, finalFor, scoredCount, buildRecord, blankResponse, isScored, unscoredUseCases } from './record';
 import type { UseCase, Response } from './types';
 import { makeRubric } from './rubric';
 import { DEFAULT_DOMAIN } from './domains';
@@ -46,6 +46,28 @@ describe('record model', () => {
     expect(rec.responses['UC-F-001']).toMatchObject({
       archetype: 'A1', proposed_state: 'GAP', final_state: 'GAP', overridden: false, rationale: 'r', confidence: 'MED',
     });
+  });
+});
+
+describe('scored predicate + unscored list', () => {
+  it('unscoredUseCases returns every UC when nothing is answered', () => {
+    expect(unscoredUseCases(RUBRIC, {}).length).toBe(RUBRIC.length);
+  });
+
+  it('scoredCount + unscored partition the rubric', () => {
+    const responses = {};
+    expect(scoredCount(RUBRIC, responses) + unscoredUseCases(RUBRIC, responses).length).toBe(RUBRIC.length);
+  });
+
+  it('isScored agrees with a ladder UC answered to a non-PENDING state', () => {
+    const lad = RUBRIC.find(u => u.kind === 'ladder')!;
+    // answer every question "yes" -> proposed state is non-PENDING -> scored
+    const answers: Record<string, 'yes'> = {};
+    for (const q of lad.questions!) answers[q.qid] = 'yes';
+    const r = { ...blankResponse(), answers };
+    expect(isScored(lad, r)).toBe(true);
+    expect(isScored(lad, undefined)).toBe(false);
+    expect(unscoredUseCases([lad], { [lad.uc_id]: r })).toEqual([]);
   });
 });
 

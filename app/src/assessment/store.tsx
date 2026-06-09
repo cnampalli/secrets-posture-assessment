@@ -2,12 +2,12 @@ import { createContext, useContext, useMemo, useRef, useState, type ReactNode } 
 import type { Answer, Response, State, UseCase, EvidenceMeta } from './types';
 import { makeRubric, type RubricView } from './rubric';
 import { DEFAULT_DOMAIN, isDomainId, type DomainId } from './domains';
-import { blankResponse, proposedFor, finalFor, scoredCount } from './record';
+import { blankResponse, proposedFor, finalFor, scoredCount, unscoredUseCases } from './record';
 import { loadResponses, saveResponses, importRecord, loadEvidence, migrateLegacy } from './persistence';
 import { putFile, deleteFile, getBlob, validateFile, genId, buildExportRecord, restoreEvidence } from './evidence';
 
 interface Api {
-  current: UseCase; responses: Record<string, Response>; scored: number;
+  current: UseCase; responses: Record<string, Response>; scored: number; unscored: UseCase[];
   domainId: DomainId; setDomain: (id: DomainId) => void;
   rubric: UseCase[]; byCategory: () => Record<string, UseCase[]>;
   go: (uc_id: string) => void;
@@ -76,6 +76,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const api: Api = useMemo(() => ({
     get current() { return view.byId(currentId) ?? view.rubric[0]; },
     responses, scored: scoredCount(view.rubric, responses),
+    unscored: unscoredUseCases(view.rubric, responses),
     domainId, setDomain, rubric: view.rubric, byCategory: view.byCategory,
     go: (uc_id) => setCurrentId(uc_id),
     answer: (qid, v) => mutate(currentId, r => {
