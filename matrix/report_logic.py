@@ -289,6 +289,13 @@ def build_iga_vendor_fit(data_dir, fit_csv="iga-vendor-fit.csv"):
     for r in rows:
         vendor = (r.get("vendor") or "").strip()
         area = (r.get("area") or "").strip()
+        # Fail loudly on a mistyped/unknown non-blank area rather than silently
+        # dropping the row (which would render a blank cell and hide the typo). A
+        # blank area is not a typo signal — it's simply not a governance-area cell.
+        if area and area not in IGA_AREAS:
+            raise ValueError(
+                f"Unrecognized IGA area {area!r} for vendor {vendor!r}; "
+                f"expected one of {IGA_AREAS}")
         if not vendor or area not in IGA_AREAS:
             continue
         if vendor not in cells:

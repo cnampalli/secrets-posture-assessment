@@ -13,12 +13,46 @@ These tests pin:
 """
 import os
 
+import pytest
+
 import report_logic
 import report_render
 import domains
 
 IGA_DATA_DIR = domains.IGA.data_dir
 AREAS = ["JML", "Certification", "SoD", "Role/Request"]
+
+_FIT_HEADER = "vendor,vendor_slug,area,fit,justification,evidence_url,citation_keys\n"
+
+
+def test_real_iga_vendor_fit_data_does_not_raise():
+    # The shipped iga-vendor-fit.csv (areas JML/Certification/SoD/Role/Request)
+    # must still build cleanly under the area guard.
+    grid = report_logic.build_iga_vendor_fit(IGA_DATA_DIR)
+    assert grid["areas"] == AREAS
+
+
+def test_unrecognized_area_raises_loudly(tmp_path):
+    # A mistyped/unknown non-blank area must fail at build time rather than being
+    # silently dropped (which would render a blank cell and hide the typo).
+    (tmp_path / "iga-vendor-fit.csv").write_text(
+        _FIT_HEADER
+        + 'Acme IGA,acme,Certifcation,NATIVE,typo in area,https://example.com,acme-cert\n',
+        encoding="utf-8")
+    with pytest.raises(ValueError):
+        report_logic.build_iga_vendor_fit(str(tmp_path))
+
+
+def test_blank_area_is_tolerated(tmp_path):
+    # A blank area is not a typo signal — it must NOT raise (the row is simply
+    # not a recognized governance-area cell).
+    (tmp_path / "iga-vendor-fit.csv").write_text(
+        _FIT_HEADER
+        + 'Acme IGA,acme,,NATIVE,no area,https://example.com,acme\n'
+        + 'Acme IGA,acme,JML,NATIVE,real cell,https://example.com,acme-jml\n',
+        encoding="utf-8")
+    grid = report_logic.build_iga_vendor_fit(str(tmp_path))
+    assert grid["vendors"][0]["cells"]["JML"]["fit"] == "NATIVE"
 
 
 def test_build_iga_vendor_fit_returns_4x4_grid_ordered():

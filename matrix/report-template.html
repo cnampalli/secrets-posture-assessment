@@ -334,6 +334,10 @@ const REGDATA = /*__REGDATA__*/{};
 const RECDATA = /*__RECDATA__*/{};
 const VENDORMIX = /*__VENDORMIX__*/{};
 /*__IGA_VENDOR_FIT_START__*/
+// Note: for IGA, the VENDORMIX and VENDORINTEL consts above/below are intentionally
+// harmless empty {} stubs — their only consumer (the VENDORMIX_REGION) is gated off
+// for IGA, so they are declared but never read. (This comment lives in the
+// IGA-gated region so secrets/PAM output stays byte-identical.)
 const IGAVFIT = /*__IGAVFIT__*/{};
 /*__IGA_VENDOR_FIT_END__*/
 const COMPLIANCE = /*__COMPLIANCE__*/{};
