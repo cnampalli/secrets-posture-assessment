@@ -1,0 +1,17 @@
+vendor,area,fit
+SailPoint,JML,supports
+SailPoint,Certification,supports
+SailPoint,SoD,supports
+SailPoint,Role/Request,supports
+Saviynt,JML,supports
+Saviynt,Certification,supports
+Saviynt,SoD,supports
+Saviynt,Role/Request,supports
+Microsoft Entra ID Governance,JML,supports
+Microsoft Entra ID Governance,Certification,supports
+Microsoft Entra ID Governance,SoD,partial
+Microsoft Entra ID Governance,Role/Request,supports
+Okta Identity Governance,JML,partial
+Okta Identity Governance,Certification,supports
+Okta Identity Governance,SoD,add-on
+Okta Identity Governance,Role/Request,supports
