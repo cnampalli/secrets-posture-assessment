@@ -1,0 +1,12 @@
+uc_id,archetype_id,params,notes
+UC-I-001,A2,"target_pattern=automated birthright and role-based provisioning;nhi_population=workforce joiners;legacy_pattern=manual ticket-based account creation;threshold=the bulk of joiner provisioning",Automated joiner / birthright provisioning
+UC-I-002,A7,"process=the mover access-recalculation process for workforce transfers",Mover access recalculation on transfer
+UC-I-003,A2,"target_pattern=automated de-provisioning within SLA on termination;nhi_population=workforce leavers;legacy_pattern=manual and delayed account disablement;threshold=the bulk of leaver events",Timely leaver de-provisioning
+UC-I-004,A5,"nhi_population=in-scope workforce entitlements;threshold=95%;cadence=quarterly certification campaign;system=the IGA certification module",Periodic access certification campaigns
+UC-I-005,A8,"artifact=a high-risk access certification sign-off;cadence=quarterly cycle;scope=privileged and high-risk entitlements;sla=the agreed campaign-close window",High-risk access certification sign-off
+UC-I-006,A1,"control=preventive segregation-of-duties checks at access-request time;nhi_population=all access requests;scope=all in-scope applications with defined SoD rules",Preventive SoD checks at request time
+UC-I-007,A7,"process=the segregation-of-duties policy and violation-management process",SoD policy register & violation management
+UC-I-008,A3,"capability=detective SoD violation scanning of existing access;nhi_population=in-scope workforce entitlements;config_target=toxic combinations detected and routed to remediation with mitigating-control tracking",Detective SoD scanning of existing access
+UC-I-009,A3,"capability=role mining and RBAC role engineering;nhi_population=in-scope workforce populations;config_target=a maintained role model covering the bulk of access with periodic role review",Role mining & RBAC baseline
+UC-I-010,A7,"process=the self-service access request and approval workflow",Self-service access request & approval
+UC-I-011,A2,"target_pattern=right-sized least-privilege entitlements;nhi_population=in-scope workforce identities;legacy_pattern=accumulated over-provisioned access from role changes;threshold=the bulk of identified excess entitlements",Least-privilege entitlement right-sizing

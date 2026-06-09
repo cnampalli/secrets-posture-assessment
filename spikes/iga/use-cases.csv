@@ -1,0 +1,12 @@
+uc_id,category,short_title,area
+UC-I-001,FUNCTIONAL,Automated joiner / birthright provisioning,JML
+UC-I-002,FUNCTIONAL,Mover access recalculation on transfer,JML
+UC-I-003,FUNCTIONAL,Timely leaver de-provisioning,JML
+UC-I-004,FUNCTIONAL,Periodic access certification campaigns,Certification
+UC-I-005,FUNCTIONAL,High-risk access certification sign-off,Certification
+UC-I-006,FUNCTIONAL,Preventive SoD checks at request time,SoD
+UC-I-007,FUNCTIONAL,SoD policy register & violation management,SoD
+UC-I-008,NON_FUNCTIONAL,Detective SoD scanning of existing access,SoD
+UC-I-009,FUNCTIONAL,Role mining & RBAC baseline,Role/Request
+UC-I-010,FUNCTIONAL,Self-service access request & approval,Role/Request
+UC-I-011,FUNCTIONAL,Least-privilege entitlement right-sizing,Role/Request
