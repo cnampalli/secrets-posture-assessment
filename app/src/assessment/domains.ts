@@ -1,14 +1,16 @@
 import type { UseCase } from './types';
 import secrets from '../data/rubric.secrets.json';
 import pam from '../data/rubric.pam.json';
+import iga from '../data/rubric.iga.json';
 
-export type DomainId = 'secrets' | 'pam';
+export type DomainId = 'secrets' | 'pam' | 'iga';
 
 export interface Domain { id: DomainId; label: string; rubric: UseCase[]; }
 
 export const DOMAINS: Domain[] = [
   { id: 'secrets', label: 'Secrets Management', rubric: secrets as unknown as UseCase[] },
   { id: 'pam', label: 'Privileged Access (PAM)', rubric: pam as unknown as UseCase[] },
+  { id: 'iga', label: 'Identity Governance (IGA)', rubric: iga as unknown as UseCase[] },
 ];
 
 export const DEFAULT_DOMAIN: DomainId = 'secrets';
