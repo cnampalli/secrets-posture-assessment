@@ -3,7 +3,11 @@ import { render, screen, act, renderHook } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { AssessmentProvider, useAssessment } from './store';
-import { RUBRIC } from './rubric';
+import { makeRubric } from './rubric';
+import { DEFAULT_DOMAIN } from './domains';
+import { keyFor } from './persistence';
+
+const RUBRIC = makeRubric(DEFAULT_DOMAIN).rubric;
 
 beforeEach(() => localStorage.clear());
 
@@ -73,7 +77,50 @@ it('answering a ladder question updates derived state + persists', async () => {
       await userEvent.click(screen.getByText(`ans-${q.qid}`));
     }
     expect(['GAP', 'PARTIAL', 'MET', 'NA']).toContain(screen.getByTestId('final').textContent);
-    expect(localStorage.getItem('posture-assessment-record/v1')).toContain(RUBRIC[0].uc_id);
+    expect(localStorage.getItem(keyFor('secrets'))).toContain(RUBRIC[0].uc_id);
   }
   expect(firstLadder).toBeTruthy();
+});
+
+describe('domain-aware store', () => {
+  beforeEach(() => localStorage.clear());
+
+  function probe() {
+    const api: { current: ReturnType<typeof useAssessment> | null } = { current: null };
+    function Probe() { api.current = useAssessment(); return null; }
+    render(<AssessmentProvider><Probe /></AssessmentProvider>);
+    return api;
+  }
+
+  it('defaults to secrets and exposes its rubric', () => {
+    const api = probe();
+    expect(api.current!.domainId).toBe('secrets');
+    expect(api.current!.rubric.length).toBe(47);
+  });
+
+  it('setDomain swaps to PAM and its 17-UC rubric', () => {
+    const api = probe();
+    act(() => api.current!.setDomain('pam'));
+    expect(api.current!.domainId).toBe('pam');
+    expect(api.current!.rubric.length).toBe(17);
+    expect(api.current!.current.uc_id.startsWith('UC-P-')).toBe(true);
+    const total = Object.values(api.current!.byCategory()).reduce((n, l) => n + l.length, 0);
+    expect(total).toBe(17);
+  });
+
+  it('isolates responses across domains', () => {
+    const api = probe();
+    act(() => { api.current!.go('UC-F-001'); api.current!.answer('A1-Q1', 'yes'); });
+    act(() => api.current!.setDomain('pam'));
+    expect(Object.keys(api.current!.responses)).toHaveLength(0);
+    act(() => api.current!.setDomain('secrets'));
+    expect(api.current!.responses['UC-F-001'].answers['A1-Q1']).toBe('yes');
+  });
+
+  it('persists the selected domain across remounts', () => {
+    const a1 = probe();
+    act(() => a1.current!.setDomain('pam'));
+    const a2 = probe();
+    expect(a2.current!.domainId).toBe('pam');
+  });
 });

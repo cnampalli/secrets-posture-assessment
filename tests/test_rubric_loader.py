@@ -95,14 +95,27 @@ def _ev_on(uc, dimension):
     return out
 
 
-def test_pam_loads_only_mapped_use_cases():
-    assert {u["uc_id"] for u in PAM_UCS} == {"UC-P-001", "UC-P-002", "UC-P-003"}
+def test_pam_loads_all_17_use_cases():
+    # the PAM questionnaire must reach parity with the PAM matrix report (all 17 UCs),
+    # not the original 3-UC demo slice.
+    assert {u["uc_id"] for u in PAM_UCS} == {f"UC-P-{i:03d}" for i in range(1, 18)}
+
+
+def test_pam_all_use_cases_are_ladder():
+    # every PAM UC maps to a reusable archetype (no bespoke A0 long-tail in this domain).
+    for uc in PAM_UCS:
+        assert uc["kind"] == "ladder", f"{uc['uc_id']} is not a ladder UC"
+        assert uc["questions"], f"{uc['uc_id']} has no questions"
 
 
 def test_pam_archetypes_assigned():
     assert PAM_BY_ID["UC-P-001"]["archetype"] == "A4"
     assert PAM_BY_ID["UC-P-002"]["archetype"] == "A1"
     assert PAM_BY_ID["UC-P-003"]["archetype"] == "A3"
+    # spot-check a sample of the newly-mapped tail
+    assert PAM_BY_ID["UC-P-007"]["archetype"] == "A1"   # MFA -> preventive guardrail
+    assert PAM_BY_ID["UC-P-014"]["archetype"] == "A5"   # recertification -> inventory & attestation
+    assert PAM_BY_ID["UC-P-017"]["archetype"] == "A8"   # resilience -> periodic assurance artifact
 
 
 def test_pam_questions_have_no_leftover_slots():

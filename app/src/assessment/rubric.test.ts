@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { RUBRIC, byCategory, byId } from './rubric';
+import { makeRubric } from './rubric';
+import { DEFAULT_DOMAIN } from './domains';
+
+const view = makeRubric(DEFAULT_DOMAIN);
+const RUBRIC = view.rubric;
 
 describe('rubric', () => {
   it('loads 47 use cases', () => { expect(RUBRIC.length).toBe(47); });
@@ -13,8 +17,8 @@ describe('rubric', () => {
     }
   });
   it('groups by category and indexes by id', () => {
-    const g = byCategory();
+    const g = view.byCategory();
     expect(Object.keys(g)).toEqual(expect.arrayContaining(['Functional', 'Non-functional']));
-    expect(byId(RUBRIC[0].uc_id)).toBe(RUBRIC[0]);
+    expect(view.byId(RUBRIC[0].uc_id)).toBe(RUBRIC[0]);
   });
 });

@@ -1,8 +1,11 @@
 import { describe, it, expect, test } from 'vitest';
 import { proposedFor, finalFor, scoredCount, buildRecord, blankResponse } from './record';
 import type { UseCase, Response } from './types';
-import { RUBRIC } from './rubric';
+import { makeRubric } from './rubric';
+import { DEFAULT_DOMAIN } from './domains';
 import type { EvidenceMeta } from './types';
+
+const RUBRIC = makeRubric(DEFAULT_DOMAIN).rubric;
 
 const ladder: UseCase = {
   uc_id: 'UC-F-001', title: 'X', category: 'Functional', archetype: 'A1', archetype_name: 'A1',

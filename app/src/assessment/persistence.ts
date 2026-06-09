@@ -1,18 +1,24 @@
-import type { Response, State, EvidenceMeta } from './types';
+import type { Response, State, EvidenceMeta, UseCase } from './types';
 import { blankResponse, buildRecord } from './record';
-import { RUBRIC } from './rubric';
+import { DEFAULT_DOMAIN, type DomainId } from './domains';
 
-export const STORE_KEY = 'posture-assessment-record/v1';
+const PREFIX = 'posture-assessment-record/v1';
+const LEGACY_KEY = PREFIX; // the old single, un-namespaced key
 const SCHEMA = 'posture-assessment-record/v1';
 const STATES: State[] = ['GAP', 'PARTIAL', 'MET', 'PENDING', 'NA'];
 
-export function loadResponses(): Record<string, Response> {
+export function keyFor(domainId: DomainId): string { return `${PREFIX}/${domainId}`; }
+
+/** One-shot: fold a legacy un-namespaced record into the secrets namespace. */
+export function migrateLegacy(): void {
   try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return {};
-    const rec = JSON.parse(raw);
-    return rec && rec.responses ? rebuildResponses(rec.responses) : {};
-  } catch { return {}; }
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (legacy === null) return;
+    if (localStorage.getItem(keyFor(DEFAULT_DOMAIN)) === null) {
+      localStorage.setItem(keyFor(DEFAULT_DOMAIN), legacy);
+    }
+    localStorage.removeItem(LEGACY_KEY);
+  } catch { /* storage unavailable — nothing to migrate */ }
 }
 
 function rebuildResponses(stored: Record<string, unknown>): Record<string, Response> {
@@ -29,17 +35,27 @@ function rebuildResponses(stored: Record<string, unknown>): Record<string, Respo
   return out;
 }
 
+export function loadResponses(domainId: DomainId): Record<string, Response> {
+  try {
+    const raw = localStorage.getItem(keyFor(domainId));
+    if (!raw) return {};
+    const rec = JSON.parse(raw);
+    return rec && rec.responses ? rebuildResponses(rec.responses) : {};
+  } catch { return {}; }
+}
+
 export function saveResponses(
+  domainId: DomainId, rubric: UseCase[],
   responses: Record<string, Response>, generated: string,
   evidence?: Record<string, EvidenceMeta[]>,
 ): void {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(buildRecord(RUBRIC, responses, generated, evidence))); }
+  try { localStorage.setItem(keyFor(domainId), JSON.stringify(buildRecord(rubric, responses, generated, evidence, domainId))); }
   catch { /* quota / unavailable — caller may toast */ }
 }
 
-export function loadEvidence(): Record<string, EvidenceMeta[]> {
+export function loadEvidence(domainId: DomainId): Record<string, EvidenceMeta[]> {
   try {
-    const raw = localStorage.getItem(STORE_KEY);
+    const raw = localStorage.getItem(keyFor(domainId));
     if (!raw) return {};
     const rec = JSON.parse(raw);
     const ev = rec && rec.evidence;

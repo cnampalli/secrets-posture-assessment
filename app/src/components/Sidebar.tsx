@@ -1,5 +1,4 @@
 import { useAssessment } from '../assessment/store';
-import { byCategory } from '../assessment/rubric';
 import type { State } from '../assessment/types';
 
 const dotClass: Record<State, string> = {
@@ -8,7 +7,7 @@ const dotClass: Record<State, string> = {
 
 export function Sidebar() {
   const a = useAssessment();
-  const groups = byCategory();
+  const groups = a.byCategory();
   return (
     <nav className="w-[280px] shrink-0 border-r border-border bg-bg2 overflow-auto p-3">
       {Object.entries(groups).map(([cat, ucs]) => (

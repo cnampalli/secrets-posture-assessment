@@ -1,3 +1,5 @@
+import type { DomainId } from './domains';
+
 export type State = 'GAP' | 'PARTIAL' | 'MET' | 'PENDING' | 'NA';
 export type Answer = 'yes' | 'no' | 'na';
 export type InformsState = 'GAP_PARTIAL' | 'PARTIAL_MET';
@@ -15,7 +17,9 @@ export interface Response {
   confidence: 'LOW' | 'MED' | 'HIGH';
 }
 export interface AssessmentRecord {
-  schema: 'posture-assessment-record/v1'; generated: string;
+  schema: 'posture-assessment-record/v1';
+  domain?: DomainId;
+  generated: string;
   responses: Record<string, {
     archetype: string; answers: Record<string, Answer | boolean>;
     proposed_state: State | null; final_state: State; overridden: boolean;
