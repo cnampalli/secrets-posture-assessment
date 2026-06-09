@@ -68,6 +68,60 @@ end-to-end in either, with the questionnaire depth and report both complete.
 - **PAM regulatory evidence packs in the React UI** — surface the per-question "what artifact proves this
   control" hints (already in the PAM data) in the interactive app.
 
+## Instrument-quality review (2026-06-09) — findings & to-dos
+A **buyer's due-diligence review of the assessment instrument itself** (not a client's posture). Reusable
+methodology: `methodology/INSTRUMENT-REVIEW-METHODOLOGY.md` (4 lenses × 20 scored dimensions — Methodological
+Rigor / Domain Completeness & Currency / Regulatory Defensibility / Commercial & Operational Fit). Worked
+application + full scorecard: `meta/instrument-review-2026-06-09.md`.
+
+**Verdict: Buy-with-conditions.** No `Inadequate` dimensions; the engine (archetypes, evidence packs,
+deterministic scoring + override audit trail, regulatory layer) is strong. **Pattern: engineering is ahead of
+the product surface** — four buyer-facing surfaces lag. **Strongest lens:** Regulatory defensibility (source
+URL + verbatim quote + `framework_role` + `maturity_level` per control in `regulatory-trace.csv`; audit-grade
+`evidence-catalog.csv`). **Coverage is Strong** — UC-P-011 (vendor access), UC-P-012 (CIEM), UC-P-013
+(secretless/SPIFFE), PID-015/019/020 are already present (not gaps).
+
+**To-do — ordered by buyer-impact × low-effort (credibility quick wins first):**
+1. ☐ **[MUST-FIX · trivial · A6]** Reframe the **"98% calibration" claim** wherever it appears
+   (`meta/IMPROVEMENT-BACKLOG.md` WS-1, any client collateral) as *"98% reproduction of our frozen baseline
+   (internal consistency)"* — **not "validated."** As written it's a due-diligence landmine: the 98% is the
+   rubric reproducing a baseline the *same author* hand-scored, which is internal consistency, not independent
+   validation.
+2. ☐ **[MUST-FIX · low–med · B8]** Add an **agentic-AI / autonomous-agent identity class** to the NHI catalogs
+   (`matrix/domains/pam/identity-catalog.csv` + Secrets), mapped to archetype(s) + ≥1 use case; add an
+   **OAuth app-registration / consent-grant** sibling (the Midnight-Blizzard pattern, only indirectly covered
+   via PID-010). Rationale: the fastest-emerging privileged NHI in 2026; its absence dates the instrument.
+   *(Do alongside the next domain-model refresh.)*
+3. ☐ **[SHOULD-ADD · low–med · A4]** **Maturity roll-up (ML1/2/3).** Derive a board-readable maturity score
+   from the per-control `maturity_level` already in `regulatory-trace.csv` + per-UC verdicts. The data exists;
+   the engine just doesn't surface it. (Already noted deferred in IMPROVEMENT-BACKLOG.)
+4. ☐ **[SHOULD-ADD · low · A4]** **Consequence-weight the roll-up** using `priority_fi` (P0/P1/P2 already in
+   `use-cases.csv`) so a failed P0 (e.g. break-glass UC-P-008) dominates a failed P2. Fixes the worst
+   discrimination flaw: scoring is currently flat/unweighted and a single `GAP_PARTIAL` "no" floors the whole UC.
+5. ☐ **[SHOULD-ADD · low–med · D16]** **Rapid-scan (triage) tier.** A subset/lighter flow giving a credible
+   first read in ~1 hour, alongside the full ~150–190-question deep dive. Current single depth is overcooked
+   for first-look buyers and the per-NHI×UC deep cut is deferred — both gears are missing.
+6. ☐ **[SHOULD-ADD · low–med · A3+A5]** **Publish a calibration / worked-example set** ("here's the evidence →
+   here's the verdict → here's why") to align assessors. Lifts inter-rater reliability *and* gaming resistance
+   together; reduces reliance on facilitator skill.
+7. ☐ **[SHOULD-ADD · med · A6]** **External calibration** — a small independent expert panel or one incident
+   back-test. Converts "internal consistency" into genuine validation; biggest single credibility lift.
+8. ☐ **[SHOULD-ADD · med–high · D19] → maps to Phase 5** **Anonymized peer/industry benchmark.** Answers the
+   buyer's "where do I stand vs comparable FIs?" — already scoped in Phase 5 ("anonymized benchmark").
+9. ☐ **[NICE-TO-HAVE · low · B7]** **SAW/PAW (tier-0 isolation) as a discrete UC** — today only an Essential 8
+   tag (E8-RAP-ML3 → UC-P-004), not an assessed control.
+10. ☐ **[NICE-TO-HAVE · low–med · B9]** **Structured per-UC ATT&CK mapping (PAM)** — promote the prose
+    technique references (PtH/Kerberoasting/DCSync in UC-P-016) to structured technique IDs, as already done
+    for secrets/T1552.
+11. ☐ **[NICE-TO-HAVE · low · A5]** **Enforce confidence/evidence at capture** so an un-evidenced MET is
+    structurally low-confidence rather than depending on facilitator discipline.
+12. ☐ **[NICE-TO-HAVE · low · C13]** **Tidy field-name/doc drift** — `override_reason` vs `rationale`; stale
+    `RUBRIC.md` vs schema. Cosmetic, but external reviewers notice.
+13. ☐ **[NICE-TO-HAVE · verify-first · B7]** **Leaked-secret / sprawl detection** (repos, SaaS) — confirm
+    whether the Secrets domain already covers this before adding to PAM.
+14. ☐ **[NICE-TO-HAVE · med · B7]** **OT/ICS privileged access** — sector-dependent; add or explicitly
+    disclose as out-of-scope.
+
 ## What exists now (on `main`)
 - Engine: `matrix/optimizer.py`, `resilience.py`, `vendor_intel.py`, `compliance.py`, `matrix_vocab.py`,
   `report_logic.py` (build_vendormix / build_vendor_intel / build_compliance + legacy build_recdata).
