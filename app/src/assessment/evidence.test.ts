@@ -5,7 +5,10 @@ import {
   validateFile, humanSize, genId,
   buildExportRecord, restoreEvidence,
 } from './evidence';
-import { RUBRIC } from './rubric';
+import { makeRubric } from './rubric';
+import { DEFAULT_DOMAIN } from './domains';
+
+const RUBRIC = makeRubric(DEFAULT_DOMAIN).rubric;
 
 function fileOf(name: string, type: string, bytes = 10): File {
   return new File([new Uint8Array(bytes).fill(65)], name, { type });

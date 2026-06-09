@@ -1,5 +1,6 @@
 import { MAX_BYTES, ALLOWED_TYPES } from './types';
 import type { UseCase, Response, AssessmentRecord, EvidenceMeta, EvidenceExport } from './types';
+import type { DomainId } from './domains';
 import { buildRecord } from './record';
 
 const DB_NAME = 'posture-evidence';
@@ -106,8 +107,9 @@ export async function buildExportRecord(
   rubric: UseCase[], responses: Record<string, Response>,
   evidence: Record<string, EvidenceMeta[]>, generated: string,
   load: (id: string) => Promise<Blob | null> = getBlob,
+  domain?: DomainId,
 ): Promise<{ record: ExportRecord; skipped: number }> {
-  const record = buildRecord(rubric, responses, generated) as ExportRecord;
+  const record = buildRecord(rubric, responses, generated, undefined, domain) as ExportRecord;
   let skipped = 0;
   const ev: Record<string, EvidenceExport[]> = {};
   for (const [uc, list] of Object.entries(evidence)) {

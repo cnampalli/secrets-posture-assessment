@@ -49,7 +49,7 @@ export function saveResponses(
   responses: Record<string, Response>, generated: string,
   evidence?: Record<string, EvidenceMeta[]>,
 ): void {
-  try { localStorage.setItem(keyFor(domainId), JSON.stringify(buildRecord(rubric, responses, generated, evidence))); }
+  try { localStorage.setItem(keyFor(domainId), JSON.stringify(buildRecord(rubric, responses, generated, evidence, domainId))); }
   catch { /* quota / unavailable — caller may toast */ }
 }
 

@@ -6,7 +6,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { ToastProvider, useToast } from './components/Toast';
 import { UseCaseView } from './components/UseCaseView';
 import { Button } from './components/ui';
-import { RUBRIC } from './assessment/rubric';
+import { DomainPicker } from './components/DomainPicker';
 
 function Header() {
   const a = useAssessment();
@@ -18,7 +18,7 @@ function Header() {
       const { text, skipped } = await a.exportRecord();
       const blob = new Blob([text], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a'); link.href = url; link.download = 'assessment-record.json'; link.click();
+      const link = document.createElement('a'); link.href = url; link.download = `assessment-${a.domainId}.json`; link.click();
       URL.revokeObjectURL(url);
       if (skipped) toast(`${skipped} file(s) couldn't be exported`);
     } catch {
@@ -31,15 +31,22 @@ function Header() {
       <div className="w-8 h-8 rounded-sm bg-accent text-accent-fg grid place-items-center font-display font-semibold">P</div>
       <b className="font-display">Posture Assessment</b>
       <span className="text-muted text-sm">/ Questionnaire</span>
+      <DomainPicker />
       <span className="flex-1" />
-      <span className="font-mono text-xs text-muted">{a.scored} / {RUBRIC.length} scored</span>
+      <span className="font-mono text-xs text-muted">{a.scored} / {a.rubric.length} scored</span>
       <input ref={fileRef} type="file" accept="application/json" className="hidden"
         onChange={e => {
           const f = e.target.files?.[0];
           if (!f) return;
           const rd = new FileReader();
           rd.onload = async () => {
-            try { await a.importText(String(rd.result)); toast('Record imported'); }
+            try {
+              const parsed = JSON.parse(String(rd.result));
+              await a.importText(String(rd.result));
+              if (parsed && parsed.domain && parsed.domain !== a.domainId)
+                toast(`Imported — note: file domain "${parsed.domain}" differs from "${a.domainId}"; only matching items were merged`);
+              else toast('Record imported');
+            }
             catch { toast('Import failed — check the file'); }
           };
           rd.readAsText(f);

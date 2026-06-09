@@ -112,7 +112,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
       persistAll(ref.current, { ...evRef.current, [uc]: (evRef.current[uc] ?? []).filter(m => m.id !== id) });
     },
     exportRecord: async () => {
-      const { record, skipped } = await buildExportRecord(view.rubric, ref.current, evRef.current, now(), getBlob);
+      const { record, skipped } = await buildExportRecord(view.rubric, ref.current, evRef.current, now(), getBlob, domainId);
       return { text: JSON.stringify(record, null, 2), skipped };
     },
     importText: async (text) => {

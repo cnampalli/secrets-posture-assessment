@@ -1,4 +1,5 @@
 import type { UseCase, Response, State, AssessmentRecord, EvidenceMeta } from './types';
+import type { DomainId } from './domains';
 import { deriveState } from './scoring';
 
 const SCHEMA = 'posture-assessment-record/v1' as const;
@@ -27,9 +28,10 @@ export function scoredCount(rubric: UseCase[], responses: Record<string, Respons
 
 export function buildRecord(
   rubric: UseCase[], responses: Record<string, Response>, generated: string,
-  evidence?: Record<string, EvidenceMeta[]>,
+  evidence?: Record<string, EvidenceMeta[]>, domain?: DomainId,
 ): AssessmentRecord {
   const out: AssessmentRecord = { schema: SCHEMA, generated, responses: {} };
+  if (domain) out.domain = domain;
   for (const uc of rubric) {
     const r = responses[uc.uc_id];
     if (!r) continue;

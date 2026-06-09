@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useAssessment } from '../assessment/store';
-import { RUBRIC } from '../assessment/rubric';
 import { Badge, Button, Card, CardBody, ToggleGroup, Checkbox } from './ui';
 import { ScorePanel } from './ScorePanel';
 import { EvidencePanel } from './EvidencePanel';
@@ -10,7 +9,8 @@ export function UseCaseView({ startId }: { startId?: string }) {
   useEffect(() => { if (startId) a.go(startId); /* once */ }, [startId]); // eslint-disable-line
   const uc = a.current;
   const r = a.responses[uc.uc_id];
-  const idx = RUBRIC.findIndex(u => u.uc_id === uc.uc_id);
+  const rubric = a.rubric;
+  const idx = rubric.findIndex(u => u.uc_id === uc.uc_id);
 
   return (
     <div>
@@ -50,8 +50,8 @@ export function UseCaseView({ startId }: { startId?: string }) {
       <EvidencePanel />
 
       <div className="flex justify-between mt-6">
-        <Button variant="outline" disabled={idx <= 0} onClick={() => a.go(RUBRIC[idx - 1].uc_id)}>← Previous</Button>
-        <Button disabled={idx >= RUBRIC.length - 1} onClick={() => a.go(RUBRIC[idx + 1].uc_id)}>Save &amp; next →</Button>
+        <Button variant="outline" disabled={idx <= 0} onClick={() => a.go(rubric[idx - 1].uc_id)}>← Previous</Button>
+        <Button disabled={idx >= rubric.length - 1} onClick={() => a.go(rubric[idx + 1].uc_id)}>Save &amp; next →</Button>
       </div>
     </div>
   );

@@ -3,7 +3,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AssessmentProvider } from '../assessment/store';
 import { UseCaseView } from './UseCaseView';
-import { RUBRIC } from '../assessment/rubric';
+import { makeRubric } from '../assessment/rubric';
+import { DEFAULT_DOMAIN } from '../assessment/domains';
+
+const RUBRIC = makeRubric(DEFAULT_DOMAIN).rubric;
 
 beforeEach(() => localStorage.clear());
 
