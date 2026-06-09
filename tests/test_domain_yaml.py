@@ -31,6 +31,12 @@ def test_pam_round_trips_through_registry():
     assert domains.DOMAINS["pam"] is domains.PAM
 
 
+def test_iga_round_trips_through_registry():
+    loaded = domains.load_domain(os.path.join(CONFIG_DIR, "iga.yaml"))
+    assert loaded == domains.IGA
+    assert domains.DOMAINS["iga"] is domains.IGA
+
+
 def test_secrets_yaml_anchors_to_historical_values():
     """Independent pin to the values the hand-written Python SECRETS descriptor
     carried — does NOT route through domains.SECRETS (which is itself YAML-loaded),
@@ -56,6 +62,24 @@ def test_pam_yaml_anchors_to_historical_values():
     assert set(d.vendor_layer) == {"cyberark-pam", "delinea", "beyondtrust",
                                    "one-identity-safeguard", "wallix-bastion", "teleport"}
     assert d.short["cyberark-pam"] == "CyberArk"
+    assert d.informative_frameworks == frozenset()
+    assert d.legacy_recdata is False
+
+
+def test_iga_yaml_anchors_to_historical_values():
+    d = domains.load_domain(os.path.join(CONFIG_DIR, "iga.yaml"))
+    assert d.label == "Identity Governance & Administration"
+    assert d.report_heading == "Identity Governance & Administration — Vendor Selection"
+    assert d.object_singular == "identity"
+    assert d.posture_noun == "identity-governance"
+    assert d.substrate_slug == ""
+    assert d.anchors_tier == "suite"
+    assert set(d.vendor_layer) == {"sailpoint-isc", "saviynt-eic",
+                                   "microsoft-entra-idg", "okta-oig"}
+    assert d.vendor_layer["sailpoint-isc"] == ("L1", "suite")
+    assert d.vendor_layer["okta-oig"] == ("L1", "suite")
+    assert d.short["sailpoint-isc"] == "SailPoint"
+    assert d.short["microsoft-entra-idg"] == "Microsoft Entra"
     assert d.informative_frameworks == frozenset()
     assert d.legacy_recdata is False
 

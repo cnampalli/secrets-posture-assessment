@@ -21,6 +21,19 @@ def read_csv(here, name):
         return list(csv.DictReader(fh))
 
 
+def _has_header(here, name):
+    """True iff <here>/<name> exists and carries a non-empty header line — i.e. a
+    deliberately *header-only* CSV (zero data rows) is distinguishable from a
+    missing/truly-empty file. Used to recognise a matrix-less domain (IGA ships a
+    header-only vendor-capabilities.csv on purpose) without weakening the
+    no-rows guard for domains that genuinely depend on the matrix."""
+    path = os.path.join(here, name)
+    if not os.path.exists(path):
+        return False
+    with open(path, newline="", encoding="utf-8") as fh:
+        return any(h.strip() for h in (next(csv.reader(fh), []) or []))
+
+
 def load_vendor_residency(cfgdir):
     return _ov.load_vendor_residency(os.path.join(cfgdir, "vendor-residency.yaml"))
 
@@ -42,7 +55,11 @@ def load_inputs(here, current_state_name=None, domain=SECRETS):
     defaults to the domain's default current-state file."""
     current_state_name = current_state_name or domain.default_current_state
     all_rows = read_csv(here, domain.vendor_capabilities)
-    if not all_rows:
+    if not all_rows and not _has_header(here, domain.vendor_capabilities):
+        # Missing / truly-empty matrix for a matrix-using domain (secrets/PAM) is fatal.
+        # A *header-only* matrix is the deliberate signal that this domain doesn't use
+        # the NATIVE/ADD-ON capability matrix (IGA → bespoke per-area vendor-fit): it
+        # simply has no ranked vendors, which must NOT be a fatal error.
         sys.exit(f"No rows in {domain.vendor_capabilities}")
     unmapped = sorted({r["vendor_slug"] for r in all_rows if r["vendor_slug"] not in domain.vendor_layer})
     if unmapped:

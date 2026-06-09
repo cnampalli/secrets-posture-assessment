@@ -23,6 +23,21 @@ def build():
     domains_data = []
     for dom in domains.DOMAINS.values():
         inp = report_io.load_inputs(dom.data_dir, None, dom)
+        # Matrix-less domains (IGA ships a header-only vendor-capabilities.csv and uses
+        # a bespoke per-area vendor-fit model) have no ranked vendors and a disjoint
+        # vendor set, so they don't participate in the NATIVE/ADD-ON cross-domain
+        # spanning/concentration map. Skip them rather than rolling up an empty domain.
+        #
+        # PRECONDITION (grill Q5): this exclusion is honest ONLY while a matrix-less
+        # domain's vendor set is parent-disjoint from every matrix-using domain. The
+        # concentration map rolls up by ultimate corporate PARENT, so if a matrix-less
+        # domain ever shares a corporate parent with a matrix-using one (e.g. a
+        # Microsoft secrets/PAM SKU alongside Microsoft Entra in IGA), skipping it here
+        # would SUPPRESS a real parent-concentration signal. Revisit this skip — fold
+        # the matrix-less domain's parents into the rollup — before that day.
+        if not inp["ranked"]:
+            print(f"cross-domain: skipping matrix-less domain {dom.slug}")
+            continue
         domains_data.append({"slug": dom.slug, "label": dom.label, "ranked": inp["ranked"]})
     model = crossdomain.build_crossmap(domains_data, ownership)
     with open(DST, "w", encoding="utf-8") as f:

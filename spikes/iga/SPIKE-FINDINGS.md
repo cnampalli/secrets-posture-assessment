@@ -37,4 +37,19 @@ process-maturity core; build a small bespoke vendor-fit renderer rather than for
 capability matrix. Sequence: data research → questionnaire (works now) → vendor-fit view → cross-domain.
 
 ## Status
-Spike complete; illustrative artifacts in `spikes/iga/`. No production code touched.
+Spike complete; illustrative artifacts in `spikes/iga/`.
+
+## ✅ SUPERSEDED BY PRODUCTION (Phase 3 built — 2026-06-10)
+The full Phase 3 IGA domain is now built and shipped on the hybrid model this spike validated:
+- **Citation-backed data** (13 use cases UC-I-001..013; 13 identity classes IGID-001..013; regulatory
+  trace; evidence catalog) in `matrix/domains/iga/`, researched + adversarially citation-verified
+  (59/60 verified, 0 fabricated; provenance in `research/iga/`).
+- **Domain descriptor** `matrix/config/domains/iga.yaml` + loader/emit registration + guard tests.
+- **Bespoke per-area vendor-fit renderer** (NATIVE/PARTIAL/ADD-ON × {JML,Cert,SoD,Role/Request}); the
+  NATIVE/ADD-ON capability matrix is gated OFF for IGA, exactly as this spike predicted.
+- **React app** wired (Identity Governance (IGA) in the domain dropdown; 13-UC rubric).
+- **Quality gates passed**: instrument-review = Buy-with-conditions (condition closed), code-review =
+  approved; full suite 257 passing. Dated buyer-DD review at `meta/iga-instrument-review-2026-06-10.md`.
+
+The illustrative artifacts in this directory are retained for history; the authoritative IGA domain
+now lives under `matrix/domains/iga/`.

@@ -3,14 +3,15 @@ import { DOMAINS, DEFAULT_DOMAIN, getDomain } from './domains';
 import { makeRubric } from './rubric';
 
 describe('domain registry', () => {
-  it('registers secrets and pam', () => {
-    expect(DOMAINS.map(d => d.id).sort()).toEqual(['pam', 'secrets']);
+  it('registers secrets, pam and iga', () => {
+    expect(DOMAINS.map(d => d.id).sort()).toEqual(['iga', 'pam', 'secrets']);
     expect(DEFAULT_DOMAIN).toBe('secrets');
   });
 
   it('carries the right rubric per domain', () => {
     expect(getDomain('secrets').rubric.length).toBe(47);
     expect(getDomain('pam').rubric.length).toBe(17);
+    expect(getDomain('iga').rubric.length).toBe(13);
   });
 
   it('falls back to the default domain on an unknown id', () => {
