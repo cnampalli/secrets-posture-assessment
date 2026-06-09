@@ -150,7 +150,7 @@ def load_domain(path):
 
 # Canonical display order; any additional domain YAMLs are appended alphabetically,
 # so dropping a new descriptor into config/domains/ registers it without code.
-_DOMAIN_ORDER = ("secrets", "pam")
+_DOMAIN_ORDER = ("secrets", "pam", "iga")
 
 
 def load_domains(directory=_DOMAIN_DIR):
@@ -171,3 +171,4 @@ def load_domains(directory=_DOMAIN_DIR):
 DOMAINS = load_domains()
 SECRETS = DOMAINS["secrets"]
 PAM = DOMAINS["pam"]
+IGA = DOMAINS["iga"]

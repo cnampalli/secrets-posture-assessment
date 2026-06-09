@@ -17,6 +17,7 @@ OUT_DIR = os.path.join(ROOT, "app", "src", "data")
 DOMAINS = [
     {"id": "secrets", "data_dir": None},
     {"id": "pam", "data_dir": os.path.join(ROOT, "matrix", "domains", "pam")},
+    {"id": "iga", "data_dir": os.path.join(ROOT, "matrix", "domains", "iga")},
 ]
 
 
