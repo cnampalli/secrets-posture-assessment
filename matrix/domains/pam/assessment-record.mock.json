@@ -1,0 +1,183 @@
+{
+  "schema": "posture-assessment-record/v1",
+  "generated": "2026-06-10T00:00:00Z",
+  "meta": {
+    "scenario": "ILLUSTRATIVE — not a client assessment",
+    "as_of": "2026-06-10",
+    "domain": "pam",
+    "profile": "mid-maturity Australian bank (composite, fictional) — CyberArk-style vault deployed on the core estate, JIT/ZSP and cloud entitlement governance still maturing",
+    "disclaimer": "Synthetic illustrative posture authored to demonstrate the reporting pipeline. Does not represent any real institution or assessment."
+  },
+  "responses": {
+    "UC-P-001": {
+      "archetype": "A1",
+      "answers": {"vault-deployed": "yes", "rotation-on-policy": "partial", "plaintext-in-config": "some"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "CyberArk vault holds Windows/AD privileged accounts but Unix/Linux and network-device passwords are onboarded inconsistently and several batch service accounts are still rotated by hand.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-002": {
+      "archetype": "A1",
+      "answers": {"proxy-brokered": "yes", "bypass-blocked": "yes"},
+      "proposed_state": "MET",
+      "final_state": "MET",
+      "overridden": false,
+      "rationale": "Privileged sessions to in-scope servers route through the PAM proxy with credential injection and direct admin paths are blocked at the network layer.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-003": {
+      "archetype": "A1",
+      "answers": {"sessions-recorded": "yes", "tamper-evident": "partial"},
+      "proposed_state": "MET",
+      "final_state": "MET",
+      "overridden": false,
+      "rationale": "Sessions are recorded with searchable command metadata and retained per policy; high-risk command flagging is enabled though review SLAs are still being tuned.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-004": {
+      "archetype": "A2",
+      "answers": {"standing-priv-removed": "no", "jit-coverage": "low"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Most privileged roles still carry always-on standing membership; JIT elevation is piloted only for a handful of cloud admin groups, so zero-standing-privilege coverage is minimal.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-005": {
+      "archetype": "A1",
+      "answers": {"discovery-recurring": "partial", "auto-onboard": "no"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Scheduled discovery runs across AD and the major Unix estate but cloud, DB and SaaS local-admin accounts are scanned ad hoc and newly found accounts are onboarded manually.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-006": {
+      "archetype": "A2",
+      "answers": {"runtime-fetch": "no", "hardcoded-removed": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Application-to-application credentials are still largely hard-coded in config and CI variables; only two strategic platforms fetch credentials from the broker at runtime.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-007": {
+      "archetype": "A1",
+      "answers": {"mfa-at-proxy": "yes", "phishing-resistant-tier0": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "MFA is enforced at the PAM elevation point for all in-scope access, but phishing-resistant FIDO2 is rolled out to only part of the tier-0 administrator population.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-008": {
+      "archetype": "A1",
+      "answers": {"breakglass-sealed": "yes", "dual-control": "yes", "post-use-rotation": "yes"},
+      "proposed_state": "MET",
+      "final_state": "MET",
+      "overridden": false,
+      "rationale": "Break-glass accounts are sealed, alert-on-use, require dual control at checkout and auto-rotate after use with an auto-raised incident for review.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-009": {
+      "archetype": "A1",
+      "answers": {"local-admin-removed": "partial", "per-app-elevation": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Standing local-admin has been removed from the standard SOE fleet but a sizeable population of developer and engineering workstations still retains local-admin pending an EPM rollout.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-010": {
+      "archetype": "A2",
+      "answers": {"entitlements-rightsized": "no", "high-risk-combos-flagged": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Privileged entitlements are not yet right-sized against actual usage; no periodic least-privilege baseline review exists and excess grants accumulate over time.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-011": {
+      "archetype": "A1",
+      "answers": {"vendor-brokered": "yes", "standing-vendor-creds": "some"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Strategic vendors connect through the recorded PAM proxy with JIT grants, but a few legacy support arrangements still rely on standing VPN and shared admin credentials.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-012": {
+      "archetype": "A2",
+      "answers": {"ciem-deployed": "no", "drift-monitored": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "There is no continuous cloud entitlement analysis across AWS/Azure/GCP; over-permissioned cloud identities are only found during periodic manual reviews.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-013": {
+      "archetype": "A2",
+      "answers": {},
+      "proposed_state": "PENDING",
+      "final_state": "PENDING",
+      "overridden": false,
+      "rationale": "Secretless privileged workload attestation has not yet been assessed; the platform team has flagged it for a future spike alongside the workload-identity program.",
+      "confidence": "LOW",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-014": {
+      "archetype": "A1",
+      "answers": {"recert-cycle": "partial", "orphan-revoke": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Privileged accounts are recertified annually as part of the broader access review, but the cadence is not risk-tiered and a meaningful share of items are bulk-approved.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-015": {
+      "archetype": "A2",
+      "answers": {"behavioural-analytics": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Privileged session and credential-use telemetry is forwarded to the SIEM but no behavioural analytics or anomaly detection is applied to it today.",
+      "confidence": "LOW",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-016": {
+      "archetype": "A1",
+      "answers": {"pth-detection": "partial", "kerberoast-detection": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "The SOC has detections for pass-the-hash and Kerberoasting via the EDR/SIEM, but DCSync and token-theft coverage against privileged accounts is incomplete and not fully correlated.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-017": {
+      "archetype": "A1",
+      "answers": {"availability-target-met": "yes", "breakglass-tested": "yes", "failover-tested": "partial"},
+      "proposed_state": "MET",
+      "final_state": "MET",
+      "overridden": false,
+      "rationale": "The PAM platform meets its availability and recovery targets with tested break-glass paths; cross-region failover is exercised though the full DR drill cadence is still being formalised.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    }
+  }
+}

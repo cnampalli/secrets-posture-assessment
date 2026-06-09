@@ -1,0 +1,143 @@
+{
+  "schema": "posture-assessment-record/v1",
+  "generated": "2026-06-10T00:00:00Z",
+  "meta": {
+    "scenario": "ILLUSTRATIVE — not a client assessment",
+    "as_of": "2026-06-10",
+    "domain": "iga",
+    "profile": "mid-maturity Australian bank (composite, fictional) — birthright provisioning and self-service request established, certification and SoD governance partially mature, role model and right-sizing still emerging",
+    "disclaimer": "Synthetic illustrative posture authored to demonstrate the reporting pipeline. Does not represent any real institution or assessment."
+  },
+  "responses": {
+    "UC-I-001": {
+      "archetype": "A1",
+      "answers": {"hr-feed-authoritative": "yes", "birthright-automated": "yes"},
+      "proposed_state": "MET",
+      "final_state": "MET",
+      "overridden": false,
+      "rationale": "Joiners receive birthright access automatically from the HR feed against versioned role policies, with the large majority of day-one access granted without manual tickets.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-002": {
+      "archetype": "A2",
+      "answers": {"mover-event-triggered": "no", "prior-access-revoked": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Transfers add new-role birthright access but prior-role entitlements are rarely revoked, so privilege creep accumulates across role changes with no manager reaffirmation step.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-003": {
+      "archetype": "A1",
+      "answers": {"termination-automated": "partial", "same-day-disable": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Leaver de-provisioning runs on a nightly batch from the HR source so the same-day disablement expectation (ASD ISM-1591) is not consistently met for contractors and federated SaaS targets.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-004": {
+      "archetype": "A2",
+      "answers": {"reconciliation-periodic": "partial", "dormant-disabled": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Account-to-owner reconciliation is performed only on a few critical systems; dormant accounts beyond the inactivity threshold are not systematically detected or disabled estate-wide.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-005": {
+      "archetype": "A1",
+      "answers": {"campaign-scheduled": "yes", "decisioned-in-window": "partial", "no-decision-safe-default": "no"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Annual certification campaigns run on schedule and most items are decisioned, but no-decision items currently default to retain rather than revoke and revocation actioning often slips past SLA.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-006": {
+      "archetype": "A1",
+      "answers": {"priv-shorter-cadence": "partial", "named-owner-signoff": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Privileged entitlements are flagged within the general campaign but lack a separate shorter cadence and a consistent named-owner sign-off, so the highest-impact access is not validated more often than ordinary access.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-007": {
+      "archetype": "A2",
+      "answers": {"event-triggers-defined": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "There is no event-driven micro-certification; risk-relevant changes such as transfers or new privileged grants wait for the next scheduled campaign to be re-validated.",
+      "confidence": "LOW",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-008": {
+      "archetype": "A2",
+      "answers": {"sod-checked-at-request": "no", "toxic-combo-blocked": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Access requests are not evaluated against the SoD ruleset before provisioning, so toxic combinations are only discovered later during detective scans rather than blocked at the source.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-009": {
+      "archetype": "A1",
+      "answers": {"sod-register-exists": "yes", "violation-workflow": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "A versioned SoD ruleset with named owners exists for the SOX-relevant scope, but the violation-management workflow and time-bound exception re-attestation are only partly documented and applied.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-010": {
+      "archetype": "A1",
+      "answers": {"detective-scan-recurring": "partial", "mitigating-control-tracked": "partial"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Detective SoD scans run on the SOX-critical ERP and core banking systems, but coverage of cross-system toxic pairs and a complete mitigating-control register across the wider estate is still incomplete.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-011": {
+      "archetype": "A2",
+      "answers": {},
+      "proposed_state": "PENDING",
+      "final_state": "PENDING",
+      "overridden": false,
+      "rationale": "A formal role-mining and RBAC baseline exercise has not yet been scoped; entitlements are still largely granted individually and a coverage metric has not been captured.",
+      "confidence": "LOW",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-012": {
+      "archetype": "A1",
+      "answers": {"catalogue-exposed": "yes", "approval-chain-enforced": "yes"},
+      "proposed_state": "MET",
+      "final_state": "MET",
+      "overridden": false,
+      "rationale": "A self-service catalogue routes requests through an enforced manager-plus-owner approval chain with recorded approver, timestamp and justification, and most grants flow through the workflow rather than out-of-band.",
+      "confidence": "HIGH",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-013": {
+      "archetype": "A2",
+      "answers": {"rightsizing-report": "no", "trend-tracked": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "There is no periodic least-privilege right-sizing report driven by usage telemetry; standing excess access is added far more readily than it is removed, with no measured reduction trend.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    }
+  }
+}
