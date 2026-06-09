@@ -18,12 +18,17 @@ export function finalFor(uc: UseCase, r: Response): State {
   return proposedFor(uc, r) ?? r.final_state ?? 'PENDING';
 }
 
+export function isScored(uc: UseCase, r: Response | undefined): boolean {
+  const p = r ? proposedFor(uc, r) : null;
+  return !!((p && p !== 'PENDING') || (uc.kind === 'bespoke' && r && r.final_state));
+}
+
 export function scoredCount(rubric: UseCase[], responses: Record<string, Response>): number {
-  return rubric.filter(uc => {
-    const r = responses[uc.uc_id];
-    const p = r ? proposedFor(uc, r) : null;
-    return (p && p !== 'PENDING') || (uc.kind === 'bespoke' && r && r.final_state);
-  }).length;
+  return rubric.filter(uc => isScored(uc, responses[uc.uc_id])).length;
+}
+
+export function unscoredUseCases(rubric: UseCase[], responses: Record<string, Response>): UseCase[] {
+  return rubric.filter(uc => !isScored(uc, responses[uc.uc_id]));
 }
 
 export function buildRecord(

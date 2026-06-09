@@ -34,3 +34,13 @@ it('keeps Save & next on a non-last use case', () => {
   expect(screen.getByRole('button', { name: /save & next/i })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: /export record/i })).toBeNull();
 });
+
+it('lists unscored use cases on the last screen and lets you jump to one', async () => {
+  const last = RUBRIC[RUBRIC.length - 1];
+  render(<AssessmentProvider><UseCaseView startId={last.uc_id} /></AssessmentProvider>);
+  // nothing scored yet -> the first UC shows as an unscored jump link
+  const first = RUBRIC[0];
+  const link = screen.getByRole('button', { name: new RegExp(first.uc_id) });
+  await userEvent.click(link);
+  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(first.title || first.uc_id);
+});
