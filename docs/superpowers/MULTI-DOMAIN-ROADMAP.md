@@ -19,8 +19,8 @@ is summarised here.
 | **0.5** | PAM spike: validate "shared engine + per-domain model" abstraction | ✅ DONE — abstraction holds (see `spikes/pam/SPIKE-FINDINGS.md`) |
 | **1** | Generalize the engine: per-domain `Domain` descriptor + config-driven report | ✅ DONE — slices 1–2, #1 body-prose, #3/#5, #4, #8, #1-residual all closed → **PR #17** (`feat/phase1`, off `main`; secrets byte-identical, suite 210 green) |
 | **2** | Promote PAM to a real offering + cross-domain consolidation/concentration view (X1–X2) | ✅ DONE — PAM domain fully stood up; **cross-domain consolidation view built** (`build_cross_domain.py` → `cross-domain-report.html`; CyberArk flagged spanning 2/2; runtime-verified, suite 197 green) |
-| **2.7** | **Both-domain demo parity** — app + questionnaires work seamlessly for BOTH PAM and Secrets posture assessment (gate before Phase 3) | 🟦 IN PROGRESS — #1 PAM questionnaire depth ✅, #2 React app domain-aware ✅; #3 manual both-domain parity smoke remaining. See "Phase 2.7" below |
-| **3** | IGA / SailPoint as a *scoped* offering (process-shaped — own model, judgment-heavy) | ⬜ — **blocked on 2.7** |
+| **2.7** | **Both-domain demo parity** — app + questionnaires work seamlessly for BOTH PAM and Secrets posture assessment (gate before Phase 3) | ✅ DONE (2026-06-09) — PAM questionnaire depth (17 UCs), React app domain-aware (dropdown + per-domain isolation), both-domain smoke confirmed working. See "Phase 2.7" below |
+| **3** | IGA / SailPoint as a *scoped* offering (process-shaped — own model, judgment-heavy) | ⬜ — **unblocked** (2.7 gate cleared) |
 | **4** | Workforce IAM / CIAM — **demand-pulled only** (analyst-owned space) | ⬜ |
 | **5** | Consulting-instrument wrap: multi-engagement workspace, current-state import, anonymized benchmark | ⬜ |
 
@@ -50,11 +50,11 @@ interactive UX, comparable depth, no domain looking like a stub. Added 2026-06-0
    domain-tagged (`assessment-<domain>.json`) and import warns on a cross-domain file. `UseCaseView` prev/next
    now follows the active rubric. App suite 57 green; offline single-file `build:check` passes (both rubrics
    inlined). PAM regulatory evidence packs in the React UI remain out of scope (separate follow-up).
-3. **[Parity check] Seamless both-domain demo** — Secrets and PAM each: open in the React app, score a use
-   case, attach evidence, export/import a record, and open the matching matrix report. No secrets vocabulary
-   leaking into PAM; no PAM stub-feel. Eyeball all tabs in a browser (no live render done to date).
-4. **[Regression] Suite green for both domains**; both data gates clean
-   (`validate_data.py --data-dir matrix/domains/pam`).
+3. ✅ **[Parity check] DONE** (2026-06-09) — both-domain demo smoke-tested live in the React app
+   (`npm run dev`): Secrets⇄PAM switch, score + evidence + export/import confirmed working in each, no
+   cross-domain contamination. Confirmed working by the user.
+4. ✅ **[Regression] DONE** — app suite 57 green; Python suite 234 green; PAM data gate clean
+   (`validate_data.py --data-dir matrix/domains/pam`); offline `build:check` passes.
 
 **Acceptance:** a reviewer can pick "PAM" or "Secrets" in the live app and run a full posture assessment
 end-to-end in either, with the questionnaire depth and report both complete.
