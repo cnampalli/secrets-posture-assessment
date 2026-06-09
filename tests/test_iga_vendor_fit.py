@@ -68,6 +68,18 @@ def test_iga_cells_carry_justification_and_citation():
     assert "marketing-grade" in sav_jml["justification"]
 
 
+def test_csv_vendor_slugs_subset_of_descriptor_vendor_layer():
+    """Drift guard: every vendor_slug in iga-vendor-fit.csv must exist as a key in
+    the IGA descriptor's vendor_layer map. The two vocabularies diverged once
+    (product-accurate CSV slugs vs short YAML keys); this fails the moment a
+    second consumer joins the CSV slug to the descriptor and they drift again."""
+    grid = report_logic.build_iga_vendor_fit(IGA_DATA_DIR)
+    csv_slugs = {v["vendor_slug"] for v in grid["vendors"]}
+    layer_keys = set(domains.DOMAINS["iga"].vendor_layer.keys())
+    assert csv_slugs <= layer_keys, (
+        f"CSV vendor_slugs not in descriptor vendor_layer: {sorted(csv_slugs - layer_keys)}")
+
+
 def _render_iga():
     model = report_render and None  # placeholder; built below
     igavfit = report_logic.build_iga_vendor_fit(IGA_DATA_DIR)

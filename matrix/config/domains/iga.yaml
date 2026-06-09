@@ -23,16 +23,16 @@ default_current_state: "current-state.csv"
 # Single "suite" layer for all four — IGA fit is assessed per governance AREA,
 # not per-product NATIVE/ADD-ON.
 vendor_layer:
-  sailpoint: ["L1", "suite"]
-  saviynt: ["L1", "suite"]
-  entra-id-governance: ["L1", "suite"]
-  okta-ig: ["L1", "suite"]
+  sailpoint-isc: ["L1", "suite"]
+  saviynt-eic: ["L1", "suite"]
+  microsoft-entra-idg: ["L1", "suite"]
+  okta-oig: ["L1", "suite"]
 
 short:
-  sailpoint: "SailPoint"
-  saviynt: "Saviynt"
-  entra-id-governance: "Microsoft Entra"
-  okta-ig: "Okta"
+  sailpoint-isc: "SailPoint"
+  saviynt-eic: "Saviynt"
+  microsoft-entra-idg: "Microsoft Entra"
+  okta-oig: "Okta"
 
 layer_label:
   L1: "L1 · IGA platforms (lifecycle / certification / SoD / access requests) — fit assessed per governance area, not per-product NATIVE/ADD-ON"

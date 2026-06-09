@@ -28,6 +28,7 @@ def build():
         # vendor set, so they don't participate in the NATIVE/ADD-ON cross-domain
         # spanning/concentration map. Skip them rather than rolling up an empty domain.
         if not inp["ranked"]:
+            print(f"cross-domain: skipping matrix-less domain {dom.slug}")
             continue
         domains_data.append({"slug": dom.slug, "label": dom.label, "ranked": inp["ranked"]})
     model = crossdomain.build_crossmap(domains_data, ownership)

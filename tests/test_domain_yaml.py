@@ -74,12 +74,12 @@ def test_iga_yaml_anchors_to_historical_values():
     assert d.posture_noun == "identity-governance"
     assert d.substrate_slug == ""
     assert d.anchors_tier == "suite"
-    assert set(d.vendor_layer) == {"sailpoint", "saviynt",
-                                   "entra-id-governance", "okta-ig"}
-    assert d.vendor_layer["sailpoint"] == ("L1", "suite")
-    assert d.vendor_layer["okta-ig"] == ("L1", "suite")
-    assert d.short["sailpoint"] == "SailPoint"
-    assert d.short["entra-id-governance"] == "Microsoft Entra"
+    assert set(d.vendor_layer) == {"sailpoint-isc", "saviynt-eic",
+                                   "microsoft-entra-idg", "okta-oig"}
+    assert d.vendor_layer["sailpoint-isc"] == ("L1", "suite")
+    assert d.vendor_layer["okta-oig"] == ("L1", "suite")
+    assert d.short["sailpoint-isc"] == "SailPoint"
+    assert d.short["microsoft-entra-idg"] == "Microsoft Entra"
     assert d.informative_frameworks == frozenset()
     assert d.legacy_recdata is False
 

@@ -108,13 +108,13 @@ def test_iga_domain_registered_and_substrateless():
 
 def test_iga_vendor_layer_and_shorts():
     d = domains.IGA
-    assert set(d.vendor_layer) == {"sailpoint", "saviynt",
-                                   "entra-id-governance", "okta-ig"}
+    assert set(d.vendor_layer) == {"sailpoint-isc", "saviynt-eic",
+                                   "microsoft-entra-idg", "okta-oig"}
     # IGA uses a single "suite" layer for all four platforms (fit is per-area)
     assert all(lay == "L1" and tier == "suite"
                for lay, tier in d.vendor_layer.values())
-    assert d.short["saviynt"] == "Saviynt"
-    assert d.short["okta-ig"] == "Okta"
+    assert d.short["saviynt-eic"] == "Saviynt"
+    assert d.short["okta-oig"] == "Okta"
 
 
 def test_report_meta_is_single_source_token_map():

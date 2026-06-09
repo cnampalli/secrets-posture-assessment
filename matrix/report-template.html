@@ -815,7 +815,7 @@ function igaVendorFitHtml(){
     g.vendors.map(v=>'<tr>'+
       '<td style="padding:6px 5px;border-bottom:1px solid #eee;vertical-align:top"><b>'+esc(v.vendor)+'</b></td>'+
       g.areas.map(a=>{ const c=v.cells[a]||{}; return '<td style="padding:6px 5px;border-bottom:1px solid #eee;vertical-align:top">'+
-        fitPill(c.fit)+cite(c)+
+        (c.fit?fitPill(c.fit):'')+cite(c)+
         '<div class="muted" style="font-size:11px;margin-top:3px">'+esc(c.justification||"")+'</div></td>'; }).join("")+
       '</tr>').join("")+
     '</tbody></table></div>';
