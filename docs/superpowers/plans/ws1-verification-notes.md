@@ -260,3 +260,28 @@ Nothing is outright UNVERIFIED — every code resolved to a primary or acceptabl
 - **eCFR (17 CFR 240.13a-15):** ecfr.gov 302-redirected to unblock.federalregister.gov (geo/bot block). Verified via law.cornell.edu instead. Re-check ecfr.gov when reachable.
 - **cyber.gov.au HTML guideline page** (personnel security) timed out twice; verification instead used the official cyber.gov.au ISM **December 2024 PDF** (downloaded from cyber.gov.au) — still the primary source. A newer ISM release may exist (ismcontrol.xyz shows "last updated May 21, 2025" with identical control texts for all six controls checked); confirm against the current cyber.gov.au release at next quarterly refresh.
 - **SOX §404(a):** govinfo HTML fetch truncated before Title IV; §404(a) items (1)/(2) verified verbatim via the codified text at 15 U.S.C. §7262(a) (law.cornell.edu). §103 clause verified verbatim directly on govinfo.
+
+---
+
+## Deferred review findings (logged 2026-06-10 WS1 code review; not blocking)
+
+Surfaced by the 7-angle review, accepted as follow-ups rather than WS1 scope:
+
+1. **backmap_codes style drift (→ WS2, touches use-cases.csv anyway):** IGA `use-cases.csv`
+   backmap_codes still use `ISO-A.5.18` / `SOX-§404` / `SOX-§103` / `ICFR-13a15f` styles that don't
+   match the trace control_codes (`A.5.18`, `PL 107-204 §404(a)`, …). Display-only today; align when
+   WS2 edits the UC rows (secrets/PAM backmaps match their traces exactly).
+2. **Dangling citation key `iso-27001-a5-18` (→ WS2):** used in use-cases.csv + identity-catalog.csv
+   but the trace's ISO key is `iso-27001-a5-18-quote-withheld`; no bib entry. Pre-existing on main.
+3. **`ms-incident` registry pattern is a no-op** (`^[A-Z][A-Za-z0-9-]+$` matches nearly anything) —
+   membership is the real gate (documented as such); tighten if the namespace grows.
+4. **Blank `framework_role` double-bypass (validator hardening idea):** `check_enum` skips empty
+   values, and a blank role also escapes evidence-pack binding. Consider a non-empty check for
+   framework_slug/framework_role/control_code in trace rows.
+5. **Duplicate secrets gate:** `test_validate_data_domains.py[secrets]` overlaps
+   `test_validate_data.py::test_validate_all_real_data_is_clean` — consolidate to one home if the
+   golden-baseline policy ever changes.
+6. **Matrix-less signal unification:** `report_io._has_header` (engine) and the validator's
+   descriptor-based `vendor_fit` check are separate mechanisms for the same concept; consider having
+   report_io read `Domain.vendor_fit` too (and `report_logic.build_iga_vendor_fit`'s hardcoded
+   filename default).
