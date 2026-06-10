@@ -30,14 +30,19 @@ CORE_REQUIRED = {
 VENDOR_REQUIRED = ("vendor_slug", "vendor_name", "target_id", "target_type", "coverage",
                    "maturity", "evidence_url", "evidence_quote", "citation_keys", "notes")
 VALID_STATES = {"MET", "PARTIAL", "GAP", "PENDING", "NA"}
-VALID_ROLES = {"PRIMARY-LENS", "BACK-MAP", "ADVERSARY-LENS"}
+# INFORMATIVE (context-only ISO mappings) and THREAT-CONTEXT (adversary/incident
+# framing) are deliberate, documented IGA roles. Like ADVERSARY-LENS, they do NOT
+# bind evidence packs — EVIDENCE_COMPLIANCE_ROLES below stays compliance-only.
+VALID_ROLES = {"PRIMARY-LENS", "BACK-MAP", "ADVERSARY-LENS", "INFORMATIVE", "THREAT-CONTEXT"}
 SENTINELS = {"MISSING-UC", "MISSING-NHI"}
 
 # --- evidence-pack gate (regulatory-driven evidence packs) ---
 # Evidence packs are a compliance-evidence concept, so refs are collected only
 # from compliance-role rows; ADVERSARY-LENS rows are skipped.
 EVIDENCE_COMPLIANCE_ROLES = {"PRIMARY-LENS", "BACK-MAP"}
-VALID_EVIDENCE_DIMENSIONS = {"coverage", "enforcement", "depth", "cadence", "governance", "exception"}
+# "scope" is a deliberate IGA evidence dimension (breadth of population/system in scope).
+VALID_EVIDENCE_DIMENSIONS = {"coverage", "enforcement", "depth", "cadence", "governance",
+                             "exception", "scope"}
 VALID_EVIDENCE_TIERS = {"primary", "follow-up"}
 
 # --- provenance gate (theme F) ---
@@ -110,6 +115,26 @@ def validate_vendor_rows(name, rows, single_slug=False):
     if single_slug and len(slugs) > 1:
         errs.append(f"{name}: multiple vendor_slug values {sorted(slugs)} in one per-vendor file")
     return errs
+
+
+def is_matrixless_domain(data_dir):
+    """A domain is 'matrix-less' when it ships a bespoke per-area vendor fit grid
+    (*-vendor-fit.csv, e.g. IGA's iga-vendor-fit.csv) instead of populating the
+    aggregate vendor matrix. The fit file is the self-documenting marker — secrets
+    and PAM have no such file, so the exception cannot apply to them."""
+    return bool(glob.glob(os.path.join(data_dir, "*-vendor-fit.csv")))
+
+
+def check_aggregate_vendor_capabilities(data_dir, rows):
+    """NARROW exception to the 'empty (no data rows)' rule, for the aggregate
+    vendor-capabilities.csv only: a header-only file is accepted IFF the domain is
+    matrix-less (sibling *-vendor-fit.csv present in the same data dir). Everything
+    else is unchanged — an empty vendor matrix in secrets/PAM stays a violation, and
+    any data rows present (even in a matrix-less domain) are fully validated.
+    Downstream per-row vendor checks naturally no-op on the empty row list."""
+    if not rows and is_matrixless_domain(data_dir):
+        return []
+    return validate_vendor_rows("vendor-capabilities.csv", rows)
 
 
 def validate_referential(use_cases, current_state, reg_trace, identity, vendor_files):
@@ -284,7 +309,8 @@ def validate_all(root=".", data_dir=None):
     vendor_files = []
     agg_rows = load_csv(os.path.join(m, "vendor-capabilities.csv"))
     vendor_files.append(("vendor-capabilities.csv", agg_rows))
-    errs += validate_vendor_rows("vendor-capabilities.csv", agg_rows)
+    # header-only aggregate file is OK only for matrix-less domains (see helper docstring)
+    errs += check_aggregate_vendor_capabilities(m, agg_rows)
     for p in sorted(glob.glob(os.path.join(m, "vendor-capabilities-*.csv"))):
         name = os.path.basename(p)
         rows = load_csv(p)
