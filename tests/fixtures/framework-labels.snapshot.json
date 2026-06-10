@@ -26,5 +26,29 @@
   "mitre-attack": [
     "MITRE ATT&CK",
     "Adversary TTPs (informative)"
+  ],
+  "nist-800-53r5": [
+    "NIST SP 800-53 Rev 5",
+    "NIST · security & privacy controls"
+  ],
+  "iso-27001-2022": [
+    "ISO/IEC 27001:2022",
+    "ISO · Annex A controls (titles only — licensed text)"
+  ],
+  "sox": [
+    "SOX (PL 107-204)",
+    "US statute · financial reporting controls"
+  ],
+  "sox-icfr": [
+    "SOX ICFR (17 CFR 240.13a-15)",
+    "SEC rule · internal control over financial reporting"
+  ],
+  "owasp-llm": [
+    "OWASP LLM Top 10 (2025)",
+    "GenAI application risks (informative)"
+  ],
+  "ms-incident": [
+    "Microsoft incident disclosures",
+    "First-party breach case refs (informative)"
   ]
 }

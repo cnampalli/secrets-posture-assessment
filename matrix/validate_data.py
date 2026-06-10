@@ -117,24 +117,75 @@ def validate_vendor_rows(name, rows, single_slug=False):
     return errs
 
 
-def is_matrixless_domain(data_dir):
-    """A domain is 'matrix-less' when it ships a bespoke per-area vendor fit grid
-    (*-vendor-fit.csv, e.g. IGA's iga-vendor-fit.csv) instead of populating the
-    aggregate vendor matrix. The fit file is the self-documenting marker — secrets
-    and PAM have no such file, so the exception cannot apply to them."""
-    return bool(glob.glob(os.path.join(data_dir, "*-vendor-fit.csv")))
+def resolve_domain_descriptor(root, data_dir):
+    """Find the domain descriptor (config/domains/*.yaml) whose `data_dir` resolves
+    to the data dir under validation; return the raw YAML mapping, or None.
+
+    Descriptor `data_dir` values are relative to <root>/matrix (secrets' is ".",
+    meaning <root>/matrix itself); both sides are realpath'd before comparing.
+    This is THE definition of which domain a --data-dir belongs to — properties
+    like the matrix-less exception are declared in the descriptor, never inferred
+    from filenames lying around in the data dir."""
+    target = os.path.realpath(data_dir)
+    cfg_dir = os.path.join(root, "matrix", "config", "domains")
+    if not os.path.isdir(cfg_dir):
+        return None
+    for fn in sorted(os.listdir(cfg_dir)):
+        if not fn.endswith((".yaml", ".yml")):
+            continue
+        d = load_yaml(os.path.join(cfg_dir, fn))
+        dd = os.path.realpath(os.path.join(root, "matrix", d.get("data_dir") or ""))
+        if dd == target:
+            return d
+    return None
 
 
-def check_aggregate_vendor_capabilities(data_dir, rows):
+def check_aggregate_vendor_capabilities(rows, vendor_fit=None):
     """NARROW exception to the 'empty (no data rows)' rule, for the aggregate
-    vendor-capabilities.csv only: a header-only file is accepted IFF the domain is
-    matrix-less (sibling *-vendor-fit.csv present in the same data dir). Everything
-    else is unchanged — an empty vendor matrix in secrets/PAM stays a violation, and
-    any data rows present (even in a matrix-less domain) are fully validated.
-    Downstream per-row vendor checks naturally no-op on the empty row list."""
-    if not rows and is_matrixless_domain(data_dir):
+    vendor-capabilities.csv only: a header-only file is accepted IFF the domain's
+    descriptor declares a `vendor_fit` grid (the bespoke per-area substitute for
+    the matrix, e.g. IGA's iga-vendor-fit.csv — itself gated by check_vendor_fit).
+    Everything else is unchanged — an empty vendor matrix in a domain without a
+    declared fit grid stays a violation, and any data rows present (even in a
+    matrix-less domain) are fully validated. Downstream per-row vendor checks
+    naturally no-op on the empty row list."""
+    if not rows and vendor_fit:
         return []
     return validate_vendor_rows("vendor-capabilities.csv", rows)
+
+
+# --- descriptor-declared vendor-fit grid (matrix-less domains) ---
+# The fit grid is the load-bearing substitute for the vendor matrix, so its
+# claims clear the same anti-fabrication bar: valid grade + sourced, every row.
+VENDOR_FIT_REQUIRED = ("vendor", "vendor_slug", "area", "fit", "justification",
+                       "evidence_url", "citation_keys")
+VALID_FIT_GRADES = {"NATIVE", "PARTIAL", "ADD-ON"}
+
+
+def check_vendor_fit(data_dir, fit_name):
+    """Validate a descriptor-declared vendor-fit grid. Declared means load-bearing:
+    the file must exist with data rows (a missing/header-only fit grid alongside a
+    header-only matrix would leave the domain with NO vendor evidence), carry the
+    required columns, use a valid fit grade, and source every claim (justification
+    + evidence_url + citation_keys)."""
+    path = os.path.join(data_dir, fit_name)
+    if not os.path.exists(path):
+        return [f"{fit_name}: declared in the domain descriptor but missing"]
+    rows = load_csv(path)
+    errs = check_required_columns(fit_name, rows, VENDOR_FIT_REQUIRED)
+    if errs:
+        return errs   # empty file / missing columns -> per-row checks are unsafe
+    for r in rows:
+        where = f"{r.get('vendor_slug') or '?'}/{r.get('area') or '?'}"
+        fit = (r.get("fit") or "").strip()
+        if fit not in VALID_FIT_GRADES:
+            errs.append(f"{fit_name}: invalid fit '{fit}' ({where}) — expected one of "
+                        f"{sorted(VALID_FIT_GRADES)}")
+        for col in ("justification", "evidence_url", "citation_keys"):
+            if not (r.get(col) or "").strip():
+                errs.append(f"{fit_name}: empty {col} ({where}) — a fit claim without "
+                            f"a source is a violation")
+    return errs
 
 
 def validate_referential(use_cases, current_state, reg_trace, identity, vendor_files):
@@ -306,11 +357,18 @@ def validate_all(root=".", data_dir=None):
     errs += check_required_columns("identity-catalog.csv", identity, CORE_REQUIRED["identity-catalog.csv"])
     errs += check_unique("identity-catalog.csv", identity, "nhi_id")
 
+    # matrix-less exception is descriptor-declared (vendor_fit key), never inferred
+    descriptor = resolve_domain_descriptor(root, m) or {}
+    vendor_fit = descriptor.get("vendor_fit") or None
+
     vendor_files = []
     agg_rows = load_csv(os.path.join(m, "vendor-capabilities.csv"))
     vendor_files.append(("vendor-capabilities.csv", agg_rows))
-    # header-only aggregate file is OK only for matrix-less domains (see helper docstring)
-    errs += check_aggregate_vendor_capabilities(m, agg_rows)
+    # header-only aggregate file is OK only when the descriptor declares a fit grid
+    errs += check_aggregate_vendor_capabilities(agg_rows, vendor_fit)
+    if vendor_fit:
+        # the declared fit grid substitutes for the matrix -> it is gated too
+        errs += check_vendor_fit(m, vendor_fit)
     for p in sorted(glob.glob(os.path.join(m, "vendor-capabilities-*.csv"))):
         name = os.path.basename(p)
         rows = load_csv(p)

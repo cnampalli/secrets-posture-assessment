@@ -1,8 +1,8 @@
-"""WS1 validator-side tests: documented IGA tokens + matrix-less vendor exception,
-plus the cross-domain zero-violation gate.
+"""WS1 validator-side tests: documented IGA tokens, the descriptor-declared
+vendor-fit exception (+ fit-grid citation gate), and the cross-domain
+zero-violation gate.
 
-NOTE: the IGA gate case is EXPECTED RED until the parallel data-fix agent's output
-is integrated — it is the WS1 exit gate. Do not skip/xfail it.
+All three domains must validate clean; this is the recurring debt gate.
 """
 import pathlib
 import sys
@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / "matrix"))
 import pytest
 
 import validate_data as vd
+from domains import DOMAINS
 
 
 # ---------------------------------------------------------------- item 1: roles
@@ -67,56 +68,130 @@ def test_bogus_dimension_still_rejected():
     assert errs == ["evidence-catalog.csv: invalid dimension 'vibes' (item EV-1)"]
 
 
-# --------------------------- item 3: header-only vendor-capabilities (matrix-less)
+# ------------- item 3: descriptor-declared vendor-fit (matrix-less exception)
+# "Matrix-less" is declared in the domain descriptor (`vendor_fit:` key), NOT
+# inferred from a *-vendor-fit.csv filename glob — a stray supplemental fit file
+# in a matrix-using domain must never disable that domain's empty-matrix guard.
 
-def _write(p, text):
-    p.write_text(text, encoding="utf-8")
-
-
-def test_header_only_vendor_caps_ok_with_vendor_fit_sibling(tmp_path):
-    _write(tmp_path / "iga-vendor-fit.csv", "area,vendor,fit\n")
-    _write(tmp_path / "vendor-capabilities.csv", ",".join(vd.VENDOR_REQUIRED) + "\n")
-    rows = vd.load_csv(str(tmp_path / "vendor-capabilities.csv"))
-    assert rows == []
-    assert vd.check_aggregate_vendor_capabilities(str(tmp_path), rows) == []
+def test_domain_dataclass_carries_vendor_fit():
+    assert DOMAINS["iga"].vendor_fit == "iga-vendor-fit.csv"
+    assert DOMAINS["secrets"].vendor_fit is None
+    assert DOMAINS["pam"].vendor_fit is None
 
 
-def test_header_only_vendor_caps_fails_without_vendor_fit_sibling(tmp_path):
-    # secrets/PAM have no *-vendor-fit.csv -> empty vendor matrix stays a violation
-    _write(tmp_path / "vendor-capabilities.csv", ",".join(vd.VENDOR_REQUIRED) + "\n")
-    rows = vd.load_csv(str(tmp_path / "vendor-capabilities.csv"))
-    errs = vd.check_aggregate_vendor_capabilities(str(tmp_path), rows)
+def test_resolve_descriptor_for_iga_data_dir():
+    d = vd.resolve_domain_descriptor(str(ROOT), str(ROOT / "matrix" / "domains" / "iga"))
+    assert d is not None and d["slug"] == "iga"
+    assert d["vendor_fit"] == "iga-vendor-fit.csv"
+
+
+def test_resolve_descriptor_for_secrets_data_dir_declares_no_vendor_fit():
+    # secrets' data_dir is "." (== <root>/matrix) and it keeps its vendor matrix
+    d = vd.resolve_domain_descriptor(str(ROOT), str(ROOT / "matrix"))
+    assert d is not None and d["slug"] == "secrets"
+    assert not d.get("vendor_fit")
+
+
+def test_stray_fit_file_does_not_make_a_dir_matrixless(tmp_path):
+    # regression for the glob heuristic: a stray pam-vendor-fit.csv in an
+    # unregistered dir resolves to NO descriptor -> the empty-matrix guard holds
+    (tmp_path / "pam-vendor-fit.csv").write_text("area,vendor,fit\n", encoding="utf-8")
+    assert vd.resolve_domain_descriptor(str(ROOT), str(tmp_path)) is None
+
+
+def test_header_only_vendor_caps_ok_when_descriptor_declares_vendor_fit():
+    assert vd.check_aggregate_vendor_capabilities([], vendor_fit="iga-vendor-fit.csv") == []
+
+
+def test_header_only_vendor_caps_fails_without_declared_vendor_fit():
+    # secrets/PAM declare no vendor_fit -> empty vendor matrix stays a violation
+    errs = vd.check_aggregate_vendor_capabilities([], vendor_fit=None)
     assert errs == ["vendor-capabilities.csv: empty (no data rows)"]
 
 
-def test_nonempty_vendor_caps_still_validated_in_matrixless_domain(tmp_path):
+def test_nonempty_vendor_caps_still_validated_when_vendor_fit_declared():
     # the exception is for header-only files ONLY; real rows are still checked
-    _write(tmp_path / "iga-vendor-fit.csv", "area,vendor,fit\n")
     bad = dict({c: "x" for c in vd.VENDOR_REQUIRED}, maturity="9", coverage="")
-    errs = vd.check_aggregate_vendor_capabilities(str(tmp_path), [bad])
+    errs = vd.check_aggregate_vendor_capabilities([bad], vendor_fit="iga-vendor-fit.csv")
     assert any("maturity '9'" in e for e in errs)
     assert any("empty coverage" in e for e in errs)
 
 
-def test_is_matrixless_domain_detection(tmp_path):
-    assert vd.is_matrixless_domain(str(tmp_path)) is False
-    _write(tmp_path / "iga-vendor-fit.csv", "area,vendor,fit\n")
-    assert vd.is_matrixless_domain(str(tmp_path)) is True
+# --------------------- item 3b: the declared fit grid is itself citation-gated
+# The fit file substitutes for the vendor matrix, so its NATIVE/PARTIAL/ADD-ON
+# claims must clear the same anti-fabrication bar: every row sourced.
+
+FIT_NAME = "iga-vendor-fit.csv"
+FIT_HEADER = ",".join(vd.VENDOR_FIT_REQUIRED) + "\n"
+GOOD_FIT_ROW = ("SailPoint,sailpoint-isc,JML,NATIVE,Lifecycle states drive access,"
+                "https://docs.example/lifecycle,sailpoint-isc-lifecycle\n")
+
+
+def _fit_errs(tmp_path, text):
+    (tmp_path / FIT_NAME).write_text(text, encoding="utf-8")
+    return vd.check_vendor_fit(str(tmp_path), FIT_NAME)
+
+
+def test_vendor_fit_good_row_passes(tmp_path):
+    assert _fit_errs(tmp_path, FIT_HEADER + GOOD_FIT_ROW) == []
+
+
+@pytest.mark.parametrize("grade", sorted(vd.VALID_FIT_GRADES))
+def test_vendor_fit_all_grades_accepted(tmp_path, grade):
+    assert vd.VALID_FIT_GRADES == {"NATIVE", "PARTIAL", "ADD-ON"}
+    assert _fit_errs(tmp_path, FIT_HEADER + GOOD_FIT_ROW.replace("NATIVE", grade)) == []
+
+
+def test_vendor_fit_missing_file_is_violation(tmp_path):
+    # descriptor declares the fit grid but it does not exist -> no vendor evidence
+    errs = vd.check_vendor_fit(str(tmp_path), FIT_NAME)
+    assert len(errs) == 1 and FIT_NAME in errs[0] and "missing" in errs[0]
+
+
+def test_vendor_fit_header_only_is_violation(tmp_path):
+    # header-only fit grid + header-only matrix == NO vendor evidence at all
+    assert _fit_errs(tmp_path, FIT_HEADER) == [f"{FIT_NAME}: empty (no data rows)"]
+
+
+def test_vendor_fit_missing_required_column_rejected(tmp_path):
+    errs = _fit_errs(tmp_path, "vendor,fit\nSailPoint,NATIVE\n")
+    assert any("missing required column" in e for e in errs)
+
+
+def test_vendor_fit_bad_grade_rejected(tmp_path):
+    errs = _fit_errs(tmp_path, FIT_HEADER + GOOD_FIT_ROW.replace("NATIVE", "TOTALLY-NATIVE"))
+    assert errs and "TOTALLY-NATIVE" in errs[0]
+
+
+def test_vendor_fit_empty_grade_rejected(tmp_path):
+    errs = _fit_errs(tmp_path, FIT_HEADER + GOOD_FIT_ROW.replace("NATIVE", ""))
+    assert errs and "invalid fit" in errs[0]
+
+
+@pytest.mark.parametrize("col", ["justification", "evidence_url", "citation_keys"])
+def test_vendor_fit_unsourced_claim_rejected(tmp_path, col):
+    # anti-fabrication: a fit claim without a source is a violation
+    row = {"vendor": "SailPoint", "vendor_slug": "sailpoint-isc", "area": "JML",
+           "fit": "NATIVE", "justification": "j", "evidence_url": "u",
+           "citation_keys": "k"}
+    row[col] = ""
+    text = FIT_HEADER + ",".join(row[c] for c in vd.VENDOR_FIT_REQUIRED) + "\n"
+    errs = _fit_errs(tmp_path, text)
+    assert len(errs) == 1 and col in errs[0]
+
+
+def test_real_iga_fit_grid_passes_the_gate():
+    # 16 rows, all NATIVE/PARTIAL, fully sourced — must clear the new gate as-is
+    assert vd.check_vendor_fit(str(ROOT / "matrix" / "domains" / "iga"), FIT_NAME) == []
 
 
 # -------------------------------------------------- item 4: cross-domain gate
+# Parametrized off the domain registry: a 4th domain YAML auto-joins the gate.
 
-DOMAIN_DATA_DIRS = {
-    "secrets": None,                                       # default <root>/matrix
-    "pam": str(ROOT / "matrix" / "domains" / "pam"),
-    "iga": str(ROOT / "matrix" / "domains" / "iga"),       # EXPECTED RED until data-debt fixed (WS1 exit gate)
-}
-
-
-@pytest.mark.parametrize("domain", sorted(DOMAIN_DATA_DIRS))
-def test_domain_has_zero_violations(domain):
-    violations = vd.validate_all(root=str(ROOT), data_dir=DOMAIN_DATA_DIRS[domain])
-    assert violations == [], f"{domain}: {len(violations)} violation(s):\n" + "\n".join(violations)
+@pytest.mark.parametrize("slug", sorted(DOMAINS))
+def test_domain_has_zero_violations(slug):
+    violations = vd.validate_all(root=str(ROOT), data_dir=DOMAINS[slug].data_dir)
+    assert violations == [], f"{slug}: {len(violations)} violation(s):\n" + "\n".join(violations)
 
 
 # ------------------------------------------------------- main() exit contract

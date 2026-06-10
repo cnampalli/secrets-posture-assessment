@@ -1,5 +1,15 @@
 # IGA Phase 3 — Consolidated Research Summary (Build-Agent Input)
 
+> **⚠️ ERRATUM (2026-06-10 WS1 re-verification — supersedes the VERIFIED claims below; see
+> `docs/superpowers/plans/ws1-verification-notes.md`):** the official cyber.gov.au ISM Dec-2024 PDF
+> shows two control-ID errors in this ledger: **ISM-1591** is *suspension on detected malicious
+> activity*, NOT same-day removal on loss of business requirement (correct control: **ISM-0430**);
+> **ISM-1648** is the *privileged* 45-day inactivity control, NOT unprivileged (correct: **ISM-1404**).
+> Also superseded: `AC-2(j)` recoded **AC-2j** (letter-in-parens misreads as an 800-53 enhancement);
+> `apra-cps234-roles` repointed **CPS234-§14** (official APRA PDF); `CPG234-LP` repointed
+> **CPG234-Att-A**. The shipped trace + `matrix/config/control-id-registry.yaml` carry the corrected
+> IDs — do NOT regenerate trace data from the tables below without applying these corrections.
+
 **Purpose.** Single authoritative hand-off from verified per-area IGA research to the build agent.
 Consolidates the use-case list, citation table, regulatory-trace plan, identity taxonomy, vendor-fit
 grid, and a data-quality ledger. Compiled 2026-06-10 from the six verified per-area files in this

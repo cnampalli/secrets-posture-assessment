@@ -19,3 +19,21 @@ asd-ism:
 mitre-attack:
   label: MITRE ATT&CK
   subtitle: Adversary TTPs (informative)
+nist-800-53r5:
+  label: NIST SP 800-53 Rev 5
+  subtitle: NIST · security & privacy controls
+iso-27001-2022:
+  label: ISO/IEC 27001:2022
+  subtitle: ISO · Annex A controls (titles only — licensed text)
+sox:
+  label: SOX (PL 107-204)
+  subtitle: US statute · financial reporting controls
+sox-icfr:
+  label: SOX ICFR (17 CFR 240.13a-15)
+  subtitle: SEC rule · internal control over financial reporting
+owasp-llm:
+  label: OWASP LLM Top 10 (2025)
+  subtitle: GenAI application risks (informative)
+ms-incident:
+  label: Microsoft incident disclosures
+  subtitle: First-party breach case refs (informative)

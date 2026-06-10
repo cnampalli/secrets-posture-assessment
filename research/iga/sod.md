@@ -1,5 +1,9 @@
 # IGA Domain — Separation of Duties (SoD) / Toxic-Combination Management
 
+> **⚠️ ERRATUM (2026-06-10):** `apra-cps234-roles` below is superseded — the verbatim roles quote is
+> CPS 234 **paragraph 14** (official APRA PDF), shipped as control code **CPS234-§14** with citation
+> key `apra-cps-234-para14`. See `docs/superpowers/plans/ws1-verification-notes.md`.
+
 **Area:** Separation of Duties (SoD) / toxic-combination management
 **Domain:** Identity Governance & Administration (IGA)
 **Instrument intent:** Scores *process maturity*, not tool deployment. Questions probe whether the SoD lifecycle (define → prevent → detect → remediate → attest) is governed, repeatable, and evidenced — independent of any particular IGA/GRC vendor.
