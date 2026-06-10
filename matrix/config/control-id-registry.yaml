@@ -17,12 +17,15 @@ asd-ism:
   # ISM-0407 / ISM-0430 / ISM-1647 verified 2026-06-10 vs cyber.gov.au ISM Dec 2024 PDF
   # + ismcontrol.xyz (IGA trace). NB: the IGA rows originally cited ISM-1591/ISM-1648 —
   # wrong controls (fabrication-class); deliberately NOT registered.
+  # ISM-1175 / ISM-1380 / ISM-1898 verified 2026-06-11 vs cyber.gov.au ISM June 2025 PDF
+  # (downloaded + text-extracted) + ismcontrol.xyz (PAM SAW trace, WS2). NB: ISM-1653 is
+  # REMOVED (merged into ISM-1175) — deliberately NOT registered.
   controls: [ISM-0027, ISM-0039, ISM-0043, ISM-0140, ISM-0252, ISM-0363, ISM-0401,
     ISM-0407, ISM-0421, ISM-0430, ISM-0457, ISM-0469, ISM-0471, ISM-0481, ISM-0507,
-    ISM-1139, ISM-1173, ISM-1181, ISM-1192, ISM-1211, ISM-1247, ISM-1256, ISM-1275,
-    ISM-1304, ISM-1323, ISM-1324, ISM-1401, ISM-1404, ISM-1405, ISM-1437, ISM-1452,
-    ISM-1504, ISM-1570, ISM-1611, ISM-1613, ISM-1619, ISM-1647, ISM-1656, ISM-1690,
-    ISM-1707, ISM-1730, ISM-1795, ISM-1796, ISM-1917]
+    ISM-1139, ISM-1173, ISM-1175, ISM-1181, ISM-1192, ISM-1211, ISM-1247, ISM-1256,
+    ISM-1275, ISM-1304, ISM-1323, ISM-1324, ISM-1380, ISM-1401, ISM-1404, ISM-1405,
+    ISM-1437, ISM-1452, ISM-1504, ISM-1570, ISM-1611, ISM-1613, ISM-1619, ISM-1647,
+    ISM-1656, ISM-1690, ISM-1707, ISM-1730, ISM-1795, ISM-1796, ISM-1898, ISM-1917]
 
 essential-8:
   source: "cyber.gov.au Essential Eight Maturity Model (Nov 2023)"
