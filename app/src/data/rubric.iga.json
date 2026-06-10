@@ -20,6 +20,21 @@
         "text": "What share of existing workforce joiners (permanent and contractor) has migrated off manual ticket-based account creation and copy-a-colleague grants?",
         "evidence": [
           {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
+          {
             "ev_id": "EV-IGA-JOINER-LOG",
             "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
             "dimension": "coverage",
@@ -99,6 +114,21 @@
         "informs_state": "GAP_PARTIAL",
         "text": "Is the mover access-recalculation process triggered by an authoritative HR change event, with prior-role access removal and manager reaffirmation of retained access documented and operating?",
         "evidence": [
+          {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
           {
             "ev_id": "EV-IGA-JOINER-LOG",
             "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
@@ -193,6 +223,21 @@
             "satisfies": [
               "AC-2(3)"
             ]
+          },
+          {
+            "ev_id": "EV-IGA-EXPIRY-REGRANT-LOG",
+            "requirement": "An expiry / re-grant log: time-bound grants with their expiry, automatic removal at lapse with timestamp and SLA attainment, and re-request decisions recorded with approver, timestamp and justification, distinguishable from first grants and showing no silent auto-renewal.",
+            "dimension": "enforcement",
+            "tier": "primary",
+            "example_artifact": "e.g., a request-workflow export of expired-and-removed grants plus the renewal-decision audit trail",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2-3",
+              "asd-ism-1647"
+            ],
+            "satisfies": [
+              "AC-2(3)"
+            ]
           }
         ]
       },
@@ -202,6 +247,21 @@
         "informs_state": "PARTIAL_MET",
         "text": "What share of existing workforce leavers (resignation, dismissal, contract / secondment end) has migrated off manual and delayed account disablement?",
         "evidence": [
+          {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
           {
             "ev_id": "EV-IGA-JOINER-LOG",
             "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
@@ -298,6 +358,21 @@
         "informs_state": "GAP_PARTIAL",
         "text": "Does a register of accounts across in-scope systems reconciled to a valid owner and recent activity exist?",
         "evidence": [
+          {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
           {
             "ev_id": "EV-IGA-JOINER-LOG",
             "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
@@ -396,6 +471,21 @@
         "satisfies": [
           "AC-2(3)"
         ]
+      },
+      {
+        "ev_id": "EV-IGA-EXPIRY-REGRANT-LOG",
+        "requirement": "An expiry / re-grant log: time-bound grants with their expiry, automatic removal at lapse with timestamp and SLA attainment, and re-request decisions recorded with approver, timestamp and justification, distinguishable from first grants and showing no silent auto-renewal.",
+        "dimension": "enforcement",
+        "tier": "primary",
+        "example_artifact": "e.g., a request-workflow export of expired-and-removed grants plus the renewal-decision audit trail",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac2-3",
+          "asd-ism-1647"
+        ],
+        "satisfies": [
+          "AC-2(3)"
+        ]
       }
     ]
   },
@@ -413,6 +503,21 @@
         "informs_state": "GAP_PARTIAL",
         "text": "Does a register of in-scope workforce entitlements (application roles, group memberships, fine-grained entitlements) exist?",
         "evidence": [
+          {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
           {
             "ev_id": "EV-IGA-JOINER-LOG",
             "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
@@ -442,6 +547,21 @@
             ],
             "satisfies": [
               "AC-2(3)"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-TIMEBOUND-COVERAGE",
+            "requirement": "A time-bound coverage metric: the share of high-risk / SoD-relevant / contractor entitlements carrying a defined expiry versus perpetual grants, trended across cycles, with the migration backlog of standing access flagged by certification.",
+            "dimension": "coverage",
+            "tier": "follow-up",
+            "example_artifact": "e.g., a periodic expiry-coverage dashboard with the perpetual-grant burn-down trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2j",
+              "apra-cps-234-para21"
+            ],
+            "satisfies": [
+              "AC-2j"
             ]
           }
         ]
@@ -528,6 +648,21 @@
         ]
       },
       {
+        "ev_id": "EV-IGA-EXPIRY-REGRANT-LOG",
+        "requirement": "An expiry / re-grant log: time-bound grants with their expiry, automatic removal at lapse with timestamp and SLA attainment, and re-request decisions recorded with approver, timestamp and justification, distinguishable from first grants and showing no silent auto-renewal.",
+        "dimension": "enforcement",
+        "tier": "primary",
+        "example_artifact": "e.g., a request-workflow export of expired-and-removed grants plus the renewal-decision audit trail",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac2-3",
+          "asd-ism-1647"
+        ],
+        "satisfies": [
+          "AC-2(3)"
+        ]
+      },
+      {
         "ev_id": "EV-IGA-CERT-ATTESTATION-EXPORT",
         "requirement": "A reviewer attestation export: per-item attestation records with reviewer identity, accountable owner, decision, justification, timestamp and (for privileged) named sign-off, retained tamper-evidently.",
         "dimension": "governance",
@@ -559,6 +694,21 @@
         "informs_state": "GAP_PARTIAL",
         "text": "Is a high-risk / privileged access certification sign-off produced at all?",
         "evidence": [
+          {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
           {
             "ev_id": "EV-IGA-ORPHAN-SCAN",
             "requirement": "An orphan-account scan plus dormant-account (inactivity) report identifying accounts with no valid owner and accounts past the inactivity threshold (e.g. 45 days), with remediation/disable actions and approvals and scan coverage of in-scope systems.",
@@ -669,7 +819,39 @@
         "qid": "A5-Q1",
         "dimension": "coverage",
         "informs_state": "GAP_PARTIAL",
-        "text": "Does a register of the entitlements impacted by a triggering event (mover / transfer, privileged or high-risk grant, role redefinition, detected SoD violation) exist?"
+        "text": "Does a register of the entitlements impacted by a triggering event (mover / transfer, privileged or high-risk grant, role redefinition, detected SoD violation) exist?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-TIMEBOUND-COVERAGE",
+            "requirement": "A time-bound coverage metric: the share of high-risk / SoD-relevant / contractor entitlements carrying a defined expiry versus perpetual grants, trended across cycles, with the migration backlog of standing access flagged by certification.",
+            "dimension": "coverage",
+            "tier": "follow-up",
+            "example_artifact": "e.g., a periodic expiry-coverage dashboard with the perpetual-grant burn-down trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2j",
+              "apra-cps-234-para21"
+            ],
+            "satisfies": [
+              "AC-2j"
+            ]
+          }
+        ]
       },
       {
         "qid": "A5-Q2",
@@ -689,6 +871,8 @@
               "apra-cps-234-para27"
             ],
             "satisfies": [
+              "A.5.18",
+              "AC-2j",
               "CPS234-§27"
             ]
           },
@@ -736,7 +920,24 @@
         "qid": "A1-Q2",
         "dimension": "enforcement",
         "informs_state": "PARTIAL_MET",
-        "text": "Is preventive segregation-of-duties evaluation of the requester's current plus requested entitlements at access-request time enforced in blocking mode (not detect-only) across all provisioning channels (self-service, birthright / automated, manager grants, break-glass) and cross-system toxic pairs?"
+        "text": "Is preventive segregation-of-duties evaluation of the requester's current plus requested entitlements at access-request time enforced in blocking mode (not detect-only) across all provisioning channels (self-service, birthright / automated, manager grants, break-glass) and cross-system toxic pairs?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-SELF-APPROVAL-AUDIT",
+            "requirement": "The workflow configuration showing the requester-not-equal-approver rule (including delegation and out-of-office routing) plus a periodic self-approval audit report across all grants evidencing zero unremediated self-approvals, retained per evidence policy.",
+            "dimension": "enforcement",
+            "tier": "primary",
+            "example_artifact": "e.g., the approval-policy configuration export plus the latest self-approval audit report",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac5",
+              "sox-icfr-13a15f"
+            ],
+            "satisfies": [
+              "AC-5"
+            ]
+          }
+        ]
       },
       {
         "qid": "A1-Q3",
@@ -857,7 +1058,24 @@
         "qid": "A7-Q3",
         "dimension": "enforcement",
         "informs_state": "PARTIAL_MET",
-        "text": "Do expired entries auto-escalate?"
+        "text": "Do expired entries auto-escalate?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-SELF-APPROVAL-AUDIT",
+            "requirement": "The workflow configuration showing the requester-not-equal-approver rule (including delegation and out-of-office routing) plus a periodic self-approval audit report across all grants evidencing zero unremediated self-approvals, retained per evidence policy.",
+            "dimension": "enforcement",
+            "tier": "primary",
+            "example_artifact": "e.g., the approval-policy configuration export plus the latest self-approval audit report",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac5",
+              "sox-icfr-13a15f"
+            ],
+            "satisfies": [
+              "AC-5"
+            ]
+          }
+        ]
       }
     ],
     "evidence_additional": [
@@ -994,6 +1212,21 @@
     ],
     "evidence_additional": [
       {
+        "ev_id": "EV-IGA-SELF-APPROVAL-AUDIT",
+        "requirement": "The workflow configuration showing the requester-not-equal-approver rule (including delegation and out-of-office routing) plus a periodic self-approval audit report across all grants evidencing zero unremediated self-approvals, retained per evidence policy.",
+        "dimension": "enforcement",
+        "tier": "primary",
+        "example_artifact": "e.g., the approval-policy configuration export plus the latest self-approval audit report",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "sox-icfr-13a15f"
+        ],
+        "satisfies": [
+          "AC-5"
+        ]
+      },
+      {
         "ev_id": "EV-IGA-SOD-BLOCK-LOG",
         "requirement": "A request-time SoD block log: access requests that triggered an SoD rule, the decision (blocked/overridden), the named approver, justification and timestamp, across all provisioning channels including birthright and break-glass.",
         "dimension": "scope",
@@ -1125,6 +1358,21 @@
         "text": "Is the self-service access-request and approval workflow (request catalogue tied to the role model, enforced approval path, recorded approver / decision / justification, request-time SoD checks for SOX-relevant items, and time-bound access) documented and operating?",
         "evidence": [
           {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
+          {
             "ev_id": "EV-IGA-REQUEST-APPROVAL-TRAIL",
             "requirement": "A request/approval audit trail: per-request record of requester, item, approver(s), decision, timestamp and business justification, queryable per user, per entitlement and per time window, with out-of-band grants logged as exceptions.",
             "dimension": "coverage",
@@ -1224,6 +1472,21 @@
         "text": "What share of existing in-scope workforce identities and the entitlements they hold has migrated off accumulated over-provisioned and standing excess access from role changes?",
         "evidence": [
           {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
+          {
             "ev_id": "EV-IGA-ROLE-MODEL",
             "requirement": "A role model document: role catalogue with role name, owner, contained entitlements, eligible population and business justification; business-vs-technical role mapping; and a coverage metric (percentage of users/entitlements explained by an approved role).",
             "dimension": "coverage",
@@ -1288,5 +1551,367 @@
         ]
       }
     ]
+  },
+  {
+    "uc_id": "UC-I-014",
+    "title": "Request-time re-approval & time-bound access expiry",
+    "category": "Functional",
+    "archetype": "A1",
+    "archetype_name": "Preventive Guardrail",
+    "kind": "ladder",
+    "questions": [
+      {
+        "qid": "A1-Q1",
+        "dimension": "coverage",
+        "informs_state": "GAP_PARTIAL",
+        "text": "Is request-time re-approval with time-bound expiry — high-risk access granted with an expiry, removed automatically at lapse and re-validated as a fresh owned decision on every re-request deployed at all relevant gates for high-risk, SoD-relevant and contractor entitlement grants?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-JOINER-LOG",
+            "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a provisioning audit-log export plus the versioned birthright role-policy register",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2",
+              "apra-cps-234-para21"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-ORPHAN-SCAN",
+            "requirement": "An orphan-account scan plus dormant-account (inactivity) report identifying accounts with no valid owner and accounts past the inactivity threshold (e.g. 45 days), with remediation/disable actions and approvals and scan coverage of in-scope systems.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a reconciliation scan output listing orphan and dormant accounts with disposition",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2-3",
+              "asd-ism-1404"
+            ],
+            "satisfies": [
+              "AC-2(3)",
+              "ISM-1647"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-TIMEBOUND-COVERAGE",
+            "requirement": "A time-bound coverage metric: the share of high-risk / SoD-relevant / contractor entitlements carrying a defined expiry versus perpetual grants, trended across cycles, with the migration backlog of standing access flagged by certification.",
+            "dimension": "coverage",
+            "tier": "follow-up",
+            "example_artifact": "e.g., a periodic expiry-coverage dashboard with the perpetual-grant burn-down trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2j",
+              "apra-cps-234-para21"
+            ],
+            "satisfies": [
+              "AC-2j"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A1-Q2",
+        "dimension": "enforcement",
+        "informs_state": "PARTIAL_MET",
+        "text": "Is request-time re-approval with time-bound expiry — high-risk access granted with an expiry, removed automatically at lapse and re-validated as a fresh owned decision on every re-request enforced in blocking mode (not detect-only) across all provisioning channels of the access-request workflow (self-service, manager, renewal / re-request), with post-event reviews of already-held access remaining UC-I-007's scope?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-CERT-REVOCATION-LOG",
+            "requirement": "A certification revocation / remediation log: every revoke decision with decision timestamp, action timestamp, SLA met/missed, target system and closed-loop confirmation the entitlement was actually removed; privileged revocations on the tight SLA broken out.",
+            "dimension": "enforcement",
+            "tier": "primary",
+            "example_artifact": "e.g., a closed-loop revocation log with SLA attainment per decision",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2-3",
+              "nist-sp-800-53-ac6-7"
+            ],
+            "satisfies": [
+              "AC-2(3)"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-EXPIRY-REGRANT-LOG",
+            "requirement": "An expiry / re-grant log: time-bound grants with their expiry, automatic removal at lapse with timestamp and SLA attainment, and re-request decisions recorded with approver, timestamp and justification, distinguishable from first grants and showing no silent auto-renewal.",
+            "dimension": "enforcement",
+            "tier": "primary",
+            "example_artifact": "e.g., a request-workflow export of expired-and-removed grants plus the renewal-decision audit trail",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2-3",
+              "asd-ism-1647"
+            ],
+            "satisfies": [
+              "AC-2(3)"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A1-Q3",
+        "dimension": "exception",
+        "informs_state": "PARTIAL_MET",
+        "text": "Are bypasses controlled by a registered exception with owner and expiry?"
+      }
+    ],
+    "evidence_additional": [
+      {
+        "ev_id": "EV-IGA-CERT-COMPLETION-REPORT",
+        "requirement": "A certification campaign completion report: scope/population, item counts, percentage reviewed within window (target >=95%), decision breakdown, no-decision handling, on-time vs overdue, named reviewers and rubber-stamp/bulk-approve analytics.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a per-campaign completion report with reviewer and decision analytics",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac2j",
+          "apra-cps-234-para27"
+        ],
+        "satisfies": [
+          "AC-2j",
+          "CPS234-§21",
+          "ISM-1647"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-LEAVER-SLA-REPORT",
+        "requirement": "A leaver de-provisioning SLA report showing per-account termination-event timestamp to disable timestamp, percentage within SLA, breach list with root cause, and coverage across SaaS and on-prem targets.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "asd-ism-0430",
+          "nist-sp-800-53-ac2-3"
+        ],
+        "satisfies": [
+          "CPS234-§21"
+        ]
+      }
+    ]
+  },
+  {
+    "uc_id": "UC-I-015",
+    "title": "Requestor-approver separation / self-approval prevention",
+    "category": "Functional",
+    "archetype": "A1",
+    "archetype_name": "Preventive Guardrail",
+    "kind": "ladder",
+    "questions": [
+      {
+        "qid": "A1-Q1",
+        "dimension": "coverage",
+        "informs_state": "GAP_PARTIAL",
+        "text": "Is requestor-approver separation enforced in the access-request workflow — no identity can approve, modify or fulfil its own access request deployed at all relevant gates for all access requests and direct entitlement edits across in-scope systems?"
+      },
+      {
+        "qid": "A1-Q2",
+        "dimension": "enforcement",
+        "informs_state": "PARTIAL_MET",
+        "text": "Is requestor-approver separation enforced in the access-request workflow — no identity can approve, modify or fulfil its own access request enforced in blocking mode (not detect-only) across every approval chain including delegation and out-of-office routing, admin-console self-edits of the editor's own entitlements, and break-glass self-grants?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-SELF-APPROVAL-AUDIT",
+            "requirement": "The workflow configuration showing the requester-not-equal-approver rule (including delegation and out-of-office routing) plus a periodic self-approval audit report across all grants evidencing zero unremediated self-approvals, retained per evidence policy.",
+            "dimension": "enforcement",
+            "tier": "primary",
+            "example_artifact": "e.g., the approval-policy configuration export plus the latest self-approval audit report",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac5",
+              "sox-icfr-13a15f"
+            ],
+            "satisfies": [
+              "AC-5"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A1-Q3",
+        "dimension": "exception",
+        "informs_state": "PARTIAL_MET",
+        "text": "Are bypasses controlled by a registered exception with owner and expiry?"
+      }
+    ],
+    "evidence_additional": [
+      {
+        "ev_id": "EV-IGA-SOD-BLOCK-LOG",
+        "requirement": "A request-time SoD block log: access requests that triggered an SoD rule, the decision (blocked/overridden), the named approver, justification and timestamp, across all provisioning channels including birthright and break-glass.",
+        "dimension": "scope",
+        "tier": "primary",
+        "example_artifact": "e.g., a request-time block/override log covering all provisioning channels",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "sox-pl107-204-authorizations"
+        ],
+        "satisfies": [
+          "AC-5"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-RULESET",
+        "requirement": "A versioned SoD ruleset / policy register where each rule has a business rationale, named owner, risk rating and the conflicting functions/entitlements it covers, with review dates demonstrating a living register.",
+        "dimension": "governance",
+        "tier": "primary",
+        "example_artifact": "e.g., a version-controlled SoD ruleset export with owners and review history",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para14"
+        ],
+        "satisfies": [
+          "AC-5",
+          "CPS234-§14",
+          "PL 107-204 §404(a)"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-VIOLATION-REGISTER",
+        "requirement": "A SoD violation register recording per conflict the rule, affected identity, affected systems, risk rating, disposition, documented mitigating control, owner and next-review/expiry, traceable across scan cycles.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a violation register with documented specific mitigating controls and bounded exceptions",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para27"
+        ],
+        "satisfies": [
+          "17 CFR 240.13a-15(f)",
+          "AC-5"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-CERT-ATTESTATION-EXPORT",
+        "requirement": "A reviewer attestation export: per-item attestation records with reviewer identity, accountable owner, decision, justification, timestamp and (for privileged) named sign-off, retained tamper-evidently.",
+        "dimension": "governance",
+        "tier": "follow-up",
+        "example_artifact": "e.g., an immutable per-item attestation export including last-reviewed dates",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "asd-ism-0407",
+          "sox-icfr-13a15f"
+        ],
+        "satisfies": [
+          "17 CFR 240.13a-15(f)"
+        ]
+      }
+    ]
+  },
+  {
+    "uc_id": "UC-I-016",
+    "title": "Unstructured-data / data-access entitlement governance",
+    "category": "Functional",
+    "archetype": "A5",
+    "archetype_name": "Inventory & Attestation",
+    "kind": "ladder",
+    "questions": [
+      {
+        "qid": "A5-Q1",
+        "dimension": "coverage",
+        "informs_state": "GAP_PARTIAL",
+        "text": "Does a register of unstructured-data repositories (file shares, SharePoint / OneDrive / Teams sites, cloud object-storage buckets) reconciled to a named business owner and a data classification, and the identities holding effective access to them exist?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-DATA-REPO-REGISTER",
+            "requirement": "An unstructured-data repository register: per repository the named business owner, data classification, effective-access resolution (including nested groups and sharing links) and last owner certification date, with a coverage metric of registered versus discovered repositories.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a repository inventory export with owner, classification and certification-status columns plus the coverage trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-REQUEST-APPROVAL-TRAIL",
+            "requirement": "A request/approval audit trail: per-request record of requester, item, approver(s), decision, timestamp and business justification, queryable per user, per entitlement and per time window, with out-of-band grants logged as exceptions.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a request/approval audit-trail export with the enforced approval-path configuration",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac3",
+              "nist-sp-800-53-ac6-1"
+            ],
+            "satisfies": [
+              "AC-3"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-ROLE-MODEL",
+            "requirement": "A role model document: role catalogue with role name, owner, contained entitlements, eligible population and business justification; business-vs-technical role mapping; and a coverage metric (percentage of users/entitlements explained by an approved role).",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., an owner-approved role model document plus a role-mining coverage metric",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac6",
+              "apra-cpg-234-least-privilege"
+            ],
+            "satisfies": [
+              "AC-6",
+              "CPG234-Att-A"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A5-Q2",
+        "dimension": "depth",
+        "informs_state": "PARTIAL_MET",
+        "text": "Does it cover >= 95% of unstructured-data repositories (file shares, SharePoint / OneDrive / Teams sites, cloud object-storage buckets) reconciled to a named business owner and a data classification, and the identities holding effective access to them with owner attestation?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-CERT-COMPLETION-REPORT",
+            "requirement": "A certification campaign completion report: scope/population, item counts, percentage reviewed within window (target >=95%), decision breakdown, no-decision handling, on-time vs overdue, named reviewers and rubber-stamp/bulk-approve analytics.",
+            "dimension": "depth",
+            "tier": "primary",
+            "example_artifact": "e.g., a per-campaign completion report with reviewer and decision analytics",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2j",
+              "apra-cps-234-para27"
+            ],
+            "satisfies": [
+              "A.5.18"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-RIGHTSIZING-REPORT",
+            "requirement": "An entitlement right-sizing report flagging excess/unused/unexplained/over-broad entitlements with disposition (revoke/downscope/JIT/accept), plus a reduction trend across cycles demonstrating a program not a one-off purge.",
+            "dimension": "depth",
+            "tier": "primary",
+            "example_artifact": "e.g., a periodic right-sizing report with a standing-/excess-entitlement reduction trend",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac6",
+              "nist-sp-800-53-ac6-5"
+            ],
+            "satisfies": [
+              "AC-6",
+              "CPG234-Att-A"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A5-Q3",
+        "dimension": "cadence",
+        "informs_state": "PARTIAL_MET",
+        "text": "Is it re-attested every risk-tiered owner certification aligned to data classification and exported to the IGA certification module and data-access remediation queue?"
+      }
+    ],
+    "evidence_additional": []
   }
 ]

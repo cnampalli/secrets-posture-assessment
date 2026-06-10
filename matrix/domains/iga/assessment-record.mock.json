@@ -138,6 +138,36 @@
       "rationale": "There is no periodic least-privilege right-sizing report driven by usage telemetry; standing excess access is added far more readily than it is removed, with no measured reduction trend.",
       "confidence": "MED",
       "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-014": {
+      "archetype": "A1",
+      "answers": {"expiry-default-set": "partial", "rerequest-fresh-approval": "no"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "The request workflow supports time-bound access and some contractor grants carry an expiry, but high-risk entitlements default to perpetual and renewals are waved through without a fresh owner approval, so expiry-driven re-validation is not yet a working control.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-015": {
+      "archetype": "A1",
+      "answers": {"self-approval-blocked": "partial", "admin-self-edit-alerted": "no"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "The workflow blocks the trivial requester-equals-approver case, but delegation re-routing is not checked against the requester and application administrators can still edit their own entitlements in admin consoles without detection or alerting; no periodic self-approval audit report is produced.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
+    },
+    "UC-I-016": {
+      "archetype": "A5",
+      "answers": {"repo-owner-inventory": "no", "open-access-removed": "no"},
+      "proposed_state": "GAP",
+      "final_state": "GAP",
+      "overridden": false,
+      "rationale": "Access governance covers applications only; file shares, SharePoint sites and cloud buckets have no owner inventory, sharing links and org-wide grants proliferate unreviewed, and there is no open-access scanning or repository-owner certification.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
     }
   }
 }
