@@ -39,7 +39,7 @@ def record_to_rows(record):
             "evidence_q_ids": ";".join(sorted(answered)),
             "evidence_redacted": "",
             "gap_notes": r.get("rationale") or "",
-            "sensitivity_tag": "",
+            "sensitivity_tag": r.get("sensitivity_tag") or "",
             "citation_keys": "",
         })
     return rows

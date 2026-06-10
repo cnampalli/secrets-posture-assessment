@@ -25,6 +25,28 @@ REC_UC_DOMAIN = {
                    "UC-N-009", "UC-N-010", "UC-N-016", "UC-N-017", "UC-N-018", "UC-N-020"],
 }
 
+# Per-domain board-maturity capability groupings, keyed by domain slug. Each maps a
+# board-readable label -> the UC ids that constitute that capability area, so the
+# per-group maturity table has the same depth across domains. Domains absent here
+# fall back to grouping by the `category` column of their use-cases.csv (see
+# build_posture_maturity); IGA uses its bespoke id-range area map instead.
+MATURITY_GROUPS = {
+    "secrets": {
+        "Secrets lifecycle": REC_UC_DOMAIN["secrets"],
+        "Governance": REC_UC_DOMAIN["governance"],
+    },
+    "pam": {
+        "Credential & session control":
+            ["UC-P-001", "UC-P-002", "UC-P-003", "UC-P-007", "UC-P-008"],
+        "Privilege governance":
+            ["UC-P-004", "UC-P-005", "UC-P-010", "UC-P-014"],
+        "Workload & cloud access":
+            ["UC-P-006", "UC-P-011", "UC-P-012", "UC-P-013"],
+        "Endpoint & threat analytics":
+            ["UC-P-009", "UC-P-015", "UC-P-016", "UC-P-017"],
+    },
+}
+
 
 def build_glossary(nhis, ucs):
     g = {}
@@ -192,6 +214,231 @@ def build_compliance(reg_rows, anz, framework_labels, gap_limit=15, exclude=froz
         key=lambda d: (-d["met_pct"], d["slug"]))
     return {"frameworks": frameworks,
             "gap_to_target": _cmp.gap_to_target(rows, anz)[:gap_limit]}
+
+
+# ---------------------------------------------------------------------------
+# Curated Value Proposition view (board maturity + quick-wins + defensibility)
+# ---------------------------------------------------------------------------
+
+# Designed (non-standard) maturity convention — one tunable place (R2). The band
+# is derived from assessed-state coverage (EE maturity_level is too sparse,
+# especially for IGA), surfaced honestly via `basis`.
+_ML_THRESHOLDS = {"ml2_floor": 0.40, "ml3_floor": 0.75}
+
+_ML_BASIS = ("Designed coverage-based convention (ML1 foundational / ML2 managed / "
+             "ML3 optimised), not an external standard: ML3 needs ≥75% MET with no "
+             "open P0; ML2 needs ≥40% MET with no open P0 gap; any P0 gap caps at ML1.")
+
+# R1: production iga/use-cases.csv has `category`, not `area`. Derive the
+# governance area from the UC-I id ranges (research/iga/RESEARCH-SUMMARY.md §1).
+_IGA_AREA_BY_NUM = (
+    (1, 4, "JML"), (5, 7, "Certification"), (8, 10, "SoD"), (11, 13, "Role/Request"))
+
+
+def _iga_area_for(uc_id):
+    """Map a UC-I id to its governance area; anything outside the ranges -> 'Other'."""
+    try:
+        num = int((uc_id or "").rsplit("-", 1)[-1])
+    except (ValueError, IndexError):
+        return "Other"
+    for lo, hi, area in _IGA_AREA_BY_NUM:
+        if lo <= num <= hi:
+            return area
+    return "Other"
+
+
+def _band_for(met_pct, p0_gap, p0_partial):
+    """Apply the maturity convention to a coverage % + P0 signals -> ML1/2/3."""
+    if p0_gap or met_pct < _ML_THRESHOLDS["ml2_floor"]:
+        return "ML1"
+    if met_pct >= _ML_THRESHOLDS["ml3_floor"] and not p0_partial:
+        return "ML3"
+    return "ML2"
+
+
+def _maturity_for(ucs_subset, state_by_uc, priority_by_uc):
+    """Coverage %, MET/PARTIAL/GAP/PENDING counts and band for a set of UC ids."""
+    counts = {"met": 0, "partial": 0, "gap": 0, "pending": 0}
+    p0_gap = p0_partial = p0_open = 0
+    total = 0
+    for uc_id in ucs_subset:
+        st = state_by_uc.get(uc_id, "UNKNOWN")
+        total += 1
+        is_p0 = priority_by_uc.get(uc_id) == "P0"
+        if st == "MET":
+            counts["met"] += 1
+        elif st == "PARTIAL":
+            counts["partial"] += 1
+            if is_p0:
+                p0_partial += 1; p0_open += 1
+        elif st == "GAP":
+            counts["gap"] += 1
+            if is_p0:
+                p0_gap += 1; p0_open += 1
+        elif st == "PENDING":
+            counts["pending"] += 1
+            if is_p0:
+                p0_open += 1
+        elif is_p0:
+            p0_open += 1
+    met_pct = round(counts["met"] / total, 4) if total else 0.0
+    return met_pct, counts, p0_gap, p0_partial, p0_open
+
+
+def build_posture_maturity(anz, ucs, domain_slug):
+    """Board-readable ML1/2/3 roll-up from assessed-state coverage (pure).
+
+    Returns {overall_band, met_pct, counts{met,partial,gap,pending}, p0_open,
+    groups:[{label, band, met_pct}], basis}. `basis` names this as a designed
+    coverage-based convention (R2), not an external standard. Per-group breakdown:
+    IGA -> per governance AREA (id-range derived, R1); a domain with a bespoke
+    MATURITY_GROUPS map -> that capability grouping; any other domain -> grouping
+    by the `category` column of use-cases.csv (honest fallback so every domain's
+    board table has real per-group depth). UCs outside any group still count in
+    the overall roll-up."""
+    state_by_uc = {a["uc_id"]: a.get("current_state", "UNKNOWN") for a in anz}
+    priority_by_uc = {u["uc_id"]: (u.get("priority_fi") or "").strip() for u in ucs}
+    all_ids = [u["uc_id"] for u in ucs]
+
+    met_pct, counts, p0_gap, p0_partial, p0_open = _maturity_for(
+        all_ids, state_by_uc, priority_by_uc)
+    overall = _band_for(met_pct, p0_gap, p0_partial)
+
+    # group membership
+    grouped = defaultdict(list)
+    if domain_slug == "iga":
+        labels_order = list(IGA_AREAS) + ["Other"]
+        for uc_id in all_ids:
+            grouped[_iga_area_for(uc_id)].append(uc_id)
+    elif domain_slug in MATURITY_GROUPS:
+        bespoke = MATURITY_GROUPS[domain_slug]
+        labels_order = list(bespoke.keys())
+        members = {lbl: set(ids) for lbl, ids in bespoke.items()}
+        for uc_id in all_ids:
+            for lbl, idset in members.items():
+                if uc_id in idset:
+                    grouped[lbl].append(uc_id)
+    else:
+        # Honest fallback: group by the use-case `category` column so domains
+        # without a bespoke capability map still yield a non-empty board table.
+        cat_by_uc = {u["uc_id"]: (u.get("category") or "Other").strip() or "Other"
+                     for u in ucs}
+        labels_order = []
+        for uc_id in all_ids:
+            cat = cat_by_uc.get(uc_id, "Other")
+            if cat not in grouped:
+                labels_order.append(cat)
+            grouped[cat].append(uc_id)
+
+    groups = []
+    for lbl in labels_order:
+        ids = grouped.get(lbl)
+        if not ids:
+            continue
+        g_pct, _gc, g_p0_gap, g_p0_partial, _g_p0_open = _maturity_for(
+            ids, state_by_uc, priority_by_uc)
+        groups.append({"label": lbl, "band": _band_for(g_pct, g_p0_gap, g_p0_partial),
+                       "met_pct": g_pct})
+
+    return {"overall_band": overall, "met_pct": met_pct, "counts": counts,
+            "p0_open": p0_open, "groups": groups, "basis": _ML_BASIS}
+
+
+def build_quick_wins(anz, ucs, reg_rows, scope, limit=3):
+    """Top 'priorities — highest risk first' for the value narrative (pure).
+
+    Reuses roadmap_generator's seed_risk / regulatory_driver (single source of
+    truth). Filters `anz` to GAP/PARTIAL, returns the worst-risk-first top `limit`
+    with their regulatory-driver control codes. Each item:
+    {uc_id, short_title, state, risk_band, regulatory_driver}. Effort is NOT
+    modelled here (the questionnaire does not capture it), so no effort/quadrant
+    is surfaced — the ranking is risk + regulatory-driver only, which are real."""
+    # Reuse the roadmap_generator pure fns directly (single source of truth). It
+    # lives in questionnaire/ and imports questionnaire.record_state, so the repo
+    # root must be importable; ensure it without disturbing the matrix/ sys.path[0].
+    import os as _os2
+    import sys as _sys2
+    _root = _os2.path.dirname(_os2.path.dirname(_os2.path.abspath(__file__)))
+    if _root not in _sys2.path:
+        _sys2.path.append(_root)
+    from questionnaire.roadmap_generator import seed_risk, regulatory_driver
+
+    uc_by_id = {u["uc_id"]: u for u in ucs}
+    risk_order = {"High": 0, "Med": 1, "Low": 2}
+    items = []
+    for a in anz:
+        state = a.get("current_state", "")
+        if state not in ("GAP", "PARTIAL"):
+            continue
+        uc = uc_by_id.get(a["uc_id"], {})
+        risk = seed_risk(uc.get("priority_fi"))
+        items.append({
+            "uc_id": a["uc_id"],
+            "short_title": uc.get("short_title", a["uc_id"]),
+            "state": state,
+            "risk_band": risk,
+            "regulatory_driver": regulatory_driver(a["uc_id"], reg_rows, scope),
+        })
+    # worst-risk-first; regulatory-driven before undriven; then deterministic by id.
+    items.sort(key=lambda it: (
+        risk_order.get(it["risk_band"], 9),
+        0 if it["regulatory_driver"] else 1,
+        it["uc_id"]))
+    return items[:limit]
+
+
+_PROVENANCE_ROLES = {"PRIMARY-LENS", "BACK-MAP"}
+
+
+def build_value_callouts(reg_rows, identity_rows, igavfit, vendormix):
+    """Three honest, data-driven defensibility callouts (pure).
+
+    provenance  -> distinct control_code carrying an evidence url + quote (a
+                   compliance-role row): the audit-trail defensibility number.
+    independence -> IGA per-area NATIVE/PARTIAL counts from `igavfit`; else the
+                   secrets/PAM single-source / top-parent concentration read from
+                   `vendormix`.
+    currency    -> identity classes in the EMERGING bucket (R4: key on EMERGING
+                   exactly). secrets/PAM = 0 -> the renderer shows the honest
+                   forward-looking-gap branch; IGA = its 2 emerging classes."""
+    seen = set()
+    for r in (reg_rows or []):
+        if (r.get("framework_role") or "").strip() not in _PROVENANCE_ROLES:
+            continue
+        cc = (r.get("control_code") or "").strip()
+        if not cc or cc in seen:
+            continue
+        if (r.get("evidence_url") or "").strip() and (r.get("evidence_quote") or "").strip():
+            seen.add(cc)
+    total_controls = len({(r.get("control_code") or "").strip()
+                          for r in (reg_rows or []) if (r.get("control_code") or "").strip()})
+    provenance = {"controls_with_source": len(seen), "total": total_controls}
+
+    if igavfit and igavfit.get("vendors"):
+        native = partial = 0
+        for v in igavfit["vendors"]:
+            for cell in (v.get("cells") or {}).values():
+                fit = (cell.get("fit") or "").strip()
+                if fit == "NATIVE":
+                    native += 1
+                elif fit == "PARTIAL":
+                    partial += 1
+        independence = {"mode": "vendor-fit", "native": native, "partial": partial}
+    else:
+        con = (vendormix or {}).get("concentration") or []
+        ss = (vendormix or {}).get("single_source") or []
+        top = con[0] if con else {}
+        independence = {"mode": "concentration",
+                        "single_source_count": len(ss),
+                        "top_parent": top.get("name", ""),
+                        "top_share": top.get("share", 0)}
+
+    emerging = [r for r in (identity_rows or [])
+                if (r.get("bucket") or "").strip() == "EMERGING"]
+    classes = [(r.get("short_name") or r.get("nhi_id") or "").strip() for r in emerging]
+    currency = {"emerging_count": len(emerging), "classes": [c for c in classes if c]}
+
+    return {"provenance": provenance, "independence": independence, "currency": currency}
 
 
 def build_vendor_intel(ranked, ucs, chosen_slugs, short, evidence_len=160):

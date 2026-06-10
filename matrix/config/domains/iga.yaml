@@ -80,3 +80,7 @@ value_content:
     - ["Orphan / dormant accounts", "count of accounts with no owner or no recent activity", "Account-hygiene use cases", "per cycle"]
     - ["Access-request cycle time", "median time from access request to fulfilment", "Access-request use cases", "continuous"]
   roi_events: "one access-related audit finding, one SoD / fraud control failure, or one orphaned-account compromise"
+  caveats:
+    - "<b>Illustrative scenario, not a client assessment.</b> The posture states below are a worked example to show the report&rsquo;s shape — replace them with a real assessment before acting on any figure."
+    - "<b>Maturity bands are a roadmap, not a benchmark.</b> The ML1/2/3 ladder is a designed coverage-based convention for tracking progress over time — it is not an external standard and not a peer comparison."
+    - "<b>Vendor-fit reflects presence, not efficacy.</b> A NATIVE / PARTIAL rating means the capability exists at that grade, not that it is well-implemented in your environment — validate against your own requirements."

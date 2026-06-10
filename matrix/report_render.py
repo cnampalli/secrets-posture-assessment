@@ -80,6 +80,9 @@ def render(model):
             .replace("/*__COMPLIANCE__*/{}", json.dumps(model.get("compliance", {}), ensure_ascii=False))
             .replace("/*__VENDORINTEL__*/{}", json.dumps(model.get("vendorintel", {}), ensure_ascii=False))
             .replace("/*__META__*/{}", json.dumps(model["meta"], ensure_ascii=False))
+            .replace("/*__POSTUREMATURITY__*/{}", json.dumps(model.get("posturematurity", {}), ensure_ascii=False))
+            .replace("/*__QUICKWINS__*/[]", json.dumps(model.get("quickwins", []), ensure_ascii=False))
+            .replace("/*__VALUECALLOUTS__*/{}", json.dumps(model.get("valuecallouts", {}), ensure_ascii=False))
             .replace("/*__VALUECFG__*/{}", json.dumps(dc["value_content"], ensure_ascii=False))
             .replace("/*__DOMAINCFG__*/{}", json.dumps(
                 {"kpi_object_label": dc["kpi_object_label"], "layer_groups": dc["layer_groups"],

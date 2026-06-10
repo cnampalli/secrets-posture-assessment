@@ -345,6 +345,9 @@ const VENDORINTEL = /*__VENDORINTEL__*/{};
 const META = /*__META__*/{};
 const VALUECFG = /*__VALUECFG__*/{};
 const DOMAINCFG = /*__DOMAINCFG__*/{};
+const POSTUREMATURITY = /*__POSTUREMATURITY__*/{};
+const QUICKWINS = /*__QUICKWINS__*/[];
+const VALUECALLOUTS = /*__VALUECALLOUTS__*/{};
 
 function esc(s){ if(s==null) return ""; return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function gloss(code){ const d=GLOSSARY[code]; const t=esc(code); return d?'<span class="gloss" title="'+esc(d)+'">'+t+'</span>':t; }
@@ -850,14 +853,89 @@ function renderValue(){
   const kpis=VALUECFG.kpis||[];
   const kpirows=kpis.map(k=>'<tr><td><b>'+k[0]+'</b></td><td class="muted">'+k[1]+'</td><td class="muted">'+k[2]+'</td><td class="mono">'+k[3]+'</td></tr>').join("");
 
+  // ---- 0. prominent illustrative banner at the TOP of the value view ----
+  // A CISO sees the board maturity band first; if the posture is a synthetic
+  // worked example we say so before any figure, not only in the caveats card.
+  // Reuses .roi-banner styling with an amber (partial-tint) inline override so it
+  // reads as a caution, distinct from the green ROI banner — no new CSS class.
+  const isIllustrative=(VALUECFG.caveats||[]).some(c=>/illustrative scenario/i.test(c));
+  const illustrativeBanner=isIllustrative?
+    '<div class="roi-banner" style="background:var(--partial-tint);border-color:#e2c48f;border-left-color:var(--partial);margin-top:0;margin-bottom:16px">'+
+    '<span class="pill pill-PARTIAL">Illustrative</span> &nbsp;'+
+    '<b style="color:var(--partial-ink)">Illustrative scenario — synthetic posture, not a client assessment.</b> '+
+    'The maturity band and figures below are a worked example to show the report&rsquo;s shape; replace them with a real assessment before acting on any number.</div>':"";
+
+  // ---- 1. board maturity roll-up (designed coverage-based convention) ----
+  const pm=POSTUREMATURITY||{};
+  const BANDLBL={ML1:"ML1 · Foundational",ML2:"ML2 · Managed",ML3:"ML3 · Optimised"};
+  const bandPill=b=>{const cls={ML1:"pill-GAP",ML2:"pill-PARTIAL",ML3:"pill-MET"}[b]||"pill-PENDING";
+    return '<span class="pill '+cls+'">'+esc(BANDLBL[b]||b||"—")+'</span>';};
+  let maturityHtml="";
+  if(pm.overall_band){
+    const grp=(pm.groups||[]).map(g=>'<tr><td>'+esc(g.label)+'</td><td>'+bandPill(g.band)+
+      '</td><td class="mono">'+Math.round((g.met_pct||0)*100)+'% MET</td></tr>').join("");
+    maturityHtml=
+      '<h3 class="vsec">Board maturity roll-up</h3>'+
+      '<div class="card"><p style="margin:0 0 6px">Overall posture: '+bandPill(pm.overall_band)+
+        ' &nbsp;<span class="mono">'+Math.round((pm.met_pct||0)*100)+'% MET</span>'+
+        (pm.p0_open?' &nbsp;<span class="pill pill-GAP">'+pm.p0_open+' P0 open</span>':'')+'</p>'+
+      (grp?'<table class="kpitable"><thead><tr><th>Area</th><th>Band</th><th>Coverage</th></tr></thead><tbody>'+grp+'</tbody></table>':'')+
+      '<p class="note" style="margin:6px 0 0">'+esc(pm.basis||"")+'</p></div>';
+  }
+
+  // ---- 4. top priorities (highest risk first, with control codes) ----
+  const RISKPILL={High:"pill-GAP",Med:"pill-PARTIAL",Low:"pill-PENDING"};
+  const qw=(QUICKWINS||[]).map(w=>{
+    const codes=(w.regulatory_driver||[]).map(d=>'<span class="pill pill-PENDING">'+esc(d.control_code)+'</span>').join(" ")
+      ||'<span class="muted">no in-scope regulatory driver</span>';
+    return '<tr><td><b>'+esc(w.short_title)+'</b><br><span class="muted mono">'+esc(w.uc_id)+'</span></td>'+
+      '<td><span class="pill pill-'+esc(w.state)+'">'+esc(w.state)+'</span></td>'+
+      '<td><span class="pill '+(RISKPILL[w.risk_band]||"pill-PENDING")+'">'+esc(w.risk_band)+' risk</span></td>'+
+      '<td>'+codes+'</td></tr>';}).join("");
+  const quickHtml=qw?
+    '<h3 class="vsec">Top priorities — highest risk first</h3>'+
+    '<div class="card"><table class="kpitable"><thead><tr><th>Use case</th><th>State</th><th>Risk</th><th>Regulatory driver</th></tr></thead><tbody>'+qw+'</tbody></table>'+
+    '<p class="note" style="margin:6px 0 0">Ranked worst-risk-first; regulatory-driven items lead. Risk seeded from use-case priority — a roadmap starting point, not a fixed sequence. Effort is not modelled here.</p></div>':"";
+
+  // ---- 5. three defensibility callouts (computed from the data) ----
+  const co=VALUECALLOUTS||{};
+  const cards=[];
+  const prov=co.provenance||{};
+  if(prov.total){ cards.push('<div class="card ocard"><h3><span class="vtag risk">Defensible</span> Control-ID provenance</h3>'+
+    '<div class="mech"><b>'+prov.controls_with_source+'</b> of '+prov.total+' mapped controls carry an authoritative source URL + verbatim quote — an auditor-ready evidence trail, not assertion.</div></div>'); }
+  const ind=co.independence||{};
+  if(ind.mode==="vendor-fit"){ cards.push('<div class="card ocard"><h3><span class="vtag hours">Independent</span> Vendor-fit, honestly graded</h3>'+
+    '<div class="mech"><b>'+(ind.native||0)+'</b> NATIVE and <b>'+(ind.partial||0)+'</b> PARTIAL per-area fit calls — presence, not efficacy. PARTIAL is rated PARTIAL even where marketing claims more.</div></div>'); }
+  else if(ind.mode==="concentration"){ const ts=ind.top_share?Math.round(ind.top_share*100)+'%':null;
+    cards.push('<div class="card ocard"><h3><span class="vtag hours">Independent</span> Vendor concentration read</h3>'+
+    '<div class="mech"><b>'+(ind.single_source_count||0)+'</b> single-source use cases'+(ind.top_parent?'; top parent <b>'+esc(ind.top_parent)+'</b>'+(ts?' at '+ts+' share':''):'')+' — a resilience-first, lock-in-aware view of the stack.</div></div>'); }
+  const cur=co.currency||{};
+  if(cur.emerging_count>0){ cards.push('<div class="card ocard"><h3><span class="vtag kpi">Current</span> Emerging-identity coverage</h3>'+
+    '<div class="mech">Taxonomy already covers <b>'+cur.emerging_count+'</b> emerging identity classes: '+esc((cur.classes||[]).join(", "))+'. Keeps the assessment ahead of agentic-AI / consent-grant risk.</div></div>'); }
+  else { cards.push('<div class="card ocard"><h3><span class="vtag kpi">Honest gap</span> Emerging-identity coverage</h3>'+
+    '<div class="mech">No emerging identity classes are in this domain&rsquo;s taxonomy yet — a forward-looking gap to close as agentic-AI / consent-grant identities enter scope, not coverage we claim today.</div></div>'); }
+  const calloutHtml=cards.length?
+    '<h3 class="vsec">Why you can defend this</h3><div class="grid2">'+cards.join("")+'</div>':"";
+
+  // ---- 6. caveats (honesty guardrails, from value_content) ----
+  const caveats=VALUECFG.caveats||[];
+  const caveatHtml=caveats.length?
+    '<h3 class="vsec">Read this with the caveats</h3>'+
+    '<div class="card"><ul class="notes" style="margin:0">'+caveats.map(c=>'<li>'+c+'</li>').join("")+'</ul></div>':"";
+
   document.getElementById("value-body").innerHTML =
+    illustrativeBanner+
+    maturityHtml+
+    '<h3 class="vsec">Why it matters — where the return comes from</h3>'+
     '<div class="loop">'+loop+'</div>'+
-    '<p class="muted" style="margin:8px 0 0">Current baseline feeds the loop: <b>'+targets+'</b> prioritised remediation targets ('+gaps+' GAP · '+part+' PARTIAL · '+pend+' PENDING) tracked to closure.</p>'+
-    '<h3 class="vsec">Where the return comes from</h3>'+
     '<div class="grid2">'+ocards+'</div>'+
-    '<h3 class="vsec">How it&rsquo;s measured — KPIs (underpinned by '+nf+' non-functional use cases)</h3>'+
+    '<h3 class="vsec">The numbers — KPIs (underpinned by '+nf+' non-functional use cases)</h3>'+
+    '<p class="muted" style="margin:8px 0 0">Current baseline feeds the loop: <b>'+targets+'</b> prioritised remediation targets ('+gaps+' GAP · '+part+' PARTIAL · '+pend+' PENDING) tracked to closure.</p>'+
     '<div class="card"><table class="kpitable"><thead><tr><th>KPI</th><th>What it measures</th><th>Source</th><th>Cadence</th></tr></thead><tbody>'+kpirows+'</tbody></table></div>'+
-    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — '+VALUECFG.roi_events+' — typically exceeds the whole assessment cost by an order of magnitude. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>';
+    quickHtml+
+    calloutHtml+
+    '<div class="roi-banner"><b>Return is cost-avoidance, not new revenue.</b> The biggest single avoided event — '+VALUECFG.roi_events+' — can exceed the assessment cost many times over. Quantify against the institution&rsquo;s own baselines (current licences, audit effort, FAIR-style expected loss): this view supplies the metrics, not invented figures.</div>'+
+    caveatHtml;
 }
 
 renderDashboard();
