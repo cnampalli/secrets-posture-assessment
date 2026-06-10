@@ -35,7 +35,7 @@
       "proposed_state": "PARTIAL",
       "final_state": "PARTIAL",
       "overridden": false,
-      "rationale": "Leaver de-provisioning runs on a nightly batch from the HR source so the same-day disablement expectation (ASD ISM-1591) is not consistently met for contractors and federated SaaS targets.",
+      "rationale": "Leaver de-provisioning runs on a nightly batch from the HR source so the same-day disablement expectation (ASD ISM-0430) is not consistently met for contractors and federated SaaS targets.",
       "confidence": "HIGH",
       "sensitivity_tag": "PUBLIC"
     },

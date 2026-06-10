@@ -28,7 +28,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2",
-              "apra-cps234-para21"
+              "apra-cps-234-para21"
             ],
             "satisfies": [
               "AC-2",
@@ -60,7 +60,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac2j",
-          "apra-cps234-para27"
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "A.5.18",
@@ -75,7 +75,7 @@
         "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
-          "asd-ism-1591",
+          "asd-ism-0430",
           "nist-sp-800-53-ac2-3"
         ],
         "satisfies": [
@@ -108,7 +108,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2",
-              "apra-cps234-para21"
+              "apra-cps-234-para21"
             ],
             "satisfies": [
               "AC-2",
@@ -140,7 +140,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac2j",
-          "apra-cps234-para27"
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "A.5.18",
@@ -155,7 +155,7 @@
         "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
-          "asd-ism-1591",
+          "asd-ism-0430",
           "nist-sp-800-53-ac2-3"
         ],
         "satisfies": [
@@ -211,7 +211,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2",
-              "apra-cps234-para21"
+              "apra-cps-234-para21"
             ],
             "satisfies": [
               "AC-2",
@@ -227,7 +227,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2-3",
-              "asd-ism-1648"
+              "asd-ism-1404"
             ],
             "satisfies": [
               "AC-2(3)"
@@ -258,7 +258,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac2j",
-          "apra-cps234-para27"
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "A.5.18",
@@ -273,13 +273,13 @@
         "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
-          "asd-ism-1591",
+          "asd-ism-0430",
           "nist-sp-800-53-ac2-3"
         ],
         "satisfies": [
           "AC-2",
           "CPS234-§21",
-          "ISM-1591"
+          "ISM-0430"
         ]
       }
     ]
@@ -307,7 +307,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2",
-              "apra-cps234-para21"
+              "apra-cps-234-para21"
             ],
             "satisfies": [
               "AC-2",
@@ -323,12 +323,12 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2-3",
-              "asd-ism-1648"
+              "asd-ism-1404"
             ],
             "satisfies": [
               "AC-2(3)",
-              "ISM-1647",
-              "ISM-1648"
+              "ISM-1404",
+              "ISM-1647"
             ]
           }
         ]
@@ -348,7 +348,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2j",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "A.5.18",
@@ -364,7 +364,7 @@
             "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
-              "asd-ism-1591",
+              "asd-ism-0430",
               "nist-sp-800-53-ac2-3"
             ],
             "satisfies": [
@@ -422,7 +422,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2",
-              "apra-cps234-para21"
+              "apra-cps-234-para21"
             ],
             "satisfies": [
               "AC-2",
@@ -438,7 +438,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2-3",
-              "asd-ism-1648"
+              "asd-ism-1404"
             ],
             "satisfies": [
               "AC-2(3)"
@@ -461,11 +461,11 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2j",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "A.5.18",
-              "AC-2(j)",
+              "AC-2j",
               "CPS234-§21",
               "CPS234-§27"
             ]
@@ -478,7 +478,7 @@
             "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
-              "asd-ism-1591",
+              "asd-ism-0430",
               "nist-sp-800-53-ac2-3"
             ],
             "satisfies": [
@@ -495,7 +495,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac5",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "17 CFR 240.13a-15(f)",
@@ -568,7 +568,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2-3",
-              "asd-ism-1648"
+              "asd-ism-1404"
             ],
             "satisfies": [
               "ISM-1647"
@@ -597,7 +597,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2j",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "A.5.18",
@@ -614,7 +614,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac5",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "17 CFR 240.13a-15(f)"
@@ -686,7 +686,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2j",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "CPS234-§27"
@@ -701,7 +701,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac5",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "CPS234-§27"
@@ -770,7 +770,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac5",
-          "apra-cps234-roles"
+          "apra-cps-234-para14"
         ],
         "satisfies": [
           "AC-5",
@@ -787,7 +787,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac5",
-          "apra-cps234-para27"
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "17 CFR 240.13a-15(f)",
@@ -842,11 +842,11 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac5",
-              "apra-cps234-roles"
+              "apra-cps-234-para14"
             ],
             "satisfies": [
               "AC-5",
-              "CPS234-roles",
+              "CPS234-§14",
               "CPS234-§22",
               "PL 107-204 §404(a)"
             ]
@@ -885,7 +885,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac5",
-          "apra-cps234-para27"
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "AC-5",
@@ -924,7 +924,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2j",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "CPS234-§27"
@@ -939,7 +939,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac5",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "AC-5",
@@ -965,7 +965,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac2j",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "CPS234-§27"
@@ -980,7 +980,7 @@
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
               "nist-sp-800-53-ac5",
-              "apra-cps234-para27"
+              "apra-cps-234-para27"
             ],
             "satisfies": [
               "AC-5",
@@ -1017,7 +1017,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac5",
-          "apra-cps234-roles"
+          "apra-cps-234-para14"
         ],
         "satisfies": [
           "AC-5",
@@ -1054,7 +1054,7 @@
             ],
             "satisfies": [
               "AC-6",
-              "CPG234-LP"
+              "CPG234-Att-A"
             ]
           }
         ]
@@ -1078,7 +1078,7 @@
             ],
             "satisfies": [
               "AC-6",
-              "CPG234-LP"
+              "CPG234-Att-A"
             ]
           }
         ]
@@ -1102,7 +1102,7 @@
             ],
             "satisfies": [
               "AC-6",
-              "CPG234-LP"
+              "CPG234-Att-A"
             ]
           }
         ]
@@ -1180,7 +1180,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac2j",
-          "apra-cps234-para27"
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "A.5.18"
@@ -1236,7 +1236,7 @@
             ],
             "satisfies": [
               "AC-6",
-              "CPG234-LP"
+              "CPG234-Att-A"
             ]
           }
         ]
@@ -1264,7 +1264,7 @@
         "sensitivity_tag": "[INTERNAL]",
         "citation_keys": [
           "nist-sp-800-53-ac2j",
-          "apra-cps234-para27"
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "A.5.18"
@@ -1284,7 +1284,7 @@
         "satisfies": [
           "AC-6",
           "AC-6(5)",
-          "CPG234-LP"
+          "CPG234-Att-A"
         ]
       }
     ]

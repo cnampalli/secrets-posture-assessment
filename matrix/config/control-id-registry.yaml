@@ -14,12 +14,15 @@ asd-ism:
   source: "https://ismcontrol.xyz/ (Current tag) + cyber.gov.au ASD ISM"
   verified: 2026-05-24
   pattern: '^ISM-\d{4}$'
+  # ISM-0407 / ISM-0430 / ISM-1647 verified 2026-06-10 vs cyber.gov.au ISM Dec 2024 PDF
+  # + ismcontrol.xyz (IGA trace). NB: the IGA rows originally cited ISM-1591/ISM-1648 —
+  # wrong controls (fabrication-class); deliberately NOT registered.
   controls: [ISM-0027, ISM-0039, ISM-0043, ISM-0140, ISM-0252, ISM-0363, ISM-0401,
-    ISM-0421, ISM-0457, ISM-0469, ISM-0471, ISM-0481, ISM-0507, ISM-1139, ISM-1173,
-    ISM-1181, ISM-1192, ISM-1211, ISM-1247, ISM-1256, ISM-1275, ISM-1304, ISM-1323,
-    ISM-1324, ISM-1401, ISM-1404, ISM-1405, ISM-1437, ISM-1452, ISM-1504, ISM-1570,
-    ISM-1611, ISM-1613, ISM-1619, ISM-1656, ISM-1690, ISM-1707, ISM-1730, ISM-1795,
-    ISM-1796, ISM-1917]
+    ISM-0407, ISM-0421, ISM-0430, ISM-0457, ISM-0469, ISM-0471, ISM-0481, ISM-0507,
+    ISM-1139, ISM-1173, ISM-1181, ISM-1192, ISM-1211, ISM-1247, ISM-1256, ISM-1275,
+    ISM-1304, ISM-1323, ISM-1324, ISM-1401, ISM-1404, ISM-1405, ISM-1437, ISM-1452,
+    ISM-1504, ISM-1570, ISM-1611, ISM-1613, ISM-1619, ISM-1647, ISM-1656, ISM-1690,
+    ISM-1707, ISM-1730, ISM-1795, ISM-1796, ISM-1917]
 
 essential-8:
   source: "cyber.gov.au Essential Eight Maturity Model (Nov 2023)"
@@ -60,16 +63,60 @@ apra-cpg-234:
   source: "apra.gov.au CPG 234 Information Security (attachment references)"
   verified: 2026-05-24
   pattern: '^CPG234-Att-[A-Z]$'
-  controls: [CPG234-Att-C, CPG234-Att-D, CPG234-Att-E]
+  # CPG234-Att-A verified 2026-06-10 (least-privilege principle, Attachment A item (b),
+  # official apra.gov.au CPG 234 June 2019 PDF) — IGA trace.
+  controls: [CPG234-Att-A, CPG234-Att-C, CPG234-Att-D, CPG234-Att-E]
 
 mitre-attack:
   source: "attack.mitre.org (T-technique IDs) + public breach disclosures (BREACH-* case refs)"
   verified: 2026-06-03
   # No single pattern: T-technique IDs and internal breach-case references coexist.
-  controls: [T1078.004, T1098.001, T1199, T1528, T1539, T1552.001, T1552.002, T1552.003,
+  # T1078 / T1098 base techniques verified 2026-06-10 vs attack.mitre.org (IGA trace).
+  controls: [T1078, T1078.004, T1098, T1098.001, T1199, T1528, T1539, T1552.001, T1552.002, T1552.003,
     T1552.004, T1552.005, T1552.006, T1552.007, T1552.008, T1556.006, T1566, T1606.002,
     BREACH-circleci-2023-01, BREACH-cloudflare-2023-11, BREACH-ia-2024-10,
     BREACH-lastpass-2022, BREACH-moveit-2023, BREACH-okta-2022-01, BREACH-okta-2023-10,
     BREACH-snowflake-2024-06, BREACH-solarwinds-2020, BREACH-sourcegraph-2023-08,
     BREACH-storm0558-2023-07, BREACH-sumologic-2023-11, BREACH-toyota-2022-10,
     BREACH-uber-2022-09, BREACH-xz-utils-2024-03]
+
+# --- IGA-trace frameworks (registered 2026-06-10; verification notes:
+# docs/superpowers/plans/ws1-verification-notes.md) ---
+
+nist-800-53r5:
+  source: "csrc.nist.gov SP 800-53 Rev 5 (official NIST OSCAL catalog, usnistgov/oscal-content) + csf.tools mirror"
+  verified: 2026-06-10
+  # Parenthesised suffix = numeric enhancement; trailing letter = base-control statement item
+  # (e.g. AC-2j). "AC-2(j)" is deliberately NOT registered — letter-in-parens fakes an enhancement.
+  pattern: '^AC-\d{1,2}(\(\d{1,2}\)|[a-z])?$'
+  controls: [AC-2, AC-2(3), AC-2j, AC-3, AC-5, AC-6, AC-6(1), AC-6(5), AC-6(7)]
+
+iso-27001-2022:
+  source: "iso.org/standard/27001 (licensed text — quotes withheld); control titles cross-checked via isms.online Annex A reference"
+  verified: 2026-06-10
+  pattern: '^A\.\d{1,2}\.\d{1,2}$'
+  controls: [A.5.3, A.5.15, A.5.16, A.5.18]
+
+sox:
+  source: "govinfo.gov PLAW-107publ204 (Sarbanes-Oxley Act 2002) + law.cornell.edu 15 U.S.C. §7262"
+  verified: 2026-06-10
+  pattern: '^PL 107-204 §\d{3}(\([a-z]\))?$'
+  controls: ["PL 107-204 §103", "PL 107-204 §404(a)"]
+
+sox-icfr:
+  source: "law.cornell.edu/cfr/text/17/240.13a-15 (eCFR geo-blocked at verification; re-verify against ecfr.gov when reachable)"
+  verified: 2026-06-10
+  pattern: '^17 CFR 240\.13a-15\([a-z]\)$'
+  controls: ["17 CFR 240.13a-15(f)"]
+
+owasp-llm:
+  source: "genai.owasp.org OWASP Top 10 for LLM Applications 2025"
+  verified: 2026-06-10
+  pattern: '^LLM\d{2}:2025$'
+  controls: ["LLM06:2025"]
+
+ms-incident:
+  source: "microsoft.com Security Blog (2024-01-25 Midnight Blizzard guidance) + MSRC blog (2024-01-19 disclosure) — incident-case refs, like BREACH-* under mitre-attack"
+  verified: 2026-06-10
+  pattern: '^[A-Z][A-Za-z0-9-]+$'
+  controls: [Midnight-Blizzard-OAuth]
