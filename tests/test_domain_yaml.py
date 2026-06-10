@@ -80,7 +80,8 @@ def test_iga_yaml_anchors_to_historical_values():
     assert d.vendor_layer["okta-oig"] == ("L1", "suite")
     assert d.short["sailpoint-isc"] == "SailPoint"
     assert d.short["microsoft-entra-idg"] == "Microsoft Entra"
-    assert d.informative_frameworks == frozenset()
+    # THREAT-CONTEXT framings are informative-only, not compliance obligations
+    assert d.informative_frameworks == frozenset({"mitre-attack", "ms-incident", "owasp-llm"})
     assert d.legacy_recdata is False
 
 

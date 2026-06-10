@@ -64,6 +64,53 @@ mitre-attack:
   owner: TBD
   source: "attack.mitre.org + public breach disclosures (informative lens)"
 
+# --- IGA-trace frameworks (registered 2026-06-10; verification notes:
+# docs/superpowers/plans/ws1-verification-notes.md) ---
+
+nist-800-53r5:
+  as_of: 2026-06-10
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "csrc.nist.gov SP 800-53 Rev 5 (official OSCAL catalog) + csf.tools mirror"
+
+iso-27001-2022:
+  as_of: 2026-06-10
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "ISO/IEC 27001:2022 Annex A (licensed standard)"
+  note: "Control titles verified via secondary mirror (isms.online); full text licensed — quotes withheld in trace rows by design."
+
+sox:
+  as_of: 2026-06-10
+  source_tier: PRIMARY
+  refresh: as-needed
+  owner: TBD
+  source: "govinfo.gov Public Law 107-204 + law.cornell.edu 15 U.S.C. §7262"
+
+sox-icfr:
+  as_of: 2026-06-10
+  source_tier: PRIMARY
+  refresh: as-needed
+  owner: TBD
+  source: "17 CFR 240.13a-15 via law.cornell.edu (eCFR geo-blocked at verification)"
+
+owasp-llm:
+  as_of: 2026-06-10
+  source_tier: PRIMARY
+  refresh: annual
+  owner: TBD
+  source: "genai.owasp.org OWASP Top 10 for LLM Applications 2025"
+
+ms-incident:
+  as_of: 2026-06-10
+  source_tier: PRIMARY
+  refresh: as-needed
+  owner: TBD
+  source: "Microsoft first-party incident disclosures (Security Blog + MSRC blog, Jan 2024)"
+  note: "Threat-context incident-case reference (cf. BREACH-* refs under mitre-attack)."
+
 vendor-capabilities:
   as_of: "2025"
   source_tier: PRIMARY

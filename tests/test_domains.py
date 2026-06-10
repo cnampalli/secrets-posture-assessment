@@ -103,7 +103,8 @@ def test_iga_domain_registered_and_substrateless():
     assert d.anchors_tier == "suite"
     assert d.posture_noun == "identity-governance"
     assert d.legacy_recdata is False
-    assert d.informative_frameworks == frozenset()
+    # THREAT-CONTEXT framings are informative-only, not compliance obligations
+    assert d.informative_frameworks == frozenset({"mitre-attack", "ms-incident", "owasp-llm"})
 
 
 def test_iga_vendor_layer_and_shorts():

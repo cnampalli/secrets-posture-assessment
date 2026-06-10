@@ -13,34 +13,28 @@ Jurisdiction: AU-primary (APRA CPS 234 / ASD ISM / Essential 8) + NIST/ISO/SOX w
 Honesty is core: **no invented numbers, no fabricated control mappings** (the project once shipped a
 fabricated ISM mapping — anti-fabrication guards in `matrix/validate_data.py` exist because of it).
 
-## Current state (2026-06-10)
-- **`main`** = `b37b50e` — **IGA domain merged (PR #22)**. Three domains live: secrets (47 UCs, ~19
-  vendors), pam (17 UCs, 6 vendors), iga (13 UCs, 4 vendors, bespoke per-area vendor-fit).
-- **PR #23 OPEN** — branch **`feat/value-proposition-reporting`** (pushed to origin). Adds a curated
-  in-report **Value Proposition** view (board ML1/2/3 maturity roll-up, top-priorities, defensibility/
-  independence/currency callouts) to all 3 reports + illustrative mock posture for PAM/IGA. Gates passed:
-  code-review approved; instrument-review Buy-with-conditions (all conditions closed); pytest 274 / app
-  vitest 63 green. **→ Review & merge this first on resume.**
+## Current state (2026-06-11)
+- **`main`** = `17c20f4` — PR #22 (IGA domain) and PR #23 (value-prop view) both **merged**. Three
+  domains live: secrets (47 UCs, ~19 vendors), pam (17 UCs, 6 vendors), iga (13 UCs, 4 vendors,
+  bespoke per-area vendor-fit).
+- **WS1 DONE on this branch (`feat/ws1-iga-validator-debt` → PR #24).** All 46 IGA `validate_data`
+  violations cleared WITHOUT weakening the gate. Source re-verification caught **two
+  fabrication-class control-ID errors** (ISM-1591→ISM-0430 same-day removal; ISM-1648→ISM-1404
+  unprivileged 45-day) — full evidence + deferred follow-ups in
+  `docs/superpowers/plans/ws1-verification-notes.md`. Validator now: descriptor-declared matrix-less
+  domains (`iga.yaml: vendor_fit`), citation-gated fit grid, cross-domain pytest gate over
+  `domains.DOMAINS`. pytest 308 / vitest 63 green; validate_data clean ×3 domains.
+  **→ If PR #24 is still open on resume, review & merge it first, then start WS2.**
 
-### ⚠️ Resume step 1 — re-establish the value-prop branch on the new laptop
-The `../valueprop` git worktree is laptop-local; the **branch is on origin**. On the new machine:
-```bash
-git clone <repo>            # or: git fetch origin
-git checkout feat/value-proposition-reporting   # the PR #23 branch
-# review/merge PR #23 via GitHub, then on main:
-git checkout main && git pull
-```
-(No need to recreate the worktree — just check out the branch. If you used a worktree before,
-`git worktree remove ../valueprop` only matters on the old laptop.)
-
-## Parked next work (approved, NOT started) → `docs/superpowers/plans/2026-06-10-vendor-accuracy-naming.md`
-Four sequenced workstreams answering a buyer-DD review of the demos. **Start after PR #23 merges**, off
-updated `main`, in an isolated worktree, agent-driven with the `code-review` + `instrument-review-methodology`
-+ `grill-me` gate per phase:
-1. **WS1 — IGA regulatory/validator debt.** Clear the 46 IGA `validate_data` violations (register IGA's
-   7 frameworks in `control-id-registry.yaml` + `data-provenance.yaml`; whitelist `INFORMATIVE`/
-   `THREAT-CONTEXT` roles + `scope` dimension in `validate_data.py`; fix the ISO A.5.18 secondary-quote).
-   These are **schema-registration gaps, not fabrication**. Do NOT weaken the validator.
+## Workstream plan → `docs/superpowers/plans/2026-06-10-vendor-accuracy-naming.md`
+Four sequenced workstreams answering a buyer-DD review of the demos. Each off updated `main`, in an
+isolated worktree, agent-driven with the `code-review` + `instrument-review-methodology` + `grill-me`
+gate per phase:
+1. **WS1 — IGA regulatory/validator debt. ✅ DONE (PR #24, 2026-06-11).** Outcome differed from the
+   original framing: mostly schema-registration gaps as expected, but verification found two
+   genuinely wrong ISM control IDs (fixed) and the ISO A.5.18 fix had already landed via PR #23.
+   WS2 inherits two small data follow-ups (backmap_codes style drift; dangling `iso-27001-a5-18`
+   citation key) — see the deferred list in `ws1-verification-notes.md`.
 2. **WS2 — Use-case gap-fill.** IGA 13→16 (request-recert, self-approval-prevention, unstructured-data);
    PAM 17→18 (SAW/PAW tier-0). Watch the UC-count ripple (`test_iga_spike`, rubric JSON, app tests, mocks).
 3. **WS3 — Vendor expansion to leader parity** (citation-backed, adversarially verified). PAM 6→~10

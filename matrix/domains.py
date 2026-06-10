@@ -46,6 +46,10 @@ class Domain:
     substrate_slug: str
     # analysis policy
     anchors_tier: str                       # vendor tier that seeds complementary picks
+    vendor_fit: str = None                  # per-area fit-grid CSV (relative to data_dir);
+                                            # declaring it marks the domain "matrix-less":
+                                            # the aggregate vendor matrix may be header-only
+                                            # and the fit grid carries the (validated) claims
     informative_frameworks: frozenset = field(default_factory=frozenset)
     legacy_recdata: bool = False            # build the secrets-specific RECDATA section?
                                             # (the frozen legacy recommendations; new domains
@@ -130,6 +134,7 @@ def load_domain(path):
         layer_label=_FrozenDict(d["layer_label"]),
         substrate_slug=d["substrate_slug"],
         anchors_tier=d["anchors_tier"],
+        vendor_fit=d.get("vendor_fit"),
         informative_frameworks=frozenset(d.get("informative_frameworks", [])),
         legacy_recdata=d.get("legacy_recdata", False),
         report_title=d.get("report_title", ""),

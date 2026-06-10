@@ -1,5 +1,11 @@
 # IGA Research — Joiner / Mover / Leaver (JML) Identity Lifecycle
 
+> **⚠️ ERRATUM (2026-06-10):** the ISM-1591 and ISM-1648 citations below are WRONG controls
+> (ISM-1591 = malicious-activity suspension; ISM-1648 = *privileged* 45-day inactivity). Correct
+> controls: **ISM-0430** (same-day removal) and **ISM-1404** (unprivileged 45-day). Verified against
+> the official cyber.gov.au ISM Dec-2024 PDF — see `docs/superpowers/plans/ws1-verification-notes.md`.
+> The shipped trace and registry carry the corrected IDs.
+
 > Domain: Identity Governance & Administration (IGA), Phase 3.
 > Jurisdiction: AU-primary (APRA CPS 234, ASD ISM, Essential Eight) + NIST SP 800-53, ISO/IEC 27001:2022, SOX (SoD only).
 > Instrument scores **process maturity**, not tool deployment.

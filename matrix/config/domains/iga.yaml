@@ -14,6 +14,9 @@ data_dir: "domains/iga"             # relative to matrix/ (HERE)
 
 # CSV filenames (relative to data_dir)
 vendor_capabilities: "vendor-capabilities.csv"
+vendor_fit: "iga-vendor-fit.csv"    # per-area fit grid; declaring it marks IGA matrix-less
+                                    # (header-only vendor-capabilities.csv accepted; the fit
+                                    #  grid itself is citation-gated by validate_data.py)
 use_cases: "use-cases.csv"
 identity_catalog: "identity-catalog.csv"
 regulatory_trace: "regulatory-trace.csv"
@@ -41,7 +44,9 @@ substrate_slug: ""
 
 # analysis policy
 anchors_tier: "suite"
-informative_frameworks: []
+# THREAT-CONTEXT framings (adversary/incident lenses), not compliance obligations —
+# excluded from compliance scoring the same way secrets.yaml excludes mitre-attack.
+informative_frameworks: ["mitre-attack", "ms-incident", "owasp-llm"]
 legacy_recdata: false
 
 # report labels
