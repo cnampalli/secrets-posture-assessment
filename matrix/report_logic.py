@@ -43,7 +43,7 @@ MATURITY_GROUPS = {
         "Workload & cloud access":
             ["UC-P-006", "UC-P-011", "UC-P-012", "UC-P-013"],
         "Endpoint & threat analytics":
-            ["UC-P-009", "UC-P-015", "UC-P-016", "UC-P-017"],
+            ["UC-P-009", "UC-P-015", "UC-P-016", "UC-P-017", "UC-P-018"],
     },
 }
 
@@ -232,7 +232,11 @@ _ML_BASIS = ("Designed coverage-based convention (ML1 foundational / ML2 managed
 # R1: production iga/use-cases.csv has `category`, not `area`. Derive the
 # governance area from the UC-I id ranges (research/iga/RESEARCH-SUMMARY.md §1).
 _IGA_AREA_BY_NUM = (
-    (1, 4, "JML"), (5, 7, "Certification"), (8, 10, "SoD"), (11, 13, "Role/Request"))
+    (1, 4, "JML"), (5, 7, "Certification"), (8, 10, "SoD"), (11, 13, "Role/Request"),
+    # WS2 gap-fill: UC-I-014 request-time recertification -> Certification;
+    # UC-I-015 self-approval prevention -> SoD; UC-I-016 data-access governance
+    # -> Role/Request (docs/superpowers/plans/ws2-research-notes.md).
+    (14, 14, "Certification"), (15, 15, "SoD"), (16, 16, "Role/Request"))
 
 
 def _iga_area_for(uc_id):

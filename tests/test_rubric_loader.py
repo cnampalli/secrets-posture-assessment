@@ -95,10 +95,10 @@ def _ev_on(uc, dimension):
     return out
 
 
-def test_pam_loads_all_17_use_cases():
-    # the PAM questionnaire must reach parity with the PAM matrix report (all 17 UCs),
+def test_pam_loads_all_18_use_cases():
+    # the PAM questionnaire must reach parity with the PAM matrix report (all 18 UCs),
     # not the original 3-UC demo slice.
-    assert {u["uc_id"] for u in PAM_UCS} == {f"UC-P-{i:03d}" for i in range(1, 18)}
+    assert {u["uc_id"] for u in PAM_UCS} == {f"UC-P-{i:03d}" for i in range(1, 19)}
 
 
 def test_pam_all_use_cases_are_ladder():

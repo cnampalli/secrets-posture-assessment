@@ -10,8 +10,8 @@ describe('domain registry', () => {
 
   it('carries the right rubric per domain', () => {
     expect(getDomain('secrets').rubric.length).toBe(47);
-    expect(getDomain('pam').rubric.length).toBe(17);
-    expect(getDomain('iga').rubric.length).toBe(13);
+    expect(getDomain('pam').rubric.length).toBe(18);
+    expect(getDomain('iga').rubric.length).toBe(16);
   });
 
   it('falls back to the default domain on an unknown id', () => {
@@ -28,6 +28,6 @@ describe('makeRubric factory', () => {
     const groups = pam.byCategory();
     expect(Object.keys(groups).length).toBeGreaterThan(0);
     const total = Object.values(groups).reduce((n, l) => n + l.length, 0);
-    expect(total).toBe(17);
+    expect(total).toBe(18);
   });
 });

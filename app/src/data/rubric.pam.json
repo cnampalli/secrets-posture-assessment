@@ -376,6 +376,21 @@
             "satisfies": [
               "ISM-1304"
             ]
+          },
+          {
+            "ev_id": "EV-PAM-SAW-INVENTORY",
+            "requirement": "A SAW/PAW fleet inventory mapping each tier-0 / privileged administrator to a dedicated hardened admin workstation, with hardening-baseline compliance status (application control, no standing local admin, patch state) and exceptions registered with owner and expiry.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a SAW device inventory with per-device baseline-compliance status and the tier-0 operator mapping",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "acsc-e8-changes-nov2023",
+              "ms-pth-mitigation-2014"
+            ],
+            "satisfies": [
+              "E8-RAP-ML3"
+            ]
           }
         ]
       },
@@ -1427,6 +1442,101 @@
         "dimension": "depth",
         "informs_state": "PARTIAL_MET",
         "text": "Is it generated within the agreed post-test reporting window?"
+      }
+    ],
+    "evidence_additional": []
+  },
+  {
+    "uc_id": "UC-P-018",
+    "title": "Secure admin workstations (SAW/PAW) for tier-0 isolation",
+    "category": "Functional",
+    "archetype": "A1",
+    "archetype_name": "Preventive Guardrail",
+    "kind": "ladder",
+    "questions": [
+      {
+        "qid": "A1-Q1",
+        "dimension": "coverage",
+        "informs_state": "GAP_PARTIAL",
+        "text": "Is privileged administration permitted only from dedicated hardened Secure Admin Workstations, with non-SAW access to tier-0 targets blocked at the proxy / conditional-access layer deployed at all relevant gates for tier-0 and in-scope privileged sessions and the administrators behind them?",
+        "evidence": [
+          {
+            "ev_id": "EV-PAM-SAW-INVENTORY",
+            "requirement": "A SAW/PAW fleet inventory mapping each tier-0 / privileged administrator to a dedicated hardened admin workstation, with hardening-baseline compliance status (application control, no standing local admin, patch state) and exceptions registered with owner and expiry.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a SAW device inventory with per-device baseline-compliance status and the tier-0 operator mapping",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "acsc-e8-changes-nov2023",
+              "ms-pth-mitigation-2014"
+            ],
+            "satisfies": [
+              "E8-RAP-ML3",
+              "ISM-1380",
+              "ISM-1898"
+            ]
+          },
+          {
+            "ev_id": "EV-PAM-JIT-GRANTS",
+            "requirement": "Evidence that privileged access is granted just-in-time and time-bound rather than held as standing privilege.",
+            "dimension": "coverage",
+            "tier": "follow-up",
+            "example_artifact": "e.g., a just-in-time elevation policy and a sample of time-bound grants with expiry",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "acsc-e8-mm-nov2023",
+              "gartner-pam-mq-2024"
+            ],
+            "satisfies": [
+              "E8-RAP-ML2"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A1-Q2",
+        "dimension": "enforcement",
+        "informs_state": "PARTIAL_MET",
+        "text": "Is privileged administration permitted only from dedicated hardened Secure Admin Workstations, with non-SAW access to tier-0 targets blocked at the proxy / conditional-access layer enforced in blocking mode (not detect-only) across all tier-0 administrative paths including directory, virtualization, network devices and the PAM platform itself?",
+        "evidence": [
+          {
+            "ev_id": "EV-PAM-PRIV-SEPARATION",
+            "requirement": "Evidence that privileged accounts are separated from standard accounts and prevented from accessing the internet, email and web services.",
+            "dimension": "enforcement",
+            "tier": "primary",
+            "example_artifact": "e.g., the privileged-account policy and an internet/email/web block ruleset with the covered-account list",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "acsc-e8-2023",
+              "acsc-e8-mm-nov2023"
+            ],
+            "satisfies": [
+              "E8-RAP-ML2"
+            ]
+          },
+          {
+            "ev_id": "EV-PAM-SAW-ACCESS-BLOCK",
+            "requirement": "Evidence that access to tier-0 targets from non-SAW devices is technically blocked (proxy or conditional-access device filter) and that privileged accounts used from SAWs are prevented from reaching internet, email and web services, with a sample blocked-attempt alert.",
+            "dimension": "enforcement",
+            "tier": "follow-up",
+            "example_artifact": "e.g., the conditional-access / proxy device-filter rule plus a sample blocked-attempt alert",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "acsc-e8-mm-nov2023",
+              "gartner-pam-mq-2024"
+            ],
+            "satisfies": [
+              "ISM-1175"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A1-Q3",
+        "dimension": "exception",
+        "informs_state": "PARTIAL_MET",
+        "text": "Are bypasses controlled by a registered exception with owner and expiry?"
       }
     ],
     "evidence_additional": []

@@ -178,6 +178,16 @@
       "rationale": "The PAM platform meets its availability and recovery targets with tested break-glass paths; cross-region failover is exercised though the full DR drill cadence is still being formalised.",
       "confidence": "MED",
       "sensitivity_tag": "PUBLIC"
+    },
+    "UC-P-018": {
+      "archetype": "A1",
+      "answers": {"priv-env-separated": "yes", "saw-dedicated": "no", "nonsaw-blocked": "no"},
+      "proposed_state": "PARTIAL",
+      "final_state": "PARTIAL",
+      "overridden": false,
+      "rationale": "Administrators use separate privileged accounts and sessions are brokered through the PAM proxy, but administration is performed from standard SOE workstations rather than dedicated hardened SAWs, and tier-0 logon is not yet restricted to compliant devices, so a compromised daily-driver endpoint can still host a privileged session.",
+      "confidence": "MED",
+      "sensitivity_tag": "PUBLIC"
     }
   }
 }

@@ -13,10 +13,10 @@ def test_emits_both_domains(tmp_path, monkeypatch):
     pam = json.loads((out_dir / "rubric.pam.json").read_text(encoding="utf-8"))
     iga = json.loads((out_dir / "rubric.iga.json").read_text(encoding="utf-8"))
     assert len(secrets) == 47
-    assert len(pam) == 17
-    assert len(iga) == 13
-    assert {u["uc_id"] for u in pam} == {f"UC-P-{i:03d}" for i in range(1, 18)}
-    assert {u["uc_id"] for u in iga} == {f"UC-I-{i:03d}" for i in range(1, 14)}
+    assert len(pam) == 18
+    assert len(iga) == 16
+    assert {u["uc_id"] for u in pam} == {f"UC-P-{i:03d}" for i in range(1, 19)}
+    assert {u["uc_id"] for u in iga} == {f"UC-I-{i:03d}" for i in range(1, 17)}
     assert all("uc_id" in u and "questions" in u or u["kind"] == "bespoke" for u in secrets)
 
 
