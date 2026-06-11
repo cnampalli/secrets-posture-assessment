@@ -60,8 +60,15 @@ def test_pam_yaml_anchors_to_historical_values():
     assert d.substrate_slug == ""
     assert d.anchors_tier == "suite"
     assert set(d.vendor_layer) == {"cyberark-pam", "delinea", "beyondtrust",
-                                   "one-identity-safeguard", "wallix-bastion", "teleport"}
+                                   "one-identity-safeguard", "wallix-bastion", "teleport",
+                                   "strongdm", "britive", "apono", "netwrix-privilege-secure"}
+    assert d.vendor_layer["strongdm"] == ("L2", "modern-access")
+    assert d.vendor_layer["britive"] == ("L2", "modern-access")
+    assert d.vendor_layer["apono"] == ("L2", "modern-access")
+    assert d.vendor_layer["netwrix-privilege-secure"] == ("L1", "suite")
     assert d.short["cyberark-pam"] == "CyberArk"
+    assert d.short["strongdm"] == "StrongDM"
+    assert d.short["netwrix-privilege-secure"] == "Netwrix"
     assert d.informative_frameworks == frozenset()
     assert d.legacy_recdata is False
 
@@ -75,11 +82,22 @@ def test_iga_yaml_anchors_to_historical_values():
     assert d.substrate_slug == ""
     assert d.anchors_tier == "suite"
     assert set(d.vendor_layer) == {"sailpoint-isc", "saviynt-eic",
-                                   "microsoft-entra-idg", "okta-oig"}
+                                   "microsoft-entra-idg", "okta-oig",
+                                   "omada", "conductorone", "lumos", "zilla"}
     assert d.vendor_layer["sailpoint-isc"] == ("L1", "suite")
     assert d.vendor_layer["okta-oig"] == ("L1", "suite")
+    # all four new SaaS-first IGA vendors land at L1 suite (ConductorOne's proposed
+    # L2 modern-iga label is overridden per the PASS-2 layer ruling)
+    assert d.vendor_layer["omada"] == ("L1", "suite")
+    assert d.vendor_layer["conductorone"] == ("L1", "suite")
+    assert d.vendor_layer["lumos"] == ("L1", "suite")
+    assert d.vendor_layer["zilla"] == ("L1", "suite")
     assert d.short["sailpoint-isc"] == "SailPoint"
     assert d.short["microsoft-entra-idg"] == "Microsoft Entra"
+    assert d.short["omada"] == "Omada"
+    assert d.short["conductorone"] == "ConductorOne"
+    assert d.short["lumos"] == "Lumos"
+    assert d.short["zilla"] == "Zilla"
     # THREAT-CONTEXT framings are informative-only, not compliance obligations
     assert d.informative_frameworks == frozenset({"mitre-attack", "ms-incident", "owasp-llm"})
     assert d.legacy_recdata is False
