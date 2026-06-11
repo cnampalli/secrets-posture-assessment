@@ -8,7 +8,7 @@ used in the PRD body, appendices and ADRs is expanded. Sources are
 [`research/identity-taxonomy.md`](../../research/identity-taxonomy.md)
 ([ADR-002](../adrs/ADR-002-identity-taxonomy-source.md)) and
 [`research/use-cases.md`](../../research/use-cases.md). Sensitivity
-tagging per [ADR-005](../adrs/ADR-005-anz-evidence-policy.md).
+tagging per [ADR-005](../adrs/ADR-005-fi-evidence-policy.md).
 
 ---
 

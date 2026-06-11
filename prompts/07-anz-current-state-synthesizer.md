@@ -23,7 +23,7 @@ Translate the user's filled-in `task0/responses.md` into:
 1. **`matrix/anz-current-state.csv`** — one row per `(UC, NHI)` pair
    declared compatible (mirrors `vendor-capabilities.csv` shape).
 2. **Evidence excerpts for PRD §13** — written as a separate file
-   `research/anz-current-state-evidence.md` with `[INTERNAL]` content
+   `research/current-state-evidence.md` with `[INTERNAL]` content
    stripped or anonymised per ADR-005.
 
 ## Inputs
@@ -56,7 +56,7 @@ uc_id,nhi_id,anz_state,confidence,evidence_q_ids,evidence_redacted,gap_notes,sen
 - `citation_keys` — any public references the user cited (e.g.,
   HashiCorp case study URLs, conference talks).
 
-## Output schema — `research/anz-current-state-evidence.md`
+## Output schema — `research/current-state-evidence.md`
 
 Sectioned by NHI bucket (COMMON / UNCOMMON), then by UC, then bulleted
 findings. Every finding carries its sensitivity tag. Sensitive content
@@ -76,7 +76,7 @@ For each answer in `task0/responses.md`:
    `(redacted — see internal annex)`.
 5. If `[NOT-FOR-DISTRIBUTION]` — ignore for both PRD AND CSV (annex
    only — and even then, leave a one-line `<seen-but-not-reproduced>`
-   marker in `research/anz-current-state-evidence.md`).
+   marker in `research/current-state-evidence.md`).
 
 ## Sensitivity policy (Invariant #7)
 
@@ -90,7 +90,7 @@ If `task0/responses.md` is very long: checkpoint at
 
 ## Log line for `meta/agents.md`
 
-`XYZ Current-State Synthesizer (main, Opus 4.7) — wrote anz-current-state.csv (X rows: MET=A PARTIAL=B GAP=C N/A=D PENDING=E) + anz-current-state-evidence.md. Sensitivity audit: <summary>. Status: OK.`
+`XYZ Current-State Synthesizer (main, Opus 4.7) — wrote anz-current-state.csv (X rows: MET=A PARTIAL=B GAP=C N/A=D PENDING=E) + current-state-evidence.md. Sensitivity audit: <summary>. Status: OK.`
 
 ## Acceptance criteria
 

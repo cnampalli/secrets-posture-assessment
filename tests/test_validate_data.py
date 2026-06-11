@@ -209,6 +209,144 @@ def test_data_provenance_clean():
     assert vd.check_data_provenance(trace, _PROV) == []
 
 
+# ---- A1: data-currency gate (max-age per source tier) ----
+_POLICY = {"max_age_days": {"PRIMARY": 365, "ANALYST": 270, "CONSENSUS": 180}}
+
+
+def _prov(as_of, tier="PRIMARY", impact="HIGH", policy=_POLICY):
+    p = {"asd-ism": {"as_of": as_of, "source_tier": tier, "impact": impact}}
+    if policy is not None:
+        p["freshness_policy"] = policy
+    return p
+
+
+def test_data_currency_backdated_high_impact_fails():
+    # PRIMARY max age 365d; as_of 2024-01-01 vs today 2026-06-11 is ~892d -> FAIL
+    errs = vd.check_data_currency(_prov("2024-01-01"), today="2026-06-11")
+    assert len(errs) == 1
+    e = errs[0]
+    assert "asd-ism" in e and "PRIMARY" in e and "365" in e and "892" in e
+
+
+def test_data_currency_fresh_fact_passes():
+    assert vd.check_data_currency(_prov("2026-05-24"), today="2026-06-11") == []
+
+
+def test_data_currency_thresholds_come_from_yaml_not_code():
+    # Same entry, same age (~200d): passes under PRIMARY=365, fails when the yaml
+    # policy tightens PRIMARY to 100 -> the threshold is sourced from the yaml.
+    prov_loose = _prov("2025-11-23")  # 200 days before 2026-06-11
+    assert vd.check_data_currency(prov_loose, today="2026-06-11") == []
+    tight = {"max_age_days": {"PRIMARY": 100, "ANALYST": 270, "CONSENSUS": 180}}
+    prov_tight = _prov("2025-11-23", policy=tight)
+    errs = vd.check_data_currency(prov_tight, today="2026-06-11")
+    assert any("asd-ism" in e and "100" in e for e in errs)
+
+
+def test_data_currency_tier_thresholds_differ():
+    # 200d old: fine for PRIMARY (365), stale for CONSENSUS (180)
+    assert vd.check_data_currency(_prov("2025-11-23", tier="PRIMARY"), today="2026-06-11") == []
+    errs = vd.check_data_currency(_prov("2025-11-23", tier="CONSENSUS"), today="2026-06-11")
+    assert any("CONSENSUS" in e and "180" in e for e in errs)
+
+
+def test_data_currency_missing_policy_is_violation():
+    errs = vd.check_data_currency(_prov("2026-05-24", policy=None), today="2026-06-11")
+    assert any("freshness_policy" in e for e in errs)
+
+
+def test_data_currency_missing_impact_fail_closes_to_high():
+    prov = {"freshness_policy": _POLICY,
+            "asd-ism": {"as_of": "2024-01-01", "source_tier": "PRIMARY"}}  # no impact key
+    assert any("asd-ism" in e for e in vd.check_data_currency(prov, today="2026-06-11"))
+
+
+def test_data_currency_non_high_impact_not_build_failing():
+    assert vd.check_data_currency(_prov("2024-01-01", impact="MEDIUM"), today="2026-06-11") == []
+
+
+def test_data_currency_year_only_as_of_reads_as_year_end():
+    # "2025" resolves to 2025-12-31 (latest date consistent with the declared value):
+    # 162d on 2026-06-11 -> fresh under PRIMARY, stale-on-proof under a 100d policy.
+    assert vd.check_data_currency(_prov("2025"), today="2026-06-11") == []
+    tight = {"max_age_days": {"PRIMARY": 100, "ANALYST": 270, "CONSENSUS": 180}}
+    assert vd.check_data_currency(_prov("2025", policy=tight), today="2026-06-11")
+
+
+def test_data_currency_unparseable_as_of_is_violation():
+    errs = vd.check_data_currency(_prov("circa 2025"), today="2026-06-11")
+    assert any("as_of" in e for e in errs)
+
+
+def test_data_currency_today_env_var_injection(monkeypatch):
+    # With no explicit today, the gate must honour VALIDATE_DATA_TODAY.
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "2027-06-11")
+    assert vd.check_data_currency(_prov("2026-05-24"))  # >365d from injected today
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "2026-06-11")
+    assert vd.check_data_currency(_prov("2026-05-24")) == []
+
+
+def test_data_currency_empty_provenance_defers_to_provenance_gate():
+    # check_data_provenance already flags a missing manifest; no double-flag here.
+    assert vd.check_data_currency({}, today="2026-06-11") == []
+
+
+def test_data_currency_invalid_impact_fails_closed_and_flagged():
+    # H1: an unrecognised impact value (typo or off-vocabulary) must NOT exempt
+    # a stale entry. It fail-closes to HIGH (the entry is gated) AND the bogus
+    # value itself is flagged so the typo gets fixed.
+    for bogus in ("HIGGH", "CRITICAL"):
+        errs = vd.check_data_currency(_prov("2024-01-01", impact=bogus), today="2026-06-11")
+        assert any("impact" in e and bogus in e for e in errs), f"impact '{bogus}' not flagged"
+        assert any("stale" in e for e in errs), f"impact '{bogus}' silently exempted a stale entry"
+
+
+def test_data_currency_valid_downgrade_still_exempts():
+    # Only an explicit, VALID MEDIUM/LOW exempts an entry from currency gating.
+    assert vd.check_data_currency(_prov("2024-01-01", impact="MEDIUM"), today="2026-06-11") == []
+    assert vd.check_data_currency(_prov("2024-01-01", impact="LOW"), today="2026-06-11") == []
+
+
+def test_data_currency_unknown_tier_is_violation_not_skip():
+    # M1: a typo'd source_tier must fail closed HERE — check_data_provenance only
+    # inspects the current domain's trace, so an off-domain entry with a bad tier
+    # would otherwise slip both gates.
+    errs = vd.check_data_currency(_prov("2024-01-01", tier="PRIMRY"), today="2026-06-11")
+    assert any("source_tier" in e and "PRIMRY" in e for e in errs)
+
+
+def test_data_currency_empty_env_override_is_clean_error(monkeypatch):
+    # L1a: an empty VALIDATE_DATA_TODAY must surface as a clean violation naming
+    # the bad value, not an uncaught ValueError traceback.
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "")
+    errs = vd.check_data_currency(_prov("2026-05-24"))
+    assert any("VALIDATE_DATA_TODAY" in e for e in errs)
+
+
+def test_data_currency_malformed_env_override_is_clean_error(monkeypatch):
+    # L1a: same for a malformed value — the message names the offending value.
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "not-a-date")
+    errs = vd.check_data_currency(_prov("2026-05-24"))
+    assert any("VALIDATE_DATA_TODAY" in e and "not-a-date" in e for e in errs)
+
+
+def test_data_currency_env_override_warns_on_stderr(monkeypatch, capsys):
+    # L1b: an active (non-empty) override prints a one-line stderr WARNING with
+    # the frozen date, so a stray export can't silently freeze the gate.
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "2026-06-11")
+    assert vd.check_data_currency(_prov("2026-05-24")) == []
+    err = capsys.readouterr().err
+    assert "WARNING" in err and "2026-06-11" in err
+
+
+def test_validate_all_fails_on_backdated_high_impact_fact(monkeypatch):
+    # End-to-end: the real manifest validated as of a far-future "today" must
+    # trip the currency gate through validate_all (proves it is wired in).
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "2030-01-01")
+    viol = vd.validate_all(str(ROOT))
+    assert any("max_age_days" in v or "stale" in v for v in viol)
+
+
 # --- evidence-pack gate (regulatory-driven evidence packs) -----------------
 
 def _trace_row(**kw):

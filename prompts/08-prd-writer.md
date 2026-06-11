@@ -19,7 +19,7 @@ the six ADRs, and write the four appendices.
 - `research/vendors/*.md` (12)
 - `research/regulatory/*.md` (5)
 - `research/adversary/*.md` (2)
-- `research/anz-current-state-evidence.md`
+- `research/current-state-evidence.md`
 - `matrix/matrix.csv`, `matrix/matrix.md`, `matrix/matrix-viewer.html`
 - `task0/responses.md` (with sensitivity tags respected — see prompt 07
   redaction rules)
@@ -32,7 +32,7 @@ the six ADRs, and write the four appendices.
 - `PRD/adrs/ADR-002-identity-taxonomy-source.md`
 - `PRD/adrs/ADR-003-regulatory-lens.md`
 - `PRD/adrs/ADR-004-vendor-shortlist.md`
-- `PRD/adrs/ADR-005-anz-evidence-policy.md`
+- `PRD/adrs/ADR-005-fi-evidence-policy.md`
 - `PRD/adrs/ADR-006-scoring-rubric.md`
 - `PRD/appendices/A-compliance-traceability.md`
 - `PRD/appendices/B-vendor-profiles-index.md`

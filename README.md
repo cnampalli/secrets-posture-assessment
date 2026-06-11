@@ -95,7 +95,7 @@ reasoning; Sonnet 4.6 for high-volume vendor doc summarisation). See
 context from the live 1-hour interactive session on 2026-05-22. All 11
 sections (A-K) covered. Drives the XYZ-side narrative in PRD §12 and the
 synthesised evidence file
-[`research/anz-current-state-evidence.md`](./research/anz-current-state-evidence.md).
+[`research/current-state-evidence.md`](./research/current-state-evidence.md).
 
 ## Reading order for Monday stakeholder review
 
@@ -130,7 +130,7 @@ For a **deeper architecture read** (≥ 2 hours):
 2. [`PRD/adrs/`](./PRD/adrs/) — 7 ADRs (007 = three-layer reading model + confidence policy) (~22 min).
 3. [`PRD/appendices/`](./PRD/appendices/) — A (compliance trace), B (vendor index, now layer-tagged), C (glossary), D (adversary) (~30 min).
 4. [`matrix/matrix.md`](./matrix/matrix.md) cross-vendor summary — §0 stack model + §1 layer-grouped coverage (~10 min).
-5. [`research/anz-current-state-evidence.md`](./research/anz-current-state-evidence.md) (~15 min).
+5. [`research/current-state-evidence.md`](./research/current-state-evidence.md) (~15 min).
 
 For **vendor procurement / RFP basis**:
 
@@ -143,7 +143,7 @@ For **audit / compliance review**:
 
 0. [`matrix/domains/secrets/secrets-report.html`](./matrix/domains/secrets/secrets-report.html) → **Compliance trace** tab — cascade from any APRA CPS 234 / ASD ISM / E8 / ZT control → the use cases it demands → vendor evidence, in three clicks. Each use-case card also shows its mapped APRA + ISM controls.
 1. [`PRD/appendices/A-compliance-traceability.md`](./PRD/appendices/A-compliance-traceability.md) — full E8/ZT/CPS 234/ISM trace.
-2. [`PRD/adrs/ADR-005-anz-evidence-policy.md`](./PRD/adrs/ADR-005-anz-evidence-policy.md) — sensitivity policy.
+2. [`PRD/adrs/ADR-005-fi-evidence-policy.md`](./PRD/adrs/ADR-005-fi-evidence-policy.md) — sensitivity policy.
 3. [`meta/review-M2-2026-05-23.md`](./meta/review-M2-2026-05-23.md) — independent reviewer's M2 verdict + recommended actions.
 
 ## Sharing this with the stakeholder

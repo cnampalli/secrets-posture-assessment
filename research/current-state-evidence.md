@@ -5,7 +5,7 @@
 > `[INTERNAL]` content paraphrased / anonymised; `[SENSITIVE]` and
 > `[NOT-FOR-DISTRIBUTION]` content not reproduced.
 > **Scope:** captures the structured signal from Task 0 grouped by
-> capability cluster. Companion CSV: `matrix/anz-current-state.csv` (47
+> capability cluster. Companion CSV: `matrix/domains/secrets/current-state.csv` (47
 > rows, one per UC).
 
 ---

@@ -9,7 +9,7 @@ and
 joined to the 31 ADVERSARY-LENS rows in
 [`matrix/regulatory-trace.csv`](../../matrix/regulatory-trace.csv) (16
 MITRE techniques + 15 breach post-mortems). Sensitivity tagging per
-[ADR-005](../adrs/ADR-005-anz-evidence-policy.md) — the 2019 red-team
+[ADR-005](../adrs/ADR-005-fi-evidence-policy.md) — the 2019 red-team
 chain is paraphrased and attributed to "a major AU Tier-1 FI".
 
 ---
@@ -210,7 +210,7 @@ All entries are `[PUBLIC]`.
 ## D.4 The FI's 2019 red-team chain (paraphrased per ADR-005)
 
 > Attribution: paraphrased lived-experience signal from a major AU
-> Tier-1 FI per [ADR-005](../adrs/ADR-005-anz-evidence-policy.md).
+> Tier-1 FI per [ADR-005](../adrs/ADR-005-fi-evidence-policy.md).
 > No `[SENSITIVE]` or `[NOT-FOR-DISTRIBUTION]` material is reproduced.
 > Source: Task 0 §F.01 / §F.02 / §F.04 / §F.05 lived-experience
 > evidence, paraphrased.

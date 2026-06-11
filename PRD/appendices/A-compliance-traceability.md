@@ -39,7 +39,7 @@ control_code, control_short_title, uc_ids, nhi_ids, maturity_level,
 evidence_url, evidence_quote, citation_keys`). The CSV is the
 authoritative source; the tables below are a compressed reading view.
 
-Per [ADR-005](../adrs/ADR-005-anz-evidence-policy.md), all rows are
+Per [ADR-005](../adrs/ADR-005-fi-evidence-policy.md), all rows are
 `[PUBLIC]` (regulator publications + NIST + MITRE primary URLs);
 no `[SENSITIVE]` or `[NOT-FOR-DISTRIBUTION]` content appears.
 
