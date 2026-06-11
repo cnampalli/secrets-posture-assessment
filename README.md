@@ -116,7 +116,7 @@ synthesised evidence file
 > [ADR-007](./PRD/adrs/ADR-007-reading-model-and-confidence.md).
 >
 > **Fastest way in:** open
-> [`matrix/matrix-viewer.html`](./matrix/matrix-viewer.html) — it opens on
+> [`matrix/domains/secrets/secrets-report.html`](./matrix/domains/secrets/secrets-report.html) — it opens on
 > an XYZ-posture dashboard; click any gap to jump to that use case's
 > decision card (best-fit vendors + where XYZ stands + the recommended
 > action).
@@ -126,7 +126,7 @@ For a **30-minute exec read**:
 1. This README (~5 min).
 2. [`PRD/PRD-FI-v0.1.md`](./PRD/PRD-FI-v0.1.md) §1 Executive summary + §8.1 sourcing & confidence (~5 min).
 3. [`PRD/PRD-FI-v0.1.md`](./PRD/PRD-FI-v0.1.md) §9 (three-layer matrix) + §11 (vendor findings) + §12 (XYZ findings) + §16 (recommendations) (~13 min).
-4. [`matrix/matrix-viewer.html`](./matrix/matrix-viewer.html) — the interactive report: **XYZ posture dashboard** → click a gap → **use-case decision card** (best-fit vendors by layer + XYZ state + recommended action); "By identity" and "Browse all" tabs for deeper digging; hover any NHI/UC/coverage code for its definition (~7 min).
+4. [`matrix/domains/secrets/secrets-report.html`](./matrix/domains/secrets/secrets-report.html) — the interactive report: **XYZ posture dashboard** → click a gap → **use-case decision card** (best-fit vendors by layer + XYZ state + recommended action); "By identity" and "Browse all" tabs for deeper digging; hover any NHI/UC/coverage code for its definition (~7 min).
 
 For a **deeper architecture read** (≥ 2 hours):
 
@@ -140,12 +140,12 @@ For **vendor procurement / RFP basis**:
 
 1. [`PRD/appendices/B-vendor-profiles-index.md`](./PRD/appendices/B-vendor-profiles-index.md) — strengths + gaps per vendor.
 2. [`research/vendors/`](./research/vendors/) — 19 detailed vendor profiles.
-3. [`matrix/vendor-capabilities.csv`](./matrix/vendor-capabilities.csv) — 1596-row capability matrix for pivot-table analysis.
-4. [`matrix/regulatory-trace.csv`](./matrix/regulatory-trace.csv) — UC ↔ control-framework back-map.
+3. [`matrix/domains/secrets/vendor-capabilities.csv`](./matrix/domains/secrets/vendor-capabilities.csv) — 1596-row capability matrix for pivot-table analysis.
+4. [`matrix/domains/secrets/regulatory-trace.csv`](./matrix/domains/secrets/regulatory-trace.csv) — UC ↔ control-framework back-map.
 
 For **audit / compliance review**:
 
-0. [`matrix/matrix-viewer.html`](./matrix/matrix-viewer.html) → **Compliance trace** tab — cascade from any APRA CPS 234 / ASD ISM / E8 / ZT control → the use cases it demands → vendor evidence, in three clicks. Each use-case card also shows its mapped APRA + ISM controls.
+0. [`matrix/domains/secrets/secrets-report.html`](./matrix/domains/secrets/secrets-report.html) → **Compliance trace** tab — cascade from any APRA CPS 234 / ASD ISM / E8 / ZT control → the use cases it demands → vendor evidence, in three clicks. Each use-case card also shows its mapped APRA + ISM controls.
 1. [`PRD/appendices/A-compliance-traceability.md`](./PRD/appendices/A-compliance-traceability.md) — full E8/ZT/CPS 234/ISM trace.
 2. [`PRD/adrs/ADR-005-anz-evidence-policy.md`](./PRD/adrs/ADR-005-anz-evidence-policy.md) — sensitivity policy.
 3. [`meta/review-M2-2026-05-23.md`](./meta/review-M2-2026-05-23.md) — independent reviewer's M2 verdict + recommended actions.
@@ -153,10 +153,10 @@ For **audit / compliance review**:
 ## Sharing this with the stakeholder
 
 The interactive report is **one self-contained file** —
-[`matrix/matrix-viewer.html`](./matrix/matrix-viewer.html) — with all data
+[`matrix/domains/secrets/secrets-report.html`](./matrix/domains/secrets/secrets-report.html) — with all data
 baked in. No server, no internet, nothing to install.
 
-- **Email:** attach `matrix-viewer.html` directly. The recipient saves it
+- **Email:** attach `secrets-report.html` directly. The recipient saves it
   and **double-clicks to open in any browser** (Chrome / Edge / Safari),
   fully offline. That single file is the whole stakeholder experience —
   dashboard, decision cards, and the full matrix.

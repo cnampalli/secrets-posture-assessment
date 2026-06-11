@@ -66,8 +66,9 @@ python3 matrix/build_matrix_viewer.py --domain secrets|pam|iga   # build a domai
 python3 questionnaire/emit_rubric.py                  # regenerate app rubric JSON
 cd app && npm install && npm test && npm run build     # React app (node_modules not committed)
 ```
-Reports today: secrets `matrix/matrix-viewer.html`; pam `matrix/domains/pam/pam-report.html`; iga
-`matrix/domains/iga/iga-report.html` (WS4 will standardize these names).
+Reports today: all standardized at `matrix/domains/<slug>/<slug>-report.html` — secrets
+`matrix/domains/secrets/secrets-report.html`; pam `matrix/domains/pam/pam-report.html`; iga
+`matrix/domains/iga/iga-report.html` (WS4 done).
 
 ## Key references
 - Roadmap/status: `docs/superpowers/MULTI-DOMAIN-ROADMAP.md`

@@ -1,8 +1,8 @@
 # Vendor Capability Matrix — Cross-Vendor Summary
 
 > **19 vendors × 37 NHIs × 47 UCs = 1,596 capability rows** assembled from
-> per-vendor sub-agent profiles, joined into [`vendor-capabilities.csv`](./vendor-capabilities.csv).
-> For row-level filterable view see [`matrix-viewer.html`](./matrix-viewer.html).
+> per-vendor sub-agent profiles, joined into [`vendor-capabilities.csv`](./domains/secrets/vendor-capabilities.csv).
+> For row-level filterable view see [`secrets-report.html`](./domains/secrets/secrets-report.html).
 > For per-vendor narrative see [`../research/vendors/`](../research/vendors/).
 
 **Scoring rubric (per ADR-006):**
@@ -193,7 +193,7 @@ A category that didn't exist in the 2019 XYZ red-team and has rapidly emerged
 
 ## 6. Where to drill down
 
-- Per-cell view (filterable + sortable): [`matrix-viewer.html`](./matrix-viewer.html).
+- Per-cell view (filterable + sortable): [`secrets-report.html`](./domains/secrets/secrets-report.html).
 - Per-vendor profile (narrative + citations): [`../research/vendors/<slug>.md`](../research/vendors/).
 - Per-UC vs framework back-map: [`regulatory-trace.csv`](./regulatory-trace.csv) (E8 + CISA ZTMM v2.0 primary; CPS 234 + CPS 230 + CPG 234 + ISM back-map; MITRE ATT&CK adversary lens — 145 control rows).
 - Adversary post-mortems mapping: [`../research/adversary/breach-postmortems.md`](../research/adversary/breach-postmortems.md).

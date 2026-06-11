@@ -25,7 +25,7 @@ At the end you hand the client **four things**:
 
 | Artifact | What it is | File |
 |---|---|---|
-| **Gap report** | Interactive web page: every use case marked Met / Partial / Gap / Pending | `matrix/matrix-viewer.html` |
+| **Gap report** | Interactive web page: every use case marked Met / Partial / Gap / Pending | `matrix/domains/secrets/secrets-report.html` |
 | **Executive summary** | One-page web dashboard of the headline counts, for leadership | `exec-summary.html` |
 | **Engagement menu / roadmap** | Prioritised to-do list of fixes — this is your follow-on sales wedge | `engagement-menu.json` |
 | **Assessment record** | The official machine-readable record of every answer and score | `assessment-record.json` |
@@ -177,7 +177,7 @@ else is built from.
 **Who:** your technical teammate runs this. You read the result.
 
 **What to do:** hand your teammate the **technical hand-off pack** (section 5 below). They
-run two commands. Out comes `matrix/matrix-viewer.html` — an interactive page with five
+run two commands. Out comes `matrix/domains/secrets/secrets-report.html` — an interactive page with five
 tabs (the headline posture, a view per use case, a view per identity type, the compliance
 mapping, and a full browse). You open it and **read off the scores**: Met / Partial / Gap /
 Pending for each use case.
@@ -264,7 +264,7 @@ project root. Replace `financial` with whichever preset the facilitator chose
 # 1. Turn the workshop answers into the report's input file
 python3 -m questionnaire.report_adapter assessment-record.json -o current-state.csv
 
-# 2. Build the interactive gap report (writes to matrix/matrix-viewer.html)
+# 2. Build the interactive gap report (writes to matrix/domains/secrets/secrets-report.html)
 python3 matrix/build_matrix_viewer.py --preset financial --current-state current-state.csv
 
 # 3. Build the prioritised engagement menu / roadmap
@@ -279,15 +279,15 @@ python3 -m presentation.build_exec_summary assessment-record.json -o exec-summar
 | Command | You should see |
 |---|---|
 | 1 | A new `current-state.csv` created, one row per use case. |
-| 2 | A printed line `Wrote .../matrix-viewer.html (N bytes)` plus counts of UCs/NHIs. Open the file in a browser — it shows the client's scores. |
+| 2 | A printed line `Wrote .../secrets-report.html (N bytes)` plus counts of UCs/NHIs. Open the file in a browser — it shows the client's scores. |
 | 3 | A new `engagement-menu.json` with the prioritised findings. |
 | 4 | A new `exec-summary.html`. Open it — it shows the Met/Partial/Gap/Pending counts. |
 
 **Notes:**
-- `build_matrix_viewer.py` always writes to `matrix/matrix-viewer.html` (no output flag) —
+- `build_matrix_viewer.py` always writes to `matrix/domains/secrets/secrets-report.html` (no output flag) —
   if that file has uncommitted local changes, stash or back it up first.
 - To compare against extra frameworks, add `--frameworks slug1,slug2` (valid slugs live in
-  `matrix/regulatory-trace.csv`: e.g. `apra-cps-234`, `asd-ism`, `cisa-ztmm-v2`,
+  `matrix/domains/secrets/regulatory-trace.csv`: e.g. `apra-cps-234`, `asd-ism`, `cisa-ztmm-v2`,
   `essential-8`, `mitre-attack`).
 - For finer per-finding tuning of the roadmap (override a risk band, record a dependency),
   pass `--engagement <csv>` to command 3 — see `PLAYBOOK.md` §5.
@@ -296,7 +296,7 @@ python3 -m presentation.build_exec_summary assessment-record.json -o exec-summar
 
 ## 6. How to share the deliverable
 
-- **Quickest:** email the single HTML files (`matrix/matrix-viewer.html`,
+- **Quickest:** email the single HTML files (`matrix/domains/secrets/secrets-report.html`,
   `exec-summary.html`). Each is self-contained — the recipient just double-clicks; no
   software, no internet.
 - **Full package:** run `bash package.sh` to produce a zipped bundle (report + supporting
