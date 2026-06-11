@@ -1,5 +1,9 @@
 # A+ Hardening Plan — from "B / top-decile instrument" to "A+ / best available in the market"
 
+> **⮕ Execution driver:** see `docs/superpowers/plans/2026-06-11-critical-action-plan.md` — the
+> gap-closure + re-sequencing addendum that corrects two softened items (currency gate, scoring trend),
+> promotes four dropped specialist asks (A3–A5, A7), and front-loads release-blockers as Wave 0.
+
 > **Status: APPROVED 2026-06-11, not started.** Source inputs: the independent cold-start audit
 > (`meta/independent-audit-2026-06-11.md`, verdict **B**) and the independent IAM-specialist review
 > (`meta/iam-specialist-review-2026-06-11.md`, "top-decile instrument, held back by missing
