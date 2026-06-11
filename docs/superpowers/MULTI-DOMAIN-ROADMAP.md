@@ -35,8 +35,8 @@ interactive UX, comparable depth, no domain looking like a stub. Added 2026-06-0
 - The **Python static questionnaires** (`questionnaire/build_questionnaire.py`) *are* domain-aware and both
   build clean, BUT **PAM renders only 3 of 17 use cases** — `matrix/domains/pam/uc-archetype-map.csv` maps
   just `UC-P-001..003`. The PAM *matrix report* covers all 17; only the *questionnaire* archetype map lags.
-- Matrix reports are at parity already: `matrix-viewer.html` (Secrets), `matrix/domains/pam/pam-report.html`
-  (PAM, 17 UCs), `cross-domain-report.html`.
+- Matrix reports are at parity already: `matrix/domains/secrets/secrets-report.html` (Secrets),
+  `matrix/domains/pam/pam-report.html` (PAM, 17 UCs), `cross-domain-report.html`.
 
 **To-do (do these before starting Phase 3):**
 1. ✅ **[PAM questionnaire depth] DONE** (commit `b48d3d8`) — all 17 PAM UCs (`UC-P-001..017`) mapped across 7

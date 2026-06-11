@@ -56,8 +56,8 @@ def build(record_path, out_path=None, preset="financial", frameworks=None, clien
     with open(record_path, encoding="utf-8") as fh:
         record = json.load(fh)
     snapshot = snapshot_counts(record)
-    use_cases = rg.load_use_cases(os.path.join(root, "matrix", "use-cases.csv"))
-    trace = rg.load_trace(os.path.join(root, "matrix", "regulatory-trace.csv"))
+    use_cases = rg.load_use_cases(os.path.join(root, "matrix", "domains", "secrets", "use-cases.csv"))
+    trace = rg.load_trace(os.path.join(root, "matrix", "domains", "secrets", "regulatory-trace.csv"))
     if frameworks:
         scope = {s.strip() for s in frameworks.split(",") if s.strip()}
     else:

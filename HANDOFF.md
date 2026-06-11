@@ -13,25 +13,29 @@ Jurisdiction: AU-primary (APRA CPS 234 / ASD ISM / Essential 8) + NIST/ISO/SOX w
 Honesty is core: **no invented numbers, no fabricated control mappings** (the project once shipped a
 fabricated ISM mapping — anti-fabrication guards in `matrix/validate_data.py` exist because of it).
 
-## Current state (2026-06-11)
-- **`main`** = `3349b4b` — PRs #22 (IGA), #23 (value-prop), #24 (WS1), **#25 (WS2)** all **merged**.
-  Domains: secrets (47 UCs, ~19 vendors), pam (18 UCs), iga (16 UCs).
+## Current state (2026-06-11) — **ALL FOUR WORKSTREAMS COMPLETE**
+- **`main`** = `822833b` — PRs #22 (IGA), #23 (value-prop), #24 (WS1), #25 (WS2), **#26 (WS3)**
+  all **merged**. Domains: secrets (47 UCs, ~19 vendors), pam (18 UCs, 10 vendors), iga (16 UCs,
+  8 fit-grid vendors).
 - **WS1 DONE (PR #24):** 46 IGA validator violations cleared; two fabrication-class control-ID
   fixes (ISM-1591→ISM-0430, ISM-1648→ISM-1404) — `docs/superpowers/plans/ws1-verification-notes.md`.
 - **WS2 DONE (PR #25):** IGA 13→16, PAM 17→18 (UC-P-018 SAW/PAW; ISM-1898/1380/1175 registered) —
   `docs/superpowers/plans/ws2-research-notes.md`.
-- **WS3 DONE on this branch (`feat/ws3-vendor-expansion`).** PAM 6→**10** vendors (+StrongDM,
-  Britive, Apono = L2 modern-access; +Netwrix Privilege Secure = L1 suite; 18 per-UC rows each);
-  IGA 4→**8** fit-grid vendors (+Omada, ConductorOne, Lumos, Zilla — all L1 suite; 4 cited rows
-  each through the WS1 citation gate). Every claim live-fetch verified + ADVERSARIALLY re-verified
-  (PASS 2 in `docs/superpowers/plans/ws3-research/*.md` — 8 vendor ledgers). Ownership graph:
-  **strongdm→delinea (acquisition CLOSED 2026-03-05, HIGH)**, **zilla→cyberark (2025-02-13, HIGH)**;
-  Britive/BeyondTrust acquisition REFUTED (conflation with Entitle). Adjacent-categories caveat
-  (CrowdStrike/Cisco/Veza/Astrix-Entro-Aembit) added to all 3 reports; secrets snapshot regenerated
-  (one intended line). Gates: pytest 308 / validate_data clean ×3 / reports rebuilt (PAM 10 ranked,
-  IGA 8×4 grid). Britive evidence is all marketing-tier — re-anchor to admin docs before client use.
-  **→ If the WS3 PR is still open on resume, review & merge it first, then start WS4
-  (report naming standardization — the last workstream).**
+- **WS3 DONE (PR #26):** PAM 6→10 + IGA 4→8 vendors, adversarially citation-verified (8 ledgers in
+  `docs/superpowers/plans/ws3-research/`); ownership graph strongdm→delinea (closed 2026-03-05) +
+  zilla→cyberark (2025-02-13); Britive/BeyondTrust acquisition REFUTED. ⚠️ Britive evidence is
+  marketing-tier — re-anchor to admin docs before client use.
+- **WS4 DONE on this branch (`feat/ws4-report-naming`).** All three reports standardized at
+  `matrix/domains/<slug>/<slug>-report.html`; secrets data relocated to `matrix/domains/secrets/`
+  (25 CSVs, git-mv); `matrix-viewer.html` retired; `validate_data` no-arg default resolves secrets
+  via the descriptor; consumers repathed (exec-summary, roadmap, stakeholder pack, package.sh,
+  methodology validators); value-tab → vendor-tabs pointer added. Bonus: the old matrix-viewer
+  rebuild nondeterminism does NOT reproduce at the new path (byte-stable across rebuilds).
+  Gates: pytest 308 / validate_data ×3 clean / vitest 63 / package.sh produces the secrets report.
+  **→ If the WS4 PR is open on resume, review & merge it. The buyer-DD plan is then fully shipped;
+  next frontier per `docs/superpowers/MULTI-DOMAIN-ROADMAP.md`: Phase 5 (consulting wrap:
+  workspace/import/benchmark) + WS-2 selectable-overlay engine (Phase 4 Workforce IAM stays
+  demand-pulled).**
 
 ## Workstream plan → `docs/superpowers/plans/2026-06-10-vendor-accuracy-naming.md`
 Four sequenced workstreams answering a buyer-DD review of the demos. Each off updated `main`, in an
@@ -47,7 +51,8 @@ gate per phase:
    reports). Notes: `test_iga_spike` pins the spike dir, not production — no change needed; one
    extra pin found in `app/src/assessment/store.test.tsx`. Known pre-existing non-blockers:
    `ms-pth-mitigation-2014` cite key bib-undefined (3 PAM rows + UC-P-018); IGA "REG-mapped UCs"
-   off-by-one (15/16, same delta as baseline).
+   is 15/16 by design, not a bug — UC-I-012 carries NIST/ISO back-maps only, no APRA/ISM row
+   (recomputed 2026-06-11 after the CPS234-§22→§21 merge; build output confirms 15).
 3. **WS3 — Vendor expansion to leader parity** (citation-backed, adversarially verified). PAM 6→~10
    (StrongDM, Britive, Apono, Netwrix); IGA 4→~8 (Omada, ConductorOne, Lumos, Zilla/CyberArk). Document
    CrowdStrike/Cisco as **adjacent** (ITDR/DSPM/CIEM), not core.
@@ -66,8 +71,9 @@ python3 matrix/build_matrix_viewer.py --domain secrets|pam|iga   # build a domai
 python3 questionnaire/emit_rubric.py                  # regenerate app rubric JSON
 cd app && npm install && npm test && npm run build     # React app (node_modules not committed)
 ```
-Reports today: secrets `matrix/matrix-viewer.html`; pam `matrix/domains/pam/pam-report.html`; iga
-`matrix/domains/iga/iga-report.html` (WS4 will standardize these names).
+Reports today: all standardized at `matrix/domains/<slug>/<slug>-report.html` — secrets
+`matrix/domains/secrets/secrets-report.html`; pam `matrix/domains/pam/pam-report.html`; iga
+`matrix/domains/iga/iga-report.html` (WS4 done).
 
 ## Key references
 - Roadmap/status: `docs/superpowers/MULTI-DOMAIN-ROADMAP.md`

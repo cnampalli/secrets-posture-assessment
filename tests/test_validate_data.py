@@ -97,7 +97,7 @@ def test_validate_all_accepts_external_data_dir(tmp_path):
     # clean secrets data into an arbitrary dir and validating it there must stay clean.
     ddir = tmp_path / "pam"
     ddir.mkdir()
-    for p in (ROOT / "matrix").glob("*.csv"):
+    for p in (ROOT / "matrix" / "domains" / "secrets").glob("*.csv"):
         shutil.copy(p, ddir / p.name)
     assert vd.validate_all(root=str(ROOT), data_dir=str(ddir)) == []
 
@@ -105,13 +105,13 @@ def test_validate_all_accepts_external_data_dir(tmp_path):
 def test_main_accepts_data_dir_flag(tmp_path):
     ddir = tmp_path / "pam"
     ddir.mkdir()
-    for p in (ROOT / "matrix").glob("*.csv"):
+    for p in (ROOT / "matrix" / "domains" / "secrets").glob("*.csv"):
         shutil.copy(p, ddir / p.name)
     assert vd.main(["--root", str(ROOT), "--data-dir", str(ddir)]) == 0
 
 
 def test_validate_all_catches_injected_break(tmp_path):
-    src = ROOT / "matrix"
+    src = ROOT / "matrix" / "domains" / "secrets"
     dst = tmp_path / "matrix"
     dst.mkdir()
     for p in src.glob("*.csv"):
@@ -119,6 +119,7 @@ def test_validate_all_catches_injected_break(tmp_path):
     # inject a current-state row whose uc_id is not in use-cases
     cs = dst / "current-state.csv"
     cs.write_text(cs.read_text() + "UC-ZZZ-999,GAP,MED,,,,,\n", encoding="utf-8")
+    # no descriptor exists under tmp_path -> default resolves to <root>/matrix (the dst)
     viol = vd.validate_all(str(tmp_path))
     assert any("UC-ZZZ-999" in v for v in viol)
     assert vd.main(["--root", str(tmp_path)]) == 1

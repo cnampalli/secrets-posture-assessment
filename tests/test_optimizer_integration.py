@@ -9,11 +9,12 @@ import resilience as rz
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "matrix"
+DATA = MATRIX / "domains" / "secrets"
 CFGDIR = MATRIX / "config"
 
 
 def _load():
-    ranked = report_io.load_inputs(str(MATRIX), "current-state.csv")["ranked"]
+    ranked = report_io.load_inputs(str(DATA), "current-state.csv")["ranked"]
     own = ov.load_vendor_ownership(os.path.join(CFGDIR, "vendor-ownership.yaml"))
     return ranked, own
 

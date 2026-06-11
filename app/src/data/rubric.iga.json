@@ -56,7 +56,24 @@
         "qid": "A2-Q3",
         "dimension": "governance",
         "informs_state": "PARTIAL_MET",
-        "text": "Is there an inventory plus active burn-down for the legacy remainder?"
+        "text": "Is there an inventory plus active burn-down for the legacy remainder?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-SOD-RULESET",
+            "requirement": "A versioned SoD ruleset / policy register where each rule has a business rationale, named owner, risk rating and the conflicting functions/entitlements it covers, with review dates demonstrating a living register.",
+            "dimension": "governance",
+            "tier": "primary",
+            "example_artifact": "e.g., a version-controlled SoD ruleset export with owners and review history",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac5",
+              "apra-cps-234-para14"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
+          }
+        ]
       },
       {
         "qid": "A2-Q4",
@@ -95,6 +112,21 @@
         ],
         "satisfies": [
           "AC-2",
+          "CPS234-§21"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-VIOLATION-REGISTER",
+        "requirement": "A SoD violation register recording per conflict the rule, affected identity, affected systems, risk rating, disposition, documented mitigating control, owner and next-review/expiry, traceable across scan cycles.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a violation register with documented specific mitigating controls and bounded exceptions",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para27"
+        ],
+        "satisfies": [
           "CPS234-§21"
         ]
       }
@@ -151,7 +183,24 @@
         "qid": "A7-Q2",
         "dimension": "governance",
         "informs_state": "PARTIAL_MET",
-        "text": "Does every entry carry owner and expiry?"
+        "text": "Does every entry carry owner and expiry?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-SOD-RULESET",
+            "requirement": "A versioned SoD ruleset / policy register where each rule has a business rationale, named owner, risk rating and the conflicting functions/entitlements it covers, with review dates demonstrating a living register.",
+            "dimension": "governance",
+            "tier": "primary",
+            "example_artifact": "e.g., a version-controlled SoD ruleset export with owners and review history",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac5",
+              "apra-cps-234-para14"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
+          }
+        ]
       },
       {
         "qid": "A7-Q3",
@@ -190,6 +239,21 @@
         ],
         "satisfies": [
           "AC-2",
+          "CPS234-§21"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-VIOLATION-REGISTER",
+        "requirement": "A SoD violation register recording per conflict the rule, affected identity, affected systems, risk rating, disposition, documented mitigating control, owner and next-review/expiry, traceable across scan cycles.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a violation register with documented specific mitigating controls and bounded exceptions",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para27"
+        ],
+        "satisfies": [
           "CPS234-§21"
         ]
       }
@@ -299,7 +363,24 @@
         "qid": "A2-Q3",
         "dimension": "governance",
         "informs_state": "PARTIAL_MET",
-        "text": "Is there an inventory plus active burn-down for the legacy remainder?"
+        "text": "Is there an inventory plus active burn-down for the legacy remainder?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-SOD-RULESET",
+            "requirement": "A versioned SoD ruleset / policy register where each rule has a business rationale, named owner, risk rating and the conflicting functions/entitlements it covers, with review dates demonstrating a living register.",
+            "dimension": "governance",
+            "tier": "primary",
+            "example_artifact": "e.g., a version-controlled SoD ruleset export with owners and review history",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac5",
+              "apra-cps-234-para14"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
+          }
+        ]
       },
       {
         "qid": "A2-Q4",
@@ -340,6 +421,21 @@
           "AC-2",
           "CPS234-§21",
           "ISM-0430"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-VIOLATION-REGISTER",
+        "requirement": "A SoD violation register recording per conflict the rule, affected identity, affected systems, risk rating, disposition, documented mitigating control, owner and next-review/expiry, traceable across scan cycles.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a violation register with documented specific mitigating controls and bounded exceptions",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para27"
+        ],
+        "satisfies": [
+          "CPS234-§21"
         ]
       }
     ]
@@ -446,6 +542,21 @@
               "AC-2",
               "CPS234-§21"
             ]
+          },
+          {
+            "ev_id": "EV-IGA-SOD-VIOLATION-REGISTER",
+            "requirement": "A SoD violation register recording per conflict the rule, affected identity, affected systems, risk rating, disposition, documented mitigating control, owner and next-review/expiry, traceable across scan cycles.",
+            "dimension": "depth",
+            "tier": "primary",
+            "example_artifact": "e.g., a violation register with documented specific mitigating controls and bounded exceptions",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac5",
+              "apra-cps-234-para27"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
           }
         ]
       },
@@ -485,6 +596,21 @@
         ],
         "satisfies": [
           "AC-2(3)"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-RULESET",
+        "requirement": "A versioned SoD ruleset / policy register where each rule has a business rationale, named owner, risk rating and the conflicting functions/entitlements it covers, with review dates demonstrating a living register.",
+        "dimension": "governance",
+        "tier": "primary",
+        "example_artifact": "e.g., a version-controlled SoD ruleset export with owners and review history",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para14"
+        ],
+        "satisfies": [
+          "CPS234-§21"
         ]
       }
     ]
@@ -619,6 +745,7 @@
             ],
             "satisfies": [
               "17 CFR 240.13a-15(f)",
+              "CPS234-§21",
               "CPS234-§27"
             ]
           }
@@ -660,6 +787,21 @@
         ],
         "satisfies": [
           "AC-2(3)"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-RULESET",
+        "requirement": "A versioned SoD ruleset / policy register where each rule has a business rationale, named owner, risk rating and the conflicting functions/entitlements it covers, with review dates demonstrating a living register.",
+        "dimension": "governance",
+        "tier": "primary",
+        "example_artifact": "e.g., a version-controlled SoD ruleset export with owners and review history",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para14"
+        ],
+        "satisfies": [
+          "CPS234-§21"
         ]
       },
       {
@@ -914,7 +1056,24 @@
         "qid": "A1-Q1",
         "dimension": "coverage",
         "informs_state": "GAP_PARTIAL",
-        "text": "Is preventive segregation-of-duties evaluation of the requester's current plus requested entitlements at access-request time deployed at all relevant gates for all access-granting events / provisioning transactions?"
+        "text": "Is preventive segregation-of-duties evaluation of the requester's current plus requested entitlements at access-request time deployed at all relevant gates for all access-granting events / provisioning transactions?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-JOINER-LOG",
+            "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a provisioning audit-log export plus the versioned birthright role-policy register",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2",
+              "apra-cps-234-para21"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
+          }
+        ]
       },
       {
         "qid": "A1-Q2",
@@ -948,6 +1107,36 @@
     ],
     "evidence_additional": [
       {
+        "ev_id": "EV-IGA-CERT-COMPLETION-REPORT",
+        "requirement": "A certification campaign completion report: scope/population, item counts, percentage reviewed within window (target >=95%), decision breakdown, no-decision handling, on-time vs overdue, named reviewers and rubber-stamp/bulk-approve analytics.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a per-campaign completion report with reviewer and decision analytics",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac2j",
+          "apra-cps-234-para27"
+        ],
+        "satisfies": [
+          "CPS234-§21"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-LEAVER-SLA-REPORT",
+        "requirement": "A leaver de-provisioning SLA report showing per-account termination-event timestamp to disable timestamp, percentage within SLA, breach list with root cause, and coverage across SaaS and on-prem targets.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "asd-ism-0430",
+          "nist-sp-800-53-ac2-3"
+        ],
+        "satisfies": [
+          "CPS234-§21"
+        ]
+      },
+      {
         "ev_id": "EV-IGA-SOD-BLOCK-LOG",
         "requirement": "A request-time SoD block log: access requests that triggered an SoD rule, the decision (blocked/overridden), the named approver, justification and timestamp, across all provisioning channels including birthright and break-glass.",
         "dimension": "scope",
@@ -975,7 +1164,7 @@
         ],
         "satisfies": [
           "AC-5",
-          "CPS234-§22",
+          "CPS234-§21",
           "PL 107-204 §404(a)"
         ]
       },
@@ -993,7 +1182,7 @@
         "satisfies": [
           "17 CFR 240.13a-15(f)",
           "AC-5",
-          "CPS234-§22",
+          "CPS234-§21",
           "PL 107-204 §103"
         ]
       },
@@ -1026,7 +1215,24 @@
         "qid": "A7-Q1",
         "dimension": "coverage",
         "informs_state": "GAP_PARTIAL",
-        "text": "Is the segregation-of-duties policy register and violation-management process (versioned ruleset with named rule owners, triage, time-bound exceptions with mitigating controls, and review cadence) documented and operating?"
+        "text": "Is the segregation-of-duties policy register and violation-management process (versioned ruleset with named rule owners, triage, time-bound exceptions with mitigating controls, and review cadence) documented and operating?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-JOINER-LOG",
+            "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a provisioning audit-log export plus the versioned birthright role-policy register",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2",
+              "apra-cps-234-para21"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
+          }
+        ]
       },
       {
         "qid": "A7-Q2",
@@ -1048,7 +1254,7 @@
             "satisfies": [
               "AC-5",
               "CPS234-§14",
-              "CPS234-§22",
+              "CPS234-§21",
               "PL 107-204 §404(a)"
             ]
           }
@@ -1080,6 +1286,36 @@
     ],
     "evidence_additional": [
       {
+        "ev_id": "EV-IGA-CERT-COMPLETION-REPORT",
+        "requirement": "A certification campaign completion report: scope/population, item counts, percentage reviewed within window (target >=95%), decision breakdown, no-decision handling, on-time vs overdue, named reviewers and rubber-stamp/bulk-approve analytics.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a per-campaign completion report with reviewer and decision analytics",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac2j",
+          "apra-cps-234-para27"
+        ],
+        "satisfies": [
+          "CPS234-§21"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-LEAVER-SLA-REPORT",
+        "requirement": "A leaver de-provisioning SLA report showing per-account termination-event timestamp to disable timestamp, percentage within SLA, breach list with root cause, and coverage across SaaS and on-prem targets.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "asd-ism-0430",
+          "nist-sp-800-53-ac2-3"
+        ],
+        "satisfies": [
+          "CPS234-§21"
+        ]
+      },
+      {
         "ev_id": "EV-IGA-SOD-BLOCK-LOG",
         "requirement": "A request-time SoD block log: access requests that triggered an SoD rule, the decision (blocked/overridden), the named approver, justification and timestamp, across all provisioning channels including birthright and break-glass.",
         "dimension": "scope",
@@ -1107,7 +1343,7 @@
         ],
         "satisfies": [
           "AC-5",
-          "CPS234-§22",
+          "CPS234-§21",
           "PL 107-204 §103"
         ]
       }
@@ -1125,7 +1361,24 @@
         "qid": "A3-Q1",
         "dimension": "coverage",
         "informs_state": "GAP_PARTIAL",
-        "text": "Is detective SoD scanning of existing access against the active ruleset with mitigating-control tracking available in production for the full in-scope entitlement population (all users x all entitlements across covered systems)?"
+        "text": "Is detective SoD scanning of existing access against the active ruleset with mitigating-control tracking available in production for the full in-scope entitlement population (all users x all entitlements across covered systems)?",
+        "evidence": [
+          {
+            "ev_id": "EV-IGA-JOINER-LOG",
+            "requirement": "A joiner provisioning audit log tying each joiner's grants to an HR effective-start event and a named role/birthright rule, with the manual-vs-automated grant ratio and time-to-first-access against SLA.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a provisioning audit-log export plus the versioned birthright role-policy register",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "nist-sp-800-53-ac2",
+              "apra-cps-234-para21"
+            ],
+            "satisfies": [
+              "CPS234-§21"
+            ]
+          }
+        ]
       },
       {
         "qid": "A3-Q2",
@@ -1145,7 +1398,23 @@
               "apra-cps-234-para27"
             ],
             "satisfies": [
+              "CPS234-§21",
               "CPS234-§27"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-LEAVER-SLA-REPORT",
+            "requirement": "A leaver de-provisioning SLA report showing per-account termination-event timestamp to disable timestamp, percentage within SLA, breach list with root cause, and coverage across SaaS and on-prem targets.",
+            "dimension": "depth",
+            "tier": "primary",
+            "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "asd-ism-0430",
+              "nist-sp-800-53-ac2-3"
+            ],
+            "satisfies": [
+              "CPS234-§21"
             ]
           },
           {
@@ -1161,7 +1430,7 @@
             ],
             "satisfies": [
               "AC-5",
-              "CPS234-§22",
+              "CPS234-§21",
               "CPS234-§27",
               "PL 107-204 §103"
             ]
@@ -1186,7 +1455,23 @@
               "apra-cps-234-para27"
             ],
             "satisfies": [
+              "CPS234-§21",
               "CPS234-§27"
+            ]
+          },
+          {
+            "ev_id": "EV-IGA-LEAVER-SLA-REPORT",
+            "requirement": "A leaver de-provisioning SLA report showing per-account termination-event timestamp to disable timestamp, percentage within SLA, breach list with root cause, and coverage across SaaS and on-prem targets.",
+            "dimension": "depth",
+            "tier": "primary",
+            "example_artifact": "e.g., a leaver SLA / de-provisioning report with the termination-to-disable distribution",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "asd-ism-0430",
+              "nist-sp-800-53-ac2-3"
+            ],
+            "satisfies": [
+              "CPS234-§21"
             ]
           },
           {
@@ -1202,7 +1487,7 @@
             ],
             "satisfies": [
               "AC-5",
-              "CPS234-§22",
+              "CPS234-§21",
               "CPS234-§27",
               "PL 107-204 §103"
             ]
@@ -1254,7 +1539,7 @@
         ],
         "satisfies": [
           "AC-5",
-          "CPS234-§22",
+          "CPS234-§21",
           "PL 107-204 §404(a)"
         ]
       }
@@ -1687,6 +1972,36 @@
         "citation_keys": [
           "asd-ism-0430",
           "nist-sp-800-53-ac2-3"
+        ],
+        "satisfies": [
+          "CPS234-§21"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-RULESET",
+        "requirement": "A versioned SoD ruleset / policy register where each rule has a business rationale, named owner, risk rating and the conflicting functions/entitlements it covers, with review dates demonstrating a living register.",
+        "dimension": "governance",
+        "tier": "primary",
+        "example_artifact": "e.g., a version-controlled SoD ruleset export with owners and review history",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para14"
+        ],
+        "satisfies": [
+          "CPS234-§21"
+        ]
+      },
+      {
+        "ev_id": "EV-IGA-SOD-VIOLATION-REGISTER",
+        "requirement": "A SoD violation register recording per conflict the rule, affected identity, affected systems, risk rating, disposition, documented mitigating control, owner and next-review/expiry, traceable across scan cycles.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., a violation register with documented specific mitigating controls and bounded exceptions",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "nist-sp-800-53-ac5",
+          "apra-cps-234-para27"
         ],
         "satisfies": [
           "CPS234-§21"

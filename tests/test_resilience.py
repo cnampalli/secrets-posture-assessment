@@ -12,7 +12,6 @@ OWNERSHIP = {
     "cyberark-conjur": {"parent": "cyberark"},
     "venafi": {"parent": "cyberark"},
     "cyberark-pam": {"parent": "cyberark"},
-    "entro-security": {"parent": "cyberark"},
 }
 
 RANKED = [
