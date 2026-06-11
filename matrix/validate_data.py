@@ -140,6 +140,15 @@ def resolve_domain_descriptor(root, data_dir):
     return None
 
 
+def default_data_dir(root):
+    """Resolve the no-arg default data dir VIA THE secrets descriptor, so a bare
+    `python3 matrix/validate_data.py` keeps meaning "validate the secrets domain"
+    after its CSVs moved to matrix/domains/secrets/. The descriptor's `data_dir`
+    is relative to <root>/matrix; fall back to <root>/matrix if it's unreadable."""
+    d = load_yaml(os.path.join(root, "matrix", "config", "domains", "secrets.yaml"))
+    return os.path.join(root, "matrix", d.get("data_dir") or ".")
+
+
 def check_aggregate_vendor_capabilities(rows, vendor_fit=None):
     """NARROW exception to the 'empty (no data rows)' rule, for the aggregate
     vendor-capabilities.csv only: a header-only file is accepted IFF the domain's
@@ -336,11 +345,12 @@ def check_evidence_packs(trace, catalog):
 def validate_all(root=".", data_dir=None):
     """Run all checks against a domain's five CSVs; return all violations.
 
-    `data_dir` is where the domain's CSVs live (default `<root>/matrix`, the
-    secrets domain). The provenance config (control-ID registry + data-provenance
-    manifest) is cross-domain and always resolved from `<root>/matrix/config`.
+    `data_dir` is where the domain's CSVs live (default: the secrets domain's
+    data_dir, resolved via its descriptor — matrix/domains/secrets). The
+    provenance config (control-ID registry + data-provenance manifest) is
+    cross-domain and always resolved from `<root>/matrix/config`.
     """
-    m = data_dir or os.path.join(root, "matrix")
+    m = data_dir or default_data_dir(root)
     use_cases = load_csv(os.path.join(m, "use-cases.csv"))
     current = load_csv(os.path.join(m, "current-state.csv"))
     trace = load_csv(os.path.join(m, "regulatory-trace.csv"))
@@ -399,7 +409,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Validate the matrix CSV data contracts.")
     ap.add_argument("--root", default=".", help="repo root (default: cwd)")
     ap.add_argument("--data-dir", default=None,
-                    help="domain data dir holding the five CSVs (default: <root>/matrix)")
+                    help="domain data dir holding the five CSVs (default: the secrets "
+                         "domain, resolved via its descriptor → matrix/domains/secrets)")
     args = ap.parse_args(argv)
     violations = validate_all(args.root, data_dir=args.data_dir)
     for v in violations:

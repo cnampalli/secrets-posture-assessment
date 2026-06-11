@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build the self-contained XYZ Secrets-Management stakeholder report.
 
-Reads the matrix + catalog CSVs and writes matrix-viewer.html — a single
-offline HTML file (no server, no internet) with four views:
+Reads the matrix + catalog CSVs and writes matrix/domains/<slug>/<slug>-report.html
+— a single offline HTML file (no server, no internet) with four views:
 
   1. XYZ posture dashboard (landing) — MET/PARTIAL/GAP/PENDING, clickable
      top gaps, and a stakeholder "mark as MET" override (persists locally).
@@ -44,10 +44,9 @@ _ap.add_argument("--current-state", default=None,
 _ARGS, _ = _ap.parse_known_args()
 
 DOMAIN = domains.DOMAINS[_ARGS.domain]         # the active domain descriptor
-# Secrets keeps its canonical output path (and frozen snapshot); other domains
-# write a self-contained report beside their data.
-DST = (os.path.join(HERE, "matrix-viewer.html") if DOMAIN.slug == "secrets"
-       else os.path.join(DOMAIN.data_dir, f"{DOMAIN.slug}-report.html"))
+# Every domain writes a self-contained <slug>-report.html beside its data
+# (matrix/domains/<slug>/), so all three reports share one standard path shape.
+DST = os.path.join(DOMAIN.data_dir, f"{DOMAIN.slug}-report.html")
 
 # ---- load inputs + config ----
 _inputs = report_io.load_inputs(DOMAIN.data_dir, _ARGS.current_state, DOMAIN)
