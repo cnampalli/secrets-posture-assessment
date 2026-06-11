@@ -49,6 +49,7 @@ VALID_EVIDENCE_TIERS = {"primary", "follow-up"}
 # --- provenance gate (theme F) ---
 PROVIDER_COVERAGE = {"NATIVE", "ADD-ON", "PARTNER"}      # claims that need a source
 VALID_SOURCE_TIERS = {"PRIMARY", "ANALYST", "CONSENSUS"}
+VALID_IMPACT_LEVELS = {"HIGH", "MEDIUM", "LOW"}          # currency-gate impact vocabulary (closed)
 INFERENCE_TAGS = ("[INDUSTRY-CONSENSUS]", "[CONSENSUS]", "[INFERRED]", "[INFER")
 PROVENANCE_EXTRA_KEYS = ("vendor-capabilities",)         # non-framework data sources
 
@@ -310,20 +311,33 @@ def check_data_provenance(trace, provenance):
 # --- data-currency gate (A1): max-age per source tier --------------------
 # A dated claim goes stale; a stale HIGH-impact claim is a release blocker.
 # Thresholds live in data-provenance.yaml under `freshness_policy.max_age_days`
-# (per source_tier) — NEVER hard-coded here. Entries may declare `impact:`;
-# a missing impact fail-closes to HIGH, so only an explicit downgrade exempts
+# (per source_tier) — NEVER hard-coded here. Entries may declare `impact:`
+# (closed vocabulary VALID_IMPACT_LEVELS); a missing OR unrecognised impact
+# fail-closes to HIGH, so only an explicit, valid MEDIUM/LOW downgrade exempts
 # an entry from the build gate.
 
 def _reference_today(today=None):
     """Resolve the gate's reference date. Precedence: explicit arg >
     VALIDATE_DATA_TODAY env var (ISO date, for deterministic tests/CI replays) >
-    the real current date."""
-    value = today or os.environ.get("VALIDATE_DATA_TODAY")
+    the real current date. An active env override prints a one-line stderr
+    WARNING (a stray export must not silently freeze the clock); an empty or
+    malformed override raises ValueError with a clean message naming the bad
+    value — callers convert that to a violation rather than a traceback."""
+    if today:
+        if isinstance(today, datetime.date):
+            return today
+        return datetime.date.fromisoformat(str(today).strip())
+    value = os.environ.get("VALIDATE_DATA_TODAY")
     if value is None:
         return datetime.date.today()
-    if isinstance(value, datetime.date):
-        return value
-    return datetime.date.fromisoformat(str(value).strip())
+    try:
+        ref = datetime.date.fromisoformat(value.strip())
+    except ValueError:
+        raise ValueError(f"VALIDATE_DATA_TODAY override '{value}' is not a valid "
+                         f"ISO date (YYYY-MM-DD)") from None
+    print(f"WARNING: VALIDATE_DATA_TODAY override active — currency clock frozen "
+          f"at {ref.isoformat()}", file=sys.stderr)
+    return ref
 
 
 def _parse_as_of(value):
@@ -350,11 +364,20 @@ def check_data_currency(provenance, today=None):
     if not policy:
         return ["data-provenance.yaml: missing freshness_policy.max_age_days — "
                 "data-currency gate cannot run"]
-    ref = _reference_today(today)
+    try:
+        ref = _reference_today(today)
+    except ValueError as exc:
+        return [f"{exc} — data-currency gate cannot run"]
     errs = []
     for key in sorted(k for k in provenance if k != "freshness_policy"):
         e = provenance.get(key) or {}
         impact = (str(e.get("impact") or "HIGH")).strip().upper()  # fail-closed default
+        if impact not in VALID_IMPACT_LEVELS:
+            # unrecognised impact fails CLOSED: flag the bad value AND gate the
+            # entry as HIGH — only an explicit, valid downgrade exempts it
+            errs.append(f"data-provenance.yaml: '{key}' invalid impact '{e.get('impact')}' "
+                        f"(expected one of {sorted(VALID_IMPACT_LEVELS)}) — treated as HIGH")
+            impact = "HIGH"
         if impact != "HIGH":
             continue
         as_of = _parse_as_of(e.get("as_of"))
@@ -363,13 +386,19 @@ def check_data_currency(provenance, today=None):
                         f"parseable date (YYYY-MM-DD or YYYY) — currency gate cannot date it")
             continue
         tier = (e.get("source_tier") or "").strip()
+        if tier not in VALID_SOURCE_TIERS:
+            # an unrecognised tier must fail closed HERE, not be deferred:
+            # check_data_provenance only inspects the current domain's trace, so
+            # an off-domain entry with a typo'd tier would slip both gates
+            errs.append(f"data-provenance.yaml: '{key}' invalid/missing source_tier '{tier}' "
+                        f"(expected one of {sorted(VALID_SOURCE_TIERS)}) — currency gate "
+                        f"cannot age it")
+            continue
         max_age = policy.get(tier)
         if max_age is None:
-            # invalid tiers are already flagged by check_data_provenance; a VALID
-            # tier missing from the policy is a policy hole -> fail closed
-            if tier in VALID_SOURCE_TIERS:
-                errs.append(f"data-provenance.yaml: freshness_policy.max_age_days has no "
-                            f"threshold for tier '{tier}' (entry '{key}')")
+            # a VALID tier missing from the policy is a policy hole -> fail closed
+            errs.append(f"data-provenance.yaml: freshness_policy.max_age_days has no "
+                        f"threshold for tier '{tier}' (entry '{key}')")
             continue
         age = (ref - as_of).days
         if age > int(max_age):

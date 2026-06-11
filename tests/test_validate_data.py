@@ -291,6 +291,54 @@ def test_data_currency_empty_provenance_defers_to_provenance_gate():
     assert vd.check_data_currency({}, today="2026-06-11") == []
 
 
+def test_data_currency_invalid_impact_fails_closed_and_flagged():
+    # H1: an unrecognised impact value (typo or off-vocabulary) must NOT exempt
+    # a stale entry. It fail-closes to HIGH (the entry is gated) AND the bogus
+    # value itself is flagged so the typo gets fixed.
+    for bogus in ("HIGGH", "CRITICAL"):
+        errs = vd.check_data_currency(_prov("2024-01-01", impact=bogus), today="2026-06-11")
+        assert any("impact" in e and bogus in e for e in errs), f"impact '{bogus}' not flagged"
+        assert any("stale" in e for e in errs), f"impact '{bogus}' silently exempted a stale entry"
+
+
+def test_data_currency_valid_downgrade_still_exempts():
+    # Only an explicit, VALID MEDIUM/LOW exempts an entry from currency gating.
+    assert vd.check_data_currency(_prov("2024-01-01", impact="MEDIUM"), today="2026-06-11") == []
+    assert vd.check_data_currency(_prov("2024-01-01", impact="LOW"), today="2026-06-11") == []
+
+
+def test_data_currency_unknown_tier_is_violation_not_skip():
+    # M1: a typo'd source_tier must fail closed HERE — check_data_provenance only
+    # inspects the current domain's trace, so an off-domain entry with a bad tier
+    # would otherwise slip both gates.
+    errs = vd.check_data_currency(_prov("2024-01-01", tier="PRIMRY"), today="2026-06-11")
+    assert any("source_tier" in e and "PRIMRY" in e for e in errs)
+
+
+def test_data_currency_empty_env_override_is_clean_error(monkeypatch):
+    # L1a: an empty VALIDATE_DATA_TODAY must surface as a clean violation naming
+    # the bad value, not an uncaught ValueError traceback.
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "")
+    errs = vd.check_data_currency(_prov("2026-05-24"))
+    assert any("VALIDATE_DATA_TODAY" in e for e in errs)
+
+
+def test_data_currency_malformed_env_override_is_clean_error(monkeypatch):
+    # L1a: same for a malformed value — the message names the offending value.
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "not-a-date")
+    errs = vd.check_data_currency(_prov("2026-05-24"))
+    assert any("VALIDATE_DATA_TODAY" in e and "not-a-date" in e for e in errs)
+
+
+def test_data_currency_env_override_warns_on_stderr(monkeypatch, capsys):
+    # L1b: an active (non-empty) override prints a one-line stderr WARNING with
+    # the frozen date, so a stray export can't silently freeze the gate.
+    monkeypatch.setenv("VALIDATE_DATA_TODAY", "2026-06-11")
+    assert vd.check_data_currency(_prov("2026-05-24")) == []
+    err = capsys.readouterr().err
+    assert "WARNING" in err and "2026-06-11" in err
+
+
 def test_validate_all_fails_on_backdated_high_impact_fact(monkeypatch):
     # End-to-end: the real manifest validated as of a far-future "today" must
     # trip the currency gate through validate_all (proves it is wired in).
