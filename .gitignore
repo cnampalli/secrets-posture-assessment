@@ -17,3 +17,6 @@ __pycache__/
 
 # Brainstorming visual-companion scratch (mockups, server state)
 .superpowers/
+
+# Isolated worktrees (native EnterWorktree + git fallback)
+.claude/worktrees/
