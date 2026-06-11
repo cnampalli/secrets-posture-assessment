@@ -55,15 +55,20 @@ def test_blank_area_is_tolerated(tmp_path):
     assert grid["vendors"][0]["cells"]["JML"]["fit"] == "NATIVE"
 
 
-def test_build_iga_vendor_fit_returns_4x4_grid_ordered():
+def test_build_iga_vendor_fit_returns_grid_ordered():
     grid = report_logic.build_iga_vendor_fit(IGA_DATA_DIR)
     assert grid["areas"] == AREAS
-    # four vendors, in CSV (data) order
+    # eight vendors, in CSV (data) order: the four incumbents then the four new
+    # SaaS-first vendors (Omada/ConductorOne/Lumos/Zilla)
     assert [v["vendor"] for v in grid["vendors"]] == [
         "SailPoint Identity Security Cloud",
         "Saviynt Enterprise Identity Cloud",
         "Microsoft Entra ID Governance",
         "Okta Identity Governance",
+        "Omada Identity",
+        "ConductorOne",
+        "Lumos",
+        "Zilla Security",
     ]
     # every vendor has a cell for every area
     for v in grid["vendors"]:

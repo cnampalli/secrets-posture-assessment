@@ -79,11 +79,16 @@ def test_pam_vendor_layer_and_anchors():
     d = domains.PAM
     # every vendor in the PAM capability data must be mapped (loader errors otherwise)
     assert set(d.vendor_layer) == {"cyberark-pam", "delinea", "beyondtrust",
-                                   "one-identity-safeguard", "wallix-bastion", "teleport"}
-    # anchors seed the complement view — the established suites, not the modern challenger
+                                   "one-identity-safeguard", "wallix-bastion", "teleport",
+                                   "strongdm", "britive", "apono", "netwrix-privilege-secure"}
+    # anchors seed the complement view — the established (suite-tier) platforms, not the
+    # modern-access challengers (Teleport/StrongDM/Britive/Apono are L2 modern-access).
+    # Netwrix Privilege Secure is an L1 suite, so it joins the anchor set (6 suites).
     anchors = {s for s, (lay, t) in d.vendor_layer.items() if t == d.anchors_tier}
-    assert "teleport" not in anchors and len(anchors) == 5
+    assert anchors.isdisjoint({"teleport", "strongdm", "britive", "apono"})
+    assert "netwrix-privilege-secure" in anchors and len(anchors) == 6
     assert d.short["cyberark-pam"] == "CyberArk"
+    assert d.short["strongdm"] == "StrongDM"
 
 
 def test_pam_report_labels():
@@ -110,12 +115,16 @@ def test_iga_domain_registered_and_substrateless():
 def test_iga_vendor_layer_and_shorts():
     d = domains.IGA
     assert set(d.vendor_layer) == {"sailpoint-isc", "saviynt-eic",
-                                   "microsoft-entra-idg", "okta-oig"}
-    # IGA uses a single "suite" layer for all four platforms (fit is per-area)
+                                   "microsoft-entra-idg", "okta-oig",
+                                   "omada", "conductorone", "lumos", "zilla"}
+    # IGA uses a single "suite" layer for ALL platforms (fit is per-area); the four
+    # new SaaS-first vendors land at L1 suite too (modern-iga proposal overridden)
     assert all(lay == "L1" and tier == "suite"
                for lay, tier in d.vendor_layer.values())
     assert d.short["saviynt-eic"] == "Saviynt"
     assert d.short["okta-oig"] == "Okta"
+    assert d.short["omada"] == "Omada"
+    assert d.short["zilla"] == "Zilla"
 
 
 def test_report_meta_is_single_source_token_map():

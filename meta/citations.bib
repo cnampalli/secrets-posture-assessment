@@ -3519,3 +3519,387 @@
   url    = {https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion},
   note   = {[INDUSTRY-CONSENSUS] Mandiant attribution analysis of the Snowflake 2024 campaign; details credential-harvesting from infostealer logs as old as 2020.}
 }
+
+% ============================================================
+% WS-3 vendor expansion (appended 2026-06-11)
+% Scope: PAM (+StrongDM/Britive/Apono/Netwrix Privilege Secure) and
+% IGA fit-grid (+Omada/ConductorOne/Lumos/Zilla) vendor-capability citations.
+% All keys are first-party vendor pages confirmed verbatim in the ws3-research
+% ledgers (PASS-2 LANDABLE). Sources are marketing/admin-doc tier as noted per row.
+% ============================================================
+
+% --- PAM: StrongDM (L2 modern-access; Delinea-owned 2026-03-05) ---
+@misc{strongdm-vault-2025,
+  title  = {StrongDM Vault — secret engines (rotation)},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://docs.strongdm.com/admin/secrets}
+}
+@misc{strongdm-proxy-2025,
+  title  = {StrongDM — How It Works},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://www.strongdm.com/how-it-works}
+}
+@misc{strongdm-audit-logs-2025,
+  title  = {StrongDM — Audit Logs (session replay)},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://docs.strongdm.com/admin/audit/logs.md}
+}
+@misc{strongdm-jit-2025,
+  title  = {StrongDM — Just-in-Time Access},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://www.strongdm.com/solution/just-in-time-access}
+}
+@misc{strongdm-resource-discovery-2025,
+  title  = {StrongDM — Resource Discovery},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://docs.strongdm.com/admin/resources/discovery}
+}
+@misc{strongdm-creds-mgmt-2025,
+  title  = {StrongDM — Credentials and Secrets Management},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://docs.strongdm.com/concepts/security/credentials-and-secrets-management}
+}
+@misc{strongdm-mfa-2025,
+  title  = {StrongDM — Multi-Factor Authentication},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://docs.strongdm.com/admin/principals/mfa}
+}
+@misc{strongdm-breakglass-2025,
+  title  = {StrongDM — Break-Glass Access},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://www.strongdm.com/blog/break-glass}
+}
+@misc{strongdm-vendor-access-2025,
+  title  = {StrongDM — Vendor Access},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://www.strongdm.com/use-cases/vendor-access}
+}
+@misc{strongdm-leased-cred-2025,
+  title  = {StrongDM — Leased Credential (workload access)},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://docs.strongdm.com/concepts/security/credentials-and-secrets-management}
+}
+@misc{strongdm-cza-2025,
+  title  = {StrongDM — Continuous Zero Trust Authorization},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://www.strongdm.com/blog/continuous-zero-trust-authorization}
+}
+@misc{strongdm-cred-theft-2025,
+  title  = {StrongDM — Credential-theft prevention (secretless brokering)},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://docs.strongdm.com/concepts/security/credentials-and-secrets-management}
+}
+@misc{strongdm-architecture-2025,
+  title  = {StrongDM — Architecture / HA (How It Works)},
+  author = {{StrongDM}},
+  year   = {2025},
+  url    = {https://www.strongdm.com/how-it-works}
+}
+
+% --- PAM: Britive (L2 modern-access; independent — BeyondTrust acquisition refuted) ---
+@misc{britive-platform-2026,
+  title  = {Britive — Platform (Secrets Manager / ZSP)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://www.britive.com/platform/}
+}
+@misc{britive-access-broker-2026,
+  title  = {Britive — Access Broker},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://www.britive.com/platform/access-broker}
+}
+@misc{britive-cloud-pam-usecase-2026,
+  title  = {Britive — Cloud PAM use case (session monitoring header)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://www.britive.com/use-cases/cloud-pam}
+}
+@misc{britive-jit-2026,
+  title  = {Britive — Just-in-Time Access},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://www.britive.com/platform/just-in-time-access}
+}
+@misc{britive-usecases-2026,
+  title  = {Britive — Use Cases (account discovery header)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://www.britive.com/use-cases}
+}
+
+% --- PAM: Apono (L2 modern-access; independent) ---
+@misc{apono-session-audit-2025,
+  title  = {Apono — Session Audit},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/audits-and-reports/session-audit.md}
+}
+@misc{apono-jit-2025,
+  title  = {Apono — How Apono Works (JIT / Just-Enough)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/getting-started/how-apono-works.md}
+}
+@misc{apono-access-discovery-2025,
+  title  = {Apono — Access Discovery},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/getting-started/access-discovery.md}
+}
+@misc{apono-mfa-2025,
+  title  = {Apono — What are Access Flows (request-time MFA)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/access-flows/access-flows/what-are-access-flows.md}
+}
+@misc{apono-breakglass-2025,
+  title  = {Apono — Emergency / break-glass Access Flows (docs export)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/llms-full.txt}
+}
+@misc{apono-least-privilege-2025,
+  title  = {Apono — Access Discovery (least-privilege right-sizing)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/getting-started/access-discovery.md}
+}
+@misc{apono-thirdparty-access-2025,
+  title  = {Apono — Third-party / contractor access (How Apono Works)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/getting-started/how-apono-works.md}
+}
+@misc{apono-ciem-2025,
+  title  = {Apono — Cloud Privileged Access (CIEM)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://www.apono.io/cloud-privileged-access/}
+}
+@misc{apono-workload-2025,
+  title  = {Apono — Agent Privilege Guard (NHI / AI-agent)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://www.apono.io/}
+}
+@misc{apono-access-review-2025,
+  title  = {Apono — Access reviews / certification (How Apono Works)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/getting-started/how-apono-works.md}
+}
+@misc{apono-anomaly-2025,
+  title  = {Apono — Access Threat Detection & Response (ATDR)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://www.apono.io/cloud-privileged-access/}
+}
+@misc{apono-resilience-2025,
+  title  = {Apono — Connector (no-stored-secrets architecture)},
+  author = {{Apono}},
+  year   = {2025},
+  url    = {https://docs.apono.io/docs/getting-started/how-apono-works.md}
+}
+
+% --- PAM: Netwrix Privilege Secure (L1 suite; PE-owned, no ownership-graph entry) ---
+@misc{netwrix-ps-accessmgmt-2025,
+  title  = {Netwrix Privilege Secure for Access Management},
+  author = {{Netwrix}},
+  year   = {2025},
+  url    = {https://www.netwrix.com/privilege_secure_for_access_management.html}
+}
+@misc{netwrix-ps-docs-2512,
+  title  = {Netwrix Privilege Secure 25.12 — Getting Started},
+  author = {{Netwrix}},
+  year   = {2025},
+  url    = {https://docs.netwrix.com/docs/privilegesecure/25_12/gettingstarted}
+}
+@misc{netwrix-ps-product-2025,
+  title  = {Netwrix Privilege Secure (product / ZSP)},
+  author = {{Netwrix}},
+  year   = {2025},
+  url    = {https://www.netwrix.com/privilege_secure.html}
+}
+@misc{netwrix-ps-discovery-2025,
+  title  = {Netwrix Privilege Secure for Discovery},
+  author = {{Netwrix}},
+  year   = {2025},
+  url    = {https://www.netwrix.com/privilege_secure_for_discovery.html}
+}
+@misc{netwrix-epm-2025,
+  title  = {Netwrix Endpoint Privilege Manager},
+  author = {{Netwrix}},
+  year   = {2025},
+  url    = {https://netwrix.com/en/products/privilege-secure/endpoint-privilege-manager-solution/}
+}
+@misc{netwrix-ps-discovery-cleanup-2025,
+  title  = {Netwrix — Continuous Discovery and Cleanup},
+  author = {{Netwrix}},
+  year   = {2025},
+  url    = {https://netwrix.com/en/solutions/continuous-discovery-and-cleanup/}
+}
+@misc{netwrix-ps-vendor-2025,
+  title  = {Netwrix — Third-Party Vendor Access},
+  author = {{Netwrix}},
+  year   = {2025},
+  url    = {https://netwrix.com/en/solutions/privileged-access-management/third-party-vendor-access}
+}
+
+% --- IGA fit-grid: Omada Identity (L1 suite; independent) ---
+@misc{omada-lifecycle-management,
+  title  = {Omada Identity — Lifecycle Management},
+  author = {{Omada}},
+  year   = {2025},
+  url    = {https://omadaidentity.com/products/functionality/lifecycle-management/}
+}
+@misc{omada-certification-campaigns,
+  title  = {Omada Identity — Governance (certification campaigns)},
+  author = {{Omada}},
+  year   = {2025},
+  url    = {https://documentation.omadaidentity.com/docs/identityprocess/governance/}
+}
+@misc{omada-sod-module,
+  title  = {Omada Identity — Policy and Role Management (SoD module)},
+  author = {{Omada}},
+  year   = {2025},
+  url    = {https://documentation.omadaidentity.com/productwalkthrough/IGA-scenarios/policy-and-role-management/}
+}
+@misc{omada-sod-violation,
+  title  = {Omada Identity — SoD violation handling},
+  author = {{Omada}},
+  year   = {2025},
+  url    = {https://documentation.omadaidentity.com/productwalkthrough/IGA-scenarios/policy-and-role-management/}
+}
+@misc{omada-role-management,
+  title  = {Omada Identity — Role Management},
+  author = {{Omada}},
+  year   = {2025},
+  url    = {https://documentation.omadaidentity.com/productwalkthrough/IGA-scenarios/policy-and-role-management/}
+}
+@misc{omada-access-request,
+  title  = {Omada Identity — Self-service Access Request},
+  author = {{Omada}},
+  year   = {2025},
+  url    = {https://documentation.omadaidentity.com/productwalkthrough/IGA-scenarios/policy-and-role-management/}
+}
+
+% --- IGA fit-grid: ConductorOne (L1 suite; conductorone.com -> c1.ai) ---
+@misc{conductorone-ilm,
+  title  = {ConductorOne — Identity Lifecycle Management},
+  author = {{ConductorOne}},
+  year   = {2025},
+  url    = {https://www.c1.ai/solutions/identity-lifecycle-management/}
+}
+@misc{conductorone-access-reviews,
+  title  = {ConductorOne — Access Reviews},
+  author = {{ConductorOne}},
+  year   = {2025},
+  url    = {https://www.c1.ai/products/access-reviews/}
+}
+@misc{conductorone-sod-access-conflicts,
+  title  = {ConductorOne — SoD policy automation (Access Conflicts)},
+  author = {{ConductorOne}},
+  year   = {2025},
+  url    = {https://www.c1.ai/news/press-release/conductorone-extends-next-gen-iga-platform-with-separation-of-duties-policy-automation/}
+}
+@misc{conductorone-access-requests,
+  title  = {ConductorOne — Access Requests},
+  author = {{ConductorOne}},
+  year   = {2025},
+  url    = {https://www.c1.ai/products/access-requests/}
+}
+@misc{conductorone-jit,
+  title  = {ConductorOne — Just-in-Time Access},
+  author = {{ConductorOne}},
+  year   = {2025},
+  url    = {https://www.c1.ai/products/access-requests/}
+}
+
+% --- IGA fit-grid: Lumos (L1 suite; independent) ---
+@misc{lumos-lifecycle,
+  title  = {Lumos — Lifecycle Management},
+  author = {{Lumos}},
+  year   = {2025},
+  url    = {https://www.lumos.com/products/lifecycle-management}
+}
+@misc{lumos-access-reviews,
+  title  = {Lumos — Access Reviews},
+  author = {{Lumos}},
+  year   = {2025},
+  url    = {https://www.lumos.com/products/access-reviews}
+}
+@misc{lumos-sod,
+  title  = {Lumos — SoD flagging (Access Reviews)},
+  author = {{Lumos}},
+  year   = {2025},
+  url    = {https://www.lumos.com/products/access-reviews}
+}
+@misc{lumos-sod-topic,
+  title  = {Lumos — Separation of Duties (definition / best practices)},
+  author = {{Lumos}},
+  year   = {2025},
+  url    = {https://www.lumos.com/topic/separation-of-duties-definition-best-practices}
+}
+@misc{lumos-appstore,
+  title  = {Lumos — AppStore (self-service access requests)},
+  author = {{Lumos}},
+  year   = {2025},
+  url    = {https://www.lumos.com/products/appstore}
+}
+
+% --- IGA fit-grid: Zilla Security (L1 suite; CyberArk-owned 2025-02-13) ---
+@misc{zilla-provisioning-lifecycle,
+  title  = {Zilla Security — Provisioning / lifecycle (CyberArk Modern IGA)},
+  author = {{CyberArk / Zilla Security}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/products/modern-iga/}
+}
+@misc{zilla-comply-certification,
+  title  = {Zilla Security — Comply / access reviews (CyberArk Modern IGA)},
+  author = {{CyberArk / Zilla Security}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/products/modern-iga/}
+}
+@misc{zilla-sod-detect,
+  title  = {Zilla Security — SoD detection (CyberArk Modern IGA)},
+  author = {{CyberArk / Zilla Security}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/products/modern-iga/}
+}
+@misc{zilla-acquisition-press,
+  title  = {CyberArk Acquires Zilla Security to Reshape IGA for the Modern Enterprise},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/press/cyberark-acquires-zilla-security-to-reshape-identity-governance-and-administration-for-the-modern-enterprise/}
+}
+@misc{zilla-provision-request,
+  title  = {Zilla Security Releases Zilla Provision (self-service access requests)},
+  author = {{Zilla Security}},
+  year   = {2023},
+  url    = {https://www.prnewswire.com/news-releases/zilla-security-releases-zilla-provision-to-automate-and-streamline-identity-security-301972455.html}
+}
+@misc{zilla-provision-pr-request,
+  title  = {Zilla Provision — ITSM-driven provisioning (PR Newswire)},
+  author = {{Zilla Security}},
+  year   = {2023},
+  url    = {https://www.prnewswire.com/news-releases/zilla-security-releases-zilla-provision-to-automate-and-streamline-identity-security-301972455.html}
+}
+@misc{zilla-provision-pr-sod,
+  title  = {Zilla Provision — SoD policy (PR Newswire)},
+  author = {{Zilla Security}},
+  year   = {2023},
+  url    = {https://www.prnewswire.com/news-releases/zilla-security-releases-zilla-provision-to-automate-and-streamline-identity-security-301972455.html}
+}

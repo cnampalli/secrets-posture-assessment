@@ -30,12 +30,23 @@ vendor_layer:
   saviynt-eic: ["L1", "suite"]
   microsoft-entra-idg: ["L1", "suite"]
   okta-oig: ["L1", "suite"]
+  # Four SaaS-first IGA vendors — all L1 suite (ConductorOne's proposed L2
+  # "modern-iga" label is overridden per the PASS-2 layer ruling: the modern/SaaS
+  # nuance is carried by per-area fit grades, not by a separate layer).
+  omada: ["L1", "suite"]
+  conductorone: ["L1", "suite"]
+  lumos: ["L1", "suite"]
+  zilla: ["L1", "suite"]
 
 short:
   sailpoint-isc: "SailPoint"
   saviynt-eic: "Saviynt"
   microsoft-entra-idg: "Microsoft Entra"
   okta-oig: "Okta"
+  omada: "Omada"
+  conductorone: "ConductorOne"
+  lumos: "Lumos"
+  zilla: "Zilla"
 
 layer_label:
   L1: "L1 · IGA platforms (lifecycle / certification / SoD / access requests) — fit assessed per governance area, not per-product NATIVE/ADD-ON"
@@ -89,3 +100,4 @@ value_content:
     - "<b>Illustrative scenario, not a client assessment.</b> The posture states below are a worked example to show the report&rsquo;s shape — replace them with a real assessment before acting on any figure."
     - "<b>Maturity bands are a roadmap, not a benchmark.</b> The ML1/2/3 ladder is a designed coverage-based convention for tracking progress over time — it is not an external standard and not a peer comparison."
     - "<b>Vendor-fit reflects presence, not efficacy.</b> A NATIVE / PARTIAL rating means the capability exists at that grade, not that it is well-implemented in your environment — validate against your own requirements."
+    - "<b>Adjacent categories (not assessed here).</b> Veza (CIEM / authorization-graph) and CrowdStrike / Cisco (ITDR — Falcon Identity, Duo/Oort) are identity-adjacent, not core to this domain's IGA governance vendor set; similarly Astrix/Entro/Aembit (NHI lifecycle). They complement rather than replace the IGA platforms assessed here."
