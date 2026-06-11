@@ -96,7 +96,7 @@ ws["A2"].font = SUB_FONT
 rows = [
     ("", ""),
     ("Generated", "2026-06-03"),
-    ("Source of truth", "matrix/domains/secrets/use-cases.csv, matrix/domains/secrets/identity-catalog.csv, matrix/domains/secrets/regulatory-trace.csv (CSV data contracts; validate_data.py green; 111 tests pass)."),
+    ("Source of truth", "matrix/domains/secrets/use-cases.csv, matrix/domains/secrets/identity-catalog.csv, matrix/domains/secrets/regulatory-trace.csv (CSV data contracts; gated by validate_data.py and the full pytest suite, both green at generation time)."),
     ("What this is", "47 use cases and 37 NHI types for enterprise secrets management, each linked to primary regulatory and standards sources. Audience: security, risk, audit and engineering stakeholders."),
     ("Assurance", "APRA references verified paragraph-by-paragraph against live CPS 234 / CPS 230 / CPG 234 PDFs (confidence >=98%). NHI taxonomy tested against the NIST/CNSSI Non-Person Entity definition + OWASP NHI Top 10 2025 (>=95%). Use-case back-maps regenerated from the verified trace (>=97%)."),
     ("Full audit", "matrix/REGULATOR-AUDIT-2026-06-03.md"),

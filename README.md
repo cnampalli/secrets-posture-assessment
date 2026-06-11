@@ -3,9 +3,6 @@
 > **Status:** **PRD v0.1 ready** — Milestones 1, 2, 3 all complete (2026-05-23).
 > **Stakeholder review:** **Mon 2026-05-25**.
 > **Deep-dive v1.0:** week of **2026-05-26** (after stakeholder input).
->
-> **Note:** `GEMINI.md` in this directory is a legacy stub from a prior
-> session and is **superseded by this README**. Do not treat it as authoritative.
 
 ## What this project produces
 
@@ -50,7 +47,6 @@ and is mirrored project-locally at [`meta/workflow.md`](./meta/workflow.md).
 research-papers/
 ├── README.md                          ← you are here
 ├── CHANGELOG.md                       version log per milestone
-├── GEMINI.md                          (legacy stub; superseded)
 │
 ├── PRD/                               main deliverable + ADRs + appendices
 │   ├── PRD-FI-v0.1.md

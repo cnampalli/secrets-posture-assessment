@@ -51,7 +51,8 @@ gate per phase:
    reports). Notes: `test_iga_spike` pins the spike dir, not production — no change needed; one
    extra pin found in `app/src/assessment/store.test.tsx`. Known pre-existing non-blockers:
    `ms-pth-mitigation-2014` cite key bib-undefined (3 PAM rows + UC-P-018); IGA "REG-mapped UCs"
-   off-by-one (15/16, same delta as baseline).
+   is 15/16 by design, not a bug — UC-I-012 carries NIST/ISO back-maps only, no APRA/ISM row
+   (recomputed 2026-06-11 after the CPS234-§22→§21 merge; build output confirms 15).
 3. **WS3 — Vendor expansion to leader parity** (citation-backed, adversarially verified). PAM 6→~10
    (StrongDM, Britive, Apono, Netwrix); IGA 4→~8 (Omada, ConductorOne, Lumos, Zilla/CyberArk). Document
    CrowdStrike/Cisco as **adjacent** (ITDR/DSPM/CIEM), not core.
