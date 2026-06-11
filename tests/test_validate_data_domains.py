@@ -124,7 +124,8 @@ def test_nonempty_vendor_caps_still_validated_when_vendor_fit_declared():
 FIT_NAME = "iga-vendor-fit.csv"
 FIT_HEADER = ",".join(vd.VENDOR_FIT_REQUIRED) + "\n"
 GOOD_FIT_ROW = ("SailPoint,sailpoint-isc,JML,NATIVE,Lifecycle states drive access,"
-                "https://docs.example/lifecycle,sailpoint-isc-lifecycle\n")
+                "https://docs.example/lifecycle,sailpoint-isc-lifecycle,"
+                "Lifecycle states describe a user's status in the organization\n")
 
 
 def _fit_errs(tmp_path, text):
@@ -168,12 +169,13 @@ def test_vendor_fit_empty_grade_rejected(tmp_path):
     assert errs and "invalid fit" in errs[0]
 
 
-@pytest.mark.parametrize("col", ["justification", "evidence_url", "citation_keys"])
+@pytest.mark.parametrize("col", ["justification", "evidence_url", "citation_keys",
+                                 "evidence_quote"])
 def test_vendor_fit_unsourced_claim_rejected(tmp_path, col):
     # anti-fabrication: a fit claim without a source is a violation
     row = {"vendor": "SailPoint", "vendor_slug": "sailpoint-isc", "area": "JML",
            "fit": "NATIVE", "justification": "j", "evidence_url": "u",
-           "citation_keys": "k"}
+           "citation_keys": "k", "evidence_quote": "q"}
     row[col] = ""
     text = FIT_HEADER + ",".join(row[c] for c in vd.VENDOR_FIT_REQUIRED) + "\n"
     errs = _fit_errs(tmp_path, text)

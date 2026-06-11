@@ -24,7 +24,7 @@ CORE_REQUIRED = {
                               "evidence_redacted", "gap_notes", "sensitivity_tag", "citation_keys"),
     "regulatory-trace.csv": ("framework_slug", "framework_role", "control_code", "control_short_title",
                              "uc_ids", "nhi_ids", "maturity_level", "evidence_url", "evidence_quote",
-                             "citation_keys"),
+                             "citation_keys", "quote_type"),
     "identity-catalog.csv": ("nhi_id", "bucket", "short_name", "description", "typical_secrets",
                              "lifecycle", "governance_maturity", "sources_likely", "citation_keys"),
 }
@@ -49,6 +49,11 @@ VALID_EVIDENCE_TIERS = {"primary", "follow-up"}
 # --- provenance gate (theme F) ---
 PROVIDER_COVERAGE = {"NATIVE", "ADD-ON", "PARTNER"}      # claims that need a source
 VALID_SOURCE_TIERS = {"PRIMARY", "ANALYST", "CONSENSUS"}
+# H1c: every regulatory-trace evidence_quote declares its honesty class. Only
+# `verbatim` rows are (later, H1d) held to source-quote presence/fidelity;
+# `paraphrase` and `analyst-note` are honest non-verbatim labels, never
+# silently passed off as source wording.
+VALID_QUOTE_TYPES = {"verbatim", "paraphrase", "analyst-note"}
 VALID_IMPACT_LEVELS = {"HIGH", "MEDIUM", "LOW"}          # currency-gate impact vocabulary (closed)
 INFERENCE_TAGS = ("[INDUSTRY-CONSENSUS]", "[CONSENSUS]", "[INFERRED]", "[INFER")
 PROVENANCE_EXTRA_KEYS = ("vendor-capabilities",)         # non-framework data sources
@@ -169,7 +174,7 @@ def check_aggregate_vendor_capabilities(rows, vendor_fit=None):
 # The fit grid is the load-bearing substitute for the vendor matrix, so its
 # claims clear the same anti-fabrication bar: valid grade + sourced, every row.
 VENDOR_FIT_REQUIRED = ("vendor", "vendor_slug", "area", "fit", "justification",
-                       "evidence_url", "citation_keys")
+                       "evidence_url", "citation_keys", "evidence_quote")
 VALID_FIT_GRADES = {"NATIVE", "PARTIAL", "ADD-ON"}
 
 
@@ -178,7 +183,7 @@ def check_vendor_fit(data_dir, fit_name):
     the file must exist with data rows (a missing/header-only fit grid alongside a
     header-only matrix would leave the domain with NO vendor evidence), carry the
     required columns, use a valid fit grade, and source every claim (justification
-    + evidence_url + citation_keys)."""
+    + evidence_url + citation_keys + a verbatim evidence_quote, H1b)."""
     path = os.path.join(data_dir, fit_name)
     if not os.path.exists(path):
         return [f"{fit_name}: declared in the domain descriptor but missing"]
@@ -192,10 +197,27 @@ def check_vendor_fit(data_dir, fit_name):
         if fit not in VALID_FIT_GRADES:
             errs.append(f"{fit_name}: invalid fit '{fit}' ({where}) — expected one of "
                         f"{sorted(VALID_FIT_GRADES)}")
-        for col in ("justification", "evidence_url", "citation_keys"):
+        for col in ("justification", "evidence_url", "citation_keys", "evidence_quote"):
             if not (r.get(col) or "").strip():
                 errs.append(f"{fit_name}: empty {col} ({where}) — a fit claim without "
                             f"a source is a violation")
+    return errs
+
+
+def check_quote_type(name, rows):
+    """H1c gate: every regulatory-trace row must label its evidence_quote with a
+    quote_type from the closed set VALID_QUOTE_TYPES (non-empty). A missing
+    column is check_required_columns' job (no double-flag here); when the
+    column exists, every row must carry a valid value."""
+    if not rows or "quote_type" not in rows[0]:
+        return []
+    errs = []
+    for r in rows:
+        v = (r.get("quote_type") or "").strip()
+        if v not in VALID_QUOTE_TYPES:
+            errs.append(f"{name}: invalid quote_type '{v}' (control "
+                        f"{r.get('control_code', '?')}) — expected one of "
+                        f"{sorted(VALID_QUOTE_TYPES)}")
     return errs
 
 
@@ -466,6 +488,7 @@ def validate_all(root=".", data_dir=None):
     errs += check_enum("current-state.csv", current, "current_state", VALID_STATES)
     errs += check_required_columns("regulatory-trace.csv", trace, CORE_REQUIRED["regulatory-trace.csv"])
     errs += check_enum("regulatory-trace.csv", trace, "framework_role", VALID_ROLES)
+    errs += check_quote_type("regulatory-trace.csv", trace)
     errs += check_required_columns("identity-catalog.csv", identity, CORE_REQUIRED["identity-catalog.csv"])
     errs += check_unique("identity-catalog.csv", identity, "nhi_id")
 

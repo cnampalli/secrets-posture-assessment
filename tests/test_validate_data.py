@@ -1,3 +1,4 @@
+import csv
 import pathlib, sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "matrix"))
@@ -410,3 +411,101 @@ def test_evidence_packs_optional_when_no_refs():
                             "control_code": "ISM-1619", "uc_ids": "UC-P-001"}]
     catalog = [_cat_row()]
     assert vd.check_evidence_packs(trace, catalog) == []
+
+
+# --- H1b: vendor-fit rows must carry a verbatim evidence_quote --------------
+
+_FIT_COLS = ("vendor", "vendor_slug", "area", "fit", "justification",
+             "evidence_url", "citation_keys", "evidence_quote")
+
+
+def _fit_row(**kw):
+    base = {"vendor": "Vendor X", "vendor_slug": "vx", "area": "JML", "fit": "NATIVE",
+            "justification": "vendor docs say so", "evidence_url": "https://x.example/docs",
+            "citation_keys": "vx-docs",
+            "evidence_quote": "A verbatim sentence from the vendor's own documentation."}
+    base.update(kw)
+    return base
+
+
+def _write_fit(tmp_path, rows, cols=_FIT_COLS):
+    with open(tmp_path / "fit.csv", "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(rows)
+    return str(tmp_path)
+
+
+def test_vendor_fit_requires_evidence_quote_column_in_schema():
+    # the schema contract itself must demand the quote column
+    assert "evidence_quote" in vd.VENDOR_FIT_REQUIRED
+
+
+def test_vendor_fit_missing_quote_column_is_violation(tmp_path):
+    cols = tuple(c for c in _FIT_COLS if c != "evidence_quote")
+    d = _write_fit(tmp_path, [_fit_row()], cols=cols)
+    errs = vd.check_vendor_fit(d, "fit.csv")
+    assert any("evidence_quote" in e and "missing required column" in e for e in errs)
+
+
+def test_vendor_fit_empty_quote_is_violation(tmp_path):
+    d = _write_fit(tmp_path, [_fit_row(evidence_quote="")])
+    errs = vd.check_vendor_fit(d, "fit.csv")
+    assert any("evidence_quote" in e and "vx/JML" in e for e in errs)
+
+
+def test_vendor_fit_complete_row_with_quote_is_clean(tmp_path):
+    d = _write_fit(tmp_path, [_fit_row()])
+    assert vd.check_vendor_fit(d, "fit.csv") == []
+
+
+# --- H1c: quote_type honesty flag on regulatory-trace rows -------------------
+
+def test_quote_type_enum_is_the_closed_set():
+    assert vd.VALID_QUOTE_TYPES == {"verbatim", "paraphrase", "analyst-note"}
+
+
+def test_quote_type_column_is_required_schema():
+    assert "quote_type" in vd.CORE_REQUIRED["regulatory-trace.csv"]
+
+
+def test_quote_type_invalid_value_is_violation():
+    rows = [{"control_code": "C1", "quote_type": "vibes"}]
+    errs = vd.check_quote_type("regulatory-trace.csv", rows)
+    assert any("vibes" in e and "C1" in e for e in errs)
+
+
+def test_quote_type_empty_value_is_violation():
+    rows = [{"control_code": "C1", "quote_type": ""}]
+    assert vd.check_quote_type("regulatory-trace.csv", rows)
+
+
+def test_quote_type_accepts_every_member_of_the_closed_set():
+    # an analyst-note row is ACCEPTED (honest label), exactly like verbatim —
+    # H1d's quote-presence rules only ever bind rows labelled verbatim
+    rows = [{"control_code": f"C{i}", "quote_type": qt}
+            for i, qt in enumerate(sorted(vd.VALID_QUOTE_TYPES))]
+    assert vd.check_quote_type("regulatory-trace.csv", rows) == []
+
+
+def test_quote_type_missing_column_defers_to_required_columns_check():
+    # no double-flag: column absence is check_required_columns' job
+    rows = [{"control_code": "C1"}]
+    assert vd.check_quote_type("regulatory-trace.csv", rows) == []
+    errs = vd.check_required_columns("regulatory-trace.csv", rows,
+                                     vd.CORE_REQUIRED["regulatory-trace.csv"])
+    assert any("quote_type" in e for e in errs)
+
+
+def test_validate_all_catches_bad_quote_type(tmp_path):
+    import shutil
+    dst = tmp_path / "matrix"
+    dst.mkdir()
+    for p in (ROOT / "matrix" / "domains" / "secrets").glob("*.csv"):
+        shutil.copy(p, dst / p.name)
+    rt = dst / "regulatory-trace.csv"
+    text = rt.read_text(encoding="utf-8")
+    assert ",verbatim" in text
+    rt.write_text(text.replace(",verbatim", ",vibes", 1), encoding="utf-8")
+    viol = vd.validate_all(str(tmp_path))
+    assert any("quote_type" in v and "vibes" in v for v in viol)
