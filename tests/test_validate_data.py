@@ -509,3 +509,91 @@ def test_validate_all_catches_bad_quote_type(tmp_path):
     rt.write_text(text.replace(",verbatim", ",vibes", 1), encoding="utf-8")
     viol = vd.validate_all(str(tmp_path))
     assert any("quote_type" in v and "vibes" in v for v in viol)
+
+
+# --- H1a: citation-key resolution gate ---------------------------------------
+# Every citation_keys token used in the data must resolve to a @key defined in
+# meta/citations.bib OR be an allowlisted sentinel status-marker. Anything else
+# is a dangling (potentially fabricated-by-omission) reference -> build failure.
+
+_BIB_TEXT = (
+    "% comment line\n"
+    "@misc{real-key-2025,\n"
+    "  title  = {A real entry},\n"
+    "  author = {{Org}},\n"
+    "  year   = {2025},\n"
+    "  url    = {https://example.test/doc}\n"
+    "}\n"
+)
+
+
+def _bib(tmp_path, text=_BIB_TEXT):
+    p = tmp_path / "citations.bib"
+    p.write_text(text, encoding="utf-8")
+    return str(p)
+
+
+def test_citation_keys_undefined_key_is_violation(tmp_path):
+    files = [("use-cases.csv", [{"citation_keys": "real-key-2025;ghost-key-9999"}])]
+    errs = vd.check_citation_keys_resolve(_bib(tmp_path), files)
+    assert any("ghost-key-9999" in e and "use-cases.csv" in e for e in errs)
+    # the defined key must NOT be flagged
+    assert not any("'real-key-2025'" in e for e in errs)
+
+
+def test_citation_keys_defined_key_is_clean(tmp_path):
+    files = [("use-cases.csv", [{"citation_keys": " real-key-2025 "}]),
+             ("regulatory-trace.csv", [{"citation_keys": ""}])]
+    assert vd.check_citation_keys_resolve(_bib(tmp_path), files) == []
+
+
+def test_citation_keys_sentinel_is_allowed(tmp_path):
+    # sentinels are documented status-markers, never bib entries
+    files = [("regulatory-trace.csv",
+              [{"citation_keys": "iso-27001-a5-15-unverified;iso-27001-a5-18-quote-withheld"}])]
+    assert vd.check_citation_keys_resolve(_bib(tmp_path), files) == []
+
+
+def test_citation_sentinel_allowlist_members_look_like_sentinels():
+    # guard against smuggling a real-citation key into the allowlist to force green
+    for k in vd.CITATION_SENTINEL_ALLOWLIST:
+        assert k.endswith("-unverified") or k.endswith("-withheld"), k
+
+
+def test_citation_keys_missing_bib_fails_closed(tmp_path):
+    files = [("use-cases.csv", [{"citation_keys": "real-key-2025"}])]
+    errs = vd.check_citation_keys_resolve(str(tmp_path / "nope.bib"), files)
+    assert errs and any("citations" in e or "nope.bib" in e for e in errs)
+
+
+def test_citation_keys_duplicate_use_reported_once(tmp_path):
+    rows = [{"citation_keys": "ghost-key-9999"}, {"citation_keys": "ghost-key-9999"}]
+    errs = vd.check_citation_keys_resolve(_bib(tmp_path), [("use-cases.csv", rows)])
+    assert len([e for e in errs if "ghost-key-9999" in e]) == 1
+
+
+def test_citation_keys_real_data_resolves_clean():
+    # every citation key used across ALL shipped domains resolves or is sentinel
+    bib = str(ROOT / "meta" / "citations.bib")
+    for dom in sorted((ROOT / "matrix" / "domains").iterdir()):
+        if not dom.is_dir():
+            continue
+        files = [(p.name, vd.load_csv(str(p))) for p in sorted(dom.glob("*.csv"))]
+        assert vd.check_citation_keys_resolve(bib, files) == [], dom.name
+
+
+def test_validate_all_catches_dangling_citation_key(tmp_path):
+    # gate must be wired into validate_all (bib resolved from <root>/meta)
+    ddir = tmp_path / "data"
+    ddir.mkdir()
+    for p in (ROOT / "matrix" / "domains" / "secrets").glob("*.csv"):
+        shutil.copy(p, ddir / p.name)
+    uc = ddir / "use-cases.csv"
+    rows = vd.load_csv(str(uc))
+    rows[0]["citation_keys"] = (rows[0].get("citation_keys") or "") + ";totally-fabricated-key-0000"
+    with open(uc, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    viol = vd.validate_all(root=str(ROOT), data_dir=str(ddir))
+    assert any("totally-fabricated-key-0000" in v for v in viol)
