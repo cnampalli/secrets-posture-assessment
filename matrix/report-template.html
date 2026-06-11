@@ -105,7 +105,7 @@
   /*__IGA_VENDOR_FIT_END__*/
   .chips{margin-top:8px;} .chips b{font-size:12px;}
   .chips span{display:inline-block;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--r-pill);padding:2px 9px;margin:2px 3px 2px 0;font-size:11px;}
-  .anz-card{border-left:3px solid var(--partial);}
+  .fi-card{border-left:3px solid var(--partial);}
   .rec{background:var(--met-tint);border:1px solid #bbe3cd;border-radius:var(--r-sm);padding:9px 11px;margin-top:8px;}
   .met-toggle{margin-top:12px;padding:10px;background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:var(--r-sm);}
   .met-toggle label{cursor:pointer;}
@@ -196,7 +196,7 @@
 </style>
 </head>
 <body>
-<div class="internal-bar">INTERNAL — prepared for a major AU Tier-1 FI (XYZ). Contains [INTERNAL] current-state findings. Do not distribute externally (open question O2).</div>
+<div class="internal-bar">INTERNAL — prepared for a major AU Tier-1 financial institution. Contains [INTERNAL] current-state findings. Do not distribute externally (open question O2).</div>
 <header>
   <div>
     <h1>__DOMAIN_HEADING__</h1>
@@ -363,8 +363,8 @@ DATA.forEach(r=>{ VLAYER[r.vendor_slug]=r.layer; VNAME[r.vendor_slug]=r.vendor_n
 const VENDOR_SLUGS=[...new Set(DATA.map(r=>r.vendor_slug))];
 
 // ---- XYZ override state (stakeholder "mark as MET"), persisted ----
-function loadOv(){ try{ return JSON.parse(localStorage.getItem("anz_overrides")||"{}"); }catch(e){ return {}; } }
-function saveOv(){ try{ localStorage.setItem("anz_overrides",JSON.stringify(OV)); }catch(e){} }
+function loadOv(){ try{ return JSON.parse(localStorage.getItem("fi_overrides")||"{}"); }catch(e){ return {}; } }
+function saveOv(){ try{ localStorage.setItem("fi_overrides",JSON.stringify(OV)); }catch(e){} }
 let OV=loadOv();
 function effState(a){ return OV[a.uc_id] ? "MET" : a.current_state; }
 function toggleMet(uc){ if(OV[uc]) delete OV[uc]; else OV[uc]=true; saveOv(); renderDashboard();
@@ -459,10 +459,10 @@ function renderUCCard(id){
   if(!u){ el.innerHTML=""; return; }
   const nhiChips=(u.nhis_in_scope||"").split(";").filter(Boolean).map(n=>'<span>'+gloss(n.trim())+'</span>').join("");
   const lensChips=(u.outcome_lens||"").split(";").filter(Boolean).map(x=>'<span>'+esc(x.trim())+'</span>').join("");
-  let anzHtml='<p class="muted">No XYZ current-state record.</p>';
+  let fiHtml='<p class="muted">No XYZ current-state record.</p>';
   if(a){
     const eff=effState(a), overridden=!!OV[a.uc_id];
-    anzHtml='<div><span class="pill pill-'+eff+'">'+esc(eff)+'</span> '+
+    fiHtml='<div><span class="pill pill-'+eff+'">'+esc(eff)+'</span> '+
       (overridden?'<span class="muted">(stakeholder-assessed; baseline '+esc(a.current_state)+')</span>':'<span class="muted">confidence '+esc(a.confidence)+'</span>')+' '+
       (a.sensitivity?'<span class="tag-internal">'+esc(a.sensitivity.replace(/[\[\]]/g,""))+'</span>':'')+'</div>'+
       (a.evidence?'<p>'+esc(a.evidence)+'</p>':'')+
@@ -479,7 +479,7 @@ function renderUCCard(id){
     '<div class="card"><h3>Recommendation &amp; vendor coverage</h3>'+
       '<div class="reco">'+recommend(id)+'</div>'+ vgrid(id)+
       '<p class="note">'+DOMAINCFG.card.layer_note+'NAT=NATIVE · ADD=add-on · PTR=partner · —=gap.</p></div>'+
-    '<div class="card anz-card"><h3>Where XYZ stands</h3>'+anzHtml+'</div>';
+    '<div class="card fi-card"><h3>Where XYZ stands</h3>'+fiHtml+'</div>';
 }
 
 // ---- nhi card ----

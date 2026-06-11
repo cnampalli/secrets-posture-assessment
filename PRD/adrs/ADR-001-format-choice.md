@@ -38,7 +38,7 @@ appendix** format:
   (a) `(UC × NHI × Vendor)` — the universal framework
   ([matrix/matrix.md](../../matrix/matrix.md)); (b) `(UC × NHI × XYZ-state)`
   — the current-state read
-  ([matrix/anz-current-state.csv](../../matrix/anz-current-state.csv)).
+  ([matrix/domains/secrets/current-state.csv](../../matrix/domains/secrets/current-state.csv)).
 - **ADRs** (this file + ADR-002..006) record the load-bearing choices
   (taxonomy source, regulatory lens, vendor shortlist, sensitivity policy,
   scoring rubric) so reviewers can challenge the spine without re-reading

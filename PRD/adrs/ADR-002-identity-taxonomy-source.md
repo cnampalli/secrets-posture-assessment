@@ -31,7 +31,7 @@ Candidate source taxonomies surveyed:
 
 None of these alone fully covers the FI estate XYZ runs (cloud-native
 + Vault + PAM + mainframe + RPA + Open Banking + emerging AI agents
-per [`research/anz-current-state-evidence.md`](../../research/anz-current-state-evidence.md) §1.3).
+per [`research/current-state-evidence.md`](../../research/current-state-evidence.md) §1.3).
 
 ## Decision
 
@@ -54,7 +54,7 @@ target them by ID rather than disappearing into "miscellaneous".
   cited; no vendor capture).
 - Long-tail rows (mainframe, RPA, AI agent, Open Banking) get scored
   rather than glossed — directly addresses the
-  [`research/anz-current-state-evidence.md`](../../research/anz-current-state-evidence.md) §1.10
+  [`research/current-state-evidence.md`](../../research/current-state-evidence.md) §1.10
   finding that ZT workload identity is poorly understood operationally.
 - One taxonomy spans all 19 vendor matrices and all 47 UCs — no rebase
   needed at v1.0.

@@ -251,7 +251,7 @@ SSL team's tooling_ —, break-glass governance (#8), AU sovereignty (#9),
 vaultless detection (#11), secret usage analytics (#12), mainframe / RPA
 / AI / B2B / IoT-OT coverage (#15).
 
-Status: tagged **PENDING** in `matrix/anz-current-state.csv` for those
+Status: tagged **PENDING** in `matrix/domains/secrets/current-state.csv` for those
 rows; will surface as PRD §17 open questions.
 
 ---

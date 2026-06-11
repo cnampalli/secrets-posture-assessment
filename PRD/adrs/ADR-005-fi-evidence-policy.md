@@ -83,7 +83,7 @@ Additionally:
 
 - [`prompts/README.md`](../../prompts/README.md) invariant #7 (sensitivity
   enforcement) + invariant #2 (citations).
-- [`research/anz-current-state-evidence.md`](../../research/anz-current-state-evidence.md)
+- [`research/current-state-evidence.md`](../../research/current-state-evidence.md)
   §6 (Sensitivity audit summary).
 - [`meta/review-M2-2026-05-23.md`](../../meta/review-M2-2026-05-23.md) §C
   (M2 sensitivity audit; two profile leakages identified for

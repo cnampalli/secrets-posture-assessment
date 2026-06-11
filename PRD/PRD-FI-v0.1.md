@@ -13,8 +13,8 @@
 - **Owner:** Enterprise Solutions Architect / Security Architect (user).
 - **Reviewers (proposed):** XYZ stakeholder TBC; independent PRD reviewer agent (prompt 09).
 - **Date created:** 2026-05-20. **This iteration:** 2026-05-23.
-- **Classification:** **Internal — for XYZ stakeholder review** (per [ADR-005](./adrs/ADR-005-anz-evidence-policy.md)).
-- **Sensitivity policy:** real where publicly known; anonymised where internal/sensitive. XYZ-specific lived-experience signal is paraphrased and attributed to "a major AU Tier-1 FI" throughout. See [ADR-005](./adrs/ADR-005-anz-evidence-policy.md).
+- **Classification:** **Internal — for XYZ stakeholder review** (per [ADR-005](./adrs/ADR-005-fi-evidence-policy.md)).
+- **Sensitivity policy:** real where publicly known; anonymised where internal/sensitive. XYZ-specific lived-experience signal is paraphrased and attributed to "a major AU Tier-1 FI" throughout. See [ADR-005](./adrs/ADR-005-fi-evidence-policy.md).
 - **Source plan:** [`meta/workflow.md`](../meta/workflow.md).
 - **Plan checkpoint of record:** `/Users/cnampalli/.claude/plans/wondrous-meandering-yao.md`.
 
@@ -98,7 +98,7 @@ labelled and back-cited.
 
 Distribution surface defaults to **Internal — for XYZ stakeholder
 review** until the stakeholder confirms otherwise (PRD §17 O2;
-[ADR-005](./adrs/ADR-005-anz-evidence-policy.md)).
+[ADR-005](./adrs/ADR-005-fi-evidence-policy.md)).
 
 ---
 
@@ -405,7 +405,7 @@ UC-N-020 mainframe / legacy posture and exception transparency.
 
 - `MET` / `PARTIAL` / `GAP` / `N/A` / `PENDING` with confidence
   (HIGH / MEDIUM / LOW) + evidence quote (paraphrased per
-  [ADR-005](./adrs/ADR-005-anz-evidence-policy.md)) + gap notes.
+  [ADR-005](./adrs/ADR-005-fi-evidence-policy.md)) + gap notes.
 
 The two axes are **directly joinable**: PRD §16 recommendations name
 the UC × NHI cells where the FI is `GAP` *and* the vendor matrix shows
@@ -608,9 +608,9 @@ without explicit residency contracts. See [`matrix/matrix.md`](../matrix/matrix.
 
 Inline XYZ matrix: [`matrix/matrix.md`](../matrix/matrix.md) (XYZ
 column where applicable). Raw data:
-[`matrix/anz-current-state.csv`](../matrix/anz-current-state.csv) (47
+[`matrix/domains/secrets/current-state.csv`](../matrix/domains/secrets/current-state.csv) (47
 rows, one per UC). Evidence file:
-[`research/anz-current-state-evidence.md`](../research/anz-current-state-evidence.md).
+[`research/current-state-evidence.md`](../research/current-state-evidence.md).
 
 **Headline distribution (47 UCs):**
 
@@ -642,7 +642,7 @@ pass; per-pair scoring would have exceeded lived-experience evidence).
 PRD §17 O5 carries the per-pair revisit explicitly for v1.0.
 
 All 47 XYZ rows carry `[INTERNAL]` sensitivity. All evidence quotes in
-the CSV are paraphrased per [ADR-005](./adrs/ADR-005-anz-evidence-policy.md);
+the CSV are paraphrased per [ADR-005](./adrs/ADR-005-fi-evidence-policy.md);
 no `[SENSITIVE]` or `[NOT-FOR-DISTRIBUTION]` content is reproduced.
 
 ---
@@ -742,8 +742,8 @@ not secrets-vault candidates.
 ## §12 Findings — XYZ side
 
 This section paraphrases lived-experience signals from
-[`research/anz-current-state-evidence.md`](../research/anz-current-state-evidence.md)
-per [ADR-005](./adrs/ADR-005-anz-evidence-policy.md). Each finding is
+[`research/current-state-evidence.md`](../research/current-state-evidence.md)
+per [ADR-005](./adrs/ADR-005-fi-evidence-policy.md). Each finding is
 attributed to "a major AU Tier-1 FI" (the dispatch context) and
 mapped to ZT pillars / E8 control areas in §14. Where a finding
 generates a recommendation, the recommendation ID is named in §16.
@@ -1260,7 +1260,7 @@ defined inline with source.
 - [ADR-002 — Identity taxonomy source](./adrs/ADR-002-identity-taxonomy-source.md) — CSA NHI WG + Gartner MIM + SPIFFE deltas; 37 NHIs.
 - [ADR-003 — Regulatory lens (outcomes-first)](./adrs/ADR-003-regulatory-lens.md) — E8 + ZT primary; CPS 234 + ISM back-map; CSF 2.0 deferred.
 - [ADR-004 — Vendor shortlist (19)](./adrs/ADR-004-vendor-shortlist.md) — 5-tier 19-vendor scope.
-- [ADR-005 — XYZ evidence policy (sensitivity)](./adrs/ADR-005-anz-evidence-policy.md) — `[PUBLIC]` / `[INTERNAL]` / `[SENSITIVE]` / `[NOT-FOR-DISTRIBUTION]` with redaction rules; default attribution "a major AU Tier-1 FI".
+- [ADR-005 — XYZ evidence policy (sensitivity)](./adrs/ADR-005-fi-evidence-policy.md) — `[PUBLIC]` / `[INTERNAL]` / `[SENSITIVE]` / `[NOT-FOR-DISTRIBUTION]` with redaction rules; default attribution "a major AU Tier-1 FI".
 - [ADR-006 — Scoring rubric](./adrs/ADR-006-scoring-rubric.md) — NATIVE / ADD-ON / PARTNER / GAP / N/A × Maturity 0–4; XYZ-axis MET / PARTIAL / GAP / N/A / PENDING.
 - [ADR-007 — Reading model & confidence](./adrs/ADR-007-reading-model-and-confidence.md) — three-layer stack (L0 substrate / L1 secrets-mgmt / L2 governance), rank-within-layer, NATIVE-is-layer-relative; sourcing-confidence taxonomy + forward-dated register (§8.1).
 

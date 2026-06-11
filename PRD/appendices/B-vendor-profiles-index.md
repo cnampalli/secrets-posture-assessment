@@ -9,7 +9,7 @@ the full profile under [`research/vendors/`](../../research/vendors/)
 and the per-vendor capability CSV under
 [`matrix/`](../../matrix/). Headlines are drawn from each profile's
 §1 snapshot and §5 strengths-and-gaps. Sensitivity tagging per
-[ADR-005](../adrs/ADR-005-anz-evidence-policy.md): XYZ lived-experience
+[ADR-005](../adrs/ADR-005-fi-evidence-policy.md): XYZ lived-experience
 signals are paraphrased and attributed to "a major AU Tier-1 FI".
 
 ---

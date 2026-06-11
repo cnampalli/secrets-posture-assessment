@@ -1,4 +1,4 @@
-# IGA Governed-Identity & Entitlement Taxonomy — ANZ Posture-Assessment Instrument (Phase 3, IGA domain)
+# IGA Governed-Identity & Entitlement Taxonomy — FI Posture-Assessment Instrument (Phase 3, IGA domain)
 
 **Sensitivity:** [PUBLIC] — independent of any client-specific evidence.
 **Author:** IGA Identity Taxonomist sub-agent (Opus 4.8, 1M), 2026-06-09.

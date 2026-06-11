@@ -197,7 +197,7 @@ A category that didn't exist in the 2019 XYZ red-team and has rapidly emerged
 - Per-vendor profile (narrative + citations): [`../research/vendors/<slug>.md`](../research/vendors/).
 - Per-UC vs framework back-map: [`regulatory-trace.csv`](./regulatory-trace.csv) (E8 + CISA ZTMM v2.0 primary; CPS 234 + CPS 230 + CPG 234 + ISM back-map; MITRE ATT&CK adversary lens — 145 control rows).
 - Adversary post-mortems mapping: [`../research/adversary/breach-postmortems.md`](../research/adversary/breach-postmortems.md).
-- XYZ current-state vs framework: [`anz-current-state.csv`](./anz-current-state.csv) + [`../research/anz-current-state-evidence.md`](../research/anz-current-state-evidence.md).
+- XYZ current-state vs framework: [`current-state.csv`](./domains/secrets/current-state.csv) + [`../research/current-state-evidence.md`](../research/current-state-evidence.md).
 
 ---
 

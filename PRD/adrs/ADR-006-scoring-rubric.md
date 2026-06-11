@@ -27,7 +27,7 @@ joinable.
 
 Adopt the **two-axis rubric** below, applied per `(UC, NHI, Vendor)`
 cell on the vendor matrix and per `(UC, NHI)` cell on the XYZ matrix
-([`matrix/anz-current-state.csv`](../../matrix/anz-current-state.csv)
+([`matrix/domains/secrets/current-state.csv`](../../matrix/domains/secrets/current-state.csv)
 applied at the UC level for v0.1 — per-pair deferred to v1.0).
 
 ### Vendor axis — coverage tier (per `(UC, NHI, Vendor)`)
@@ -73,7 +73,7 @@ where `[INTERNAL]`), **gap notes**.
   vendor option (after AU-residency filtering).
 - Maturity decouples capability claims from operational reality —
   Vault's database secrets engine scores NATIVE 4 at the vendor level
-  but PARTIAL at XYZ (shelf-ware — [`research/anz-current-state-evidence.md`](../../research/anz-current-state-evidence.md) §1.5).
+  but PARTIAL at XYZ (shelf-ware — [`research/current-state-evidence.md`](../../research/current-state-evidence.md) §1.5).
 - Cheap to apply: each cell is one (tier, maturity, evidence-quote)
   tuple — 1,596 cells in M2 budget.
 
@@ -110,7 +110,7 @@ where `[INTERNAL]`), **gap notes**.
 - [`matrix/matrix.md`](../../matrix/matrix.md) §1, §2, §3.
 - [`matrix/vendor-capabilities.csv`](../../matrix/vendor-capabilities.csv)
   (1,596 rows; 19 vendors × 84 cells).
-- [`matrix/anz-current-state.csv`](../../matrix/anz-current-state.csv)
+- [`matrix/domains/secrets/current-state.csv`](../../matrix/domains/secrets/current-state.csv)
   (47 rows).
 - Companion ADRs: [ADR-001](./ADR-001-format-choice.md),
   [ADR-002](./ADR-002-identity-taxonomy-source.md),

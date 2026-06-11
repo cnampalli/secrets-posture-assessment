@@ -148,4 +148,4 @@ present fact in the scoring.
   (`VENDOR_LAYER`, glossary, layer toggles).
 - Companion ADRs: [ADR-004](./ADR-004-vendor-shortlist.md) (tier
   structure), [ADR-006](./ADR-006-scoring-rubric.md) (scoring rubric),
-  [ADR-005](./ADR-005-anz-evidence-policy.md) (sensitivity).
+  [ADR-005](./ADR-005-fi-evidence-policy.md) (sensitivity).
