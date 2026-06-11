@@ -169,7 +169,7 @@ def check_aggregate_vendor_capabilities(rows, vendor_fit=None):
 # The fit grid is the load-bearing substitute for the vendor matrix, so its
 # claims clear the same anti-fabrication bar: valid grade + sourced, every row.
 VENDOR_FIT_REQUIRED = ("vendor", "vendor_slug", "area", "fit", "justification",
-                       "evidence_url", "citation_keys")
+                       "evidence_url", "citation_keys", "evidence_quote")
 VALID_FIT_GRADES = {"NATIVE", "PARTIAL", "ADD-ON"}
 
 
@@ -178,7 +178,7 @@ def check_vendor_fit(data_dir, fit_name):
     the file must exist with data rows (a missing/header-only fit grid alongside a
     header-only matrix would leave the domain with NO vendor evidence), carry the
     required columns, use a valid fit grade, and source every claim (justification
-    + evidence_url + citation_keys)."""
+    + evidence_url + citation_keys + a verbatim evidence_quote, H1b)."""
     path = os.path.join(data_dir, fit_name)
     if not os.path.exists(path):
         return [f"{fit_name}: declared in the domain descriptor but missing"]
@@ -192,7 +192,7 @@ def check_vendor_fit(data_dir, fit_name):
         if fit not in VALID_FIT_GRADES:
             errs.append(f"{fit_name}: invalid fit '{fit}' ({where}) — expected one of "
                         f"{sorted(VALID_FIT_GRADES)}")
-        for col in ("justification", "evidence_url", "citation_keys"):
+        for col in ("justification", "evidence_url", "citation_keys", "evidence_quote"):
             if not (r.get(col) or "").strip():
                 errs.append(f"{fit_name}: empty {col} ({where}) — a fit claim without "
                             f"a source is a violation")

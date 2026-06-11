@@ -1,3 +1,4 @@
+import csv
 import pathlib, sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "matrix"))
@@ -410,3 +411,49 @@ def test_evidence_packs_optional_when_no_refs():
                             "control_code": "ISM-1619", "uc_ids": "UC-P-001"}]
     catalog = [_cat_row()]
     assert vd.check_evidence_packs(trace, catalog) == []
+
+
+# --- H1b: vendor-fit rows must carry a verbatim evidence_quote --------------
+
+_FIT_COLS = ("vendor", "vendor_slug", "area", "fit", "justification",
+             "evidence_url", "citation_keys", "evidence_quote")
+
+
+def _fit_row(**kw):
+    base = {"vendor": "Vendor X", "vendor_slug": "vx", "area": "JML", "fit": "NATIVE",
+            "justification": "vendor docs say so", "evidence_url": "https://x.example/docs",
+            "citation_keys": "vx-docs",
+            "evidence_quote": "A verbatim sentence from the vendor's own documentation."}
+    base.update(kw)
+    return base
+
+
+def _write_fit(tmp_path, rows, cols=_FIT_COLS):
+    with open(tmp_path / "fit.csv", "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(rows)
+    return str(tmp_path)
+
+
+def test_vendor_fit_requires_evidence_quote_column_in_schema():
+    # the schema contract itself must demand the quote column
+    assert "evidence_quote" in vd.VENDOR_FIT_REQUIRED
+
+
+def test_vendor_fit_missing_quote_column_is_violation(tmp_path):
+    cols = tuple(c for c in _FIT_COLS if c != "evidence_quote")
+    d = _write_fit(tmp_path, [_fit_row()], cols=cols)
+    errs = vd.check_vendor_fit(d, "fit.csv")
+    assert any("evidence_quote" in e and "missing required column" in e for e in errs)
+
+
+def test_vendor_fit_empty_quote_is_violation(tmp_path):
+    d = _write_fit(tmp_path, [_fit_row(evidence_quote="")])
+    errs = vd.check_vendor_fit(d, "fit.csv")
+    assert any("evidence_quote" in e and "vx/JML" in e for e in errs)
+
+
+def test_vendor_fit_complete_row_with_quote_is_clean(tmp_path):
+    d = _write_fit(tmp_path, [_fit_row()])
+    assert vd.check_vendor_fit(d, "fit.csv") == []
