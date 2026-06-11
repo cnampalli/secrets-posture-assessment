@@ -9,6 +9,7 @@ CLI: python3 matrix/validate_data.py [--root .]
 """
 import argparse
 import csv
+import datetime
 import glob
 import os
 import re
@@ -306,6 +307,78 @@ def check_data_provenance(trace, provenance):
     return errs
 
 
+# --- data-currency gate (A1): max-age per source tier --------------------
+# A dated claim goes stale; a stale HIGH-impact claim is a release blocker.
+# Thresholds live in data-provenance.yaml under `freshness_policy.max_age_days`
+# (per source_tier) — NEVER hard-coded here. Entries may declare `impact:`;
+# a missing impact fail-closes to HIGH, so only an explicit downgrade exempts
+# an entry from the build gate.
+
+def _reference_today(today=None):
+    """Resolve the gate's reference date. Precedence: explicit arg >
+    VALIDATE_DATA_TODAY env var (ISO date, for deterministic tests/CI replays) >
+    the real current date."""
+    value = today or os.environ.get("VALIDATE_DATA_TODAY")
+    if value is None:
+        return datetime.date.today()
+    if isinstance(value, datetime.date):
+        return value
+    return datetime.date.fromisoformat(str(value).strip())
+
+
+def _parse_as_of(value):
+    """Parse an as_of value to a date, or None if unparseable.
+    A bare year (e.g. "2025") resolves to that year's LAST day — the latest
+    date consistent with the declared value, so the gate only fails on
+    provable staleness rather than fabricating precision the data lacks."""
+    s = str(value or "").strip()
+    if re.fullmatch(r"\d{4}", s):
+        return datetime.date(int(s), 12, 31)
+    try:
+        return datetime.date.fromisoformat(s)
+    except ValueError:
+        return None
+
+
+def check_data_currency(provenance, today=None):
+    """A1 build gate: fail when a HIGH-impact provenance entry's as_of is older
+    than its source_tier's max_age_days from freshness_policy. An absent/empty
+    manifest is already flagged by check_data_provenance (no double-flag)."""
+    if not provenance:
+        return []
+    policy = (provenance.get("freshness_policy") or {}).get("max_age_days") or {}
+    if not policy:
+        return ["data-provenance.yaml: missing freshness_policy.max_age_days — "
+                "data-currency gate cannot run"]
+    ref = _reference_today(today)
+    errs = []
+    for key in sorted(k for k in provenance if k != "freshness_policy"):
+        e = provenance.get(key) or {}
+        impact = (str(e.get("impact") or "HIGH")).strip().upper()  # fail-closed default
+        if impact != "HIGH":
+            continue
+        as_of = _parse_as_of(e.get("as_of"))
+        if as_of is None:
+            errs.append(f"data-provenance.yaml: '{key}' as_of '{e.get('as_of')}' is not a "
+                        f"parseable date (YYYY-MM-DD or YYYY) — currency gate cannot date it")
+            continue
+        tier = (e.get("source_tier") or "").strip()
+        max_age = policy.get(tier)
+        if max_age is None:
+            # invalid tiers are already flagged by check_data_provenance; a VALID
+            # tier missing from the policy is a policy hole -> fail closed
+            if tier in VALID_SOURCE_TIERS:
+                errs.append(f"data-provenance.yaml: freshness_policy.max_age_days has no "
+                            f"threshold for tier '{tier}' (entry '{key}')")
+            continue
+        age = (ref - as_of).days
+        if age > int(max_age):
+            errs.append(f"data-provenance.yaml: '{key}' is stale — as_of {as_of.isoformat()} "
+                        f"is {age} days old, exceeding {tier} max_age_days {max_age} "
+                        f"(re-verify the source and refresh as_of)")
+    return errs
+
+
 def check_evidence_packs(trace, catalog):
     """Regulatory-driven evidence-pack gate. Validates that every `evidence_item_ids`
     referenced by a compliance-role control row resolves to an `ev_id` in the evidence
@@ -397,6 +470,7 @@ def validate_all(root=".", data_dir=None):
     for name, rows in vendor_files:
         errs += check_provider_claims_cited(name, rows)
     errs += check_data_provenance(trace, provenance)
+    errs += check_data_currency(provenance)
 
     # evidence-pack gate: only runs when the domain ships an evidence catalog.
     catalog_path = os.path.join(m, "evidence-catalog.csv")

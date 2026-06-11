@@ -13,6 +13,28 @@
 #              CONSENSUS = industry consensus / inferred (lower confidence)
 # POINT-IN-TIME — re-verify per `refresh` before any client engagement. Frameworks and
 # vendor capabilities both drift; an undated claim is an unsupportable claim.
+#
+# impact: HIGH entries are build-gated for currency (see freshness_policy below);
+# a missing impact key fail-closes to HIGH. Downgrade to MEDIUM/LOW only with a
+# documented reason — non-HIGH entries are exempt from the currency build gate.
+
+# --- data-currency build gate (A1) ---
+# validate_data.py FAILS the build when a HIGH-impact entry's as_of is older than
+# its source_tier's max_age_days (age measured against today, or VALIDATE_DATA_TODAY
+# for deterministic CI replays). Rationale for the ladder: the LESS authoritative
+# the source, the FASTER it must be re-verified —
+#   PRIMARY   365: official/first-party sources change on publisher release cycles
+#                  (annual review is the norm for standards and vendor doc sets);
+#   ANALYST   270: third-party analyst views drift mid-cycle as vendors ship;
+#   CONSENSUS 180: inferred/industry-consensus claims have no authoritative anchor,
+#                  so they get the shortest leash — re-verify twice a year.
+# A bare-year as_of (e.g. "2025") is read as that year's last day: the latest date
+# consistent with the declared value, so the gate fails only on provable staleness.
+freshness_policy:
+  max_age_days:
+    PRIMARY: 365
+    ANALYST: 270
+    CONSENSUS: 180
 
 asd-ism:
   as_of: 2026-05-24
