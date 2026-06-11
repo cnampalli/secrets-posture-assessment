@@ -86,8 +86,8 @@ def test_resolve_descriptor_for_iga_data_dir():
 
 
 def test_resolve_descriptor_for_secrets_data_dir_declares_no_vendor_fit():
-    # secrets' data_dir is "." (== <root>/matrix) and it keeps its vendor matrix
-    d = vd.resolve_domain_descriptor(str(ROOT), str(ROOT / "matrix"))
+    # secrets' data_dir is matrix/domains/secrets and it keeps its vendor matrix
+    d = vd.resolve_domain_descriptor(str(ROOT), str(ROOT / "matrix" / "domains" / "secrets"))
     assert d is not None and d["slug"] == "secrets"
     assert not d.get("vendor_fit")
 

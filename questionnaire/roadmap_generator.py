@@ -161,8 +161,8 @@ def main(argv=None):
     ap.add_argument("--frameworks", help="comma-separated framework slugs (overrides preset scope)")
     ap.add_argument("--preset", default="financial",
                     help="preset name for default framework scope (default: financial)")
-    ap.add_argument("--use-cases", default=os.path.join(root, "matrix", "use-cases.csv"))
-    ap.add_argument("--trace", default=os.path.join(root, "matrix", "regulatory-trace.csv"))
+    ap.add_argument("--use-cases", default=os.path.join(root, "matrix", "domains", "secrets", "use-cases.csv"))
+    ap.add_argument("--trace", default=os.path.join(root, "matrix", "domains", "secrets", "regulatory-trace.csv"))
     args = ap.parse_args(argv)
 
     with open(args.record, encoding="utf-8") as fh:

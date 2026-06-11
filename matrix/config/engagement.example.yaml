@@ -12,7 +12,7 @@ preset: financial
 #   weight: high                     # high | medium | low | off
 #   irap_required: true              # gate primary vendor on AU-resident + IRAP
 #
-# Valid framework slugs (must exist in matrix/regulatory-trace.csv):
+# Valid framework slugs (must exist in matrix/domains/secrets/regulatory-trace.csv):
 #   essential-8, cisa-ztmm-v2, apra-cps-234, apra-cps-230, apra-cpg-234,
 #   asd-ism, mitre-attack
 # Frameworks NOT yet available (deferred to a future research workstream):

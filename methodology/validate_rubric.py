@@ -154,7 +154,7 @@ def run_all():
     qs = load_csv(METH / "archetype-questions.csv")
     mapping = load_csv(METH / "uc-archetype-map.csv")
     bespoke = load_csv(METH / "bespoke-criteria.csv")
-    ucs = load_csv(ROOT / "matrix" / "use-cases.csv")
+    ucs = load_csv(ROOT / "matrix" / "domains" / "secrets" / "use-cases.csv")
     files = [
         METH / "assessment-archetypes.csv",
         METH / "archetype-questions.csv",

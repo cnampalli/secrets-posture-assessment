@@ -12,6 +12,7 @@ import resilience as rz
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "matrix"
+DATA = MATRIX / "domains" / "secrets"
 CFGDIR = MATRIX / "config"
 
 
@@ -36,7 +37,7 @@ def test_ownership_entries_carry_provenance():
 
 
 def test_parent_collapse_never_removes_single_source_and_is_not_inert():
-    ranked = report_io.load_inputs(str(MATRIX), "current-state.csv")["ranked"]
+    ranked = report_io.load_inputs(str(DATA), "current-state.csv")["ranked"]
     own = _ownership()
     brand = rz.single_source(ranked, {})          # empty map -> count by brand
     parent = rz.single_source(ranked, own)        # collapse by parent
@@ -51,7 +52,7 @@ def test_parent_collapse_never_removes_single_source_and_is_not_inert():
 def test_parent_concentration_exceeds_largest_single_brand():
     """The headline CPS 230 signal: one parent's blast radius is far larger than
     any of its individual brands, which brand-counting hides."""
-    ranked = report_io.load_inputs(str(MATRIX), "current-state.csv")["ranked"]
+    ranked = report_io.load_inputs(str(DATA), "current-state.csv")["ranked"]
     own = _ownership()
     by_parent = rz.concentration(ranked, own)
     by_brand = rz.concentration(ranked, {})
@@ -62,7 +63,7 @@ def test_parent_concentration_exceeds_largest_single_brand():
 
 
 def test_cyberark_is_a_multi_brand_concentration_parent():
-    ranked = report_io.load_inputs(str(MATRIX), "current-state.csv")["ranked"]
+    ranked = report_io.load_inputs(str(DATA), "current-state.csv")["ranked"]
     con = rz.concentration(ranked, _ownership())
     assert "cyberark" in con
     assert len(con["cyberark"]["brands"]) >= 2     # ≥2 brands collapse into one parent

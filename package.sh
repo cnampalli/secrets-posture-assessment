@@ -16,7 +16,7 @@ mkdir -p "$STAGE/matrix"
 python3 matrix/build_matrix_viewer.py >/dev/null
 
 # Primary artifact: the self-contained report, friendly name.
-cp matrix/matrix-viewer.html "$STAGE/XYZ-Secrets-Report.html"
+cp matrix/domains/secrets/secrets-report.html "$STAGE/XYZ-Secrets-Report.html"
 
 # Cover note + written package.
 cp STAKEHOLDER-START-HERE.md "$STAGE/START-HERE.md"
@@ -25,7 +25,7 @@ cp -R PRD "$STAGE/PRD"
 
 # Supporting matrices for analysts (markdown summary + source CSVs).
 cp matrix/matrix.md "$STAGE/matrix/"
-cp matrix/*.csv "$STAGE/matrix/"
+cp matrix/domains/secrets/*.csv "$STAGE/matrix/"
 
 # Zip it.
 ( cd "$OUT" && zip -rq "$NAME.zip" "$NAME" )
