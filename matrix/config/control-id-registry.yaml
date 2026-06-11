@@ -28,8 +28,8 @@ asd-ism:
     ISM-1656, ISM-1690, ISM-1707, ISM-1730, ISM-1795, ISM-1796, ISM-1898, ISM-1917]
 
 essential-8:
-  source: "cyber.gov.au Essential Eight Maturity Model (Nov 2023)"
-  verified: 2026-05-24
+  source: "cyber.gov.au Essential Eight Maturity Model (live page; evidence quotes re-verified verbatim 2026-06-11)"
+  verified: 2026-06-11
   pattern: '^E8-[A-Z0-9-]+$'
   controls: [E8-AC-ML1, E8-AC-ML2, E8-AC-ML3, E8-MAC, E8-MATURITY-SCORECARD, E8-MFA-ML1,
     E8-MFA-ML2, E8-MFA-ML3, E8-MFA-WORKLOAD, E8-PA-ML1, E8-PA-ML2, E8-POS-FIRMWARE,

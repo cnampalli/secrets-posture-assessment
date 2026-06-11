@@ -23,11 +23,12 @@ asd-ism:
   note: "Corrected mapping; SAW controls (ISM-1175/1380/1898) re-verified 2026-06-11 vs the June 2025 ISM release. Confirm against the current cyber.gov.au ISM release before publishing."
 
 essential-8:
-  as_of: 2026-05-24
+  as_of: 2026-06-11
   source_tier: PRIMARY
   refresh: annual
   owner: TBD
   source: "cyber.gov.au Essential Eight Maturity Model"
+  note: "All E8 evidence quotes re-verified 2026-06-11 against the live cyber.gov.au maturity-model page; drifted pre-Nov-2023 wording replaced with current verbatim sentences (audit MEDIUM-2)."
 
 cisa-ztmm-v2:
   as_of: 2026-05-24
