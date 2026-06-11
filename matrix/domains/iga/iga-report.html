@@ -862,8 +862,14 @@ function renderValue(){
     '<h3 class="vsec">Read this with the caveats</h3>'+
     '<div class="card"><ul class="notes" style="margin:0">'+caveats.map(c=>'<li>'+c+'</li>').join("")+'</ul></div>':"";
 
+  // One-line pointer: this view is the business-value read; the vendor comparison
+  // lives in the dedicated vendor tabs, so a reader looking for it knows where to go.
+  const vendorPointer='<p class="note" style="margin:0 0 16px">Vendor comparison lives in the '+
+    '<b>By use case</b> and <b>Browse all</b> tabs — this view is the business-value read.</p>';
+
   document.getElementById("value-body").innerHTML =
     illustrativeBanner+
+    vendorPointer+
     maturityHtml+
     '<h3 class="vsec">Why it matters — where the return comes from</h3>'+
     '<div class="loop">'+loop+'</div>'+
