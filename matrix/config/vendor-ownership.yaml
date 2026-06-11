@@ -33,14 +33,19 @@ venafi:
     CyberArk completed its acquisition of Venafi (machine-identity / PKI) in
     Oct 2024 (~US$1.54B). Verify exact release before publishing to a client.
 
-entro-security:
-  parent: cyberark
-  as_of: 2025-02
-  confidence: MEDIUM
-  source: cyberark.com (newsroom)
+cyberark:
+  parent: palo-alto-networks
+  as_of: 2026-02-11
+  confidence: HIGH
+  source: paloaltonetworks.com (press) ; sec.gov (PANW 8-K)
   note: >-
-    CyberArk announced acquisition of Entro Security (NHI/secrets security) in
-    early 2025. MEDIUM confidence — verify close date and scope before client use.
+    Palo Alto Networks completed its acquisition of CyberArk on 2026-02-11
+    (~US$25B; US$45.00 cash + 2.2005 PANW shares per CyberArk share). The
+    ultimate parent of the whole CyberArk cluster (Conjur, PAM, Venafi, Zilla)
+    is therefore Palo Alto Networks — a materially different CPS 230
+    concentration story for an FI already running PANW firewalls/SASE/SOC.
+    Sources: paloaltonetworks.com/company/press/2026/palo-alto-networks-
+    completes-acquisition-of-cyberark-to-secure-the-ai-era ; PANW SEC 8-K.
 
 hashicorp-vault-enterprise:
   parent: ibm
