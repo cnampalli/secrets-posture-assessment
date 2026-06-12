@@ -7,9 +7,18 @@
 # Schema per entry:
 #   parent      ultimate parent vendor_slug (or a parent-entity slug). REQUIRED.
 #   confidence  HIGH | MEDIUM | LOW — verification confidence. REQUIRED for acquisitions.
-#   as_of       date the ownership fact became true (YYYY-MM or YYYY-MM-DD). Optional.
-#   source      where to verify (domain/newsroom). Optional.
+#   as_of       date the ownership fact became true (YYYY-MM or YYYY-MM-DD). Marks an
+#               acquisition edge (vs a first-party 'own product' edge).
+#   source_url  primary-source URL (newsroom / SEC). REQUIRED for any edge with `as_of`,
+#               gated by validate_data.check_ownership_sources (H4).
+#   source      short human hint for where to verify. Optional.
 #   note        human context.
+#
+# H4 rules: (1) every acquisition edge (`as_of` present) MUST carry a primary-source
+# `source_url`. (2) Only HIGH-confidence edges COLLAPSE siblings under one parent; an
+# explicitly MEDIUM/LOW edge is treated as unverified and NOT collapsed
+# (resilience.parent_of) — the rule that keeps an unverified ownership claim (the Entro
+# error) from inflating concentration. (3) confidence + as_of are surfaced in the report.
 #
 # Vendors NOT listed here are their own parent (handled by resilience.parent_of).
 # POINT-IN-TIME SNAPSHOT — M&A changes. VERIFY against primary sources before client use.
@@ -28,6 +37,7 @@ venafi:
   parent: cyberark
   as_of: 2024-10-01
   confidence: HIGH
+  source_url: https://www.cyberark.com/press/cyberark-completes-acquisition-of-machine-identity-management-leader-venafi/
   source: cyberark.com (newsroom)
   note: >-
     CyberArk completed its acquisition of Venafi (machine-identity / PKI) in
@@ -37,6 +47,7 @@ cyberark:
   parent: palo-alto-networks
   as_of: 2026-02-11
   confidence: HIGH
+  source_url: https://www.paloaltonetworks.com/company/press/2026/palo-alto-networks-completes-acquisition-of-cyberark-to-secure-the-ai-era
   source: paloaltonetworks.com (press) ; sec.gov (PANW 8-K)
   note: >-
     Palo Alto Networks completed its acquisition of CyberArk on 2026-02-11
@@ -51,6 +62,7 @@ hashicorp-vault-enterprise:
   parent: ibm
   as_of: 2025-02-27
   confidence: HIGH
+  source_url: https://newsroom.ibm.com/2025-02-27-ibm-completes-acquisition-of-hashicorp,-creates-comprehensive,-end-to-end-hybrid-cloud-platform
   source: newsroom.ibm.com
   note: >-
     IBM completed its acquisition of HashiCorp in Feb 2025 (~US$6.4B). No other
@@ -61,6 +73,7 @@ strongdm:
   parent: delinea
   as_of: 2026-03-05
   confidence: HIGH
+  source_url: https://delinea.com/news/delinea-acquires-strongdm-to-secure-ai-with-continuous-authorization
   source: delinea.com (newsroom) ; globenewswire.com
   note: >-
     Delinea completed its acquisition of StrongDM on 2026-03-05 (signed a
@@ -73,6 +86,7 @@ zilla:
   parent: cyberark
   as_of: 2025-02-13
   confidence: HIGH
+  source_url: https://www.cyberark.com/press/cyberark-acquires-zilla-security-to-reshape-identity-governance-and-administration-for-the-modern-enterprise/
   source: cyberark.com (press) ; techcrunch.com
   note: >-
     CyberArk acquired Zilla Security (modern IGA — Zilla Comply access reviews +

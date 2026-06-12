@@ -667,3 +667,32 @@ def test_control_semantics_real_data_is_clean():
         if not t.exists():
             continue
         assert vd.check_control_semantics(vd.load_csv(str(t)), sem) == [], dom.name
+
+
+# --- H4: ownership acquisition edges must cite a primary-source URL ---
+def test_ownership_sources_dated_edge_requires_url():
+    own = {"venafi": {"parent": "cyberark", "as_of": "2024-10-01", "confidence": "HIGH"}}
+    errs = vd.check_ownership_sources(own)
+    assert any("venafi" in e and "source_url" in e for e in errs)
+
+
+def test_ownership_sources_dated_edge_with_url_is_clean():
+    own = {"venafi": {"parent": "cyberark", "as_of": "2024-10-01",
+                      "source_url": "https://www.cyberark.com/press/venafi"}}
+    assert vd.check_ownership_sources(own) == []
+
+
+def test_ownership_sources_own_product_edge_exempt():
+    # no as_of => first-party edge, not an acquisition => no source_url required
+    own = {"cyberark-pam": {"parent": "cyberark", "confidence": "HIGH"}}
+    assert vd.check_ownership_sources(own) == []
+
+
+def test_ownership_sources_rejects_non_url():
+    own = {"x": {"parent": "y", "as_of": "2025-01-01", "source_url": "cyberark.com (press)"}}
+    assert vd.check_ownership_sources(own)
+
+
+def test_ownership_sources_real_data_clean():
+    own = vd.load_yaml(str(ROOT / "matrix" / "config" / "vendor-ownership.yaml"))
+    assert vd.check_ownership_sources(own) == []

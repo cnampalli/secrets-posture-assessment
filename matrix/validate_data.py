@@ -359,6 +359,26 @@ def check_provider_claims_cited(name, rows):
     return errs
 
 
+def check_ownership_sources(ownership):
+    """H4 gate: every ACQUISITION edge in vendor-ownership.yaml (one carrying an
+    `as_of` date) MUST cite a primary-source `source_url` (http/https). First-party
+    'own product' edges (no as_of) are exempt. Ownership config is optional, so an
+    empty map is not itself a violation — but a dated edge without a source is, the
+    rule that keeps an unsourced M&A claim (the Entro error) out of the report."""
+    if not ownership:
+        return []
+    errs = []
+    for slug, edge in ownership.items():
+        if not isinstance(edge, dict) or not edge.get("as_of"):
+            continue
+        url = str(edge.get("source_url") or "").strip()
+        if not re.match(r"^https?://", url):
+            errs.append(f"vendor-ownership.yaml: edge '{slug}' -> '{edge.get('parent', '?')}' "
+                        f"is a dated acquisition (as_of {edge.get('as_of')}) with no primary-source "
+                        f"source_url — every acquisition edge must cite one")
+    return errs
+
+
 def check_data_provenance(trace, provenance):
     """F1/F4 gate: every framework in the trace and each non-framework data source must
     have a provenance entry with a non-empty as_of and a valid source_tier."""
@@ -594,8 +614,10 @@ def validate_all(root=".", data_dir=None):
     registry = load_yaml(os.path.join(cfg, "control-id-registry.yaml"))
     semantics = load_yaml(os.path.join(cfg, "control-semantics.yaml"))
     provenance = load_yaml(os.path.join(cfg, "data-provenance.yaml"))
+    ownership = load_yaml(os.path.join(cfg, "vendor-ownership.yaml"))
     errs += check_control_id_registry(trace, registry)
     errs += check_control_semantics(trace, semantics)
+    errs += check_ownership_sources(ownership)
     for name, rows in vendor_files:
         errs += check_provider_claims_cited(name, rows)
     errs += check_data_provenance(trace, provenance)
