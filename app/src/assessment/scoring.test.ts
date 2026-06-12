@@ -19,4 +19,7 @@ describe('deriveState parity', () => {
     });
   }
   it('covers all 8 canonical vectors', () => { expect(vectors.length).toBe(8); });
+  it('empty questions throws (H6: no silent MET on empty input)', () => {
+    expect(() => deriveState([], {})).toThrow();
+  });
 });

@@ -696,3 +696,42 @@ def test_ownership_sources_rejects_non_url():
 def test_ownership_sources_real_data_clean():
     own = vd.load_yaml(str(ROOT / "matrix" / "config" / "vendor-ownership.yaml"))
     assert vd.check_ownership_sources(own) == []
+
+
+# --- H6: aggregate vendor-capabilities must stay in sync with per-vendor files ---
+def _vrow(slug, uc, cov="NATIVE", mat="3"):
+    return {"vendor_slug": slug, "target_id": uc, "coverage": cov, "maturity": mat,
+            "evidence_url": "u", "evidence_quote": "q", "citation_keys": "k"}
+
+
+def test_aggregate_consistency_clean_when_matching():
+    agg = [_vrow("a", "UC-1"), _vrow("b", "UC-1")]
+    pv = [("vendor-capabilities-a.csv", [_vrow("a", "UC-1")]),
+          ("vendor-capabilities-b.csv", [_vrow("b", "UC-1")])]
+    assert vd.check_aggregate_vendor_consistency(agg, pv) == []
+
+
+def test_aggregate_consistency_flags_unsynced_per_vendor_row():
+    agg = [_vrow("a", "UC-1")]  # missing b/UC-1
+    pv = [("vendor-capabilities-a.csv", [_vrow("a", "UC-1")]),
+          ("vendor-capabilities-b.csv", [_vrow("b", "UC-1")])]
+    errs = vd.check_aggregate_vendor_consistency(agg, pv)
+    assert any("missing from the aggregate" in e and "b/UC-1" in e for e in errs)
+
+
+def test_aggregate_consistency_flags_stale_aggregate_row():
+    agg = [_vrow("a", "UC-1"), _vrow("a", "UC-9")]  # UC-9 not in per-vendor
+    pv = [("vendor-capabilities-a.csv", [_vrow("a", "UC-1")])]
+    errs = vd.check_aggregate_vendor_consistency(agg, pv)
+    assert any("stale aggregate" in e and "a/UC-9" in e for e in errs)
+
+
+def test_aggregate_consistency_flags_coverage_drift():
+    agg = [_vrow("a", "UC-1", cov="NATIVE")]
+    pv = [("vendor-capabilities-a.csv", [_vrow("a", "UC-1", cov="ADD-ON")])]
+    errs = vd.check_aggregate_vendor_consistency(agg, pv)
+    assert any("differs between the aggregate" in e for e in errs)
+
+
+def test_aggregate_consistency_header_only_is_exempt():
+    assert vd.check_aggregate_vendor_consistency([], []) == []
