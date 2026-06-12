@@ -58,6 +58,23 @@ VALID_IMPACT_LEVELS = {"HIGH", "MEDIUM", "LOW"}          # currency-gate impact 
 INFERENCE_TAGS = ("[INDUSTRY-CONSENSUS]", "[CONSENSUS]", "[INFERRED]", "[INFER")
 PROVENANCE_EXTRA_KEYS = ("vendor-capabilities",)         # non-framework data sources
 
+# --- H1a: citation-key resolution gate ----------------------------------
+# Every citation_keys token in the data must resolve to a @key defined in
+# meta/citations.bib, EXCEPT the sentinel status-markers below. Sentinels are
+# deliberate honesty flags, not citations — they mark a control row whose
+# source verification is intentionally outstanding, and they must NEVER gain a
+# bib entry (that would fake a source). Anything else dangling fails the build.
+CITATION_SENTINEL_ALLOWLIST = {
+    # ISO 27001 Annex A control mappings recorded before the controls' wording
+    # could be verified against licensed standard text (WS1 deferred item):
+    "iso-27001-a5-3-unverified",    # A.5.3 segregation of duties — mapping unverified
+    "iso-27001-a5-15-unverified",   # A.5.15 access control — mapping unverified
+    "iso-27001-a5-16-unverified",   # A.5.16 identity management — mapping unverified
+    # A.5.18 access rights — mapped, but the (licensed) quote is withheld:
+    "iso-27001-a5-18-quote-withheld",
+}
+_BIB_KEY_RE = re.compile(r"@\w+\{([^,\s]+),")
+
 
 def load_csv(path):
     with open(path, newline="", encoding="utf-8") as fh:
@@ -430,6 +447,31 @@ def check_data_currency(provenance, today=None):
     return errs
 
 
+def check_citation_keys_resolve(bib_path, files):
+    """H1a gate: every citation_keys token used in the given (name, rows) files
+    must resolve to a @key defined in the bibliography at `bib_path` or be an
+    allowlisted sentinel (CITATION_SENTINEL_ALLOWLIST). A missing bibliography
+    fails closed — the gate cannot certify resolution without it. Each dangling
+    (file, key) pair is reported once."""
+    if not os.path.exists(bib_path):
+        return [f"{bib_path}: citations bibliography missing — "
+                f"citation-key resolution gate cannot run"]
+    with open(bib_path, encoding="utf-8") as fh:
+        defined = set(_BIB_KEY_RE.findall(fh.read()))
+    errs, seen = [], set()
+    for name, rows in files:
+        for r in rows:
+            for key in (t.strip() for t in (r.get("citation_keys") or "").split(";")):
+                if not key or key in defined or key in CITATION_SENTINEL_ALLOWLIST:
+                    continue
+                if (name, key) in seen:
+                    continue
+                seen.add((name, key))
+                errs.append(f"{name}: citation key '{key}' is not defined in "
+                            f"meta/citations.bib and is not an allowlisted sentinel")
+    return errs
+
+
 def check_evidence_packs(trace, catalog):
     """Regulatory-driven evidence-pack gate. Validates that every `evidence_item_ids`
     referenced by a compliance-role control row resolves to an `ev_id` in the evidence
@@ -526,8 +568,26 @@ def validate_all(root=".", data_dir=None):
 
     # evidence-pack gate: only runs when the domain ships an evidence catalog.
     catalog_path = os.path.join(m, "evidence-catalog.csv")
-    if os.path.exists(catalog_path):
-        errs += check_evidence_packs(trace, load_csv(catalog_path))
+    catalog = load_csv(catalog_path) if os.path.exists(catalog_path) else None
+    if catalog is not None:
+        errs += check_evidence_packs(trace, catalog)
+
+    # H1a citation-key resolution gate: every used citation key must resolve to
+    # a bib entry (or be a documented sentinel). Bib is cross-domain: <root>/meta.
+    cited_files = [("use-cases.csv", use_cases), ("current-state.csv", current),
+                   ("regulatory-trace.csv", trace), ("identity-catalog.csv", identity)]
+    cited_files += vendor_files
+    # a descriptor-declared vendor-fit grid (matrix-less domains, e.g. IGA's
+    # iga-vendor-fit.csv) carries its own citation_keys — it MUST be resolved too,
+    # else its keys escape the gate (it is not part of vendor_files).
+    if vendor_fit:
+        fit_path = os.path.join(m, vendor_fit)
+        if os.path.exists(fit_path):
+            cited_files.append((vendor_fit, load_csv(fit_path)))
+    if catalog is not None:
+        cited_files.append(("evidence-catalog.csv", catalog))
+    errs += check_citation_keys_resolve(os.path.join(root, "meta", "citations.bib"),
+                                        cited_files)
     return errs
 
 

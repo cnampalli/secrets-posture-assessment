@@ -3904,3 +3904,1010 @@
   year   = {2023},
   url    = {https://www.prnewswire.com/news-releases/zilla-security-releases-zilla-provision-to-automate-and-streamline-identity-security-301972455.html}
 }
+
+% ============================================================
+% H1a citation-key backfill — appended 2026-06-12.
+% Scope: resolve every dangling citation_keys token used in the
+% data CSVs (matrix/ + matrix/domains/*) so the new
+% check_citation_keys_resolve gate passes.
+% Provenance rule: each entry's url is either (a) the evidence_url
+% the citing data row already carries (the source the WS research
+% actually cited), or (b) for the eight market/government keys, the
+% official primary landing page verified by web research on
+% 2026-06-12. Titles are honest/descriptive of the page or document;
+% no report name is claimed that was not seen. Page-content
+% verification (link rot, quote presence) is the H1d checker's job.
+% Sentinel keys (*-unverified, *-quote-withheld) deliberately get NO
+% entry here — they are allowlisted status markers in validate_data.
+% ============================================================
+
+% ---- PAM market & government references (web-researched primary pages) ----
+
+@misc{ms-pth-mitigation-2014,
+  title  = {Mitigating Pass-the-Hash (PtH) Attacks and Other Credential Theft, Versions 1 and 2},
+  author = {{Microsoft}},
+  year   = {2014},
+  url    = {https://www.microsoft.com/en-us/download/details.aspx?id=36036},
+  note   = {[PUBLIC] Official Microsoft Download Center page hosting both whitepapers (v1 2012, v2 2014). Canonical source of the tier-0 / credential-theft defence model (PAW/SAW, admin tiering).}
+}
+@misc{gartner-pam-mq-2024,
+  title  = {Magic Quadrant for Privileged Access Management},
+  author = {{Gartner}},
+  year   = {2024},
+  url    = {https://www.gartner.com/en/documents/5741683},
+  note   = {[PAYWALLED] Published 2024-09-09. Landing page only; report body is gated. Covers ARCON, BeyondTrust, Broadcom (Symantec), CyberArk, Delinea, ManageEngine, Netwrix, One Identity, WALLIX.}
+}
+@misc{kuppingercole-pam-lc-2024,
+  title  = {Leadership Compass: Privileged Access Management},
+  author = {{KuppingerCole Analysts (Paul Fisher)}},
+  year   = {2024},
+  url    = {https://www.kuppingercole.com/research/lc80830/privileged-access-management},
+  note   = {[GATED] Published 2024-10-07. Landing page; full report requires subscription. Superseded by the May 2026 edition (lc81007).}
+}
+@misc{cyberark-pam-2025,
+  title  = {What is Privileged Access Management (PAM)? — Definition},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/what-is/privileged-access-management/},
+  note   = {[PUBLIC] Vendor educational page enumerating privileged account types (super user, domain/local admin, SSH keys, emergency, application and service accounts). Cited for privileged-identity-type market context.}
+}
+@misc{beyondtrust-pam-2024,
+  title  = {What is Privileged Access Management (PAM)? (glossary)},
+  author = {{BeyondTrust}},
+  year   = {2024},
+  url    = {https://www.beyondtrust.com/resources/glossary/privileged-access-management-pam},
+  note   = {[PUBLIC] Vendor glossary page covering privileged credential classes incl. embedded/default application credentials and A2A/A2D authentication. Cited for privileged-identity-type market context.}
+}
+@misc{delinea-pam-2024,
+  title  = {Privileged Access Management (PAM) — what-is resource},
+  author = {{Delinea}},
+  year   = {2024},
+  url    = {https://delinea.com/what-is/privileged-access-management-pam},
+  note   = {[PUBLIC] Vendor educational page covering privileged access categories (domain admins, system admins, Unix/Linux superusers, service/workload accounts). Cited for privileged-identity-type market context.}
+}
+@misc{cisa-credential-control-2018,
+  title  = {Using Rigorous Credential Control to Mitigate Trusted Network Exploitation},
+  author = {{CISA}},
+  year   = {2018},
+  url    = {https://www.cisa.gov/news-events/alerts/2018/10/03/using-rigorous-credential-control-mitigate-trusted-network},
+  note   = {[PUBLIC] CISA alert, 2018-10-03. Credential-control best practices against APT exploitation of trusted network relationships.}
+}
+@misc{gsa-privileged-identity-playbook-2024,
+  title  = {Privileged Identity Playbook},
+  author = {{GSA Office of Government-wide Policy / Federal CISO Council ICAM Subcommittee}},
+  year   = {2022},
+  url    = {https://www.idmanagement.gov/playbooks/pam/},
+  note   = {[PUBLIC] FICAM-aligned playbook for managing privileged users/accounts; collaboration with DHS CISA CDM. First published Nov 2022; key suffix reflects the research-access year.}
+}
+
+% ---- Regulatory / framework paragraph- and control-level keys ----
+% (row-sourced: the citing rows carry these urls; CPS 234 itself is
+%  already in this bib as apra-cps-234-2019 — these are paragraph-level
+%  aliases pointing at the same public-release PDF)
+
+@misc{apra-cpg-234-least-privilege,
+  title  = {Prudential Practice Guide CPG 234 Information Security — least-privilege guidance},
+  author = {{Australian Prudential Regulation Authority}},
+  year   = {2019},
+  url    = {https://www.apra.gov.au/sites/default/files/cpg_234_information_security_june_2019_1.pdf}
+}
+@misc{apra-cps-234-para14,
+  title  = {Prudential Standard CPS 234 Information Security — paragraph 14},
+  author = {{Australian Prudential Regulation Authority}},
+  year   = {2019},
+  url    = {https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf}
+}
+@misc{apra-cps-234-para21,
+  title  = {Prudential Standard CPS 234 Information Security — paragraph 21},
+  author = {{Australian Prudential Regulation Authority}},
+  year   = {2019},
+  url    = {https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf}
+}
+@misc{apra-cps-234-para22,
+  title  = {Prudential Standard CPS 234 Information Security — paragraph 22},
+  author = {{Australian Prudential Regulation Authority}},
+  year   = {2019},
+  url    = {https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf},
+  note   = {Paragraph-level alias of apra-cps-234-2019; the citing rows carry no evidence_url, but the document and its public-release PDF are already established in this bib.}
+}
+@misc{apra-cps-234-para27,
+  title  = {Prudential Standard CPS 234 Information Security — paragraph 27},
+  author = {{Australian Prudential Regulation Authority}},
+  year   = {2019},
+  url    = {https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf}
+}
+@misc{asd-ism-0407,
+  title  = {Information Security Manual — Guidelines for Personnel Security (control ISM-0407)},
+  author = {{Australian Signals Directorate}},
+  year   = {2026},
+  url    = {https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-personnel-security},
+  note   = {Living guideline page (ISM is updated quarterly); year is the verification year of the citing IGA research.}
+}
+@misc{asd-ism-0430,
+  title  = {Information Security Manual — Guidelines for Personnel Security (control ISM-0430)},
+  author = {{Australian Signals Directorate}},
+  year   = {2026},
+  url    = {https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-personnel-security},
+  note   = {Living guideline page; year is the verification year of the citing IGA research.}
+}
+@misc{asd-ism-1404,
+  title  = {Information Security Manual — Guidelines for Personnel Security (control ISM-1404)},
+  author = {{Australian Signals Directorate}},
+  year   = {2026},
+  url    = {https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-personnel-security},
+  note   = {Living guideline page; year is the verification year of the citing IGA research.}
+}
+@misc{asd-ism-1647,
+  title  = {Information Security Manual — Guidelines for Personnel Security (control ISM-1647)},
+  author = {{Australian Signals Directorate}},
+  year   = {2026},
+  url    = {https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-personnel-security},
+  note   = {Living guideline page; year is the verification year of the citing IGA research.}
+}
+@misc{nist-sp-800-53-ac2,
+  title  = {NIST SP 800-53 Rev. 5 — AC-2 Account Management},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-2/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text, as cited by the data rows.}
+}
+@misc{nist-sp-800-53-ac2-3,
+  title  = {NIST SP 800-53 Rev. 5 — AC-2(3) Disable Accounts},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-2/ac-2-3/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text.}
+}
+@misc{nist-sp-800-53-ac2j,
+  title  = {NIST SP 800-53 Rev. 5 — AC-2 Account Management, item (j) account review},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-2/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text.}
+}
+@misc{nist-sp-800-53-ac3,
+  title  = {NIST SP 800-53 Rev. 5 — AC-3 Access Enforcement},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-3/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text.}
+}
+@misc{nist-sp-800-53-ac5,
+  title  = {NIST SP 800-53 Rev. 5 — AC-5 Separation of Duties},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-5/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text.}
+}
+@misc{nist-sp-800-53-ac6,
+  title  = {NIST SP 800-53 Rev. 5 — AC-6 Least Privilege},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-6/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text.}
+}
+@misc{nist-sp-800-53-ac6-1,
+  title  = {NIST SP 800-53 Rev. 5 — AC-6(1) Authorize Access to Security Functions},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-6/ac-6-1/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text.}
+}
+@misc{nist-sp-800-53-ac6-5,
+  title  = {NIST SP 800-53 Rev. 5 — AC-6(5) Privileged Accounts},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-6/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text; row cites the AC-6 parent page.}
+}
+@misc{nist-sp-800-53-ac6-7,
+  title  = {NIST SP 800-53 Rev. 5 — AC-6(7) Review of User Privileges},
+  author = {{NIST}},
+  year   = {2020},
+  url    = {https://csf.tools/reference/nist-sp-800-53/r5/ac/ac-6/},
+  note   = {csf.tools reference mirror of SP 800-53 Rev. 5 control text; row cites the AC-6 parent page.}
+}
+@misc{sox-pl107-204-s404,
+  title  = {Sarbanes–Oxley Act of 2002 (Pub. L. 107–204) — Section 404, Management Assessment of Internal Controls},
+  author = {{U.S. Congress}},
+  year   = {2002},
+  url    = {https://www.govinfo.gov/content/pkg/PLAW-107publ204/html/PLAW-107publ204.htm}
+}
+@misc{sox-pl107-204-authorizations,
+  title  = {Sarbanes–Oxley Act of 2002 (Pub. L. 107–204) — internal-control authorization provisions},
+  author = {{U.S. Congress}},
+  year   = {2002},
+  url    = {https://www.govinfo.gov/content/pkg/PLAW-107publ204/html/PLAW-107publ204.htm}
+}
+@misc{sox-icfr-13a15f,
+  title  = {17 CFR 240.13a-15 — Controls and procedures (internal control over financial reporting)},
+  author = {{U.S. Code of Federal Regulations (Cornell LII mirror)}},
+  year   = {2026},
+  url    = {https://www.law.cornell.edu/cfr/text/17/240.13a-15},
+  note   = {Current consolidated e-CFR text via Cornell LII; year is the verification year of the citing IGA research.}
+}
+@misc{mitre-t1078-valid-accounts,
+  title  = {Valid Accounts (T1078)},
+  author = {{The MITRE Corporation}},
+  year   = {2026},
+  url    = {https://attack.mitre.org/techniques/T1078/},
+  note   = {[PUBLIC] MITRE ATT\&CK Enterprise technique page (living document); year is the verification year of the citing IGA research.}
+}
+@misc{mitre-t1098-account-manipulation,
+  title  = {Account Manipulation (T1098)},
+  author = {{The MITRE Corporation}},
+  year   = {2026},
+  url    = {https://attack.mitre.org/techniques/T1098/},
+  note   = {[PUBLIC] MITRE ATT\&CK Enterprise technique page (living document); year is the verification year of the citing IGA research.}
+}
+@misc{owasp-llm06-2025,
+  title  = {OWASP Top 10 for LLM Applications — LLM06:2025 Excessive Agency},
+  author = {{OWASP GenAI Security Project}},
+  year   = {2025},
+  url    = {https://genai.owasp.org/llmrisk/llm062025-excessive-agency/}
+}
+@misc{ms-midnight-blizzard-2024,
+  title  = {Midnight Blizzard: Guidance for responders on nation-state attack},
+  author = {{Microsoft Threat Intelligence}},
+  year   = {2024},
+  url    = {https://www.microsoft.com/en-us/security/blog/2024/01/25/midnight-blizzard-guidance-for-responders-on-nation-state-attack/}
+}
+
+% ---- Secrets domain ----
+
+@misc{1password-cli-getstarted-2024,
+  title  = {1Password CLI — Get started (developer documentation)},
+  author = {{1Password}},
+  year   = {2024},
+  url    = {https://developer.1password.com/docs/cli/get-started}
+}
+
+% ---- IGA vendor documentation (row-sourced; WS IGA research 2026) ----
+
+@misc{entra-idg-access-reviews,
+  title  = {Microsoft Entra ID Governance — What are access reviews?},
+  author = {{Microsoft}},
+  year   = {2026},
+  url    = {https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview}
+}
+@misc{entra-idg-entitlement-management,
+  title  = {Microsoft Entra ID Governance — What is entitlement management?},
+  author = {{Microsoft}},
+  year   = {2026},
+  url    = {https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-overview}
+}
+@misc{entra-idg-lifecycle-workflows,
+  title  = {Microsoft Entra ID Governance — What are lifecycle workflows?},
+  author = {{Microsoft}},
+  year   = {2026},
+  url    = {https://learn.microsoft.com/en-us/entra/id-governance/what-are-lifecycle-workflows}
+}
+@misc{entra-idg-sod-access-package,
+  title  = {Microsoft Entra ID Governance — Configure separation of duties for an access package (incompatible access packages)},
+  author = {{Microsoft}},
+  year   = {2026},
+  url    = {https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-access-package-incompatible}
+}
+@misc{okta-oig-certification,
+  title  = {Okta Identity Governance — overview (access certifications)},
+  author = {{Okta}},
+  year   = {2026},
+  url    = {https://help.okta.com/en-us/content/topics/identity-governance/iga-overview.htm}
+}
+@misc{okta-oig-lifecycle,
+  title  = {Okta Identity Governance — product help (lifecycle)},
+  author = {{Okta}},
+  year   = {2026},
+  url    = {https://help.okta.com/en-us/content/topics/identity-governance/iga.htm}
+}
+@misc{okta-oig-request,
+  title  = {Okta Identity Governance — overview (access requests)},
+  author = {{Okta}},
+  year   = {2026},
+  url    = {https://help.okta.com/en-us/content/topics/identity-governance/iga-overview.htm}
+}
+@misc{okta-oig-sod,
+  title  = {Okta Identity Governance — separation of duties (product help)},
+  author = {{Okta}},
+  year   = {2026},
+  url    = {https://help.okta.com/oie/en-us/content/topics/identity-governance/sd/separation-of-duties.htm}
+}
+@misc{okta-oig-sod-approach,
+  title  = {Okta Identity Governance — separation of duties approach (product help)},
+  author = {{Okta}},
+  year   = {2026},
+  url    = {https://help.okta.com/oie/en-us/content/topics/identity-governance/sd/separation-of-duties.htm}
+}
+@misc{sailpoint-isc-cert-roles-request,
+  title  = {SailPoint Identity Security Cloud — Understanding certifications (roles and access requests)},
+  author = {{SailPoint}},
+  year   = {2026},
+  url    = {https://documentation.sailpoint.com/saas/help/certs/understanding_certifications.html}
+}
+@misc{sailpoint-isc-certifications,
+  title  = {SailPoint Identity Security Cloud — Understanding certifications (product documentation)},
+  author = {{SailPoint}},
+  year   = {2026},
+  url    = {https://documentation.sailpoint.com/saas/help/certs/understanding_certifications.html}
+}
+@misc{sailpoint-isc-lifecycle,
+  title  = {SailPoint Identity Security Cloud — provisioning lifecycle (product documentation)},
+  author = {{SailPoint}},
+  year   = {2026},
+  url    = {https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html}
+}
+@misc{sailpoint-isc-sod,
+  title  = {SailPoint Identity Security Cloud — separation of duties (product documentation)},
+  author = {{SailPoint}},
+  year   = {2026},
+  url    = {https://documentation.sailpoint.com/saas/help/sod/index.html}
+}
+@misc{sailpoint-isc-sod-policies,
+  title  = {SailPoint Identity Security Cloud — separation-of-duties policies (product documentation)},
+  author = {{SailPoint}},
+  year   = {2026},
+  url    = {https://documentation.sailpoint.com/saas/help/sod/index.html}
+}
+@misc{saviynt-eic-certification,
+  title  = {Saviynt — Identity Governance and Administration product page (certifications)},
+  author = {{Saviynt}},
+  year   = {2026},
+  url    = {https://saviynt.com/products/identity-governance-and-administration}
+}
+@misc{saviynt-eic-lifecycle,
+  title  = {Saviynt — Identity Governance and Administration product page (lifecycle)},
+  author = {{Saviynt}},
+  year   = {2026},
+  url    = {https://saviynt.com/products/identity-governance-and-administration}
+}
+@misc{saviynt-eic-request,
+  title  = {Saviynt — Identity Governance and Administration product page (access requests)},
+  author = {{Saviynt}},
+  year   = {2026},
+  url    = {https://saviynt.com/products/identity-governance-and-administration}
+}
+@misc{saviynt-eic-sod,
+  title  = {Saviynt — Segregation of Duties solution page},
+  author = {{Saviynt}},
+  year   = {2026},
+  url    = {https://saviynt.com/solutions/segregation-of-duties}
+}
+@misc{saviynt-eic-sod-controls,
+  title  = {Saviynt — Segregation of Duties solution page (controls)},
+  author = {{Saviynt}},
+  year   = {2026},
+  url    = {https://saviynt.com/solutions/segregation-of-duties}
+}
+@misc{saviynt-eic-sod-request-point,
+  title  = {Saviynt — Identity Governance and Administration product page (SoD checks at request time)},
+  author = {{Saviynt}},
+  year   = {2026},
+  url    = {https://saviynt.com/products/identity-governance-and-administration}
+}
+
+% ---- PAM vendor documentation: BeyondTrust (row-sourced) ----
+
+@misc{beyondtrust-aapm-solution-2025,
+  title  = {BeyondTrust — Application Password Management solution page},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/solutions/application-password-management}
+}
+@misc{beyondtrust-bi-auth-docs-2025,
+  title  = {BeyondTrust BeyondInsight/Password Safe — on-prem BeyondInsight authentication (product documentation)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://docs.beyondtrust.com/bips/docs/on-prem-bi-authentication}
+}
+@misc{beyondtrust-bi-discovery-docs-2025,
+  title  = {BeyondTrust BeyondInsight — discovery scans (product documentation)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://docs.beyondtrust.com/bips/docs/bi-on-prem-discovery-scans}
+}
+@misc{beyondtrust-breakglass-wp-2025,
+  title  = {BeyondTrust — accessing privileged passwords in break-glass scenarios (whitepaper page)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/resources/whitepapers/access-privileged-passwords-break-glass-scenarios}
+}
+@misc{beyondtrust-devops-ss-ds-2025,
+  title  = {BeyondTrust DevOps Secrets Safe — datasheet page},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/resources/datasheets/devops-secrets-safe}
+}
+@misc{beyondtrust-entitle-product-2025,
+  title  = {BeyondTrust Entitle — product page},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/products/entitle}
+}
+@misc{beyondtrust-entitle-uar-2025,
+  title  = {BeyondTrust Entitle — automated user access reviews (feature page)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/products/entitle/features/automated-user-access-reviews}
+}
+@misc{beyondtrust-epm-jit-docs-2025,
+  title  = {BeyondTrust Endpoint Privilege Management — JIT access management (product documentation)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://docs.beyondtrust.com/epm-wm/docs/jit-access-management}
+}
+@misc{beyondtrust-epm-wm-docs-2025,
+  title  = {BeyondTrust Endpoint Privilege Management for Windows and Mac — product documentation},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://docs.beyondtrust.com/epm-wm/docs/welcome-to-endpoint-privilege-management-for-windows-and-mac}
+}
+@misc{beyondtrust-insights-detections-2025,
+  title  = {BeyondTrust Identity Security Insights — detections (product documentation)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://docs.beyondtrust.com/insights/docs/detections}
+}
+@misc{beyondtrust-leastpriv-solution-2025,
+  title  = {BeyondTrust — least privilege solution page},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/solutions/least-privilege}
+}
+@misc{beyondtrust-pra-docs-2025,
+  title  = {BeyondTrust Privileged Remote Access — product documentation},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://docs.beyondtrust.com/pra/docs/welcome-to-privileged-remote-access}
+}
+@misc{beyondtrust-pra-vendor-solution-2025,
+  title  = {BeyondTrust — remote access management (vendor access) solution page},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/solutions/remote-access-management}
+}
+@misc{beyondtrust-ps-dr-docs-2025,
+  title  = {BeyondTrust Password Safe Cloud — hosting locations and disaster recovery (product documentation)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://docs.beyondtrust.com/bips/docs/hosting-locations-and-disaster-recovery}
+}
+@misc{beyondtrust-ps-product-2025,
+  title  = {BeyondTrust Password Safe — product page},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/products/password-safe}
+}
+@misc{beyondtrust-ps-threatanalytics-2025,
+  title  = {BeyondTrust Password Safe — threat analytics (feature page)},
+  author = {{BeyondTrust}},
+  year   = {2025},
+  url    = {https://www.beyondtrust.com/password-safe/features/threat-analytics}
+}
+
+% ---- PAM vendor documentation: Britive (row-sourced; WS3 research 2026) ----
+
+@misc{britive-docs-broker-terminology-2026,
+  title  = {Britive Access Broker — terminology (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/terminology-accessbroker}
+}
+@misc{britive-docs-datasets-2026,
+  title  = {Britive — datasets (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/britive-datasets}
+}
+@misc{britive-docs-myaccess-2026,
+  title  = {Britive — My Access profile management (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/profile-mgmt-myaccess}
+}
+@misc{britive-docs-scanning-2026,
+  title  = {Britive — scanning environments (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/scanning-environments}
+}
+@misc{britive-docs-service-identities-2026,
+  title  = {Britive — service identities (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/service-identities}
+}
+@misc{britive-docs-sessionrec-arch-2026,
+  title  = {Britive — platform architecture (product documentation; cited for session recording)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/architecture}
+}
+@misc{britive-docs-sessionrec-docker-2026,
+  title  = {Britive — deploying session recording with Docker (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/deploying-session-recording-with-docker}
+}
+@misc{britive-docs-spiffe-2026,
+  title  = {Britive — SPIFFE integration (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/spiffe-integration}
+}
+@misc{britive-docs-vault-2026,
+  title  = {Britive — creating a Britive Vault (product documentation)},
+  author = {{Britive}},
+  year   = {2026},
+  url    = {https://docs.britive.com/docs/creating-a-britive-vault}
+}
+
+% ---- PAM vendor documentation: CyberArk (row-sourced) ----
+
+@misc{cyberark-breakglass-docs-2025,
+  title  = {CyberArk Secure Cloud Access — break glass (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/manage/latest/en/content/sca/dpaforcloud/breakglass.htm}
+}
+@misc{cyberark-ciem-product-2025,
+  title  = {CyberArk Cloud Entitlements Manager — product page},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/products/cloud-entitlements-manager/}
+}
+@misc{cyberark-conjur-machineidentity-2025,
+  title  = {CyberArk Conjur Enterprise — machine identity key concepts (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/conjur-enterprise/Latest/en/Content/Get%20Started/key_concepts/machine_identity.html}
+}
+@misc{cyberark-conjur-secrets-docs-2025,
+  title  = {CyberArk Secrets Manager — Conjur (DAP) provider reference (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/secrets-manager-sh/latest/en/content/references/providers/scl_dap.htm}
+}
+@misc{cyberark-discovery-docs-2025,
+  title  = {CyberArk Privilege Cloud — accounts discovery (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/privilege%20cloud/discovery-discover-accounts.htm}
+}
+@misc{cyberark-epm-credtheft-press-2025,
+  title  = {CyberArk press release — Endpoint Privilege Manager adds credential theft blocking},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/press/cyberark-adds-credential-theft-blocking/}
+}
+@misc{cyberark-epm-docs-2025,
+  title  = {CyberArk Endpoint Privilege Manager — introduction (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/epm/latest/en/content/intro/introduction.htm}
+}
+@misc{cyberark-epm-product-2025,
+  title  = {CyberArk Endpoint Privilege Manager — product page},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://www.cyberark.com/products/endpoint-privilege-manager/}
+}
+@misc{cyberark-ha-docs-2025,
+  title  = {CyberArk Privilege Cloud — high-availability architecture (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/privilege-cloud-shared-services/latest/en/content/privilege%20cloud/privcloud-ha-architecture.htm}
+}
+@misc{cyberark-identity-compliance-docs-2025,
+  title  = {CyberArk Identity Compliance — introduction (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/identity-compliance/latest/en/content/getstarted/introduction.htm}
+}
+@misc{cyberark-identity-mfa-docs-2025,
+  title  = {CyberArk Identity — authentication and MFA (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/identity/latest/en/content/coreservices/authenticate/authentication.htm}
+}
+@misc{cyberark-jit-epm-docs-2025,
+  title  = {CyberArk Endpoint Privilege Manager — just-in-time elevation policies (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/epm/latest/en/content/policies/jitelevationadmin-newui.htm}
+}
+@misc{cyberark-privcloud-intro-2025,
+  title  = {CyberArk Privilege Cloud — introduction (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/privilege-cloud-standard/latest/en/content/privilege%20cloud/privcloud-introduction.htm}
+}
+@misc{cyberark-psm-docs-2025,
+  title  = {CyberArk Privileged Session Manager — introduction (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/pam-self-hosted/latest/en/content/pasimp/privileged-session%20manager-introduction.htm}
+}
+@misc{cyberark-psm-monitor-2025,
+  title  = {CyberArk PAM Self-Hosted — monitoring privileged sessions (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/pam-self-hosted/latest/en/content/pasimp/monitoring-privileged-sessions.htm}
+}
+@misc{cyberark-pta-docs-2025,
+  title  = {CyberArk Privileged Threat Analytics — product documentation (landing page)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/pam-self-hosted/latest/en/content/landing%20pages/lp_threatanalyticsadmin.htm}
+}
+@misc{cyberark-remote-access-docs-2025,
+  title  = {CyberArk Remote Access — get started (product documentation)},
+  author = {{CyberArk}},
+  year   = {2025},
+  url    = {https://docs.cyberark.com/remote-access-shared-services/latest/en/content/intro/getstarted.htm}
+}
+
+% ---- PAM vendor documentation: Delinea (row-sourced) ----
+
+@misc{delinea-aapm-2025,
+  title  = {Delinea — application-to-application password management (AAPM) what-is resource},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/what-is/application-to-application-password-management-aapm}
+}
+@misc{delinea-ai-audit-2025,
+  title  = {Delinea — AI-driven auditing product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/ai-driven-auditing}
+}
+@misc{delinea-breakglass-2025,
+  title  = {Delinea Secret Server — break glass (product documentation)},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://docs.delinea.com/online-help/secret-server/backup-and-disaster-recovery/break-glass/index.htm}
+}
+@misc{delinea-discovery-2025,
+  title  = {Delinea — service account discovery tool (resource page)},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/resources/service-account-discovery-tool}
+}
+@misc{delinea-dmc-2025,
+  title  = {Delinea — delegated machine credential what-is resource},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/what-is/delegated-machine-credential}
+}
+@misc{delinea-dr-2025,
+  title  = {Delinea Secret Server — disaster recovery (product documentation)},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://docs.delinea.com/online-help/secret-server/backup-and-disaster-recovery/disaster-recovery/index.htm}
+}
+@misc{delinea-fastpath-2025,
+  title  = {Delinea — identity access certification (Fastpath) product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/identity-access-certification}
+}
+@misc{delinea-jit-zsp-2025,
+  title  = {Delinea — zero standing privilege solution page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/solutions/zero-standing-privilege}
+}
+@misc{delinea-mfa-secrets-2025,
+  title  = {Delinea Platform — MFA for secrets (product documentation)},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://docs.delinea.com/online-help/delinea-platform/authentication/mfa-for-secrets.htm}
+}
+@misc{delinea-pba-2025,
+  title  = {Delinea Privileged Behavior Analytics — product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/privileged-behavior-analytics}
+}
+@misc{delinea-pcce-2025,
+  title  = {Delinea Privilege Control for Cloud Entitlements — product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/privilege-control-for-cloud-entitlements}
+}
+@misc{delinea-pra-2025,
+  title  = {Delinea Privileged Remote Access — product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/privileged-remote-access}
+}
+@misc{delinea-privmgr-2025,
+  title  = {Delinea Privilege Manager — product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/privilege-manager}
+}
+@misc{delinea-secret-server-2025,
+  title  = {Delinea Secret Server — product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/secret-server}
+}
+@misc{delinea-serversuite-2025,
+  title  = {Delinea Server Suite — product page},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/server-suite}
+}
+@misc{delinea-session-mgmt-2025,
+  title  = {Delinea Secret Server — privileged session management (feature page)},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/secret-server/features/privileged-session-management}
+}
+@misc{delinea-session-recording-2025,
+  title  = {Delinea Secret Server — session recording (feature page)},
+  author = {{Delinea}},
+  year   = {2025},
+  url    = {https://delinea.com/products/secret-server/features/session-recording}
+}
+
+% ---- PAM vendor documentation: One Identity (row-sourced) ----
+
+@misc{oneidentity-ciem-solution-2025,
+  title  = {One Identity — cloud infrastructure entitlement management (CIEM) solution page},
+  author = {{One Identity}},
+  year   = {2025},
+  url    = {https://www.oneidentity.com/solutions/cloud-infrastructure-entitlement-management/}
+}
+@misc{oneidentity-oim-pag-admin-2024,
+  title  = {One Identity Manager 9.1.1 — Administration Guide for Privileged Account Governance},
+  author = {{One Identity}},
+  year   = {2024},
+  url    = {https://support.oneidentity.com/technical-documents/identity-manager/9.1.1/administration-guide-for-privileged-account-governance/37}
+}
+@misc{oneidentity-pag-solution-2025,
+  title  = {One Identity — privileged access governance solution page},
+  author = {{One Identity}},
+  year   = {2025},
+  url    = {https://www.oneidentity.com/solutions/privileged-access-governance/}
+}
+@misc{oneidentity-safeguard-80-lts-2024,
+  title  = {One Identity press release — Safeguard announcement (community news)},
+  author = {{One Identity}},
+  year   = {2024},
+  url    = {https://www.oneidentity.com/community/news/b/press-releases/posts/safeguard-press-announcement}
+}
+@misc{oneidentity-secrets-broker-github-2024,
+  title  = {One Identity Safeguard Secrets Broker for DevOps — SafeguardDevOpsService (GitHub repository)},
+  author = {{One Identity}},
+  year   = {2024},
+  url    = {https://github.com/OneIdentity/SafeguardDevOpsService}
+}
+@misc{oneidentity-spa-product-2025,
+  title  = {One Identity Safeguard for Privileged Analytics — product page},
+  author = {{One Identity}},
+  year   = {2025},
+  url    = {https://www.oneidentity.com/products/one-identity-safeguard-for-privileged-analytics/}
+}
+@misc{oneidentity-spmfw-product-2025,
+  title  = {One Identity Safeguard Privilege Manager for Windows — product page},
+  author = {{One Identity}},
+  year   = {2025},
+  url    = {https://www.oneidentity.com/products/safeguard-privilege-manager-for-windows/}
+}
+@misc{oneidentity-spp-a2a-admin-guide-2024,
+  title  = {One Identity Safeguard for Privileged Passwords 7.4.1 — Administration Guide (application-to-application section)},
+  author = {{One Identity}},
+  year   = {2024},
+  url    = {https://support.oneidentity.com/technical-documents/one-identity-safeguard-for-privileged-passwords/7.4.1/administration-guide/92}
+}
+@misc{oneidentity-spp-product-2025,
+  title  = {One Identity Safeguard for Privileged Passwords — product page},
+  author = {{One Identity}},
+  year   = {2025},
+  url    = {https://www.oneidentity.com/products/one-identity-safeguard-for-privileged-passwords/}
+}
+@misc{oneidentity-sps-ha-docs-2024,
+  title  = {One Identity Safeguard for Privileged Sessions 7.4 — scalability and high availability (technical document)},
+  author = {{One Identity}},
+  year   = {2024},
+  url    = {https://support.oneidentity.com/technical-documents/one-identity-safeguard-for-privileged-sessions/7.4/scalability-and-high-availability-in-safeguard}
+}
+@misc{oneidentity-sps-mfa-duo-2024,
+  title  = {One Identity Safeguard for Privileged Sessions 7.2 — Duo multi-factor authentication tutorial},
+  author = {{One Identity}},
+  year   = {2024},
+  url    = {https://support.oneidentity.com/technical-documents/one-identity-safeguard-for-privileged-sessions/7.2/duo-multi-factor-authentication---tutorial}
+}
+@misc{oneidentity-sps-product-2025,
+  title  = {One Identity Safeguard for Privileged Sessions — product page},
+  author = {{One Identity}},
+  year   = {2025},
+  url    = {https://www.oneidentity.com/products/one-identity-safeguard-for-privileged-sessions/}
+}
+@misc{oneidentity-sra-product-2025,
+  title  = {One Identity Safeguard Remote Access — product page},
+  author = {{One Identity}},
+  year   = {2025},
+  url    = {https://www.oneidentity.com/products/one-identity-safeguard-remote-access/}
+}
+
+% ---- PAM vendor documentation: Teleport (row-sourced) ----
+
+@misc{teleport-access-lists-2025,
+  title  = {Teleport Identity Governance — Access Lists (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/identity-governance/access-lists/}
+}
+@misc{teleport-auto-discovery-2025,
+  title  = {Teleport — auto-discovery of resources (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/enroll-resources/auto-discovery/}
+}
+@misc{teleport-breakglass-2025,
+  title  = {Teleport — break-glass access (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/zero-trust-access/deploy-a-cluster/reliability/breakglass-access/}
+}
+@misc{teleport-cert-theft-2025,
+  title  = {Teleport blog — how to detect compromised identities with Teleport},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/blog/how-to-detect-compromised-identities-with-teleport/}
+}
+@misc{teleport-ciem-aws-2025,
+  title  = {Teleport Identity Security — AWS sync integration (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/identity-security/integrations/aws-sync/}
+}
+@misc{teleport-ha-2025,
+  title  = {Teleport — high-availability deployment (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/deploy-a-cluster/high-availability/}
+}
+@misc{teleport-identity-security-2025,
+  title  = {Teleport Identity Security — product documentation},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/identity-security/}
+}
+@misc{teleport-itdr-2025,
+  title  = {Teleport Identity Security — platform page},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/platform/identity-security/}
+}
+@misc{teleport-jit-2025,
+  title  = {Teleport — just-in-time access use-case page},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/use-cases/just-in-time-access/}
+}
+@misc{teleport-mfa-2025,
+  title  = {Teleport — hardware key support (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/zero-trust-access/authentication/hardware-key-support/}
+}
+@misc{teleport-pam-2025,
+  title  = {Teleport — privileged access management page},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/privileged-access-management/}
+}
+@misc{teleport-session-recording-2025,
+  title  = {Teleport — session recording architecture (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/reference/architecture/session-recording/}
+}
+@misc{teleport-vendor-access-2025,
+  title  = {Teleport blog — third-party access},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/blog/third-party-access/}
+}
+@misc{teleport-workload-attestation-2025,
+  title  = {Teleport Workload Identity — introduction (product documentation)},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/machine-workload-identity/workload-identity/introduction/}
+}
+@misc{teleport-workload-identity-2025,
+  title  = {Teleport Machine \& Workload Identity — product documentation},
+  author = {{Teleport}},
+  year   = {2025},
+  url    = {https://goteleport.com/docs/machine-workload-identity/workload-identity/}
+}
+
+% ---- PAM vendor documentation: WALLIX (row-sourced) ----
+
+@misc{wallix-aapm-2025,
+  title  = {WALLIX blog — the Bastion secures your applications with AAPM},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/blogpost/the-bastion-secures-your-applications-with-aapm/}
+}
+@misc{wallix-bestsafe-2025,
+  title  = {WALLIX news — BestSafe endpoint privilege management launch},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/news/wallix-launch-bestsafe-endpoint-privilege-management-solution-epm}
+}
+@misc{wallix-cloud-2025,
+  title  = {WALLIX — Azure security monitoring and privileged access management page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/azure-security-monitoring-and-privileged-access-management-pam/}
+}
+@misc{wallix-ha-docs-2025,
+  title  = {WALLIX One PAM — high availability (product documentation)},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://pam.wallix.one/documentation/deployment/getting-started/setup/ipsec/high-availability.html}
+}
+@misc{wallix-iag-2025,
+  title  = {WALLIX Identity and Access Governance — product page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/products/identity-and-access-governance/}
+}
+@misc{wallix-insider-threat-2025,
+  title  = {WALLIX — insider threat protection solution page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/solutions/insider-threat-protection/}
+}
+@misc{wallix-jit-2025,
+  title  = {WALLIX blog — just-in-time privileged access},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/just-in-time-privileged-access-its-security-oclock/}
+}
+@misc{wallix-mfa-2025,
+  title  = {WALLIX — multi-factor authentication (MFA) product page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/products/multi-factor-authentication-mfa/}
+}
+@misc{wallix-nhi-2025,
+  title  = {WALLIX blog — understanding non-human identities: the hidden risks of automated access},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/blogpost/understanding-non-human-identities-the-hidden-risks-of-automated-access/}
+}
+@misc{wallix-pam-product-2025,
+  title  = {WALLIX Privileged Access Management — product page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/products/privileged-access-management/}
+}
+@misc{wallix-pedm-2025,
+  title  = {WALLIX — privilege elevation and delegation management (PEDM) page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/privileged-access-management/pedm/}
+}
+@misc{wallix-remote-access-2025,
+  title  = {WALLIX Remote Access — product page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/products/remote-access/}
+}
+@misc{wallix-session-mgr-2025,
+  title  = {WALLIX — Session Manager page},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/privileged-access-management/session-manager/}
+}
+@misc{wallix-siem-2025,
+  title  = {WALLIX blog — PAM, SIEM and SAO: leveraging cybersecurity tools for alert management},
+  author = {{WALLIX}},
+  year   = {2025},
+  url    = {https://www.wallix.com/blogpost/pam-siem-and-sao-leveraging-cybersecurity-tools-to-move-the-needle-on-alert-management/}
+}
