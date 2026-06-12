@@ -500,6 +500,21 @@ def build_vendormix(ranked, ownership, anchors, short):
                 "have": short.get(a, a), "add": short.get(rec["add"], rec["add"]),
                 "fills": rec["fills"], "still_open": rec["still_open"]})
 
+    # H4: surface the acquisition edges behind the concentration math so a reader sees
+    # each collapse's confidence + as_of + primary source — and which are EXCLUDED as
+    # unverified (MEDIUM/LOW edges do not collapse; resilience.parent_of). This is the
+    # transparency that would have flagged the Entro error to a reader.
+    ownership_provenance = sorted(
+        ({"child": short.get(s, s),
+          "parent": short.get(e.get("parent"), e.get("parent")),
+          "confidence": (str(e.get("confidence", "")).strip().upper() or "—"),
+          "as_of": str(e.get("as_of", "") or ""),  # YAML parses dates -> coerce for JSON
+          "source_url": e.get("source_url", ""),
+          "collapsed": str(e.get("confidence", "")).strip().upper() not in ("MEDIUM", "LOW")}
+         for s, e in (ownership or {}).items()
+         if isinstance(e, dict) and e.get("as_of") and e.get("parent")),
+        key=lambda d: (not d["collapsed"], d["parent"], d["child"]))
+
     return {
         "cover": {
             "chosen": [{"slug": s, "name": short.get(s, s)} for s in cover["chosen"]],
@@ -508,6 +523,7 @@ def build_vendormix(ranked, ownership, anchors, short):
         },
         "portfolio": _opt.portfolio_concentration(cover["chosen"], ranked, ownership),
         "concentration": concentration,
+        "ownership_provenance": ownership_provenance,
         "single_source": _rz.single_source(ranked, ownership)["single_source"],
         "complementary": complementary,
     }

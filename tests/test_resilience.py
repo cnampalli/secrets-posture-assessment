@@ -83,3 +83,33 @@ def test_concentration_sole_source_ucs():
     # cyberark is the ONLY native parent for UC-1, but UC-2 is also covered by aws.
     assert con["cyberark"]["sole_source_ucs"] == ["UC-1"]
     assert con["aws-secrets-manager"]["sole_source_ucs"] == []
+
+
+# --- H4: only VERIFIED (HIGH) ownership edges collapse; MEDIUM/LOW do not ---
+def test_parent_of_excludes_medium_confidence_edge():
+    # the Entro rule: an unverified MEDIUM acquisition must NOT collapse the child
+    own = {"entro-security": {"parent": "cyberark", "confidence": "MEDIUM"}}
+    assert rz.parent_of("entro-security", own) == "entro-security"
+
+
+def test_parent_of_excludes_low_confidence_edge():
+    own = {"x": {"parent": "y", "confidence": "LOW"}}
+    assert rz.parent_of("x", own) == "x"
+
+
+def test_parent_of_follows_high_confidence_chain():
+    own = {"venafi": {"parent": "cyberark", "confidence": "HIGH"},
+           "cyberark": {"parent": "palo-alto-networks", "confidence": "HIGH"}}
+    assert rz.parent_of("venafi", own) == "palo-alto-networks"
+
+
+def test_parent_of_stops_at_unverified_link_in_chain():
+    # a HIGH child of a MEDIUM parent edge collapses only to the unverified node
+    own = {"a": {"parent": "b", "confidence": "HIGH"},
+           "b": {"parent": "c", "confidence": "MEDIUM"}}
+    assert rz.parent_of("a", own) == "b"
+
+
+def test_parent_of_missing_confidence_still_collapses():
+    # back-compat: an edge with no confidence (first-party own-product) collapses
+    assert rz.parent_of("venafi", OWNERSHIP) == "cyberark"

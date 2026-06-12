@@ -16,12 +16,22 @@ def parent_of(slug, ownership):
 
     Follows a parent chain (brand -> parent -> grandparent) so a multi-hop
     ownership map still collapses to the root; guards against cycles.
+
+    H4: an edge is only followed when its ownership is VERIFIED. An edge whose
+    `confidence` is explicitly MEDIUM or LOW is NOT collapsed — the child stays
+    its own parent — so an unverified acquisition claim cannot inflate a parent's
+    concentration. This is the rule that would have stopped the Entro error (a
+    MEDIUM-confidence 'CyberArk owns Entro' edge) from reaching a reader. Edges
+    with no/HIGH confidence collapse as before (back-compatible).
     """
     seen = set()
     cur = slug
     while cur in ownership and cur not in seen:
         seen.add(cur)
-        nxt = ownership[cur].get("parent", cur)
+        edge = ownership[cur]
+        if str(edge.get("confidence", "")).strip().upper() in ("MEDIUM", "LOW"):
+            break  # unverified collapse -> treat the child as its own parent
+        nxt = edge.get("parent", cur)
         if nxt == cur:
             break
         cur = nxt

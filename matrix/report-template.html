@@ -763,7 +763,7 @@ function vendorMixHtml(){
   const con=(vm.concentration||[]).slice(0,8);
   if(con.length){
     h+='<div class="card"><h3>Vendor concentration &amp; lock-in — by corporate parent</h3>'+
-       '<p class="muted" style="font-size:11px">Counted by <b>ultimate parent</b>, so sibling brands under one owner (e.g. CyberArk owns Conjur / PAM / Venafi / Entro) do not read as independent second-sources — a CPS 230 service-provider-concentration view. Ownership data is point-in-time; verify before client use.</p>'+
+       '<p class="muted" style="font-size:11px">Counted by <b>ultimate parent</b>, so sibling brands under one owner (e.g. CyberArk owns Conjur / PAM / Venafi / Zilla) do not read as independent second-sources — a CPS 230 service-provider-concentration view. Ownership data is point-in-time; verify before client use.</p>'+
        '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
        '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Parent</th>'+
        '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Brands</th>'+
@@ -779,6 +779,25 @@ function vendorMixHtml(){
        '</tbody></table>'+
        (vm.single_source&&vm.single_source.length?'<p class="note"><b>Single-source use cases</b> (one parent only) — '+vm.single_source.length+': '+vm.single_source.map(u=>gloss(u)).join(', ')+'.</p>':'')+
        '</div>';
+  }
+  // H4: corporate-ownership provenance behind the concentration roll-up — each
+  // acquisition edge's confidence + as_of + primary source; unverified edges shown
+  // as NOT collapsed (the transparency that would have flagged the Entro error).
+  const op=vm.ownership_provenance||[];
+  if(op.length){
+    h+='<div class="card"><h3>Corporate-ownership provenance</h3>'+
+       '<p class="muted" style="font-size:11px">The acquisition edges behind the concentration roll-up. Only <b>HIGH</b>-confidence ownership collapses sibling brands; an unverified (MEDIUM/LOW) edge is <b>not</b> collapsed, so an unconfirmed M&amp;A claim cannot inflate a parent\'s share. Point-in-time; verify each before client use.</p>'+
+       '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'+
+       '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Brand &rarr; Parent</th>'+
+       '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Confidence</th>'+
+       '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">As of</th>'+
+       '<th style="text-align:left;border-bottom:2px solid #ccc;padding:4px">Source</th></tr></thead><tbody>'+
+       op.map(e=>'<tr>'+
+         '<td style="padding:5px;border-bottom:1px solid #eee"><b>'+esc(e.child)+'</b> &rarr; '+esc(e.parent)+(e.collapsed?'':' <span class="muted">(unverified — not collapsed)</span>')+'</td>'+
+         '<td style="padding:5px;border-bottom:1px solid #eee'+(e.collapsed?'':';color:var(--l2);font-weight:600')+'">'+esc(e.confidence)+'</td>'+
+         '<td style="padding:5px;border-bottom:1px solid #eee" class="muted">'+esc(e.as_of||'—')+'</td>'+
+         '<td style="padding:5px;border-bottom:1px solid #eee">'+(e.source_url?'<a href="'+esc(e.source_url)+'" rel="noopener" target="_blank">verify</a>':'<span class="muted">—</span>')+'</td></tr>').join("")+
+       '</tbody></table></div>';
   }
   // Data-driven complementary (C4) — computed, not authored.
   const comp=vm.complementary||[];
