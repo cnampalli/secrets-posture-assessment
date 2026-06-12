@@ -9,7 +9,14 @@ VALID_ANSWERS = {"yes", "no", "na"}
 
 def derive_state(questions, answers):
     """questions: [{"qid": str, "informs_state": "GAP_PARTIAL"|"PARTIAL_MET"}].
-    answers: {qid: "yes"|"no"|"na"|None}. Returns GAP|PARTIAL|MET|PENDING|NA."""
+    answers: {qid: "yes"|"no"|"na"|None}. Returns GAP|PARTIAL|MET|PENDING|NA.
+
+    Empty `questions` is a programming error (an archetype UC always has questions;
+    A0/bespoke is scored manually and never calls this) — raise rather than silently
+    fall through to MET, which would mark an unassessed use case as fully covered."""
+    if not questions:
+        raise ValueError("derive_state requires at least one question "
+                         "(empty input would silently return MET)")
     vals = [(q["informs_state"], answers.get(q["qid"])) for q in questions]
     if vals and all(v == "na" for _, v in vals):
         return "NA"

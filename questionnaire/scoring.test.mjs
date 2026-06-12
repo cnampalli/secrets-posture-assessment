@@ -14,4 +14,8 @@ for (const v of vectors) {
   if (got !== v.expected) { console.error(`FAIL ${v.name}: got ${got}, want ${v.expected}`); failed++; }
 }
 if (failed) { console.error(`${failed} vector(s) failed`); process.exit(1); }
+// H6: empty questions must throw (programming-error guard; parity with py/ts).
+let threw = false;
+try { deriveState([], {}); } catch { threw = true; }
+if (!threw) { console.error("FAIL: empty questions did not throw"); process.exit(1); }
 console.log(`scoring.js: ${vectors.length} vectors OK`);

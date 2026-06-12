@@ -187,6 +187,38 @@ def check_aggregate_vendor_capabilities(rows, vendor_fit=None):
     return validate_vendor_rows("vendor-capabilities.csv", rows)
 
 
+_AGG_COMPARE = ("coverage", "maturity", "evidence_url", "evidence_quote", "citation_keys")
+
+
+def check_aggregate_vendor_consistency(agg_rows, per_vendor):
+    """H6 gate: the aggregate vendor-capabilities.csv must equal the UNION of the
+    per-vendor vendor-capabilities-<slug>.csv files — same rows (keyed by
+    vendor_slug+target_id) with the same coverage/maturity/evidence. Catches the
+    drift class where a per-vendor edit is not propagated to the aggregate (the
+    Britive sync gap). A header-only aggregate (matrix-less domain) is exempt."""
+    if not agg_rows:
+        return []
+    key = lambda r: ((r.get("vendor_slug") or "").strip(), (r.get("target_id") or "").strip())
+    sig = lambda r: tuple((c, (r.get(c) or "").strip()) for c in _AGG_COMPARE)
+    agg = {key(r): sig(r) for r in agg_rows}
+    pv = {}
+    for _name, rows in per_vendor:
+        for r in rows:
+            pv[key(r)] = sig(r)
+    errs = []
+    for k in sorted(set(agg) - set(pv)):
+        errs.append(f"vendor-capabilities.csv: row {k[0]}/{k[1]} is in the aggregate but no "
+                    f"per-vendor file — stale aggregate row")
+    for k in sorted(set(pv) - set(agg)):
+        errs.append(f"vendor-capabilities.csv: row {k[0]}/{k[1]} is in a per-vendor file but "
+                    f"missing from the aggregate — un-synced (regenerate the aggregate)")
+    for k in sorted(set(agg) & set(pv)):
+        if agg[k] != pv[k]:
+            errs.append(f"vendor-capabilities.csv: row {k[0]}/{k[1]} differs between the aggregate "
+                        f"and its per-vendor file (coverage/maturity/evidence drift)")
+    return errs
+
+
 # --- descriptor-declared vendor-fit grid (matrix-less domains) ---
 # The fit grid is the load-bearing substitute for the vendor matrix, so its
 # claims clear the same anti-fabrication bar: valid grade + sourced, every row.
@@ -620,6 +652,9 @@ def validate_all(root=".", data_dir=None):
     errs += check_ownership_sources(ownership)
     for name, rows in vendor_files:
         errs += check_provider_claims_cited(name, rows)
+    # H6: the aggregate must stay in sync with the per-vendor files it denormalises.
+    per_vendor = [(n, r) for n, r in vendor_files if n != "vendor-capabilities.csv"]
+    errs += check_aggregate_vendor_consistency(agg_rows, per_vendor)
     errs += check_data_provenance(trace, provenance)
     errs += check_data_currency(provenance)
 

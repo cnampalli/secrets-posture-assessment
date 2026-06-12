@@ -1,4 +1,5 @@
 import json, pathlib
+import pytest
 import methodology.scoring as scoring
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -33,3 +34,9 @@ def test_all_na_is_na():
 def test_vectors_fixture():
     for v in VECTORS:
         assert scoring.derive_state(v["questions"], v["answers"]) == v["expected"], v["name"]
+
+
+def test_empty_questions_raises():
+    # H6: empty input is a programming error — must raise, not silently return MET
+    with pytest.raises(ValueError):
+        scoring.derive_state([], {})
