@@ -1,0 +1,54 @@
+# GitLab CI (A+ hardening H3) — portability mirror of .github/workflows/ci.yml.
+# The repo's canonical home is GitHub (Actions is the live pipeline); this file lets a
+# GitLab mirror run the identical gates. Same checks: data contracts (3 domains), pytest
+# (incl. scoring parity), report byte-identity, and the app vitest + build.
+
+stages:
+  - validate
+  - test
+  - build
+
+# The full python image (not -slim) ships git, needed by the report byte-identity job.
+.python:
+  image: python:3.12
+  before_script:
+    - pip install -r requirements.txt -r requirements-dev.txt
+
+validate-data:
+  extends: .python
+  stage: validate
+  script:
+    - python3 matrix/validate_data.py
+    - python3 matrix/validate_data.py --data-dir matrix/domains/iga
+    - python3 matrix/validate_data.py --data-dir matrix/domains/pam
+
+pytest:
+  extends: .python
+  stage: test
+  script:
+    - python3 -m pytest tests/ -q   # includes scoring parity vectors (test_scoring*.py)
+
+reports-byte-identical:
+  extends: .python
+  stage: test
+  script:
+    - python3 matrix/build_matrix_viewer.py --domain secrets
+    - python3 matrix/build_matrix_viewer.py --domain pam
+    - python3 matrix/build_matrix_viewer.py --domain iga
+    - python3 matrix/build_cross_domain.py
+    - git diff --exit-code
+
+app:
+  stage: build
+  image: node:20
+  cache:
+    key:
+      files:
+        - app/package-lock.json
+    paths:
+      - app/node_modules/
+  before_script:
+    - cd app && npm ci
+  script:
+    - npm run test    # vitest
+    - npm run build   # tsc + vite

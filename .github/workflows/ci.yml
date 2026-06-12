@@ -1,0 +1,58 @@
+# CI (A+ hardening H3) — makes HANDOFF's self-reported "Gates:" lines machine-checked.
+# Everything here is already green + deterministic on main, so the pipeline is green from
+# day one; the point is that the gates (data contracts, A1 currency, H1 citation-resolution,
+# H2 semantic registry, scoring parity, report byte-identity, app build) now run on every push.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  data-and-python:
+    name: data contracts · pytest · report byte-identity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python deps
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Validate data contracts (secrets · iga · pam)
+        run: |
+          python3 matrix/validate_data.py
+          python3 matrix/validate_data.py --data-dir matrix/domains/iga
+          python3 matrix/validate_data.py --data-dir matrix/domains/pam
+      - name: pytest (incl. scoring parity vectors test_scoring*.py)
+        run: python3 -m pytest tests/ -q
+      - name: Reports rebuild byte-identical
+        run: |
+          python3 matrix/build_matrix_viewer.py --domain secrets
+          python3 matrix/build_matrix_viewer.py --domain pam
+          python3 matrix/build_matrix_viewer.py --domain iga
+          python3 matrix/build_cross_domain.py
+          git diff --exit-code
+
+  app:
+    name: app (vitest · build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - name: vitest
+        run: npm run test
+      - name: build (tsc + vite)
+        run: npm run build
