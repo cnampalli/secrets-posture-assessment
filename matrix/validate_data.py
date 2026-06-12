@@ -309,6 +309,39 @@ def check_control_id_registry(trace, registry):
     return errs
 
 
+def _normalize_semantic(s):
+    """lower-case + collapse whitespace, for substring topic matching."""
+    return re.sub(r"\s+", " ", (s or "").strip().lower())
+
+
+def check_control_semantics(trace, semantics):
+    """F3 semantic gate (H2): a control's recorded text must match what the control
+    is ABOUT. For every trace row whose (framework_slug, control_code) has an
+    `expect_substring` in control-semantics.yaml, that substring — normalised
+    (lower-case, whitespace-collapsed) — MUST appear in the row's control_short_title
+    + evidence_quote. This makes the right-ID-wrong-text class (the audit's HIGH-2:
+    CPS234-§22 carrying §21's text) a build failure. Controls with no registered
+    expectation are not gated, so the registry can be seeded incrementally. A
+    missing/empty registry is itself a violation (fail-closed)."""
+    if not semantics:
+        return ["control-semantics.yaml: missing or empty — H2 semantic-control gate cannot run"]
+    errs = []
+    for r in trace:
+        fw = (r.get("framework_slug") or "").strip()
+        cc = (r.get("control_code") or "").strip()
+        exp = (semantics.get(fw) or {}).get(cc)
+        if not exp:
+            continue
+        haystack = _normalize_semantic((r.get("control_short_title") or "") + " "
+                                       + (r.get("evidence_quote") or ""))
+        if _normalize_semantic(exp) not in haystack:
+            errs.append(f"regulatory-trace.csv: control {cc} ({fw}) text does not match its "
+                        f"registered topic — expected substring \"{exp}\" in "
+                        f"control_short_title+evidence_quote; possible right-ID-wrong-text "
+                        f"(verify the row, or update control-semantics.yaml)")
+    return errs
+
+
 def check_provider_claims_cited(name, rows):
     """F2 gate: a capability claim (NATIVE/ADD-ON/PARTNER) must carry a source —
     an evidence_url, a citation_key, or an explicit inference tag in notes."""
@@ -559,8 +592,10 @@ def validate_all(root=".", data_dir=None):
     # Config is cross-domain — always from <root>/matrix/config, not the data dir.
     cfg = os.path.join(root, "matrix", "config")
     registry = load_yaml(os.path.join(cfg, "control-id-registry.yaml"))
+    semantics = load_yaml(os.path.join(cfg, "control-semantics.yaml"))
     provenance = load_yaml(os.path.join(cfg, "data-provenance.yaml"))
     errs += check_control_id_registry(trace, registry)
+    errs += check_control_semantics(trace, semantics)
     for name, rows in vendor_files:
         errs += check_provider_claims_cited(name, rows)
     errs += check_data_provenance(trace, provenance)

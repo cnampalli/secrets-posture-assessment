@@ -619,3 +619,51 @@ def test_validate_all_catches_dangling_key_in_vendor_fit_grid(tmp_path, monkeypa
         w.writerows(rows)
     viol = vd.validate_all(root=str(ROOT), data_dir=str(ddir))
     assert any("fit-ghost-key-0001" in v for v in viol)
+
+
+# --- H2: semantic control registry (right-ID-wrong-text gate) ---
+_SEM = {"apra-cps-234": {"CPS234-§22": "evaluate design of third-party controls",
+                         "CPS234-§21": "implementation of"}}
+
+
+def test_control_semantics_right_id_wrong_text_is_violation():
+    # the audit's HIGH-2: a §22 row carrying §21's text
+    trace = [{"framework_slug": "apra-cps-234", "control_code": "CPS234-§22",
+              "control_short_title": "Implementation of information-security controls",
+              "evidence_quote": "the entity must implement controls"}]
+    errs = vd.check_control_semantics(trace, _SEM)
+    assert any("CPS234-§22" in e and "right-ID-wrong-text" in e for e in errs)
+
+
+def test_control_semantics_matching_text_is_clean():
+    trace = [{"framework_slug": "apra-cps-234", "control_code": "CPS234-§22",
+              "control_short_title": "Evaluate design of third-party controls",
+              "evidence_quote": "must evaluate the design of the third party's controls"}]
+    assert vd.check_control_semantics(trace, _SEM) == []
+
+
+def test_control_semantics_unregistered_control_not_gated():
+    trace = [{"framework_slug": "apra-cps-234", "control_code": "CPS234-§99",
+              "control_short_title": "anything at all", "evidence_quote": ""}]
+    assert vd.check_control_semantics(trace, _SEM) == []
+
+
+def test_control_semantics_normalises_case_and_whitespace():
+    trace = [{"framework_slug": "apra-cps-234", "control_code": "CPS234-§21",
+              "control_short_title": "IMPLEMENTATION   OF   controls", "evidence_quote": ""}]
+    assert vd.check_control_semantics(trace, _SEM) == []
+
+
+def test_control_semantics_missing_registry_fails_closed():
+    assert vd.check_control_semantics([{"framework_slug": "x", "control_code": "y"}], {})
+    assert vd.check_control_semantics([], None)
+
+
+def test_control_semantics_real_data_is_clean():
+    # the shipped seed must self-match every current trace row across all domains
+    sem = vd.load_yaml(str(ROOT / "matrix" / "config" / "control-semantics.yaml"))
+    for dom in (ROOT / "matrix" / "domains").iterdir():
+        t = dom / "regulatory-trace.csv"
+        if not t.exists():
+            continue
+        assert vd.check_control_semantics(vd.load_csv(str(t)), sem) == [], dom.name
