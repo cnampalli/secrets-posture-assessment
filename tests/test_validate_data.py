@@ -597,3 +597,25 @@ def test_validate_all_catches_dangling_citation_key(tmp_path):
         w.writerows(rows)
     viol = vd.validate_all(root=str(ROOT), data_dir=str(ddir))
     assert any("totally-fabricated-key-0000" in v for v in viol)
+
+
+def test_validate_all_catches_dangling_key_in_vendor_fit_grid(tmp_path, monkeypatch):
+    # regression: a descriptor-declared vendor-fit grid (matrix-less domains like
+    # IGA) carries its own citation_keys and is NOT part of vendor_files — the gate
+    # must still resolve it. Pre-fix, a dangling key here escaped the gate.
+    ddir = tmp_path / "data"
+    ddir.mkdir()
+    for p in (ROOT / "matrix" / "domains" / "iga").glob("*.csv"):
+        shutil.copy(p, ddir / p.name)
+    # the real descriptor resolves by data_dir path; force the fit declaration here
+    monkeypatch.setattr(vd, "resolve_domain_descriptor",
+                        lambda root, data_dir: {"vendor_fit": "iga-vendor-fit.csv"})
+    fit = ddir / "iga-vendor-fit.csv"
+    rows = vd.load_csv(str(fit))
+    rows[0]["citation_keys"] = (rows[0].get("citation_keys") or "") + ";fit-ghost-key-0001"
+    with open(fit, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    viol = vd.validate_all(root=str(ROOT), data_dir=str(ddir))
+    assert any("fit-ghost-key-0001" in v for v in viol)

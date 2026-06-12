@@ -577,6 +577,13 @@ def validate_all(root=".", data_dir=None):
     cited_files = [("use-cases.csv", use_cases), ("current-state.csv", current),
                    ("regulatory-trace.csv", trace), ("identity-catalog.csv", identity)]
     cited_files += vendor_files
+    # a descriptor-declared vendor-fit grid (matrix-less domains, e.g. IGA's
+    # iga-vendor-fit.csv) carries its own citation_keys — it MUST be resolved too,
+    # else its keys escape the gate (it is not part of vendor_files).
+    if vendor_fit:
+        fit_path = os.path.join(m, vendor_fit)
+        if os.path.exists(fit_path):
+            cited_files.append((vendor_fit, load_csv(fit_path)))
     if catalog is not None:
         cited_files.append(("evidence-catalog.csv", catalog))
     errs += check_citation_keys_resolve(os.path.join(root, "meta", "citations.bib"),
