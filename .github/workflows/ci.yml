@@ -36,6 +36,8 @@ jobs:
           python3 matrix/build_matrix_viewer.py --domain pam
           python3 matrix/build_matrix_viewer.py --domain iga
           python3 matrix/build_cross_domain.py
+          python3 matrix/build_exec_rollup.py
+          python3 matrix/build_backlog.py
           git diff --exit-code
 
   app:

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Executive Roll-up — Cross-Domain Posture</title>
+<style>/*__FONTS__*/</style>
+<style>/*__TOKENS__*/</style>
+<style>
+  body { font-family: var(--font-body, serif); color: var(--ink, #1a1a1a);
+         background: var(--paper, #faf8f3); margin: 0; padding: 2rem; }
+  .sheet { max-width: 1000px; margin: 0 auto; }
+  h1 { font-family: var(--font-display, serif); font-size: 1.9rem; margin: 0 0 .25rem; }
+  .sub { color: #555; margin: 0 0 1.5rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th, td { text-align: left; padding: .6rem .5rem; border-bottom: 1px solid #ddd; vertical-align: top; }
+  th { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: #666; }
+  .band { font-weight: 700; }
+  .trend { color: #777; font-style: italic; }
+  .bench-note, .basis { font-size: .75rem; color: #777; }
+  .headline { background: #f3efe6; border-left: 3px solid #b5a36a; padding: .75rem 1rem; margin: 1rem 0; }
+  ul.risks { margin: 0; padding-left: 1.1rem; }
+  ul.risks li { font-size: .85rem; }
+  @media print { body { padding: 0; } .sheet { max-width: none; } @page { size: A4; margin: 12mm; } }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <h1>Executive Roll-up</h1>
+  <p class="sub" id="overall"></p>
+  <div class="headline" id="headline"></div>
+  <table>
+    <thead><tr><th>Domain</th><th>Maturity</th><th>Coverage</th><th>Top risks</th><th>Benchmark</th><th>Trend</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <p class="basis" id="basis"></p>
+</div>
+<script id="model" type="application/json">/*__ROLLUP__*/{}</script>
+<script>
+  const model = JSON.parse(document.getElementById("model").textContent);
+  const o = model.overall;
+  document.getElementById("overall").textContent =
+    `Lowest maturity band across domains: ${o.lowest_band}. Open P0 items: ${o.total_p0_open}.`;
+  document.getElementById("headline").textContent = o.concentration_headline;
+  const esc = s => String(s == null ? "" : s).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  document.getElementById("rows").innerHTML = model.domains.map(d => {
+    const risks = (d.top_3_risks || []).map(r => `<li>${esc(r.short_title)}</li>`).join("") || "<li>No open gaps</li>";
+    return `<tr>
+      <td>${esc(d.label)}</td>
+      <td class="band">${esc(d.overall_band)}</td>
+      <td>${Math.round((d.met_pct||0)*100)}% MET</td>
+      <td><ul class="risks">${risks}</ul></td>
+      <td>${esc(d.benchmark.percentile_band)}<br><span class="bench-note">${esc(d.benchmark.cohort_label)}</span></td>
+      <td class="trend">Baseline</td>
+    </tr>`;
+  }).join("");
+  const b = model.domains[0] && model.domains[0].benchmark;
+  document.getElementById("basis").textContent = b ? `Benchmark basis: ${b.basis_note}` : "";
+</script>
+</body>
+</html>

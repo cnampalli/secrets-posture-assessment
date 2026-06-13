@@ -1,0 +1,22 @@
+{
+  "cohort_label": "Australian financial institutions (illustrative synthetic baseline)",
+  "basis": "Synthetic, designed-honest reference bands — NOT a measured cohort. Met-% percentile estimates for an AU-FI peer group, intended to be replaced by real cohort percentiles as engagements accumulate.",
+  "unit": "met_pct_integer_0_100",
+  "domains": {
+    "secrets": {
+      "p25": 25, "p50": 45, "p75": 65,
+      "rationale": "Secrets management is comparatively mature in AU FIs (CPS 234 pressure + vaulting adoption); median ~45% MET reflects partial NHI rotation/discovery coverage.",
+      "sources": ["Synthetic estimate; calibrate against CyberArk/HashiCorp AU adoption and APRA CPS 234 thematic reviews when available."]
+    },
+    "pam": {
+      "p25": 30, "p50": 50, "p75": 70,
+      "rationale": "PAM is the most established privileged-access discipline; median ~50% MET reflects broad session-brokering adoption with weaker JIT/agentic coverage.",
+      "sources": ["Synthetic estimate; calibrate against Gartner PAM MQ adoption signals for AU FIs when available."]
+    },
+    "iga": {
+      "p25": 20, "p50": 40, "p75": 60,
+      "rationale": "IGA lags in AU FIs (heavy manual certification, partial JML automation); median ~40% MET reflects that gap.",
+      "sources": ["Synthetic estimate; calibrate against AU-FI IGA programme maturity surveys when available."]
+    }
+  }
+}
