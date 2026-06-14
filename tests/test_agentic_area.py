@@ -44,3 +44,11 @@ def test_rec_uc_domain_not_mutated():
     # REC_UC_DOMAIN is shared with the recommendations engine; subtraction must be non-mutating.
     assert "UC-F-015" in rl.REC_UC_DOMAIN["secrets"]
     assert "UC-F-018" in rl.REC_UC_DOMAIN["secrets"]
+
+
+# --- M3.3: PAM "Agentic privileged access" posture area ---
+
+def test_pam_has_agentic_posture_group():
+    g = rl.MATURITY_GROUPS["pam"]
+    assert "Agentic privileged access" in g
+    assert set(g["Agentic privileged access"]) == {"UC-P-019", "UC-P-020", "UC-P-021"}

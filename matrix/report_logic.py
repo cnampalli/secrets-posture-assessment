@@ -55,6 +55,8 @@ MATURITY_GROUPS = {
             ["UC-P-006", "UC-P-011", "UC-P-012", "UC-P-013"],
         "Endpoint & threat analytics":
             ["UC-P-009", "UC-P-015", "UC-P-016", "UC-P-017", "UC-P-018"],
+        "Agentic privileged access":
+            ["UC-P-019", "UC-P-020", "UC-P-021"],
     },
 }
 
