@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M3.1 mock — Agentic governance (IGA pilot)</title>
+<style>
+  :root{--paper:#faf9f7;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e7e3da;--gold:#b8860b;--risk:#a33;--ok:#2e7d4f;--card:#fff}
+  *{box-sizing:border-box}
+  body{font-family:Georgia,"Times New Roman",serif;background:var(--paper);color:var(--ink);margin:0;padding:32px;line-height:1.5}
+  .sheet{max-width:980px;margin:0 auto}
+  .mockbar{background:#1a1a1a;color:#f5f1e8;font-family:ui-monospace,monospace;font-size:12px;padding:6px 12px;border-radius:4px;margin-bottom:20px}
+  h1{font-size:26px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 4px}
+  .crumbs{font-family:ui-monospace,monospace;font-size:11px;color:var(--gold);margin-bottom:22px}
+  h2{font-size:17px;margin:30px 0 10px;border-bottom:2px solid var(--line);padding-bottom:5px}
+  .area{display:flex;align-items:center;gap:14px;background:#f3efe6;border-left:4px solid var(--gold);border-radius:4px;padding:12px 16px;margin:10px 0}
+  .band{font-weight:700;font-size:15px}
+  .ml1{color:var(--risk)} .ml2{color:#b07000} .ml3{color:var(--ok)}
+  .area .meta{color:var(--muted);font-size:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:12px 0}
+  .uc{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:5px;padding:14px}
+  .uc .id{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)}
+  .uc h3{font-size:14px;margin:3px 0 8px}
+  .uc p{font-size:12.5px;color:#333;margin:0 0 10px}
+  .state{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+  .gap{background:#fbeaea;color:var(--risk)} .partial{background:#fdf3e3;color:#b07000}
+  .drv{font-family:ui-monospace,monospace;font-size:10.5px;color:var(--muted);margin-top:8px}
+  .drv b{color:#444}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;margin:8px 0}
+  th,td{text-align:left;border-bottom:1px solid var(--line);padding:7px 9px;vertical-align:top}
+  th{border-bottom:2px solid #ccc;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.03em}
+  .chip{display:inline-block;background:#eef;border-radius:9px;padding:1px 7px;font-size:10.5px;margin:1px}
+  .anchor{font-family:ui-monospace,monospace;font-size:10px;color:var(--muted)}
+  .spine{background:#fffaf0;border:1px dashed var(--gold);border-radius:6px;padding:14px 16px;margin:10px 0}
+  .star{color:var(--gold);font-weight:700}
+  .note{color:var(--muted);font-size:11.5px;font-style:italic}
+  .legend{font-size:11px;color:var(--muted);margin-top:4px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="mockbar">▚ DESIGN MOCK — M3.1 agentic governance (IGA pilot). Illustrative content; not generated from data. Shows where new artifacts land in the existing IGA report + cross-domain spine.</div>
+
+  <h1>Identity Governance (IGA) — Agentic addendum</h1>
+  <p class="sub">16 + <b>3 new</b> agentic governance use cases · governed identities IGID-012 (agentic agent), IGID-013 (OAuth consent-grant)</p>
+  <div class="crumbs">posture dashboard ▸ NEW area "Agentic governance" ▸ decision cards ▸ compliance trace ▸ cross-domain spine</div>
+
+  <!-- 1. New posture-maturity area -->
+  <h2>Posture dashboard — new maturity area</h2>
+  <div class="area">
+    <span class="band ml1">ML1</span>
+    <div>
+      <div><b>Agentic governance</b> — emerging</div>
+      <div class="meta">0% MET · 2 GAP / 1 PARTIAL · 1 open P0 · basis: designed coverage convention (ML1 = any open P0)</div>
+    </div>
+  </div>
+  <div class="legend">Sits alongside the existing JML / Access certification / SoD / Role &amp; request areas (report_logic <code>_IGA_AREA_BY_NUM</code> gains UC-I-017..019 → "Agentic governance").</div>
+
+  <!-- 2. The 3 UC decision cards -->
+  <h2>Decision cards — 3 agentic governance UCs</h2>
+  <div class="grid">
+    <div class="uc">
+      <div class="id">UC-I-017 · P0</div>
+      <h3>Agent registration &amp; ownership</h3>
+      <p>Every autonomous agent is a governed object with a named human owner, declared purpose and scoped tool entitlements before it can act on systems.</p>
+      <span class="state gap">GAP</span>
+      <div class="drv"><b>drivers:</b> OWASP-LLM06 · NIST AC-2 · CPS234-§14</div>
+    </div>
+    <div class="uc">
+      <div class="id">UC-I-018 · P0</div>
+      <h3>Agent entitlement certification / continuous attestation</h3>
+      <p>Agent tool-scopes are recertified; because permissions change dynamically, point-in-time recert is replaced by continuous attestation as the good end-state.</p>
+      <span class="state partial">PARTIAL</span>
+      <div class="drv"><b>drivers:</b> OWASP-LLM06 · NIST AC-6 · ISM-1404</div>
+    </div>
+    <div class="uc">
+      <div class="id">UC-I-019 · P1</div>
+      <h3>Agent deprovisioning / orphan-agent detection</h3>
+      <p>Decommissioned or owner-less agents (and their standing consent grants) are detected and revoked — the agentic analogue of the dormant/orphan finding.</p>
+      <span class="state gap">GAP</span>
+      <div class="drv"><b>drivers:</b> OWASP-LLM06 · NIST AC-2 · CPS234-§21</div>
+    </div>
+  </div>
+  <div class="legend">Each card = one row in <code>use-cases.csv</code> + <code>current-state.csv</code> (illustrative state) + <code>regulatory-trace.csv</code>; mapped to questionnaire archetypes via <code>uc-archetype-map.csv</code>.</div>
+
+  <!-- 3. Compliance trace -->
+  <h2>Compliance trace (WS3-verified, verbatim)</h2>
+  <table>
+    <thead><tr><th>Control</th><th>Framework</th><th>Verbatim quote (re-fetched, REFUTE-tested)</th><th>UCs</th></tr></thead>
+    <tbody>
+      <tr><td>LLM06:2025</td><td>OWASP LLM Top 10</td><td>"Excessive Agency … the vulnerability that enables damaging actions … excessive functionality, permissions, or autonomy."</td><td>017,018,019</td></tr>
+      <tr><td>AC-2</td><td>NIST 800-53r5</td><td>"Manage system accounts, including … establishing conditions for … and removing accounts."</td><td>017,019</td></tr>
+      <tr><td>§14</td><td>APRA CPS 234</td><td>"…controls to protect information assets commensurate with … vulnerabilities and threats."</td><td>017</td></tr>
+    </tbody>
+  </table>
+  <div class="legend">New control IDs registered in control-id-registry + control-semantics + data-provenance; new bib keys resolve through the H1 citation gate. <span class="note">Quotes above are illustrative placeholders — execution re-verifies each verbatim.</span></div>
+
+  <!-- 4. Agentic sub-tree taxonomy (foundation) -->
+  <h2>Foundation — agentic sub-tree (extends the NHI taxonomy)</h2>
+  <table>
+    <thead><tr><th>Agentic sub-class</th><th>Maps to spine</th><th>Anchor</th></tr></thead>
+    <tbody>
+      <tr><td>Autonomous task agent</td><td>SPN-015</td><td class="anchor">OWASP LLM06 · CSA agentic</td></tr>
+      <tr><td>Tool-using agent (function-calling)</td><td>SPN-015</td><td class="anchor">OWASP LLM06 · NIST AI RMF</td></tr>
+      <tr><td>Agent-delegated NPE (OBO / consent-grant)</td><td>SPN-015 / SPN-010</td><td class="anchor">OAuth · IGID-013 pattern</td></tr>
+      <tr><td>Human-gated agent (HITL on irreversible)</td><td>SPN-015</td><td class="anchor">OWASP LLM06 · NIST AC-6</td></tr>
+      <tr><td>Multi-agent orchestrator</td><td>SPN-015</td><td class="anchor">CSA agentic</td></tr>
+    </tbody>
+  </table>
+  <div class="legend">Lives in <code>research/agentic/AGENTIC-RESEARCH.md</code> + the taxonomy doc. No new spine rows — all map to the existing <b>SPN-015</b>.</div>
+
+  <!-- 5. Cross-domain spine linkage -->
+  <h2>Cross-domain spine — already wired (M2)</h2>
+  <div class="spine">
+    <table style="margin:0">
+      <thead><tr><th>Archetype</th><th>Class</th><th>secrets<br><span class="anchor">credential/rotation</span></th><th>PAM<br><span class="anchor">priv-session</span></th><th>IGA<br><span class="anchor">lifecycle/cert</span></th><th>Spans</th></tr></thead>
+      <tbody>
+        <tr><td><b>Agentic-AI / autonomous agent</b><br><span class="anchor">SPN-015 · CSA NHI emerging</span></td><td>agentic</td><td><span class="chip">AI agent identity</span></td><td><span class="anchor" style="color:#bbb">— (M3.3)</span></td><td><span class="chip">Agentic-AI agent</span></td><td><span class="star">★</span> 2</td></tr>
+      </tbody>
+    </table>
+    <div class="legend" style="margin-top:8px">The M2 spine already surfaces SPN-015 across domains. M3.1 deepens the IGA cell (3 UCs); M3.2/M3.3 fill the secrets &amp; PAM cells. <span class="note">PAM cell is empty today (no agentic identity) — closed in the PAM generalize slice.</span></div>
+  </div>
+
+  <p class="note" style="margin-top:24px">Mock only — represents placement &amp; shape of M3.1 artifacts in the existing report engine. Real content authored + WS3-verified during execution.</p>
+</div>
+</body>
+</html>
