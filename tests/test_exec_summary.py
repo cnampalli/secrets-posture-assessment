@@ -13,7 +13,7 @@ def xyz_record():
 
 
 def test_snapshot_counts_xyz():
-    assert es.snapshot_counts(xyz_record()) == {"MET": 0, "PARTIAL": 16, "GAP": 11, "PENDING": 20}
+    assert es.snapshot_counts(xyz_record()) == {"MET": 0, "PARTIAL": 17, "GAP": 13, "PENDING": 20}
 
 
 def test_inject_replaces_tokens():
@@ -44,10 +44,10 @@ def test_build_self_contained_and_complete(tmp_path):
     out = tmp_path / "exec.html"
     es.build(str(rec), out_path=str(out))
     html = out.read_text(encoding="utf-8")
-    assert '"GAP": 11' in html and '"PARTIAL": 16' in html
+    assert '"GAP": 13' in html and '"PARTIAL": 17' in html
     menu_ids = [it["uc_id"] for it in json.loads(
         re.search(r"window\.__EXEC_DATA__\s*=\s*(\{.*?\});", html, re.S).group(1))["menu"]["items"]]
-    assert len(menu_ids) == 27
+    assert len(menu_ids) == 30
     assert "@media print" in html
     # Fully offline: brand fonts are embedded as base64 woff2, so the output has
     # NO external URLs at all (no Google Fonts link, no CDN) — firewall-proof.

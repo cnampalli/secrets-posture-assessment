@@ -46,3 +46,6 @@ UC-N-017,A8,PENDING,,,A8: observability secret-leak governance audit (CCM postur
 UC-N-018,A8,PARTIAL,MEDIUM,,A8: TEE attestation assurance reporting potentially available via Fortanix CCM but adoption/cadence not confirmed — artifact ad hoc
 UC-N-019,A6,GAP,MEDIUM,,A6: AI-agent NHI KPI suite not produced; AI/MCP NHI governance not addressed — metric absent
 UC-N-020,A6,PENDING,,,A6: mainframe/legacy NHI posture metric not addressed; board reporting cadence unconfirmed — no metric signal gathered
+UC-F-028,A3,GAP,MEDIUM,,A3: no agent credential broker in operational scope; agents use static long-lived tool API keys — capability not available
+UC-F-029,A4,PARTIAL,MEDIUM,,A4: some agent credentials rotate on the generic secret cadence but agent-aware revocation on decommission/compromise is absent — issue+rotate+revoke within SLA not met
+UC-F-030,A3,GAP,MEDIUM,,A3: agent credential scopes not right-sized and over-broad agent tokens not detected — confinement capability not available

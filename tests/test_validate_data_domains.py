@@ -218,3 +218,11 @@ def test_iga_agentic_ucs_have_archetypes():
     mapped = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "uc-archetype-map.csv"), encoding="utf-8"))}
     for uc in ("UC-I-017", "UC-I-018", "UC-I-019"):
         assert uc in ucs and uc in mapped, f"{uc} missing UC row or archetype mapping"
+
+
+def test_secrets_agentic_ucs_present():
+    import csv, os
+    base = os.path.join(ROOT, "matrix", "domains", "secrets")
+    ucs = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "use-cases.csv"), encoding="utf-8"))}
+    for uc in ("UC-F-028", "UC-F-029", "UC-F-030"):
+        assert uc in ucs, f"{uc} missing from secrets use-cases.csv"
