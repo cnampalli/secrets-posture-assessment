@@ -30,10 +30,21 @@ REC_UC_DOMAIN = {
 # per-group maturity table has the same depth across domains. Domains absent here
 # fall back to grouping by the `category` column of their use-cases.csv (see
 # build_posture_maturity); IGA uses its bespoke id-range area map instead.
+# M3.2: agentic UCs surfaced as their own emerging posture area. They are subtracted
+# from the lifecycle/governance lists below so each UC is counted in exactly one
+# posture group. REC_UC_DOMAIN is shared with the recommendations engine and is NOT
+# mutated — the subtraction uses list comprehensions over copies.
+_SECRETS_AGENTIC_UCS = ["UC-F-011", "UC-F-015", "UC-F-018", "UC-F-028",
+                        "UC-F-029", "UC-F-030", "UC-N-019"]
+_SECRETS_AGENTIC_SET = set(_SECRETS_AGENTIC_UCS)
+
 MATURITY_GROUPS = {
     "secrets": {
-        "Secrets lifecycle": REC_UC_DOMAIN["secrets"],
-        "Governance": REC_UC_DOMAIN["governance"],
+        "Secrets lifecycle": [u for u in REC_UC_DOMAIN["secrets"]
+                              if u not in _SECRETS_AGENTIC_SET],
+        "Governance": [u for u in REC_UC_DOMAIN["governance"]
+                       if u not in _SECRETS_AGENTIC_SET],
+        "Agentic": list(_SECRETS_AGENTIC_UCS),
     },
     "pam": {
         "Credential & session control":
