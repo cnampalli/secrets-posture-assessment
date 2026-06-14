@@ -85,7 +85,8 @@ def load_inputs(here, current_state_name=None, domain=SECRETS):
             "priority_fi": r.get("priority_fi", "")} for r in read_csv(here, domain.use_cases)]
 
     nhis = [{"nhi_id": r["nhi_id"], "bucket": r.get("bucket", ""), "short_name": r.get("short_name", ""),
-             "description": r.get("description", "")} for r in read_csv(here, domain.identity_catalog)]
+             "description": r.get("description", ""), "spine_id": r.get("spine_id", "")}
+            for r in read_csv(here, domain.identity_catalog)]
 
     anz = [{"uc_id": r["uc_id"], "current_state": r.get("current_state", ""), "confidence": r.get("confidence", ""),
             "evidence": r.get("evidence_redacted", ""), "recommendation": r.get("gap_notes", ""),

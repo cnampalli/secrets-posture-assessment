@@ -32,9 +32,14 @@ th{border-bottom:2px solid #ccc;font-size:12px}
   <div class="sub"><a class="report-link" href="exec-rollup.html">Executive roll-up &#8599;</a></div>
   <table id="map"><thead></thead><tbody></tbody></table>
   <div id="panels"></div>
+
+  <h2 id="spine-h" style="font-size:18px;margin:32px 0 4px">Identity spine — one identity, every domain's lens</h2>
+  <div class="sub">Designed cross-domain identity taxonomy: each archetype (class &times; privileged) is keyed once and linked to how each domain governs it. <span class="star">&#9733;</span> marks an identity that appears in two or more domains — the cross-platform signal single-domain analysis misses (e.g. the same service account modelled separately in secrets, PAM and IGA). Governance-anchored (CSA NHI / NIST AC / ISM / CPS 234); a designed taxonomy, point-in-time.</div>
+  <table id="spine"><thead></thead><tbody></tbody></table>
 </div>
 <script>
 const CROSSMAP = /*__CROSSMAP__*/{};
+const SPINE = /*__SPINE__*/{};
 function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 function renderMap(){
   const ds=CROSSMAP.domains||[], ps=CROSSMAP.parents||[];
@@ -66,8 +71,30 @@ function renderPanels(){
   if(!h) h='<p class="note">No parent spans more than one domain in the current data.</p>';
   document.getElementById("panels").innerHTML=h;
 }
+function renderSpine(){
+  const t=document.getElementById("spine"); if(!t) return;
+  const arts=SPINE.archetypes||[];
+  if(!arts.length){ t.style.display="none"; const h=document.getElementById("spine-h"); if(h) h.style.display="none"; return; }
+  const lens=SPINE.lens||{}, slugs=Object.keys(lens);
+  t.querySelector("thead").innerHTML =
+    "<tr><th>Archetype</th><th>Class</th><th>Priv</th>"+
+    slugs.map(s=>"<th>"+esc(s)+'<div class="hint">'+esc(lens[s])+"</div></th>").join("")+"<th>Spans</th></tr>";
+  t.querySelector("tbody").innerHTML = arts.map(a=>{
+    const cells=slugs.map(s=>{
+      const names=(a.by_domain||{})[s];
+      if(!names||!names.length) return '<td class="muted">—</td>';
+      return "<td>"+names.map(n=>'<span class="chip">'+esc(n)+'</span>').join("")+"</td>";
+    }).join("");
+    const star=a.span>=2?'<span class="star">★ </span>':"";
+    const anchor=esc(a.csa_nhi_anchor||"")+(a.spiffe_ref?" · "+esc(a.spiffe_ref):"");
+    return "<tr><td><b>"+esc(a.label)+'</b><div class="hint">'+anchor+"</div></td><td>"+
+      esc(a.identity_class)+"</td><td>"+(a.privileged?"priv":'<span class="muted">—</span>')+
+      "</td>"+cells+"<td>"+star+esc(a.span)+"</td></tr>";
+  }).join("");
+}
 renderMap();
 renderPanels();
+renderSpine();
 </script>
 </body>
 </html>

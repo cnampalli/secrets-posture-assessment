@@ -1,0 +1,139 @@
+# Cross-domain identity spine (M2) — canonical identity archetypes, keyed once.
+#
+# Each domain's identity-catalog.csv carries a `spine_id` referencing one archetype here,
+# so the same logical identity (e.g. a service account) modelled in secrets / PAM / IGA is
+# LINKED. Classification axis: identity_class (human | npe | agentic) x privileged.
+#
+# Anchoring is GOVERNANCE-first: csa_nhi_anchor points NPE archetypes at the CSA
+# Non-Human-Identity taxonomy and human archetypes at the instrument's IAM-governance
+# references (NIST SP 800-53 AC family, ASD ISM, APRA CPS 234). `spiffe_ref` is OPTIONAL and
+# set only on genuine workload archetypes (the technical lens; full SPIFFE/conformance work
+# is the orthogonal npe_conformance field + M3). The anchors are a DESIGNED taxonomy mapping,
+# point-in-time — not verbatim control text.
+basis: "Designed cross-domain identity taxonomy. Archetypes clustered from the three domains' identity catalogs; governance-anchored (CSA NHI / NIST AC / ISM / CPS 234). Illustrative where no primary source is cited."
+archetypes:
+  # ---- human, privileged ----
+  - spine_id: SPN-001
+    label: Privileged human administrator
+    identity_class: human
+    privileged: true
+    description: "A human operator holding tier-0/admin control over infrastructure, directories, databases, hypervisors, cloud consoles or the secrets/PKI fabric."
+    csa_nhi_anchor: "NIST SP 800-53 AC-6 (least privilege); APRA CPS 234 privileged access; out of CSA NHI scope (human)"
+    spiffe_ref: ""
+    citation_keys: "nist-sp-800-53-ac6;gsa-privileged-identity-playbook-2024"
+  - spine_id: SPN-002
+    label: Privileged business user
+    identity_class: human
+    privileged: true
+    description: "A line-of-business human whose role grants high-impact application privilege (approvals, payments, configuration) outside classic IT admin."
+    csa_nhi_anchor: "NIST SP 800-53 AC-6; APRA CPS 234 privileged access; out of CSA NHI scope (human)"
+    spiffe_ref: ""
+    citation_keys: "nist-sp-800-53-ac6"
+  - spine_id: SPN-003
+    label: Break-glass / emergency account
+    identity_class: human
+    privileged: true
+    description: "A pre-provisioned, tightly governed emergency-access account used only when normal privileged paths fail."
+    csa_nhi_anchor: "NIST SP 800-53 AC-6; emergency-access governance; out of CSA NHI scope (human)"
+    spiffe_ref: ""
+    citation_keys: "nist-sp-800-53-ac6"
+  - spine_id: SPN-004
+    label: Third-party / vendor privileged access
+    identity_class: human
+    privileged: true
+    description: "An external vendor or partner human granted privileged remote access into the estate (service-provider risk)."
+    csa_nhi_anchor: "APRA CPS 234 / CPS 230 third-party access; NIST SP 800-53 AC-6; out of CSA NHI scope (human)"
+    spiffe_ref: ""
+    citation_keys: "nist-sp-800-53-ac6"
+  # ---- human, non-privileged ----
+  - spine_id: SPN-005
+    label: Workforce human (JML)
+    identity_class: human
+    privileged: false
+    description: "An ordinary employee/contractor identity governed through the joiner-mover-leaver lifecycle and birthright/RBAC entitlements."
+    csa_nhi_anchor: "NIST SP 800-53 AC-2 (account management / JML); ISO 27001 A.5.16-18; out of CSA NHI scope (human)"
+    spiffe_ref: ""
+    citation_keys: "nist-sp-800-53-ac2"
+  - spine_id: SPN-006
+    label: Business / governance role holder
+    identity_class: human
+    privileged: false
+    description: "A human owning or holding a governed business role — application/role/entitlement owner or an SoD-sensitive function — central to certification and segregation of duties."
+    csa_nhi_anchor: "NIST SP 800-53 AC-5 (separation of duties) / AC-6; ISO 27001 A.5.3; out of CSA NHI scope (human)"
+    spiffe_ref: ""
+    citation_keys: "nist-sp-800-53-ac2"
+  # ---- npe, non-privileged ----
+  - spine_id: SPN-007
+    label: Cloud / workload identity
+    identity_class: npe
+    privileged: false
+    description: "A workload-bound machine identity — cloud IAM principal, Kubernetes ServiceAccount, mTLS/service-mesh identity, ephemeral attested workload."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: cloud workload identities"
+    spiffe_ref: "SPIFFE SVID / workload identity (trust domain + attestation)"
+    citation_keys: "aws-iam-roles-2024;k8s-sa-tokens-2024"
+  - spine_id: SPN-008
+    label: CI/CD & software-supply-chain identity
+    identity_class: npe
+    privileged: false
+    description: "A build/release or supply-chain machine identity — CI/CD pipeline, git platform credential, code-signing, SLSA build-provenance, artifact/registry."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: pipeline / build identities"
+    spiffe_ref: "SPIFFE SVID for CI/CD workloads (OIDC-federated)"
+    citation_keys: "github-oidc-2024"
+  - spine_id: SPN-009
+    label: Application / service account
+    identity_class: npe
+    privileged: false
+    description: "A standing application or service account — database/AD-LDAP service account, A2A credential, gMSA, message-broker client, governed service account, orphaned legacy account. The identity most commonly modelled separately in every domain."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: service accounts"
+    spiffe_ref: ""
+    citation_keys: ""
+  - spine_id: SPN-010
+    label: Third-party SaaS / OAuth integration identity
+    identity_class: npe
+    privileged: false
+    description: "An external integration identity — SaaS API key / OAuth client, federated B2B / Open Banking client, OAuth app / consent grant, webhook, browser/SaaS extension."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: OAuth apps & API keys"
+    spiffe_ref: ""
+    citation_keys: ""
+  - spine_id: SPN-011
+    label: Operational / infrastructure agent
+    identity_class: npe
+    privileged: false
+    description: "An infrastructure automation agent — IaC/config-management, monitoring/observability, backup/DR, container image-pull."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: automation agents"
+    spiffe_ref: ""
+    citation_keys: ""
+  - spine_id: SPN-012
+    label: Device / OT / hardware identity
+    identity_class: npe
+    privileged: false
+    description: "A device-bound identity — IoT/OT device, network/infrastructure device, branch peripheral, hardware-attested platform."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: device identities"
+    spiffe_ref: ""
+    citation_keys: ""
+  - spine_id: SPN-013
+    label: RPA / functional automation identity
+    identity_class: npe
+    privileged: false
+    description: "A robotic-process-automation or shared functional identity that automates human-style workflows (a frequent human-use antipattern)."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: RPA / bot identities"
+    spiffe_ref: ""
+    citation_keys: ""
+  # ---- npe, privileged ----
+  - spine_id: SPN-014
+    label: Privileged workload / CIEM identity
+    identity_class: npe
+    privileged: true
+    description: "A machine identity holding standing or just-in-time privilege — privileged cloud IAM principal, CIEM cloud workload role, privileged CI/CD pipeline, secretless/attested privileged workload, privileged backup/DR agent."
+    csa_nhi_anchor: "CSA Non-Human Identity taxonomy: privileged workloads; NIST SP 800-53 AC-6"
+    spiffe_ref: "SPIFFE SVID for attested privileged workloads"
+    citation_keys: "nist-sp-800-53-ac6"
+  # ---- agentic ----
+  - spine_id: SPN-015
+    label: Agentic-AI / autonomous agent
+    identity_class: agentic
+    privileged: false
+    description: "An autonomous AI agent that acts with its own (or delegated) identity across systems. EMERGING — M2 establishes the class and tags existing entries; M3 populates the agentic instrument."
+    csa_nhi_anchor: "CSA Non-Human Identity (emerging agentic); OWASP Top 10 for LLM/agentic"
+    spiffe_ref: ""
+    citation_keys: ""
