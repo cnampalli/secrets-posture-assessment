@@ -209,3 +209,12 @@ def test_main_exits_zero_when_clean(monkeypatch, capsys):
     monkeypatch.setattr(vd, "validate_all", lambda root, data_dir=None: [])
     assert vd.main([]) == 0
     assert "All CSV data contracts valid" in capsys.readouterr().out
+
+
+def test_iga_agentic_ucs_have_archetypes():
+    import csv, os
+    base = os.path.join(ROOT, "matrix", "domains", "iga")
+    ucs = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "use-cases.csv"), encoding="utf-8"))}
+    mapped = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "uc-archetype-map.csv"), encoding="utf-8"))}
+    for uc in ("UC-I-017", "UC-I-018", "UC-I-019"):
+        assert uc in ucs and uc in mapped, f"{uc} missing UC row or archetype mapping"
