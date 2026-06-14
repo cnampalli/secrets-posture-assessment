@@ -35,7 +35,8 @@ taxonomy and is left untouched by M2.
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| Spine shape | **Anchored archetype registry** (~10–15 named archetypes, class × privileged, CSA-NHI/SPIFFE-anchored) | Links precisely; builds on the repo's most valuable asset (the NHI taxonomy). |
+| Spine shape | **Anchored archetype registry** (~10–15 named archetypes, class × privileged) | Links precisely; builds on the repo's most valuable asset (the NHI taxonomy). |
+| Anchoring | **CSA NHI primary** (governance) for NPE + IAM-governance citations (NIST AC / ISM / CPS 234) for human classes; **optional `spiffe_ref`** on genuine workload archetypes only | SPIFFE only covers NPE/workload (silent on human + privileged-human + governance lifecycle ≈ 2/3 of the spine); the audience is board/CISO governance; SPIFFE's technical angle already lives in the orthogonal `npe_conformance` field + M3. Co-equal SPIFFE anchoring = category error + audit-fragile thin anchors. |
 | Agentic scope | **Establish the agentic class + tag existing EMERGING entries only** | Clean M2/M3 boundary; M3 authors new agentic identities/UCs. Spine is ready for M3 to populate. |
 | Surfacing | **"Identity spine" section in the cross-domain report** | A cross-platform artifact belongs in the only-possible-on-one-platform view. |
 | `npe_conformance` | **Keep as orthogonal axis; add `spine_id`; non-identity rows get a sentinel, exempt from mapping** | Don't rewrite a verified field; a credential isn't an identity. |
@@ -55,7 +56,8 @@ Follows the established `matrix/` separation: **config/data** + **pure model bui
     identity_class: human          # human | npe | agentic
     privileged: true
     description: "<one line — what this archetype is>"
-    anchor: "<CSA NHI category / SPIFFE concept it maps to>"
+    csa_nhi_anchor: "<CSA NHI category, or IAM-governance citation for human classes>"
+    spiffe_ref: "<OPTIONAL — SPIFFE concept; populate only for genuine workload archetypes, else omit/empty>"
     citation_keys: "<bib key(s) anchoring the archetype; may be empty for self-evident classes>"
   ```
   ~10–15 entries spanning the three classes × privileged flag, sized to cover the 70
@@ -71,7 +73,8 @@ Follows the established `matrix/` separation: **config/data** + **pure model bui
 
 - **`check_identity_spine_registry(spine)`** — `spine_id` unique; `identity_class` in
   `{human, npe, agentic}`; `privileged` is a real bool; every archetype has a non-empty
-  `label`, `description`, and `anchor`. Fail-closed on a malformed registry file.
+  `label`, `description`, and `csa_nhi_anchor` (the optional `spiffe_ref` is not required).
+  Fail-closed on a malformed registry file.
 - **`check_identity_spine_mapping(identity_rows, spine)`** — every catalog row has a
   non-empty `spine_id`; each value is either `NOT-AN-IDENTITY` or resolves to a registered
   archetype. Raises on an unmapped row or an unknown `spine_id`. Injection-tested (a bogus
@@ -91,7 +94,7 @@ Both wired into `validate_all` so they run in the existing CI `validate_data` ×
     ```
     {
       archetypes: [
-        { spine_id, label, identity_class, privileged, anchor,
+        { spine_id, label, identity_class, privileged, csa_nhi_anchor, spiffe_ref,
           by_domain: { secrets: [short_name...], pam: [...], iga: [...] },
           span: <count of domains that map ≥1 identity to this archetype> }
       ],
@@ -150,7 +153,7 @@ field reaches the builder. This is the one touch to existing I/O.
   class roll-up counts, sentinel exemption (NOT-AN-IDENTITY never appears), `unmapped` capture.
 - **`tests/test_identity_spine_validate.py`** (or extend `test_validate_data_domains.py`) —
   every catalog row mapped; sentinel allowed; unknown `spine_id` raises (injection); registry
-  enum/uniqueness/anchor-required raise on malformed input.
+  enum/uniqueness/csa_nhi_anchor-required raise on malformed input.
 - **Render** — cross-domain report contains the "Identity spine" section; a cross-domain
   (span ≥ 2) archetype is present; IGA identities appear (proving IGA is included).
 
@@ -167,8 +170,10 @@ The archetype set and the 70 per-row mappings are authored during execution:
 1. Derive candidate archetypes by clustering the existing 70 `short_name`/`description`
    entries across domains (e.g. cloud-workload NPE, CI/CD NPE, privileged human admin,
    workforce human, agentic-AI agent).
-2. Anchor each archetype to a CSA-NHI category or SPIFFE concept; cite where a real source
-   exists, mark designed/illustrative where it doesn't (same honesty bar as prior phases).
+2. Anchor each archetype to a CSA-NHI category (governance) — for human classes use the
+   instrument's IAM-governance citations (NIST AC / ISM / CPS 234); set the optional `spiffe_ref`
+   only on genuine workload archetypes. Cite where a real source exists, mark designed/illustrative
+   where it doesn't (same honesty bar as prior phases).
 3. Map every real identity to exactly one archetype; assign the sentinel to non-identity rows.
 4. Tag existing EMERGING agentic entries (e.g. IGA `IGID-012`) to an agentic archetype; author
    no new agentic identities (M3).
