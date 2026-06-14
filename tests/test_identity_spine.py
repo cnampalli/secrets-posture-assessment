@@ -161,3 +161,24 @@ def test_view_on_real_data_links_service_account_across_domains():
     v = identity_spine.build_spine_view(doms, spine)
     sa = next(a for a in v["archetypes"] if a["spine_id"] == "SPN-009")
     assert sa["span"] == 3               # secrets + pam + iga all map a service account
+
+
+# ---- cross-domain render of the spine section ----
+
+def test_cross_render_embeds_spine_section():
+    import cross_render  # noqa: E402
+    model = {"domains": [], "parents": [], "concentration": [], "consolidation": []}
+    spine_view = identity_spine.build_spine_view(_VIEW_DOMAINS, _VIEW_SPINE)
+    html = cross_render.render(model, spine_view)
+    assert "Identity spine" in html
+    assert "/*__SPINE__*/" not in html        # token substituted
+    assert "Service account" in html          # an archetype label is embedded
+    assert "Agentic-AI agent" in html         # an IGA-only identity reaches the section
+
+
+def test_cross_render_spine_optional():
+    import cross_render  # noqa: E402
+    model = {"domains": [], "parents": [], "concentration": [], "consolidation": []}
+    html = cross_render.render(model)          # spine omitted -> still valid HTML
+    assert "/*__SPINE__*/" not in html
+    assert html.lstrip().startswith("<!doctype html>")
