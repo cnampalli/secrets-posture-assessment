@@ -17,6 +17,11 @@ import sys
 
 import yaml
 
+import identity_spine
+
+# M2 identity-spine archetype classes (matches config/identity-spine.yaml).
+VALID_IDENTITY_CLASSES = ("human", "npe", "agentic")
+
 CORE_REQUIRED = {
     "use-cases.csv": ("uc_id", "category", "short_title", "story", "acceptance_criteria",
                       "nhis_in_scope", "outcome_lens", "backmap_codes", "priority_fi", "citation_keys"),
@@ -593,6 +598,52 @@ def check_evidence_packs(trace, catalog):
     return errs
 
 
+def check_identity_spine_registry(spine):
+    """M2: the identity-spine archetype registry is well-formed. Returns violation strings
+    (empty = clean). Fail-closed: an empty/missing registry is itself a violation so the
+    cross-domain identity gate can never silently no-op."""
+    archetypes = spine.get("archetypes") or []
+    if not archetypes:
+        return ["identity-spine.yaml: missing or empty — identity-spine gate cannot run"]
+    errs = []
+    seen = set()
+    for a in archetypes:
+        sid = (a.get("spine_id") or "").strip()
+        if not sid:
+            errs.append("identity-spine.yaml: archetype with empty spine_id")
+            continue
+        if sid in seen:
+            errs.append(f"identity-spine.yaml: duplicate spine_id {sid}")
+        seen.add(sid)
+        if a.get("identity_class") not in VALID_IDENTITY_CLASSES:
+            errs.append(f"identity-spine.yaml: {sid} identity_class "
+                        f"{a.get('identity_class')!r} not in {VALID_IDENTITY_CLASSES}")
+        if not isinstance(a.get("privileged"), bool):
+            errs.append(f"identity-spine.yaml: {sid} privileged must be a bool, got "
+                        f"{a.get('privileged')!r}")
+        for col in ("label", "description", "csa_nhi_anchor"):
+            if not (a.get(col) or "").strip():
+                errs.append(f"identity-spine.yaml: {sid} missing {col}")
+    return errs
+
+
+def check_identity_spine_mapping(identity_rows, spine):
+    """M2: every identity-catalog row maps to a registered archetype or the explicit
+    NOT-AN-IDENTITY sentinel (credentials/attributes that aren't identities). Returns
+    violation strings (empty = clean)."""
+    by_id = spine.get("by_id") or {}
+    errs = []
+    for r in identity_rows:
+        nhi = (r.get("nhi_id") or "").strip()
+        sid = (r.get("spine_id") or "").strip()
+        if not sid:
+            errs.append(f"identity-catalog.csv: {nhi} has empty spine_id")
+        elif sid != identity_spine.NOT_AN_IDENTITY and sid not in by_id:
+            errs.append(f"identity-catalog.csv: {nhi} spine_id {sid} is not a registered "
+                        "archetype (nor the NOT-AN-IDENTITY sentinel)")
+    return errs
+
+
 def validate_all(root=".", data_dir=None):
     """Run all checks against a domain's five CSVs; return all violations.
 
@@ -650,6 +701,10 @@ def validate_all(root=".", data_dir=None):
     errs += check_control_id_registry(trace, registry)
     errs += check_control_semantics(trace, semantics)
     errs += check_ownership_sources(ownership)
+    # M2 cross-domain identity spine: registry well-formed (mapping gate added in validate_all
+    # once the spine_id column is present on the catalogs).
+    spine = identity_spine.load_spine(cfg)
+    errs += check_identity_spine_registry(spine)
     for name, rows in vendor_files:
         errs += check_provider_claims_cited(name, rows)
     # H6: the aggregate must stay in sync with the per-vendor files it denormalises.
