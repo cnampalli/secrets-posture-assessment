@@ -236,7 +236,8 @@ _IGA_AREA_BY_NUM = (
     # WS2 gap-fill: UC-I-014 request-time recertification -> Certification;
     # UC-I-015 self-approval prevention -> SoD; UC-I-016 data-access governance
     # -> Role/Request (docs/superpowers/plans/ws2-research-notes.md).
-    (14, 14, "Certification"), (15, 15, "SoD"), (16, 16, "Role/Request"))
+    (14, 14, "Certification"), (15, 15, "SoD"), (16, 16, "Role/Request"),
+    (17, 19, "Agentic governance"))
 
 
 def _iga_area_for(uc_id):
@@ -311,7 +312,7 @@ def build_posture_maturity(anz, ucs, domain_slug):
     # group membership
     grouped = defaultdict(list)
     if domain_slug == "iga":
-        labels_order = list(IGA_AREAS) + ["Other"]
+        labels_order = list(_IGA_POSTURE_AREAS) + ["Other"]
         for uc_id in all_ids:
             grouped[_iga_area_for(uc_id)].append(uc_id)
     elif domain_slug in MATURITY_GROUPS:
@@ -532,6 +533,9 @@ def build_vendormix(ranked, ownership, anchors, short):
 # IGA is process-shaped: the NATIVE/ADD-ON per-use-case capability matrix
 # (build_vendormix) does NOT fit it. IGA is assessed per governance AREA instead.
 IGA_AREAS = ["JML", "Certification", "SoD", "Role/Request"]
+# Posture grouping shows an emerging agentic area; the vendor-fit grid (IGA_AREAS) does
+# NOT — there is no agentic IGA vendor rating yet, so it must not get an empty column.
+_IGA_POSTURE_AREAS = IGA_AREAS + ["Agentic governance"]
 
 
 def build_iga_vendor_fit(data_dir, fit_csv="iga-vendor-fit.csv"):
