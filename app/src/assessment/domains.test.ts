@@ -11,7 +11,7 @@ describe('domain registry', () => {
   it('carries the right rubric per domain', () => {
     expect(getDomain('secrets').rubric.length).toBe(47);
     expect(getDomain('pam').rubric.length).toBe(18);
-    expect(getDomain('iga').rubric.length).toBe(16);
+    expect(getDomain('iga').rubric.length).toBe(19);   // M3.1: +3 agentic governance UCs
   });
 
   it('falls back to the default domain on an unknown id', () => {
