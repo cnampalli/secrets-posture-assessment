@@ -72,3 +72,26 @@ def test_registry_missing_anchor_fails():
     bad = [dict(_GOOD[1], spine_id="SPN-097", csa_nhi_anchor="")]
     errs = validate_data.check_identity_spine_registry(_spine(bad))
     assert any("csa_nhi_anchor" in e for e in errs)
+
+
+# ---- check_identity_spine_mapping ----
+
+def test_mapping_clean_passes():
+    spine = identity_spine.load_spine(CFGDIR)
+    rows = [{"nhi_id": "X-1", "spine_id": "SPN-001"},
+            {"nhi_id": "X-2", "spine_id": identity_spine.NOT_AN_IDENTITY}]
+    assert validate_data.check_identity_spine_mapping(rows, spine) == []
+
+
+def test_mapping_empty_spine_id_fails():
+    spine = identity_spine.load_spine(CFGDIR)
+    errs = validate_data.check_identity_spine_mapping([{"nhi_id": "X-3", "spine_id": ""}], spine)
+    assert len(errs) == 1 and "X-3" in errs[0]
+
+
+def test_mapping_unknown_spine_id_fails():
+    # injection: a bogus archetype id must be rejected
+    spine = identity_spine.load_spine(CFGDIR)
+    errs = validate_data.check_identity_spine_mapping(
+        [{"nhi_id": "X-4", "spine_id": "SPN-999"}], spine)
+    assert len(errs) == 1 and "SPN-999" in errs[0]

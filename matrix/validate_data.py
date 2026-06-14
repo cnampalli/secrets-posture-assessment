@@ -31,7 +31,8 @@ CORE_REQUIRED = {
                              "uc_ids", "nhi_ids", "maturity_level", "evidence_url", "evidence_quote",
                              "citation_keys", "quote_type"),
     "identity-catalog.csv": ("nhi_id", "bucket", "short_name", "description", "typical_secrets",
-                             "lifecycle", "governance_maturity", "sources_likely", "citation_keys"),
+                             "lifecycle", "governance_maturity", "sources_likely", "citation_keys",
+                             "spine_id"),
 }
 VENDOR_REQUIRED = ("vendor_slug", "vendor_name", "target_id", "target_type", "coverage",
                    "maturity", "evidence_url", "evidence_quote", "citation_keys", "notes")
@@ -705,6 +706,7 @@ def validate_all(root=".", data_dir=None):
     # once the spine_id column is present on the catalogs).
     spine = identity_spine.load_spine(cfg)
     errs += check_identity_spine_registry(spine)
+    errs += check_identity_spine_mapping(identity, spine)
     for name, rows in vendor_files:
         errs += check_provider_claims_cited(name, rows)
     # H6: the aggregate must stay in sync with the per-vendor files it denormalises.
