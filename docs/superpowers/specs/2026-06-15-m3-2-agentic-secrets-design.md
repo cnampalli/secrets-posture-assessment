@@ -29,7 +29,7 @@ follows in M3.3.
 | UC count | **3 focused new UCs** (`UC-F-028/029/030`) | Mirrors M3.1's high-signal minimalism; covers issuance, rotation/revocation, scope-confinement. |
 | Posture area | **New "Agentic" group in `MATURITY_GROUPS["secrets"]`** + **retrofit existing agentic UCs** | The board posture view should reflect *true* agentic coverage, not split it across lifecycle/governance. |
 | Verification bar | **WS3-style adversarial** | Reuse already-verified controls; any genuinely new source re-fetched, REFUTE posture, verbatim-only, keys resolve through the H1 gate. |
-| Rubric / archetypes | **None — secrets is methodology-only** | `emit_rubric.py` registers secrets with `data_dir=None`; there is **no** `uc-archetype-map.csv` and **no** `evidence-catalog.csv` for secrets. M3.2 therefore has no archetype-map or evidence-catalog work (simpler than M3.1). |
+| Rubric / archetypes | **Methodology-level only** (no *domain-dir* map/catalog) | `emit_rubric.py` registers secrets with `data_dir=None`, so there is no `matrix/domains/secrets/uc-archetype-map.csv` or `evidence-catalog.csv`. **Correction (found at execution):** secrets UCs are still mapped at the *methodology* level — `methodology/uc-archetype-map.csv` and `methodology/posture-rescore.csv` must carry a row for every UC (the rubric validator asserts full coverage). M3.2 therefore adds 3 methodology archetype rows (UC-F-028→A3, UC-F-029→A4, UC-F-030→A3) + 3 rescore rows; it still has no *evidence-catalog* work. |
 | Spine | **No change to `identity-spine.yaml`** | `SPN-015` already exists; `NHI-019` already anchors to it. |
 
 ## Architecture
