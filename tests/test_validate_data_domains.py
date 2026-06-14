@@ -226,3 +226,14 @@ def test_secrets_agentic_ucs_present():
     ucs = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "use-cases.csv"), encoding="utf-8"))}
     for uc in ("UC-F-028", "UC-F-029", "UC-F-030"):
         assert uc in ucs, f"{uc} missing from secrets use-cases.csv"
+
+
+def test_pam_agentic_ucs_and_identity_present():
+    import csv, os
+    base = os.path.join(ROOT, "matrix", "domains", "pam")
+    ucs = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "use-cases.csv"), encoding="utf-8"))}
+    mapped = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "uc-archetype-map.csv"), encoding="utf-8"))}
+    ids = {r["nhi_id"] for r in csv.DictReader(open(os.path.join(base, "identity-catalog.csv"), encoding="utf-8"))}
+    for uc in ("UC-P-019", "UC-P-020", "UC-P-021"):
+        assert uc in ucs and uc in mapped, f"{uc} missing UC row or archetype mapping"
+    assert "PID-021" in ids, "PID-021 missing from PAM identity-catalog"

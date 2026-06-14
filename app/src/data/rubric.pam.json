@@ -1540,5 +1540,138 @@
       }
     ],
     "evidence_additional": []
+  },
+  {
+    "uc_id": "UC-P-019",
+    "title": "Agent privileged-session brokering",
+    "category": "Functional",
+    "archetype": "A2",
+    "archetype_name": "Population Migration / Coverage",
+    "kind": "ladder",
+    "questions": [
+      {
+        "qid": "A2-Q1",
+        "dimension": "enforcement",
+        "informs_state": "GAP_PARTIAL",
+        "text": "Is brokered, recorded agent privileged sessions with no standing agent credential the enforced default for new autonomous/agentic privileged operators (PID-021)?"
+      },
+      {
+        "qid": "A2-Q2",
+        "dimension": "coverage",
+        "informs_state": "PARTIAL_MET",
+        "text": "What share of existing autonomous/agentic privileged operators (PID-021) has migrated off agents using standing privileged service accounts or unbrokered access?",
+        "evidence": [
+          {
+            "ev_id": "EV-PAM-CRED-ELIM-REGISTER",
+            "requirement": "A register of in-scope privileged accounts confirming default and static shared credentials have been changed, vaulted or removed.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a vault onboarded-accounts export listing account, credential type and status",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "asd-ism-comms-2025",
+              "cyberark-pam-2025"
+            ],
+            "satisfies": [
+              "ISM-1304"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A2-Q3",
+        "dimension": "governance",
+        "informs_state": "PARTIAL_MET",
+        "text": "Is there an inventory plus active burn-down for the legacy remainder?"
+      },
+      {
+        "qid": "A2-Q4",
+        "dimension": "exception",
+        "informs_state": "PARTIAL_MET",
+        "text": "Are exceptions registered with owner and expiry?"
+      }
+    ],
+    "evidence_additional": []
+  },
+  {
+    "uc_id": "UC-P-020",
+    "title": "Agent JIT elevation / zero standing privilege",
+    "category": "Functional",
+    "archetype": "A2",
+    "archetype_name": "Population Migration / Coverage",
+    "kind": "ladder",
+    "questions": [
+      {
+        "qid": "A2-Q1",
+        "dimension": "enforcement",
+        "informs_state": "GAP_PARTIAL",
+        "text": "Is just-in-time, time-boxed, purpose-bound agent privilege (zero standing privilege) the enforced default for new autonomous/agentic privileged operators (PID-021)?"
+      },
+      {
+        "qid": "A2-Q2",
+        "dimension": "coverage",
+        "informs_state": "PARTIAL_MET",
+        "text": "What share of existing autonomous/agentic privileged operators (PID-021) has migrated off agents holding standing administrative rights between tasks?",
+        "evidence": [
+          {
+            "ev_id": "EV-PAM-SAW-INVENTORY",
+            "requirement": "A SAW/PAW fleet inventory mapping each tier-0 / privileged administrator to a dedicated hardened admin workstation, with hardening-baseline compliance status (application control, no standing local admin, patch state) and exceptions registered with owner and expiry.",
+            "dimension": "coverage",
+            "tier": "primary",
+            "example_artifact": "e.g., a SAW device inventory with per-device baseline-compliance status and the tier-0 operator mapping",
+            "sensitivity_tag": "[INTERNAL]",
+            "citation_keys": [
+              "acsc-e8-changes-nov2023",
+              "ms-pth-mitigation-2014"
+            ],
+            "satisfies": [
+              "E8-RAP-ML3"
+            ]
+          }
+        ]
+      },
+      {
+        "qid": "A2-Q3",
+        "dimension": "governance",
+        "informs_state": "PARTIAL_MET",
+        "text": "Is there an inventory plus active burn-down for the legacy remainder?"
+      },
+      {
+        "qid": "A2-Q4",
+        "dimension": "exception",
+        "informs_state": "PARTIAL_MET",
+        "text": "Are exceptions registered with owner and expiry?"
+      }
+    ],
+    "evidence_additional": []
+  },
+  {
+    "uc_id": "UC-P-021",
+    "title": "Agentic privileged-behaviour detection",
+    "category": "Non-functional",
+    "archetype": "A3",
+    "archetype_name": "Capability Adoption",
+    "kind": "ladder",
+    "questions": [
+      {
+        "qid": "A3-Q1",
+        "dimension": "coverage",
+        "informs_state": "GAP_PARTIAL",
+        "text": "Is behavioural detection of anomalous agent privileged sessions (off-purpose tool use, scope inflation, abnormal velocity) available in production for agent privileged sessions (PID-021)?"
+      },
+      {
+        "qid": "A3-Q2",
+        "dimension": "depth",
+        "informs_state": "PARTIAL_MET",
+        "text": "What share of agent privileged sessions (PID-021) actually uses behavioural detection of anomalous agent privileged sessions (off-purpose tool use, scope inflation, abnormal velocity) (vs shelf-ware)?"
+      },
+      {
+        "qid": "A3-Q3",
+        "dimension": "depth",
+        "informs_state": "PARTIAL_MET",
+        "text": "Does the configuration meet deviations alerted to the SOC in near real time, attributed to the agent and owner, and mapped to a containment runbook?"
+      }
+    ],
+    "evidence_additional": []
   }
 ]
