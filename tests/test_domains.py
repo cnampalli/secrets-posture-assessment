@@ -39,7 +39,7 @@ def test_anchors_tier_selects_cloud_native_vendors():
 
 
 def test_informative_frameworks_is_domain_config():
-    assert domains.SECRETS.informative_frameworks == frozenset({"mitre-attack"})
+    assert domains.SECRETS.informative_frameworks == frozenset({"mitre-attack", "owasp-llm", "ms-incident"})
 
 
 def test_data_filenames_present():
@@ -72,7 +72,7 @@ def test_pam_domain_registered_and_substrateless():
     d = domains.PAM
     assert d.substrate_slug == ""            # PAM has no L0 crypto substrate
     assert d.substrate_note == ""            # so no subtitle parenthetical
-    assert d.informative_frameworks == frozenset()   # PAM trace has no mitre-attack lens
+    assert d.informative_frameworks == frozenset({"mitre-attack", "owasp-llm", "ms-incident"})  # OC-01: excluded from compliance %
 
 
 def test_pam_vendor_layer_and_anchors():

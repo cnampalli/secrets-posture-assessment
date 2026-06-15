@@ -218,3 +218,62 @@ def test_iga_agentic_ucs_have_archetypes():
     mapped = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "uc-archetype-map.csv"), encoding="utf-8"))}
     for uc in ("UC-I-017", "UC-I-018", "UC-I-019"):
         assert uc in ucs and uc in mapped, f"{uc} missing UC row or archetype mapping"
+
+
+def test_secrets_agentic_ucs_present():
+    import csv, os
+    base = os.path.join(ROOT, "matrix", "domains", "secrets")
+    ucs = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "use-cases.csv"), encoding="utf-8"))}
+    for uc in ("UC-F-028", "UC-F-029", "UC-F-030"):
+        assert uc in ucs, f"{uc} missing from secrets use-cases.csv"
+
+
+def test_informative_frameworks_not_leaked_into_compliance():
+    # OC-01 regression guard: any framework marked "(informative)" in frameworks.yaml that a
+    # domain actually maps in its regulatory-trace MUST be in that domain's informative_frameworks
+    # (so it is excluded from the buyer-facing compliance %). Prevents per-domain config drift.
+    import os, csv, yaml
+    from domains import DOMAINS
+    fw = yaml.safe_load(open(os.path.join(ROOT, "matrix", "config", "frameworks.yaml"), encoding="utf-8"))
+    informative = {slug for slug, meta in fw.items()
+                   if isinstance(meta, dict) and "(informative)" in (meta.get("subtitle") or "")}
+    assert informative, "expected at least one (informative)-marked framework"
+    for slug in ("secrets", "pam", "iga"):
+        used = {r["framework_slug"] for r in csv.DictReader(
+            open(os.path.join(ROOT, "matrix", "domains", slug, "regulatory-trace.csv"), encoding="utf-8"))}
+        leaked = (informative & used) - set(DOMAINS[slug].informative_frameworks)
+        assert not leaked, f"{slug}: informative frameworks leak into compliance %: {sorted(leaked)}"
+
+
+def test_npe_conformance_values_in_legend():
+    # IAM-01 regression guard: every npe_conformance value across all domains must be in
+    # the closed legend (no off-legend "NPE"), so cross-domain conformance claims hold.
+    import csv, os
+    legend = {"CONFORMANT", "HUMAN-IDENTITY", "CREDENTIAL-NOT-IDENTITY",
+              "CROSS-CUTTING-ATTRIBUTE", "HUMAN-USE-ANTIPATTERN"}
+    for dom in ("secrets", "pam", "iga"):
+        path = os.path.join(ROOT, "matrix", "domains", dom, "identity-catalog.csv")
+        for r in csv.DictReader(open(path, encoding="utf-8")):
+            assert r["npe_conformance"] in legend, \
+                f"{dom} {r['nhi_id']}: off-legend npe_conformance '{r['npe_conformance']}'"
+
+
+def test_validator_rejects_off_legend_npe_conformance():
+    # the gate itself must catch a bad value (not just the data being clean today)
+    import sys, os
+    sys.path.insert(0, os.path.join(ROOT, "matrix"))
+    import validate_data as vd
+    bad = [{"nhi_id": "X-1", "npe_conformance": "NPE"}]
+    errs = vd.check_enum("identity-catalog.csv", bad, "npe_conformance", vd.VALID_NPE_CONFORMANCE)
+    assert len(errs) == 1 and "npe_conformance" in errs[0]
+
+
+def test_pam_agentic_ucs_and_identity_present():
+    import csv, os
+    base = os.path.join(ROOT, "matrix", "domains", "pam")
+    ucs = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "use-cases.csv"), encoding="utf-8"))}
+    mapped = {r["uc_id"] for r in csv.DictReader(open(os.path.join(base, "uc-archetype-map.csv"), encoding="utf-8"))}
+    ids = {r["nhi_id"] for r in csv.DictReader(open(os.path.join(base, "identity-catalog.csv"), encoding="utf-8"))}
+    for uc in ("UC-P-019", "UC-P-020", "UC-P-021"):
+        assert uc in ucs and uc in mapped, f"{uc} missing UC row or archetype mapping"
+    assert "PID-021" in ids, "PID-021 missing from PAM identity-catalog"

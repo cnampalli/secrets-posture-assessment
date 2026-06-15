@@ -6,7 +6,7 @@ const view = makeRubric(DEFAULT_DOMAIN);
 const RUBRIC = view.rubric;
 
 describe('rubric', () => {
-  it('loads 47 use cases', () => { expect(RUBRIC.length).toBe(47); });
+  it('loads 50 use cases', () => { expect(RUBRIC.length).toBe(50); });
   it('every use case has the required shape', () => {
     for (const uc of RUBRIC) {
       expect(uc.uc_id).toBeTruthy();

@@ -9,8 +9,8 @@ describe('domain registry', () => {
   });
 
   it('carries the right rubric per domain', () => {
-    expect(getDomain('secrets').rubric.length).toBe(47);
-    expect(getDomain('pam').rubric.length).toBe(18);
+    expect(getDomain('secrets').rubric.length).toBe(50);   // M3.2: +3 agentic secrets UCs
+    expect(getDomain('pam').rubric.length).toBe(21);        // M3.3: +3 agentic privileged-access UCs
     expect(getDomain('iga').rubric.length).toBe(19);   // M3.1: +3 agentic governance UCs
   });
 
@@ -28,6 +28,6 @@ describe('makeRubric factory', () => {
     const groups = pam.byCategory();
     expect(Object.keys(groups).length).toBeGreaterThan(0);
     const total = Object.values(groups).reduce((n, l) => n + l.length, 0);
-    expect(total).toBe(18);
+    expect(total).toBe(21);
   });
 });

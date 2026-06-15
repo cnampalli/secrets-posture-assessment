@@ -8,8 +8,8 @@ UCS = rl.load_rubric(METH)
 BY_ID = {u["uc_id"]: u for u in UCS}
 
 
-def test_all_47_use_cases_resolve():
-    assert len(UCS) == 47
+def test_all_50_use_cases_resolve():
+    assert len(UCS) == 50  # M3.2: +3 agent-credential UCs (UC-F-028/029/030)
 
 
 def test_category_from_prefix():
@@ -95,10 +95,10 @@ def _ev_on(uc, dimension):
     return out
 
 
-def test_pam_loads_all_18_use_cases():
-    # the PAM questionnaire must reach parity with the PAM matrix report (all 18 UCs),
-    # not the original 3-UC demo slice.
-    assert {u["uc_id"] for u in PAM_UCS} == {f"UC-P-{i:03d}" for i in range(1, 19)}
+def test_pam_loads_all_21_use_cases():
+    # the PAM questionnaire must reach parity with the PAM matrix report (all 21 UCs
+    # incl. M3.3 agentic UC-P-019/020/021), not the original 3-UC demo slice.
+    assert {u["uc_id"] for u in PAM_UCS} == {f"UC-P-{i:03d}" for i in range(1, 22)}
 
 
 def test_pam_all_use_cases_are_ladder():
@@ -160,7 +160,7 @@ def test_followup_tier_preserved_for_drilldown():
 def test_secrets_still_loads_without_evidence(tmp_path):
     # backward compatibility: methodology-only load is unchanged and carries no evidence
     secrets = rl.load_rubric(METH)
-    assert len(secrets) == 47
+    assert len(secrets) == 50  # M3.2: +3 agent-credential UCs (UC-F-028/029/030)
     uc = next(u for u in secrets if u["uc_id"] == "UC-F-001")
     assert all(not q.get("evidence") for q in uc["questions"])
 

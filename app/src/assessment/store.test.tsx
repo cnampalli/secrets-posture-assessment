@@ -95,17 +95,17 @@ describe('domain-aware store', () => {
   it('defaults to secrets and exposes its rubric', () => {
     const api = probe();
     expect(api.current!.domainId).toBe('secrets');
-    expect(api.current!.rubric.length).toBe(47);
+    expect(api.current!.rubric.length).toBe(50);
   });
 
-  it('setDomain swaps to PAM and its 18-UC rubric', () => {
+  it('setDomain swaps to PAM and its 21-UC rubric', () => {
     const api = probe();
     act(() => api.current!.setDomain('pam'));
     expect(api.current!.domainId).toBe('pam');
-    expect(api.current!.rubric.length).toBe(18);
+    expect(api.current!.rubric.length).toBe(21);
     expect(api.current!.current.uc_id.startsWith('UC-P-')).toBe(true);
     const total = Object.values(api.current!.byCategory()).reduce((n, l) => n + l.length, 0);
-    expect(total).toBe(18);
+    expect(total).toBe(21);
   });
 
   it('isolates responses across domains', () => {

@@ -45,7 +45,7 @@ substrate_slug: ""
 
 # analysis policy
 anchors_tier: "suite"
-informative_frameworks: []
+informative_frameworks: ["mitre-attack", "owasp-llm", "ms-incident"]
 legacy_recdata: false
 
 # report labels

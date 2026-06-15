@@ -18,3 +18,37 @@ def test_existing_areas_unchanged():
 def test_agentic_area_in_posture_order_not_in_vendor_fit():
     assert "Agentic governance" in rl._IGA_POSTURE_AREAS
     assert "Agentic governance" not in rl.IGA_AREAS
+
+
+# --- M3.2: secrets "Agentic" posture area ---
+
+def test_secrets_has_agentic_posture_group():
+    g = rl.MATURITY_GROUPS["secrets"]
+    assert "Agentic" in g
+    agentic = set(g["Agentic"])
+    assert {"UC-F-011", "UC-F-015", "UC-F-018",
+            "UC-F-028", "UC-F-029", "UC-F-030", "UC-N-019"} <= agentic
+
+
+def test_secrets_agentic_ucs_counted_once():
+    g = rl.MATURITY_GROUPS["secrets"]
+    seen = {}
+    for ids in g.values():
+        for uc in ids:
+            seen[uc] = seen.get(uc, 0) + 1
+    for uc in ("UC-F-015", "UC-F-018"):  # these were in REC_UC_DOMAIN["secrets"]
+        assert seen.get(uc) == 1, f"{uc} appears in more than one posture group"
+
+
+def test_rec_uc_domain_not_mutated():
+    # REC_UC_DOMAIN is shared with the recommendations engine; subtraction must be non-mutating.
+    assert "UC-F-015" in rl.REC_UC_DOMAIN["secrets"]
+    assert "UC-F-018" in rl.REC_UC_DOMAIN["secrets"]
+
+
+# --- M3.3: PAM "Agentic privileged access" posture area ---
+
+def test_pam_has_agentic_posture_group():
+    g = rl.MATURITY_GROUPS["pam"]
+    assert "Agentic privileged access" in g
+    assert set(g["Agentic privileged access"]) == {"UC-P-019", "UC-P-020", "UC-P-021"}

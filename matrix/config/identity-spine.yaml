@@ -133,7 +133,16 @@ archetypes:
     label: Agentic-AI / autonomous agent
     identity_class: agentic
     privileged: false
-    description: "An autonomous AI agent that acts with its own (or delegated) identity across systems. EMERGING — M2 establishes the class and tags existing entries; M3 populates the agentic instrument."
+    description: "A non-privileged autonomous AI agent that acts with its own (or delegated) identity across systems (tool/API calls, governed agent objects). Populated across all three domains by M3 (secrets NHI-019, IGA IGID-012). The privileged agentic operator is the separate SPN-016 node."
     csa_nhi_anchor: "CSA Non-Human Identity (emerging agentic); OWASP Top 10 for LLM/agentic"
     spiffe_ref: ""
-    citation_keys: ""
+    citation_keys: "csa-agentic-iam-2025;owasp-llm06-2025"
+
+  - spine_id: SPN-016
+    label: Agentic-AI / autonomous privileged agent
+    identity_class: agentic
+    privileged: true
+    description: "An autonomous AI agent that performs privileged actions (JIT elevation, brokered privileged sessions, privileged tool execution) on behalf of a human owner. The agentic counterpart of the privileged workload (SPN-014); in the good state it holds no standing privileged credential and acts only through the broker. Populated by M3.3 (PAM PID-021)."
+    csa_nhi_anchor: "CSA Non-Human Identity (emerging agentic); NIST SP 800-53 AC-6; OWASP LLM06 Excessive Agency"
+    spiffe_ref: ""
+    citation_keys: "csa-agentic-iam-2025;owasp-llm06-2025"

@@ -49,7 +49,8 @@ def test_secrets_yaml_anchors_to_historical_values():
     assert d.vendor_layer["hashicorp-vault-enterprise"] == ("L1", "core")
     assert d.short["hashicorp-vault-enterprise"] == "Vault Ent"
     assert len(d.vendor_layer) == 19
-    assert d.informative_frameworks == frozenset({"mitre-attack"})
+    # OC-01: exclude the full (informative) set so it never leaks into compliance %
+    assert d.informative_frameworks == frozenset({"mitre-attack", "owasp-llm", "ms-incident"})
     assert d.legacy_recdata is True
 
 
@@ -69,7 +70,8 @@ def test_pam_yaml_anchors_to_historical_values():
     assert d.short["cyberark-pam"] == "CyberArk"
     assert d.short["strongdm"] == "StrongDM"
     assert d.short["netwrix-privilege-secure"] == "Netwrix"
-    assert d.informative_frameworks == frozenset()
+    # OC-01: PAM trace carries mitre-attack (T1078/T1098) + owasp-llm — exclude from compliance %
+    assert d.informative_frameworks == frozenset({"mitre-attack", "owasp-llm", "ms-incident"})
     assert d.legacy_recdata is False
 
 
