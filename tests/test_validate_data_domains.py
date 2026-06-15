@@ -228,6 +228,23 @@ def test_secrets_agentic_ucs_present():
         assert uc in ucs, f"{uc} missing from secrets use-cases.csv"
 
 
+def test_informative_frameworks_not_leaked_into_compliance():
+    # OC-01 regression guard: any framework marked "(informative)" in frameworks.yaml that a
+    # domain actually maps in its regulatory-trace MUST be in that domain's informative_frameworks
+    # (so it is excluded from the buyer-facing compliance %). Prevents per-domain config drift.
+    import os, csv, yaml
+    from domains import DOMAINS
+    fw = yaml.safe_load(open(os.path.join(ROOT, "matrix", "config", "frameworks.yaml"), encoding="utf-8"))
+    informative = {slug for slug, meta in fw.items()
+                   if isinstance(meta, dict) and "(informative)" in (meta.get("subtitle") or "")}
+    assert informative, "expected at least one (informative)-marked framework"
+    for slug in ("secrets", "pam", "iga"):
+        used = {r["framework_slug"] for r in csv.DictReader(
+            open(os.path.join(ROOT, "matrix", "domains", slug, "regulatory-trace.csv"), encoding="utf-8"))}
+        leaked = (informative & used) - set(DOMAINS[slug].informative_frameworks)
+        assert not leaked, f"{slug}: informative frameworks leak into compliance %: {sorted(leaked)}"
+
+
 def test_npe_conformance_values_in_legend():
     # IAM-01 regression guard: every npe_conformance value across all domains must be in
     # the closed legend (no off-legend "NPE"), so cross-domain conformance claims hold.
