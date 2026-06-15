@@ -1562,18 +1562,18 @@
         "text": "What share of existing autonomous/agentic privileged operators (PID-021) has migrated off agents using standing privileged service accounts or unbrokered access?",
         "evidence": [
           {
-            "ev_id": "EV-PAM-CRED-ELIM-REGISTER",
-            "requirement": "A register of in-scope privileged accounts confirming default and static shared credentials have been changed, vaulted or removed.",
+            "ev_id": "EV-PAM-CENTRAL-SESSION-LOG",
+            "requirement": "Evidence that privileged sessions and access events are captured to a centralised logging facility with searchable metadata.",
             "dimension": "coverage",
             "tier": "primary",
-            "example_artifact": "e.g., a vault onboarded-accounts export listing account, credential type and status",
+            "example_artifact": "e.g., the centralised session-recording or log store and a searchable-index sample",
             "sensitivity_tag": "[INTERNAL]",
             "citation_keys": [
-              "asd-ism-comms-2025",
-              "cyberark-pam-2025"
+              "asd-ism-incidents-2025",
+              "gartner-pam-mq-2024"
             ],
             "satisfies": [
-              "ISM-1304"
+              "ISM-1405"
             ]
           }
         ]
@@ -1591,7 +1591,23 @@
         "text": "Are exceptions registered with owner and expiry?"
       }
     ],
-    "evidence_additional": []
+    "evidence_additional": [
+      {
+        "ev_id": "EV-PAM-LOG-TAMPER-EVIDENT",
+        "requirement": "Evidence that privileged access logs and session recordings are protected from unauthorised modification or deletion and retained per policy.",
+        "dimension": "depth",
+        "tier": "primary",
+        "example_artifact": "e.g., an immutable-storage/WORM configuration and the retention policy for session recordings",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "acsc-e8-2023",
+          "asd-ism-incidents-2025"
+        ],
+        "satisfies": [
+          "E8-RAP-LOG"
+        ]
+      }
+    ]
   },
   {
     "uc_id": "UC-P-020",
