@@ -511,6 +511,25 @@ def test_validate_all_catches_bad_quote_type(tmp_path):
     assert any("quote_type" in v and "vibes" in v for v in viol)
 
 
+def test_validate_all_catches_stale_backmap(tmp_path):
+    # REG-F2: a use-case backmap_codes control that the regulatory-trace does NOT
+    # map to that uc_id must fail the build (the right-ID-wrong-scope / stale-mapping
+    # class behind REG-F1/IGA-F1/PAM-SME-01). ISM-1404 exists in the secrets trace but
+    # is mapped only to UC-F-027; tagging it on UC-F-001 is a stale/mis-scoped backmap.
+    import shutil
+    dst = tmp_path / "matrix"
+    dst.mkdir()
+    for p in (ROOT / "matrix" / "domains" / "secrets").glob("*.csv"):
+        shutil.copy(p, dst / p.name)
+    uc = dst / "use-cases.csv"
+    text = uc.read_text(encoding="utf-8")
+    anchor = "ISM-0401;ISM-1173;ISM-1504;ISM-1619;ISM-1796"   # UC-F-001 backmap (unique)
+    assert text.count(anchor) == 1
+    uc.write_text(text.replace(anchor, anchor + ";ISM-1404"), encoding="utf-8")
+    viol = vd.validate_all(str(tmp_path))
+    assert any("ISM-1404" in v and "UC-F-001" in v and "not mapped" in v for v in viol)
+
+
 # --- H1a: citation-key resolution gate ---------------------------------------
 # Every citation_keys token used in the data must resolve to a @key defined in
 # meta/citations.bib OR be an allowlisted sentinel status-marker. Anything else

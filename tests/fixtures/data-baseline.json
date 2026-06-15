@@ -2069,7 +2069,7 @@
           "current_state": "GAP",
           "evidence": [],
           "evidence_quote": "Unprivileged access to systems and applications is disabled after 45 days of inactivity",
-          "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-incidents",
+          "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-personnel-security",
           "maturity_level": "N/A",
           "title": "Unprivileged inactive-account disablement at 45 days",
           "uc_ids": [
