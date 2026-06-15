@@ -22,6 +22,12 @@ import identity_spine
 # M2 identity-spine archetype classes (matches config/identity-spine.yaml).
 VALID_IDENTITY_CLASSES = ("human", "npe", "agentic")
 
+# Closed npe_conformance vocabulary — matches the legend rendered in the stakeholder
+# pack (build_stakeholder_pack.py npe_conformance legend). Off-legend values (e.g. a
+# bare "NPE") must fail the gate so a cross-domain conformance claim stays truthful.
+VALID_NPE_CONFORMANCE = {"CONFORMANT", "HUMAN-IDENTITY", "CREDENTIAL-NOT-IDENTITY",
+                         "CROSS-CUTTING-ATTRIBUTE", "HUMAN-USE-ANTIPATTERN"}
+
 CORE_REQUIRED = {
     "use-cases.csv": ("uc_id", "category", "short_title", "story", "acceptance_criteria",
                       "nhis_in_scope", "outcome_lens", "backmap_codes", "priority_fi", "citation_keys"),
@@ -670,6 +676,7 @@ def validate_all(root=".", data_dir=None):
     errs += check_quote_type("regulatory-trace.csv", trace)
     errs += check_required_columns("identity-catalog.csv", identity, CORE_REQUIRED["identity-catalog.csv"])
     errs += check_unique("identity-catalog.csv", identity, "nhi_id")
+    errs += check_enum("identity-catalog.csv", identity, "npe_conformance", VALID_NPE_CONFORMANCE)
 
     # matrix-less exception is descriptor-declared (vendor_fit key), never inferred
     descriptor = resolve_domain_descriptor(root, m) or {}

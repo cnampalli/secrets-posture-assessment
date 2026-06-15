@@ -228,6 +228,29 @@ def test_secrets_agentic_ucs_present():
         assert uc in ucs, f"{uc} missing from secrets use-cases.csv"
 
 
+def test_npe_conformance_values_in_legend():
+    # IAM-01 regression guard: every npe_conformance value across all domains must be in
+    # the closed legend (no off-legend "NPE"), so cross-domain conformance claims hold.
+    import csv, os
+    legend = {"CONFORMANT", "HUMAN-IDENTITY", "CREDENTIAL-NOT-IDENTITY",
+              "CROSS-CUTTING-ATTRIBUTE", "HUMAN-USE-ANTIPATTERN"}
+    for dom in ("secrets", "pam", "iga"):
+        path = os.path.join(ROOT, "matrix", "domains", dom, "identity-catalog.csv")
+        for r in csv.DictReader(open(path, encoding="utf-8")):
+            assert r["npe_conformance"] in legend, \
+                f"{dom} {r['nhi_id']}: off-legend npe_conformance '{r['npe_conformance']}'"
+
+
+def test_validator_rejects_off_legend_npe_conformance():
+    # the gate itself must catch a bad value (not just the data being clean today)
+    import sys, os
+    sys.path.insert(0, os.path.join(ROOT, "matrix"))
+    import validate_data as vd
+    bad = [{"nhi_id": "X-1", "npe_conformance": "NPE"}]
+    errs = vd.check_enum("identity-catalog.csv", bad, "npe_conformance", vd.VALID_NPE_CONFORMANCE)
+    assert len(errs) == 1 and "npe_conformance" in errs[0]
+
+
 def test_pam_agentic_ucs_and_identity_present():
     import csv, os
     base = os.path.join(ROOT, "matrix", "domains", "pam")
