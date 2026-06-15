@@ -462,7 +462,7 @@ def test_vendor_fit_complete_row_with_quote_is_clean(tmp_path):
 # --- H1c: quote_type honesty flag on regulatory-trace rows -------------------
 
 def test_quote_type_enum_is_the_closed_set():
-    assert vd.VALID_QUOTE_TYPES == {"verbatim", "paraphrase", "analyst-note"}
+    assert vd.VALID_QUOTE_TYPES == {"verbatim", "verbatim-elided", "paraphrase", "analyst-note"}
 
 
 def test_quote_type_column_is_required_schema():

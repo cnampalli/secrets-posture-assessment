@@ -38,11 +38,11 @@
         "unknown": 0
       },
       {
-        "gap": 18,
+        "gap": 19,
         "label": "ASD ISM",
         "met": 0,
         "met_pct": 0.0,
-        "partial": 20,
+        "partial": 19,
         "pending": 3,
         "slug": "asd-ism",
         "subtitle": "ACSC · Australian Govt baseline",
@@ -72,18 +72,6 @@
         "subtitle": "ACSC · maturity baseline",
         "total": 26,
         "unknown": 2
-      },
-      {
-        "gap": 1,
-        "label": "OWASP LLM Top 10 (2025)",
-        "met": 0,
-        "met_pct": 0.0,
-        "partial": 0,
-        "pending": 0,
-        "slug": "owasp-llm",
-        "subtitle": "GenAI application risks (informative)",
-        "total": 1,
-        "unknown": 0
       }
     ],
     "gap_to_target": [
@@ -2078,15 +2066,14 @@
         },
         {
           "code": "ISM-1404",
-          "current_state": "PARTIAL",
+          "current_state": "GAP",
           "evidence": [],
           "evidence_quote": "Unprivileged access to systems and applications is disabled after 45 days of inactivity",
           "evidence_url": "https://www.cyber.gov.au/resources-business-and-government/essential-cybersecurity/ism/cyber-security-guidelines/guidelines-cyber-security-incidents",
           "maturity_level": "N/A",
-          "title": "Suspension of access to systems (credential revocation)",
+          "title": "Unprivileged inactive-account disablement at 45 days",
           "uc_ids": [
-            "UC-F-007",
-            "UC-N-011"
+            "UC-F-027"
           ]
         },
         {

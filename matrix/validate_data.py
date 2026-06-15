@@ -61,11 +61,14 @@ VALID_EVIDENCE_TIERS = {"primary", "follow-up"}
 # --- provenance gate (theme F) ---
 PROVIDER_COVERAGE = {"NATIVE", "ADD-ON", "PARTNER"}      # claims that need a source
 VALID_SOURCE_TIERS = {"PRIMARY", "ANALYST", "CONSENSUS"}
-# H1c: every regulatory-trace evidence_quote declares its honesty class. Only
-# `verbatim` rows are (later, H1d) held to source-quote presence/fidelity;
-# `paraphrase` and `analyst-note` are honest non-verbatim labels, never
-# silently passed off as source wording.
-VALID_QUOTE_TYPES = {"verbatim", "paraphrase", "analyst-note"}
+# H1c: every regulatory-trace evidence_quote declares its honesty class.
+# `verbatim` rows are intended to carry source-quote wording character-for-
+# character; `verbatim-elided` marks a faithful excerpt that drops immaterial
+# words with a visible ellipsis (…/...), so an elided excerpt is never passed
+# off as a complete verbatim quote; `paraphrase` and `analyst-note` are honest
+# non-verbatim labels. Source-quote fidelity is currently verified by analyst
+# diligence, not yet by an automated gate against a frozen source corpus.
+VALID_QUOTE_TYPES = {"verbatim", "verbatim-elided", "paraphrase", "analyst-note"}
 VALID_IMPACT_LEVELS = {"HIGH", "MEDIUM", "LOW"}          # currency-gate impact vocabulary (closed)
 INFERENCE_TAGS = ("[INDUSTRY-CONSENSUS]", "[CONSENSUS]", "[INFERRED]", "[INFER")
 PROVENANCE_EXTRA_KEYS = ("vendor-capabilities",)         # non-framework data sources
@@ -312,6 +315,37 @@ def validate_referential(use_cases, current_state, reg_trace, identity, vendor_f
                 errs.append(f"{name}: target_id '{tid}' (NHI) not in identity-catalog")
             elif tt.startswith("UC") and tid not in uc_ids:
                 errs.append(f"{name}: target_id '{tid}' (UC) not in use-cases")
+    return errs
+
+
+def check_backmap_trace_consistency(use_cases, reg_trace):
+    """REG-F2 gate: every control a use-case self-declares in `backmap_codes` must be
+    substantiated by a regulatory-trace row that lists that use-case under that control.
+
+    Catches the right-ID-wrong-scope / stale-mapping class — e.g. a UC still citing
+    CPS234-§22 (third-party controls) after the trace was re-mapped to §21, or an
+    agentic UC still tagging ISM-1304 after the trace moved it to ISM-1405. The
+    title/quote semantic gate (check_control_semantics) is structurally blind to this
+    because it never inspects which UCs a control is mapped to, only the control's own
+    wording. THREAT-CONTEXT rows count as substantiation (a control is 'present' if
+    any trace row carries it AND lists the uc_id).
+    """
+    errs = []
+    trace_map = {}
+    for r in reg_trace:
+        cc = (r.get("control_code") or "").strip()
+        if cc:
+            trace_map.setdefault(cc, set()).update(_ids(r.get("uc_ids")))
+    for r in use_cases:
+        uc = (r.get("uc_id") or "").strip()
+        for code in _ids(r.get("backmap_codes")):
+            bound = trace_map.get(code)
+            if bound is None:
+                errs.append(f"use-cases.csv: backmap_codes '{code}' (uc {uc}) has no "
+                            f"regulatory-trace row for that control")
+            elif uc not in bound:
+                errs.append(f"use-cases.csv: backmap_codes '{code}' (uc {uc}) is not mapped "
+                            f"to {uc} in regulatory-trace.csv — stale or mis-scoped control")
     return errs
 
 
@@ -697,6 +731,7 @@ def validate_all(root=".", data_dir=None):
         errs += validate_vendor_rows(name, rows, single_slug=True)
 
     errs += validate_referential(use_cases, current, trace, identity, vendor_files)
+    errs += check_backmap_trace_consistency(use_cases, trace)
     errs += check_no_legacy_token(current, identity)
 
     # provenance gate (theme F): control-ID registry + citations + data-provenance.
