@@ -97,7 +97,7 @@ rows = [
     ("", ""),
     ("Generated", "2026-06-03"),
     ("Source of truth", "matrix/domains/secrets/use-cases.csv, matrix/domains/secrets/identity-catalog.csv, matrix/domains/secrets/regulatory-trace.csv (CSV data contracts; gated by validate_data.py and the full pytest suite, both green at generation time)."),
-    ("What this is", "47 use cases and 37 NHI types for enterprise secrets management, each linked to primary regulatory and standards sources. Audience: security, risk, audit and engineering stakeholders."),
+    ("What this is", f"{len(ucs)} use cases and {len(nhis)} NHI types for enterprise secrets management, each linked to primary regulatory and standards sources. Audience: security, risk, audit and engineering stakeholders."),
     ("Assurance", "APRA references verified paragraph-by-paragraph against live CPS 234 / CPS 230 / CPG 234 PDFs (confidence >=98%). NHI taxonomy tested against the NIST/CNSSI Non-Person Entity definition + OWASP NHI Top 10 2025 (>=95%). Use-case back-maps regenerated from the verified trace (>=97%)."),
     ("Full audit", "matrix/REGULATOR-AUDIT-2026-06-03.md"),
     ("", ""),
@@ -130,7 +130,7 @@ for label, url in anchors:
     linkcell(ws, r, 2, url, label); r += 1
 
 # ===================== Use Cases =====================
-ws = wb.create_sheet("Use Cases (47)")
+ws = wb.create_sheet(f"Use Cases ({len(ucs)})")
 heads = ["UC ID", "Category", "Priority", "Title", "Story", "Acceptance criteria",
          "NHIs in scope", "Outcome lens (E8 / ZT)", "Regulatory back-map (APRA/ISM)",
          "Citation keys", "Primary source"]
@@ -149,7 +149,7 @@ for i, u in enumerate(ucs, start=2):
     linkcell(ws, i, 11, url, lbl)
 
 # ===================== NHI Taxonomy =====================
-ws = wb.create_sheet("NHI Taxonomy (37)")
+ws = wb.create_sheet(f"NHI Taxonomy ({len(nhis)})")
 heads = ["NHI ID", "Bucket", "NPE conformance", "Short name", "Description",
          "Typical secrets / credentials", "Lifecycle", "Governance maturity",
          "Citation keys", "Primary source"]

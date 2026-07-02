@@ -23,11 +23,8 @@ jobs:
           python-version: "3.12"
       - name: Install Python deps
         run: pip install -r requirements.txt -r requirements-dev.txt
-      - name: Validate data contracts (secrets · iga · pam)
-        run: |
-          python3 matrix/validate_data.py
-          python3 matrix/validate_data.py --data-dir matrix/domains/iga
-          python3 matrix/validate_data.py --data-dir matrix/domains/pam
+      - name: Validate data contracts (all registered domains)
+        run: python3 matrix/validate_data.py
       - name: pytest (incl. scoring parity vectors test_scoring*.py)
         run: python3 -m pytest tests/ -q
       - name: Reports rebuild byte-identical

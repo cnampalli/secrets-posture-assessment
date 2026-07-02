@@ -197,18 +197,94 @@ def test_domain_has_zero_violations(slug):
 
 
 # ------------------------------------------------------- main() exit contract
+# W0.1 (2026-07-02): the no-arg CLI validates EVERY registered domain; the
+# historical secrets-only default let PAM/IGA defects pass a "clean" run.
 
 def test_main_exits_nonzero_on_violations(monkeypatch, capsys):
+    # single-domain narrowing contract unchanged when --data-dir is explicit
     monkeypatch.setattr(vd, "validate_all", lambda root, data_dir=None: ["fake: violation"])
-    assert vd.main([]) == 1
+    assert vd.main(["--data-dir", "matrix/domains/secrets"]) == 1
     out = capsys.readouterr().out
     assert "fake: violation" in out and "1 violation(s) found" in out
 
 
 def test_main_exits_zero_when_clean(monkeypatch, capsys):
     monkeypatch.setattr(vd, "validate_all", lambda root, data_dir=None: [])
-    assert vd.main([]) == 0
+    assert vd.main(["--root", str(ROOT)]) == 0
     assert "All CSV data contracts valid" in capsys.readouterr().out
+
+
+def test_default_cli_run_covers_every_registered_domain(monkeypatch):
+    seen = []
+    monkeypatch.setattr(vd, "validate_all",
+                        lambda root, data_dir=None: (seen.append(data_dir), [])[1])
+    assert vd.main(["--root", str(ROOT)]) == 0
+    import os
+    names = {os.path.basename(os.path.realpath(d)) for d in seen}
+    assert names == set(DOMAINS), f"default run visited {names}, expected {set(DOMAINS)}"
+
+
+def test_violation_in_non_secrets_domain_fails_default_run(monkeypatch, capsys):
+    # the exact failure mode of the old default: a PAM-only defect must now
+    # fail the bare CLI run, slug-prefixed, without stopping the other domains
+    def fake(root, data_dir=None):
+        return ["use-cases.csv: seeded defect"] if data_dir.rstrip("/").endswith("pam") else []
+    monkeypatch.setattr(vd, "validate_all", fake)
+    assert vd.main(["--root", str(ROOT)]) == 1
+    out = capsys.readouterr().out
+    assert "[pam] use-cases.csv: seeded defect" in out and "1 violation(s) found" in out
+
+
+def test_iter_domain_data_dirs_registry_driven():
+    got = dict(vd.iter_domain_data_dirs(str(ROOT)))
+    assert set(got) == {"secrets", "pam", "iga"}
+    for slug, d in got.items():
+        import os
+        assert os.path.isdir(d), f"{slug}: data dir {d} does not exist"
+
+
+# ------------------------------------------ regression pins for closed defects
+# REG-F1 / IGA-F1 / PAM-SME-01 (closed 2026-06 in commits 0d3ddfe/5ca36c6):
+# pin the closed state so the defect classes are unrevivable without a red test.
+
+def _rows(path):
+    import csv
+    with open(path, encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def test_pam_cps234_s22_maps_third_party_ucs_only():
+    # REG-F1: §22 is the THIRD-PARTY control-evaluation obligation; binding it to
+    # internal PAM UCs was the right-ID-wrong-scope fabrication class
+    trace = _rows(str(ROOT / "matrix" / "domains" / "pam" / "regulatory-trace.csv"))
+    for r in trace:
+        if r["control_code"] == "CPS234-§22":
+            ucs = {u.strip() for u in r["uc_ids"].split(";") if u.strip()}
+            assert ucs == {"UC-P-011"}, f"CPS234-§22 mapped to {sorted(ucs)} — third-party scope only"
+
+
+def test_iga_has_no_cps234_s22_residue():
+    # IGA-F1: the §22→§21 remap must hold in BOTH the trace and use-cases backmaps
+    for fn in ("regulatory-trace.csv", "use-cases.csv"):
+        text = (ROOT / "matrix" / "domains" / "iga" / fn).read_text(encoding="utf-8")
+        assert "§22" not in text, f"iga/{fn}: CPS234-§22 residue"
+
+
+def test_ucp019_backmap_is_ism_1405_not_1304():
+    # PAM-SME-01: UC-P-019's stale ISM-1304 self-declaration contradicted its trace
+    ucs = _rows(str(ROOT / "matrix" / "domains" / "pam" / "use-cases.csv"))
+    row = next(r for r in ucs if r["uc_id"] == "UC-P-019")
+    codes = {c.strip() for c in row["backmap_codes"].split(";")}
+    assert "ISM-1405" in codes and "ISM-1304" not in codes, f"UC-P-019 backmaps: {sorted(codes)}"
+
+
+def test_backmap_gate_catches_stale_control_scope():
+    # the structural gate itself: a UC self-declaring a control whose trace row
+    # doesn't list it must fail (right-ID-wrong-scope / stale-mapping class)
+    ucs = [{"uc_id": "UC-P-019", "backmap_codes": "ISM-1304"}]
+    trace = [{"control_code": "ISM-1405", "uc_ids": "UC-P-019"}]
+    errs = vd.check_backmap_trace_consistency(ucs, trace)
+    assert len(errs) == 1 and "ISM-1304" in errs[0]
 
 
 def test_iga_agentic_ucs_have_archetypes():
