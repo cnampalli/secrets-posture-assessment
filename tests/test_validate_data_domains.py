@@ -278,6 +278,53 @@ def test_ucp019_backmap_is_ism_1405_not_1304():
     assert "ISM-1405" in codes and "ISM-1304" not in codes, f"UC-P-019 backmaps: {sorted(codes)}"
 
 
+# ---------------------------------------------- NEW-01: control-scope gate
+# The 2026-07-02 review proved the backmap↔trace gate is blind to a SYMMETRIC
+# right-ID-wrong-scope defect (the original REG-F1 shape). check_control_scope
+# closes that class: relationship-scoped controls only bind UCs whose own text
+# evidences the relationship.
+
+SCOPE_CFG = {"scope_restrictions": {"third-party": {
+    "controls": ["CPS234-§22"], "keyword_any": ["vendor", "third-party"]}}}
+
+
+def test_control_scope_catches_internal_uc_on_third_party_control():
+    # the original REG-F1, reproduced symmetrically: internal UC + §22 in the trace
+    ucs = [{"uc_id": "UC-P-019", "short_title": "Agent privileged-session brokering",
+            "story": "autonomous agents obtain privileged sessions through the broker",
+            "acceptance_criteria": "sessions recorded"}]
+    trace = [{"control_code": "CPS234-§22", "uc_ids": "UC-P-019"}]
+    errs = vd.check_control_scope(ucs, trace, SCOPE_CFG)
+    assert len(errs) == 1 and "right-ID-wrong-scope" in errs[0] and "UC-P-019" in errs[0]
+
+
+def test_control_scope_passes_evidenced_third_party_uc():
+    ucs = [{"uc_id": "UC-P-011", "short_title": "Privileged remote / third-party vendor access",
+            "story": "vendor engineers access via brokered sessions", "acceptance_criteria": "x"}]
+    trace = [{"control_code": "CPS234-§22", "uc_ids": "UC-P-011"}]
+    assert vd.check_control_scope(ucs, trace, SCOPE_CFG) == []
+
+
+def test_control_scope_fails_closed_without_registry():
+    errs = vd.check_control_scope([], [], {})
+    assert len(errs) == 1 and "scope_restrictions" in errs[0]
+
+
+def test_control_scope_fails_closed_on_empty_scope_spec():
+    errs = vd.check_control_scope([], [], {"scope_restrictions": {"third-party": {}}})
+    assert len(errs) == 1 and "fail-closed" in errs[0]
+
+
+def test_control_scope_real_data_clean_all_domains():
+    import os
+    sem = vd.load_yaml(str(ROOT / "matrix" / "config" / "control-semantics.yaml"))
+    for slug in sorted(DOMAINS):
+        base = os.path.join(str(ROOT), "matrix", "domains", slug)
+        ucs = vd.load_csv(os.path.join(base, "use-cases.csv"))
+        trace = vd.load_csv(os.path.join(base, "regulatory-trace.csv"))
+        assert vd.check_control_scope(ucs, trace, sem) == [], slug
+
+
 def test_backmap_gate_catches_stale_control_scope():
     # the structural gate itself: a UC self-declaring a control whose trace row
     # doesn't list it must fail (right-ID-wrong-scope / stale-mapping class)
