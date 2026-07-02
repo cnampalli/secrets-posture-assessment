@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Instrument — One Posture for the Identity-Security Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* obsidian + aurora */
+    --bg:#070a10;
+    --bg-2:#0a0f17;
+    --ink:#f4f1ea;
+    --ink-2:#c8cdd6;
+    --muted:#8a93a4;
+    --hint:#5c6577;
+
+    --emerald:#1fb287;
+    --cyan:#19d7c6;
+    --gold:#e8b04b;
+    --indigo:#6172ff;
+    --rose:#ff6b8a;
+
+    --glass:rgba(255,255,255,.035);
+    --glass-2:rgba(255,255,255,.055);
+    --line:rgba(255,255,255,.09);
+    --line-2:rgba(255,255,255,.16);
+
+    --display:'Instrument Serif',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,sans-serif;
+    --mono:'Geist Mono',ui-monospace,Menlo,monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+
+  /* ---------- fluid aurora field ---------- */
+  .aurora{position:fixed;inset:0;z-index:0;overflow:hidden;filter:saturate(1.15)}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;mix-blend-mode:screen;will-change:transform}
+  .b1{width:52vw;height:52vw;left:-12vw;top:-14vw;
+      background:radial-gradient(circle at 30% 30%,var(--emerald),transparent 65%);animation:drift1 24s ease-in-out infinite}
+  .b2{width:46vw;height:46vw;right:-10vw;top:-6vw;
+      background:radial-gradient(circle at 60% 40%,var(--indigo),transparent 64%);animation:drift2 30s ease-in-out infinite}
+  .b3{width:48vw;height:48vw;right:6vw;bottom:-22vw;
+      background:radial-gradient(circle at 50% 50%,var(--gold),transparent 62%);opacity:.42;animation:drift3 27s ease-in-out infinite}
+  .b4{width:40vw;height:40vw;left:-8vw;bottom:-18vw;
+      background:radial-gradient(circle at 50% 50%,var(--cyan),transparent 66%);opacity:.4;animation:drift1 33s ease-in-out infinite reverse}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,4vw) scale(1.12)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-5vw,6vw) scale(1.08)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-4vw,-5vw) scale(1.15)}}
+
+  /* deep vignette + grain over aurora to keep it premium */
+  .veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(120% 100% at 50% 0%,transparent 40%,rgba(4,6,10,.55) 100%),
+      radial-gradient(100% 120% at 50% 120%,rgba(4,6,10,.8),transparent 55%),
+      linear-gradient(180deg,rgba(7,10,16,.35),rgba(7,10,16,.55));
+  }
+  .grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* ---------- stage ---------- */
+  .stage{position:relative;z-index:3;height:100vh;width:100%;
+    display:flex;flex-direction:column;
+    padding:clamp(1.4rem,3.2vh,2.6rem) clamp(1.5rem,5vw,5rem);
+    max-width:1640px;margin:0 auto;gap:clamp(1rem,2.4vh,1.8rem)}
+
+  /* header */
+  .top{display:flex;justify-content:space-between;align-items:center;flex:none}
+  .wordmark{display:flex;align-items:center;gap:.7rem;font-family:var(--mono);
+    font-size:.74rem;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-2)}
+  .wordmark .gem{width:11px;height:11px;border-radius:2px;transform:rotate(45deg);
+    background:linear-gradient(135deg,var(--gold),var(--emerald));box-shadow:0 0 16px rgba(232,176,75,.5)}
+  .wordmark b{color:var(--ink);font-weight:600}
+  .tagchip{font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:.45rem .9rem;
+    background:var(--glass);backdrop-filter:blur(10px)}
+
+  /* main split */
+  .grid{flex:1;display:grid;grid-template-columns:1.18fr .82fr;gap:clamp(1.5rem,4vw,4rem);
+    align-items:center;min-height:0}
+
+  .eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--gold);font-weight:500;display:flex;align-items:center;gap:.8rem;margin-bottom:1.4rem}
+  .eyebrow::before{content:"";width:30px;height:1px;
+    background:linear-gradient(90deg,var(--gold),transparent)}
+
+  h1{font-family:var(--display);font-weight:400;line-height:.98;letter-spacing:-.01em;
+    font-size:clamp(2.6rem,6.2vw,5.4rem);color:var(--ink)}
+  h1 .it{font-style:italic;
+    background:linear-gradient(100deg,var(--gold) 10%,var(--emerald) 70%,var(--cyan));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(1rem,1.45vw,1.28rem);line-height:1.55;color:var(--ink-2);
+    max-width:48ch;margin-top:1.4rem;font-weight:300}
+  .lede b{color:var(--ink);font-weight:600}
+
+  .pills{display:flex;gap:.55rem;flex-wrap:wrap;margin-top:1.7rem}
+  .pill{font-family:var(--mono);font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;
+    padding:.5rem .85rem;border-radius:100px;border:1px solid var(--line-2);
+    background:var(--glass);color:var(--ink-2);backdrop-filter:blur(10px);
+    display:flex;align-items:center;gap:.5rem}
+  .pill::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--emerald);
+    box-shadow:0 0 8px var(--emerald)}
+  .pill.g::before{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+  .pill.c::before{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .pill.i::before{background:var(--indigo);box-shadow:0 0 8px var(--indigo)}
+
+  /* ---------- convergence orb ---------- */
+  .orbit-wrap{position:relative;aspect-ratio:1;width:100%;max-width:clamp(280px,38vh,440px);
+    margin:0 auto;display:grid;place-items:center}
+  .ring{position:absolute;border-radius:50%;inset:0}
+  .ring.conic{background:conic-gradient(from 0deg,
+      transparent 0deg,rgba(31,178,135,.55) 70deg,transparent 150deg,
+      rgba(97,114,255,.5) 220deg,transparent 300deg,rgba(232,176,75,.55) 350deg,transparent 360deg);
+    mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1px));
+    -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1px));
+    animation:spin 18s linear infinite}
+  .ring.conic.two{inset:13%;animation:spin 26s linear infinite reverse;opacity:.7}
+  .ring.dotted{inset:6%;border:1px dashed rgba(255,255,255,.12);animation:spin 60s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .core{position:relative;width:46%;height:46%;border-radius:50%;display:grid;place-items:center;
+    text-align:center;
+    background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.14),rgba(10,15,23,.85) 70%);
+    border:1px solid var(--line-2);
+    box-shadow:0 0 60px rgba(31,178,135,.25),inset 0 0 40px rgba(255,255,255,.04);
+    backdrop-filter:blur(6px);animation:pulse 5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 50px rgba(31,178,135,.22),inset 0 0 40px rgba(255,255,255,.04)}
+    50%{box-shadow:0 0 80px rgba(232,176,75,.3),inset 0 0 46px rgba(255,255,255,.06)}}
+  .core .big{font-family:var(--display);font-size:clamp(2.2rem,5vh,3.2rem);line-height:.9;color:var(--ink)}
+  .core .cap{font-family:var(--mono);font-size:.5rem;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--gold);margin-top:.4rem}
+
+  /* orbiting domain nodes */
+  .node{position:absolute;display:flex;flex-direction:column;align-items:center;gap:.25rem;
+    padding:.5rem .8rem;border-radius:12px;border:1px solid var(--line-2);
+    background:rgba(10,15,23,.72);backdrop-filter:blur(12px);white-space:nowrap;
+    box-shadow:0 8px 30px rgba(0,0,0,.4)}
+  .node .nm{font-family:var(--sans);font-weight:600;font-size:.82rem;letter-spacing:.01em}
+  .node .ct{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .node::before{content:"";position:absolute;width:7px;height:7px;border-radius:50%;
+    top:-3.5px;left:50%;transform:translateX(-50%)}
+  .n1{top:-4%;left:50%;transform:translateX(-50%)}      .n1::before{background:var(--emerald);box-shadow:0 0 10px var(--emerald)}
+  .n2{bottom:6%;left:-6%}                                .n2::before{background:var(--indigo);box-shadow:0 0 10px var(--indigo)}
+  .n3{bottom:6%;right:-6%}                               .n3::before{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .n1{border-color:rgba(31,178,135,.4)} .n2{border-color:rgba(97,114,255,.4)} .n3{border-color:rgba(232,176,75,.4)}
+
+  /* ---------- bottom ledger ---------- */
+  .ledger{flex:none;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    backdrop-filter:blur(14px)}
+  .cell{background:rgba(10,14,21,.62);padding:clamp(.9rem,1.8vh,1.35rem) clamp(1rem,1.6vw,1.5rem);
+    position:relative;overflow:hidden}
+  .cell::after{content:"";position:absolute;left:0;top:0;height:2px;width:100%;opacity:.85}
+  .cell:nth-child(1)::after{background:linear-gradient(90deg,var(--emerald),transparent)}
+  .cell:nth-child(2)::after{background:linear-gradient(90deg,var(--cyan),transparent)}
+  .cell:nth-child(3)::after{background:linear-gradient(90deg,var(--gold),transparent)}
+  .cell:nth-child(4)::after{background:linear-gradient(90deg,var(--indigo),transparent)}
+  .cell .stat{display:flex;align-items:baseline;gap:.5rem}
+  .cell .n{font-family:var(--display);font-size:clamp(1.6rem,3.2vh,2.4rem);line-height:.9;color:var(--ink)}
+  .cell .u{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .cell h3{font-size:.92rem;font-weight:600;margin-top:.7rem;color:var(--ink);letter-spacing:-.01em}
+  .cell p{font-size:.76rem;line-height:1.45;color:var(--muted);margin-top:.25rem;font-weight:300}
+
+  .footline{flex:none;display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--hint)}
+  .footline .right{color:var(--muted)}
+
+  /* ---------- entrance ---------- */
+  .rise{opacity:0;transform:translateY(18px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.28s}.d4{animation-delay:.4s}
+  .d5{animation-delay:.5s}.d6{animation-delay:.6s}.d7{animation-delay:.7s}
+  .orbit-wrap{opacity:0;animation:fadeScale 1.2s cubic-bezier(.2,.7,.2,1) .35s forwards}
+  @keyframes fadeScale{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+
+  @media (max-width:1000px){
+    body{overflow:auto}
+    .stage{height:auto;min-height:100vh}
+    .grid{grid-template-columns:1fr;gap:2rem}
+    .orbit-wrap{max-width:320px}
+    .ledger{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .ledger{grid-template-columns:1fr}
+    .tagchip,.footline .right{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important;animation-iteration-count:1!important}
+    .rise,.orbit-wrap{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="blob b3"></div><div class="blob b4"></div>
+</div>
+<div class="veil"></div>
+<div class="grain"></div>
+
+<div class="stage">
+
+  <!-- header -->
+  <header class="top">
+    <div class="wordmark rise d1"><span class="gem"></span> The&nbsp;<b>Instrument</b></div>
+    <div class="tagchip rise d1">Identity-Security Posture · Vendor Selection</div>
+  </header>
+
+  <!-- main split -->
+  <div class="grid">
+
+    <!-- narrative -->
+    <div>
+      <div class="eyebrow rise d2">One instrument · One posture</div>
+      <h1 class="rise d3">One verdict you can <span class="it">defend</span><br>across the whole identity estate.</h1>
+      <p class="lede rise d4">An <b>offline, evidence-gated</b> assessment engine that scores Secrets,
+        Privileged Access &amp; Identity Governance as a single posture — and proves every verdict,
+        with a cited source, to your <b>board and your regulator</b>.</p>
+      <div class="pills rise d5">
+        <span class="pill">Self-hosted</span>
+        <span class="pill g">Evidence-gated</span>
+        <span class="pill c">Board-defensible</span>
+        <span class="pill i">2026-forward taxonomy</span>
+      </div>
+    </div>
+
+    <!-- convergence orb -->
+    <div class="orbit-wrap" id="orb">
+      <div class="ring conic"></div>
+      <div class="ring conic two"></div>
+      <div class="ring dotted"></div>
+      <div class="core">
+        <div>
+          <div class="big">3 → 1</div>
+          <div class="cap">domains · one posture</div>
+        </div>
+      </div>
+      <div class="node n1"><span class="nm">Secrets</span><span class="ct">50 use cases</span></div>
+      <div class="node n2"><span class="nm">Priv. Access</span><span class="ct">21 use cases</span></div>
+      <div class="node n3"><span class="nm">Governance</span><span class="ct">19 use cases</span></div>
+    </div>
+
+  </div>
+
+  <!-- business-value ledger -->
+  <div class="ledger rise d6">
+    <div class="cell">
+      <div class="stat"><span class="n">90</span><span class="u">use cases · 9 archetypes</span></div>
+      <h3>Don't mis-buy</h3>
+      <p>Stop paying for tools that don't close your actual gaps.</p>
+    </div>
+    <div class="cell">
+      <div class="stat"><span class="n">71</span><span class="u">identity classes</span></div>
+      <h3>Don't over-build</h3>
+      <p>See where in-house controls replace licence spend.</p>
+    </div>
+    <div class="cell">
+      <div class="stat"><span class="n">10</span><span class="u">frameworks · control-level</span></div>
+      <h3>Don't fail audit</h3>
+      <p>Cited control mappings cut audit friction and fines.</p>
+    </div>
+    <div class="cell">
+      <div class="stat"><span class="n">1</span><span class="u">re-runnable source of truth</span></div>
+      <h3>Don't re-assess</h3>
+      <p>One instrument replaces three RFP cycles, on demand.</p>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div class="footline rise d7">
+    <span>Human · Machine · Agentic identities</span>
+    <span class="right">Essential 8 · APRA CPS 234/230 · ASD ISM · CISA ZTMM · MITRE ATT&amp;CK</span>
+  </div>
+
+</div>
+
+<script>
+  /* subtle pointer parallax on the orb — delight without noise */
+  const orb = document.getElementById('orb');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (orb && !reduce) {
+    addEventListener('pointermove', e => {
+      const dx = (e.clientX / innerWidth - .5);
+      const dy = (e.clientY / innerHeight - .5);
+      orb.style.transform = `translate(${dx*16}px, ${dy*16}px)`;
+    }, {passive:true});
+  }
+</script>
+</body>
+</html>

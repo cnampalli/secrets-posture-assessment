@@ -296,7 +296,7 @@
               "cyberark-pam-2025"
             ],
             "satisfies": [
-              "CPS234-§22"
+              "ISM-1405"
             ]
           }
         ]
@@ -334,7 +334,7 @@
               "cyberark-pam-2025"
             ],
             "satisfies": [
-              "CPS234-§22"
+              "ISM-1405"
             ]
           }
         ]
@@ -610,23 +610,7 @@
         "text": "Do expired entries auto-escalate?"
       }
     ],
-    "evidence_additional": [
-      {
-        "ev_id": "EV-PAM-HIGHRISK-CMD-FLAGGING",
-        "requirement": "Evidence that high-risk privileged commands are flagged for review within recorded sessions.",
-        "dimension": "depth",
-        "tier": "follow-up",
-        "example_artifact": "e.g., the command-flagging ruleset and a sample flagged-session review",
-        "sensitivity_tag": "[INTERNAL]",
-        "citation_keys": [
-          "gartner-pam-mq-2024",
-          "cyberark-pam-2025"
-        ],
-        "satisfies": [
-          "CPS234-§22"
-        ]
-      }
-    ]
+    "evidence_additional": []
   },
   {
     "uc_id": "UC-P-009",
@@ -1246,7 +1230,7 @@
               "cyberark-pam-2025"
             ],
             "satisfies": [
-              "CPS234-§22"
+              "ISM-1405"
             ]
           }
         ]
@@ -1284,7 +1268,7 @@
               "cyberark-pam-2025"
             ],
             "satisfies": [
-              "CPS234-§22"
+              "ISM-1405"
             ]
           }
         ]
@@ -1371,7 +1355,7 @@
               "cyberark-pam-2025"
             ],
             "satisfies": [
-              "CPS234-§22"
+              "ISM-1405"
             ]
           }
         ]
@@ -1409,7 +1393,7 @@
               "cyberark-pam-2025"
             ],
             "satisfies": [
-              "CPS234-§22"
+              "ISM-1405"
             ]
           }
         ]
@@ -1605,6 +1589,21 @@
         ],
         "satisfies": [
           "E8-RAP-LOG"
+        ]
+      },
+      {
+        "ev_id": "EV-PAM-HIGHRISK-CMD-FLAGGING",
+        "requirement": "Evidence that high-risk privileged commands are flagged for review within recorded sessions.",
+        "dimension": "depth",
+        "tier": "follow-up",
+        "example_artifact": "e.g., the command-flagging ruleset and a sample flagged-session review",
+        "sensitivity_tag": "[INTERNAL]",
+        "citation_keys": [
+          "gartner-pam-mq-2024",
+          "cyberark-pam-2025"
+        ],
+        "satisfies": [
+          "ISM-1405"
         ]
       }
     ]

@@ -11,6 +11,7 @@ import argparse
 import csv
 import datetime
 import glob
+import json
 import os
 import re
 import sys
@@ -438,6 +439,48 @@ def check_control_semantics(trace, semantics):
     return errs
 
 
+def check_control_scope(use_cases, trace, semantics):
+    """NEW-01 gate (2026-07-02 review): relationship-scoped controls may only bind
+    use-cases whose own text evidences that relationship. check_control_semantics
+    freezes what a control SAYS; this freezes WHO it is ABOUT — the right-ID-wrong-
+    SCOPE class (the original REG-F1: CPS234-§22 third-party obligation bound to
+    purely-internal PAM UCs), which the backmap↔trace consistency gate cannot catch
+    when the defect is symmetric across both files. Scope registry lives in
+    control-semantics.yaml under `scope_restrictions`; missing registry is itself a
+    violation (fail-closed), as is a scope with no controls or no keywords."""
+    cfg = (semantics or {}).get("scope_restrictions")
+    if not cfg:
+        return ["control-semantics.yaml: missing scope_restrictions — NEW-01 control-scope "
+                "gate cannot run"]
+    uc_text = {}
+    for r in use_cases:
+        uc = (r.get("uc_id") or "").strip()
+        uc_text[uc] = ((r.get("short_title") or "") + " " + (r.get("story") or "") + " "
+                       + (r.get("acceptance_criteria") or "")).lower()
+    errs = []
+    for scope, spec in cfg.items():
+        controls = set((spec or {}).get("controls") or [])
+        kws = [str(k).lower() for k in (spec or {}).get("keyword_any") or []]
+        if not controls or not kws:
+            errs.append(f"control-semantics.yaml: scope_restrictions '{scope}' must declare "
+                        f"both controls and keyword_any (fail-closed)")
+            continue
+        for r in trace:
+            cc = (r.get("control_code") or "").strip()
+            if cc not in controls:
+                continue
+            for uc in _ids(r.get("uc_ids")):
+                text = uc_text.get(uc)
+                if text is None:
+                    continue  # unknown UC ids are the referential gate's job
+                if not any(k in text for k in kws):
+                    errs.append(f"regulatory-trace.csv: {cc} is a {scope}-scoped obligation "
+                                f"but {uc}'s own text carries no {scope} evidence — "
+                                f"right-ID-wrong-scope (fix the mapping, or make the UC's "
+                                f"relationship explicit in its story/acceptance)")
+    return errs
+
+
 def check_provider_claims_cited(name, rows):
     """F2 gate: a capability claim (NATIVE/ADD-ON/PARTNER) must carry a source —
     an evidence_url, a citation_key, or an explicit inference tag in notes."""
@@ -479,6 +522,93 @@ def check_ownership_sources(ownership):
             errs.append(f"vendor-ownership.yaml: edge '{slug}' -> '{edge.get('parent', '?')}' "
                         f"is a dated acquisition (as_of {edge.get('as_of')}) with invalid/missing "
                         f"confidence '{conf}' (expected one of {sorted(VALID_OWNERSHIP_CONFIDENCE)})")
+    return errs
+
+
+def _load_verify_quotes(root):
+    """Load scripts/verify_quotes.py as a module. The gate MUST use the tool's own
+    normalisation/hashing (match_normalize + quote_sha256) — a reimplementation
+    here would drift and silently un-pin the ledger."""
+    import importlib.util
+    path = os.path.join(root, "scripts", "verify_quotes.py")
+    if not os.path.exists(path):
+        return None
+    spec = importlib.util.spec_from_file_location("_verify_quotes_gate", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def check_quote_ledger(root, domain_slug, trace, today=None):
+    """F-04 offline verbatim-fidelity gate (H1d's build-gate half). Every
+    verbatim / verbatim-elided trace row must have a meta/quote-ledger.json entry
+    keyed (domain|framework|control|citation_keys|sha256 of the normalised quote):
+
+    - a silently edited quote changes the sha and therefore reads as MISSING;
+    - status "mismatch" (ledger-recorded as not matching its source) fails —
+      relabel the quote_type or fix the quote, never ship a false "verbatim";
+    - "verified" entries go stale after 365 days (re-run scripts/verify_quotes.py);
+    - "pending-manual" passes — outstanding verification is honest and visible in
+      the ledger, and the hash pin still detects edits.
+
+    Zero network; verification itself happens in scripts/verify_quotes.py (online,
+    on demand). Fail-closed on missing tool/ledger. An EMPTY domain_slug means the
+    data dir has no registered descriptor (an external/engagement copy, not the
+    repo's shipped trace data) — the ledger is keyed to registered domains only,
+    so the gate deliberately does not apply there (registered domains are always
+    gated; this cannot exempt shipped data)."""
+    if not (domain_slug or "").strip():
+        return []
+    vq = _load_verify_quotes(root)
+    if vq is None:
+        return ["scripts/verify_quotes.py: missing — F-04 quote-ledger gate cannot run"]
+    ledger_path = os.path.join(root, "meta", "quote-ledger.json")
+    if not os.path.exists(ledger_path):
+        return ["meta/quote-ledger.json: missing — F-04 quote-ledger gate cannot run "
+                "(run scripts/verify_quotes.py --refresh)"]
+    with open(ledger_path, encoding="utf-8") as fh:
+        ledger = json.load(fh)
+    entries = {}
+    for e in ledger.get("entries", []):
+        entries[(e.get("domain"), e.get("framework_slug"), e.get("control_code"),
+                 e.get("citation_key"), e.get("quote_sha256"))] = e
+    try:
+        ref = _reference_today(today)
+    except ValueError as exc:
+        return [f"quote-ledger gate: {exc}"]
+    errs = []
+    for r in trace:
+        qtype = (r.get("quote_type") or "").strip().lower()
+        if qtype not in vq.IN_SCOPE_TYPES:
+            continue
+        fw = (r.get("framework_slug") or "").strip()
+        cc = (r.get("control_code") or "").strip()
+        key = (domain_slug, fw, cc, (r.get("citation_keys") or "").strip(),
+               vq.quote_sha256((r.get("evidence_quote") or "").strip()))
+        e = entries.get(key)
+        if e is None:
+            errs.append(f"regulatory-trace.csv: {qtype} quote for {cc} ({fw}) has no "
+                        f"quote-ledger entry — new or silently edited quote; run "
+                        f"scripts/verify_quotes.py --refresh")
+            continue
+        status = (e.get("status") or "").strip()
+        if status == "mismatch":
+            note = (e.get("note") or "").strip()
+            errs.append(f"regulatory-trace.csv: {cc} ({fw}) quote is ledger-recorded as "
+                        f"MISMATCH against its source — relabel quote_type or fix the "
+                        f"quote ({note[:100]})")
+        elif status == "verified":
+            raw = (e.get("verified_on") or "").strip()
+            try:
+                vdate = datetime.date.fromisoformat(raw)
+            except ValueError:
+                errs.append(f"quote-ledger: {cc} ({fw}) has invalid verified_on {raw!r}")
+                continue
+            if (ref - vdate).days > 365:
+                errs.append(f"quote-ledger: {cc} ({fw}) verified {raw} — stale "
+                            f"(>365 days); re-run scripts/verify_quotes.py")
+        elif status != "pending-manual":
+            errs.append(f"quote-ledger: {cc} ({fw}) unknown ledger status {status!r}")
     return errs
 
 
@@ -768,6 +898,7 @@ def validate_all(root=".", data_dir=None):
     ownership = load_yaml(os.path.join(cfg, "vendor-ownership.yaml"))
     errs += check_control_id_registry(trace, registry)
     errs += check_control_semantics(trace, semantics)
+    errs += check_control_scope(use_cases, trace, semantics)
     errs += check_ownership_sources(ownership)
     # M2 cross-domain identity spine: registry well-formed (mapping gate added in validate_all
     # once the spine_id column is present on the catalogs).
@@ -781,6 +912,7 @@ def validate_all(root=".", data_dir=None):
     errs += check_aggregate_vendor_consistency(agg_rows, per_vendor)
     errs += check_data_provenance(trace, provenance)
     errs += check_data_currency(provenance)
+    errs += check_quote_ledger(root, (descriptor.get("slug") or "").strip(), trace)
 
     # evidence-pack gate: only runs when the domain ships an evidence catalog.
     catalog_path = os.path.join(m, "evidence-catalog.csv")

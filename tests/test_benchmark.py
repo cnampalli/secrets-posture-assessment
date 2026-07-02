@@ -52,3 +52,49 @@ def test_position_unknown_domain_no_baseline():
     cohort = benchmark.load_cohort(CFGDIR)
     p = benchmark.position(0.50, "nonexistent", cohort)
     assert p["percentile_band"] == "no cohort baseline"
+
+
+# --- A6 honesty contract: cohort_type synthetic|measured, measured is earned ---
+
+def _cohort_with(band_extra, tmp_path):
+    band = {"p25": 1, "p50": 2, "p75": 3, "rationale": "r"}
+    band.update(band_extra)
+    bad = {"cohort_label": "x", "basis": "y", "unit": "met_pct_integer_0_100",
+           "domains": {"secrets": band}}
+    cfg = tmp_path / "config"
+    cfg.mkdir()
+    (cfg / "benchmark-cohort.json").write_text(json.dumps(bad), encoding="utf-8")
+    return str(cfg)
+
+
+def test_load_cohort_requires_explicit_cohort_type(tmp_path):
+    with pytest.raises(ValueError, match="cohort_type"):
+        benchmark.load_cohort(_cohort_with({}, tmp_path))
+
+
+def test_load_cohort_rejects_off_vocab_cohort_type(tmp_path):
+    with pytest.raises(ValueError, match="cohort_type"):
+        benchmark.load_cohort(_cohort_with({"cohort_type": "estimated"}, tmp_path))
+
+
+def test_load_cohort_measured_requires_min_n(tmp_path):
+    with pytest.raises(ValueError, match="measured requires n >="):
+        benchmark.load_cohort(_cohort_with({"cohort_type": "measured", "n": 3}, tmp_path))
+
+
+def test_load_cohort_measured_ok_at_min_n(tmp_path):
+    c = benchmark.load_cohort(_cohort_with({"cohort_type": "measured", "n": 5}, tmp_path))
+    assert c["domains"]["secrets"]["cohort_type"] == "measured"
+
+
+def test_position_surfaces_cohort_type_and_n():
+    c = benchmark.load_cohort(CFGDIR)
+    pos = benchmark.position(0.5, "secrets", c)
+    assert pos["cohort_type"] == "synthetic" and pos["n"] == 0
+
+
+def test_real_cohort_is_synthetic_labelled():
+    # the shipped baseline must stay honestly synthetic until real engagements land
+    c = benchmark.load_cohort(CFGDIR)
+    for dom, band in c["domains"].items():
+        assert band["cohort_type"] == "synthetic", dom

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Instrument — Identity-Security Posture &amp; Vendor-Selection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* Brass Editorial tokens */
+    --bg:#f4eedf;
+    --bg-2:#fbf7ee;
+    --card:#fffdf7;
+    --ink:#231f1a;
+    --ink-2:#46413a;
+    --muted:#7d7468;
+    --hint:#a89e8e;
+    --border:#e6decd;
+    --border-2:#d8cdb6;
+    --accent:#9a7b32;
+    --accent-deep:#6f5618;
+    --accent-soft:#f2ead4;
+    --accent-border:#e0cd9c;
+    --on-accent:#fff9ec;
+
+    --met:#2f6b4f;   --met-bg:#eaf2ec;
+    --part:#9a6a1e;  --part-bg:#f5ecd6;
+    --gap:#9b2f2f;   --gap-bg:#f6e4e1;
+    --pend:#475069;  --pend-bg:#eceef4;
+    --na:#8a8276;    --na-bg:#efece4;
+
+    --serif:'Fraunces',Georgia,serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+
+    --r-sm:7px; --r-md:10px; --r-lg:16px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* paper grain + vignette atmosphere */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(120% 90% at 12% 0%, rgba(154,123,50,.10), transparent 55%),
+      radial-gradient(110% 80% at 100% 100%, rgba(111,86,24,.08), transparent 50%);
+    mix-blend-mode:multiply;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- deck mechanics ---------- */
+  .deck{position:fixed;inset:0;z-index:1}
+  .slide{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(2rem,6vw,7rem);
+    opacity:0;visibility:hidden;
+    transform:translateY(24px);
+    transition:opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1), visibility .6s;
+    overflow:hidden;
+  }
+  .slide.active{opacity:1;visibility:visible;transform:none}
+
+  /* staggered reveal of direct children */
+  .slide.active .reveal{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+  .slide.active .reveal:nth-child(1){animation-delay:.06s}
+  .slide.active .reveal:nth-child(2){animation-delay:.16s}
+  .slide.active .reveal:nth-child(3){animation-delay:.26s}
+  .slide.active .reveal:nth-child(4){animation-delay:.36s}
+  .slide.active .reveal:nth-child(5){animation-delay:.46s}
+  .slide.active .reveal:nth-child(6){animation-delay:.56s}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+  /* ---------- shared type ---------- */
+  .eyebrow{
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;display:flex;align-items:center;gap:.9rem;
+  }
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--accent-border)}
+  h1{font-family:var(--serif);font-weight:500;line-height:1.02;letter-spacing:-.02em;color:var(--ink)}
+  h2{font-family:var(--serif);font-weight:500;line-height:1.04;letter-spacing:-.015em;color:var(--ink)}
+  .lede{font-size:clamp(1.05rem,1.6vw,1.4rem);line-height:1.55;color:var(--ink-2);max-width:46ch;font-weight:400}
+  em.gold{font-style:italic;color:var(--accent-deep)}
+  strong{font-weight:600;color:var(--ink)}
+
+  /* ---------- slide 1: title ---------- */
+  .title-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:4rem;align-items:center;width:100%;max-width:1200px;margin:0 auto}
+  .title-mark{
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--muted);margin-top:2.5rem;display:flex;gap:1.4rem;flex-wrap:wrap;
+  }
+  .title-mark span{display:inline-flex;align-items:center;gap:.5rem}
+  .title-mark span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent)}
+  .hero-h1{font-size:clamp(2.8rem,6.4vw,5.6rem)}
+  .hero-sub{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(1.2rem,2.4vw,1.9rem);color:var(--accent-deep);margin-top:1.2rem;line-height:1.25}
+
+  /* emblem dial */
+  .emblem{position:relative;aspect-ratio:1;max-width:330px;margin-left:auto;width:100%}
+  .emblem svg{width:100%;height:100%;overflow:visible}
+  .ring{fill:none;stroke:var(--accent-border);stroke-width:1}
+  .ring-2{stroke:var(--border-2)}
+  .tick{stroke:var(--accent);stroke-width:1.4}
+  .arc{fill:none;stroke:var(--accent);stroke-width:7;stroke-linecap:round;
+       stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+  .slide.active .arc{animation:draw 1.6s cubic-bezier(.3,.7,.2,1) .5s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .emblem-core{font-family:var(--serif);font-size:2.6rem;fill:var(--ink);text-anchor:middle;font-weight:500}
+  .emblem-cap{font-family:var(--mono);font-size:.42rem;letter-spacing:.22em;fill:var(--muted);text-anchor:middle}
+
+  /* ---------- generic content blocks ---------- */
+  .col-head{display:grid;grid-template-columns:1fr;gap:1.4rem;max-width:1180px;margin:0 auto;width:100%}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,5rem);align-items:center;max-width:1180px;margin:0 auto;width:100%}
+  .slide-title{font-size:clamp(2rem,4.2vw,3.5rem);margin-bottom:.4rem}
+
+  /* problem list */
+  .pain{display:flex;flex-direction:column;gap:1.1rem;margin-top:1.6rem}
+  .pain li{list-style:none;display:flex;gap:1.1rem;align-items:flex-start;padding-bottom:1.1rem;border-bottom:1px solid var(--border)}
+  .pain li:last-child{border-bottom:0}
+  .pain .x{font-family:var(--serif);font-size:1.3rem;color:var(--gap);line-height:1;margin-top:.1rem}
+  .pain b{display:block;font-size:1.05rem;color:var(--ink);margin-bottom:.2rem}
+  .pain span{font-size:.92rem;color:var(--muted);line-height:1.5}
+
+  /* big stat band */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-2);
+         border:1px solid var(--border-2);border-radius:var(--r-lg);overflow:hidden;max-width:1180px;margin:0 auto;width:100%}
+  .stat{background:var(--card);padding:clamp(1.4rem,2.5vw,2.2rem);position:relative}
+  .stat .n{font-family:var(--serif);font-size:clamp(2.4rem,4.8vw,4rem);font-weight:500;line-height:.9;color:var(--accent-deep);letter-spacing:-.02em}
+  .stat .l{font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:.7rem}
+  .stat .s{font-size:.82rem;color:var(--ink-2);margin-top:.5rem;line-height:1.4}
+
+  /* domain cards */
+  .domains{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:1180px;margin:0 auto;width:100%}
+  .dom{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.7rem 1.6rem;position:relative;overflow:hidden}
+  .dom::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .dom .tag{font-family:var(--mono);font-size:.64rem;letter-spacing:.2em;color:var(--accent);text-transform:uppercase}
+  .dom h3{font-family:var(--serif);font-weight:500;font-size:1.5rem;margin:.5rem 0 .7rem;letter-spacing:-.01em}
+  .dom p{font-size:.88rem;color:var(--muted);line-height:1.5;min-height:4.6em}
+  .dom .figs{display:flex;gap:1.5rem;margin-top:1.2rem;padding-top:1.1rem;border-top:1px solid var(--border)}
+  .dom .figs div{display:flex;flex-direction:column}
+  .dom .figs b{font-family:var(--serif);font-size:1.5rem;font-weight:500;color:var(--ink)}
+  .dom .figs small{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--hint);margin-top:.2rem}
+
+  /* pipeline (how it works) */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;max-width:1180px;margin:1.5rem auto 0;width:100%}
+  .step{position:relative;padding-right:1rem}
+  .step .num{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.2em}
+  .step h4{font-family:var(--serif);font-weight:500;font-size:1.18rem;margin:.5rem 0 .5rem}
+  .step p{font-size:.84rem;color:var(--muted);line-height:1.5}
+  .step:not(:last-child)::after{content:"→";position:absolute;right:-.1rem;top:.1rem;color:var(--accent-border);font-size:1.1rem}
+
+  /* scoring chips */
+  .chips{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.4rem}
+  .chip{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;padding:.4rem .8rem;border-radius:var(--r-sm);font-weight:600}
+  .c-met{background:var(--met-bg);color:var(--met)}
+  .c-part{background:var(--part-bg);color:var(--part)}
+  .c-gap{background:var(--gap-bg);color:var(--gap)}
+  .c-pend{background:var(--pend-bg);color:var(--pend)}
+  .c-na{background:var(--na-bg);color:var(--na)}
+
+  /* differentiators */
+  .diffs{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem 2.2rem;max-width:1180px;margin:1.6rem auto 0;width:100%}
+  .diff{display:flex;gap:1.1rem;align-items:flex-start;padding:.2rem 0}
+  .diff .mk{flex:none;width:42px;height:42px;border-radius:var(--r-md);background:var(--accent-soft);border:1px solid var(--accent-border);
+            display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--accent-deep)}
+  .diff h4{font-size:1.02rem;font-weight:600;margin-bottom:.25rem}
+  .diff p{font-size:.86rem;color:var(--muted);line-height:1.5}
+
+  /* value / ROI */
+  .roi{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;max-width:1180px;margin:1.5rem auto 0;width:100%}
+  .roi .item{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r-md);padding:1.3rem 1.4rem}
+  .roi .item b{font-family:var(--serif);font-weight:500;font-size:1.15rem;display:block;margin-bottom:.35rem}
+  .roi .item span{font-size:.87rem;color:var(--muted);line-height:1.5}
+
+  .quote{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(1.6rem,3.6vw,3rem);line-height:1.25;color:var(--ink);max-width:18ch}
+  .quote .gold{color:var(--accent-deep)}
+  .closing-foot{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:2.5rem}
+
+  /* ---------- chrome ---------- */
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;
+          padding:1.3rem clamp(1.5rem,4vw,3rem);pointer-events:none}
+  .brand{font-family:var(--mono);font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-2)}
+  .brand b{color:var(--accent-deep)}
+  .counter{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--muted)}
+  .counter b{color:var(--ink);font-weight:600}
+
+  .progress{position:fixed;left:0;right:0;bottom:0;height:3px;background:transparent;z-index:10}
+  .progress .bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-deep));width:0;transition:width .5s cubic-bezier(.3,.7,.2,1)}
+
+  .nav{position:fixed;bottom:1.4rem;right:clamp(1.5rem,4vw,3rem);z-index:11;display:flex;gap:.5rem;align-items:center}
+  .nav button{font-family:var(--mono);width:38px;height:38px;border-radius:50%;border:1px solid var(--border-2);
+              background:var(--card);color:var(--ink-2);cursor:pointer;font-size:1rem;transition:.2s;display:grid;place-items:center}
+  .nav button:hover{background:var(--accent-soft);border-color:var(--accent-border);color:var(--accent-deep);transform:translateY(-2px)}
+  .nav button:active{transform:translateY(0)}
+
+  .dots{position:fixed;left:clamp(1.5rem,4vw,3rem);bottom:1.6rem;z-index:11;display:flex;gap:.55rem}
+  .dots i{width:7px;height:7px;border-radius:50%;background:var(--border-2);cursor:pointer;transition:.3s;display:block}
+  .dots i.on{background:var(--accent);transform:scale(1.35)}
+  .dots i:hover{background:var(--accent-border)}
+
+  .hint{position:fixed;bottom:1.7rem;left:50%;transform:translateX(-50%);z-index:11;
+        font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--hint);
+        transition:opacity .6s}
+  .hint.gone{opacity:0;pointer-events:none}
+
+  @media (max-width:880px){
+    .title-grid,.two{grid-template-columns:1fr;gap:2rem}
+    .emblem{max-width:230px;margin:0 auto}
+    .stats,.domains,.flow,.diffs,.roi{grid-template-columns:1fr 1fr}
+    .slide{padding:4.5rem 1.5rem 4rem}
+    .counter{display:none}
+  }
+  @media (max-width:560px){
+    .stats,.domains,.flow,.diffs,.roi{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><b>◆</b>&nbsp; The Instrument</div>
+  <div class="counter"><b id="cur">01</b> / <span id="tot">08</span></div>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 · TITLE -->
+  <section class="slide active">
+    <div class="title-grid">
+      <div>
+        <div class="eyebrow reveal">Identity-Security Posture &amp; Vendor Selection</div>
+        <h1 class="hero-h1 reveal" style="margin-top:1.4rem">The&nbsp;Instrument</h1>
+        <div class="hero-sub reveal">An auditable, offline assessment engine for<br>Secrets, Privileged Access &amp; Identity Governance.</div>
+        <div class="title-mark reveal">
+          <span>__STAT_DOMAINS__ Domains</span><span>__STAT_UC_TOTAL__ Use&nbsp;Cases</span><span>__STAT_IDENTITY_CLASSES__ Identity&nbsp;Classes</span><span>Board-Defensible</span>
+        </div>
+      </div>
+      <div class="emblem reveal">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle class="ring" cx="100" cy="100" r="92"/>
+          <circle class="ring ring-2" cx="100" cy="100" r="78"/>
+          <!-- ticks -->
+          <g id="ticks"></g>
+          <!-- coverage arc ~ 270deg -->
+          <circle class="arc" cx="100" cy="100" r="66" style="--len:414" transform="rotate(-90 100 100)"/>
+          <text class="emblem-core" x="100" y="108">__STAT_DOMAINS__</text>
+          <text class="emblem-cap" x="100" y="132">DOMAINS · ONE POSTURE</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · PROBLEM -->
+  <section class="slide">
+    <div class="two">
+      <div>
+        <div class="eyebrow reveal">The Problem</div>
+        <h2 class="slide-title reveal">Most identity assessments<br>can't survive scrutiny.</h2>
+        <p class="lede reveal" style="margin-top:1rem">Vendor comparisons read like theatre. Spreadsheets go stale. And no one can tell the regulator <em class="gold">why</em> a verdict was reached.</p>
+      </div>
+      <ul class="pain reveal">
+        <li><span class="x">✕</span><div><b>Analyst theatre</b><span>Glossy quadrants and scores with no cited evidence — impossible to defend to a board or auditor.</span></div></li>
+        <li><span class="x">✕</span><div><b>Three silos, no whole</b><span>Secrets, PAM and IGA are bought and reviewed separately, so concentration and overlap go unseen.</span></div></li>
+        <li><span class="x">✕</span><div><b>Blind to 2026 identities</b><span>Off-the-shelf frameworks miss agentic-AI, OAuth consent abuse and workload federation.</span></div></li>
+        <li><span class="x">✕</span><div><b>One-and-done</b><span>A point-in-time PDF that's obsolete the week after it ships — no way to track movement.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3 · WHAT IT IS -->
+  <section class="slide">
+    <div class="two">
+      <div>
+        <div class="eyebrow reveal">What It Is</div>
+        <h2 class="slide-title reveal">A decision instrument —<br>not a report.</h2>
+        <p class="lede reveal" style="margin-top:1rem">A reusable, <strong>fully-offline</strong> framework that captures your current state and renders it as interactive, evidence-gated posture intelligence.</p>
+        <div class="chips reveal">
+          <span class="chip c-met">SELF-HOSTED</span>
+          <span class="chip c-pend">BYTE-DETERMINISTIC</span>
+          <span class="chip c-part">PROVENANCE-GATED</span>
+        </div>
+      </div>
+      <div class="reveal" style="display:flex;flex-direction:column;gap:.9rem">
+        <div class="roi" style="grid-template-columns:1fr;margin:0;gap:.9rem">
+          <div class="item"><b>Intake SPA</b><span>A React + TypeScript questionnaire captures current-state evidence — the front door to the assessment.</span></div>
+          <div class="item"><b>Build engine</b><span>A Python matrix engine validates a 5-table star schema, enforces citations &amp; data-currency, then compiles.</span></div>
+          <div class="item"><b>Interactive reports</b><span>Three domain dashboards + one cross-domain view — self-contained HTML that runs with no server.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · WHAT IT DOES — domains + scope -->
+  <section class="slide">
+    <div class="col-head" style="margin-bottom:1.6rem">
+      <div class="eyebrow reveal">What It Does · Three Domains, One Posture</div>
+      <h2 class="slide-title reveal" style="font-size:clamp(1.8rem,3.6vw,2.9rem)">Coverage across the full identity-security estate.</h2>
+    </div>
+    <div class="domains reveal">
+      <div class="dom">
+        <div class="tag">Domain 01</div>
+        <h3>Secrets Management</h3>
+        <p>Machine &amp; non-human identity secrets across their lifecycle — vaulting, rotation and governance.</p>
+        <div class="figs"><div><b>__STAT_UC_SECRETS__</b><small>Use cases</small></div><div><b>__STAT_VENDORS_SECRETS__</b><small>Vendors</small></div><div><b>__STAT_IDENTITY_SECRETS__</b><small>Identity classes</small></div></div>
+      </div>
+      <div class="dom">
+        <div class="tag">Domain 02</div>
+        <h3>Privileged Access</h3>
+        <p>PAM — vaulting, session isolation, JIT/ZSP, discovery, CIEM and tier-0 isolation.</p>
+        <div class="figs"><div><b>__STAT_UC_PAM__</b><small>Use cases</small></div><div><b>__STAT_VENDORS_PAM__</b><small>Vendors</small></div><div><b>__STAT_IDENTITY_PAM__</b><small>Identity classes</small></div></div>
+      </div>
+      <div class="dom">
+        <div class="tag">Domain 03</div>
+        <h3>Identity Governance</h3>
+        <p>IGA — discovery, certification, access reviews and lifecycle automation as a governed process.</p>
+        <div class="figs"><div><b>__STAT_UC_IGA__</b><small>Use cases</small></div><div><b>__STAT_IDENTITY_IGA__</b><small>Identity classes</small></div><div><b>__STAT_ARCHETYPE_RANGE__</b><small>Archetypes</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · HOW IT WORKS -->
+  <section class="slide">
+    <div class="col-head" style="margin-bottom:.4rem">
+      <div class="eyebrow reveal">How It Works · From Evidence to Roadmap</div>
+      <h2 class="slide-title reveal" style="font-size:clamp(1.8rem,3.6vw,2.9rem)">Every verdict is scored, sourced and sequenced.</h2>
+    </div>
+    <div class="flow reveal">
+      <div class="step"><div class="num">01 · MODEL</div><h4>Archetypes</h4><p>Each use case maps to one of __STAT_ARCHETYPES__ reusable patterns (__STAT_ARCHETYPE_RANGE__) — preventive guardrails, lifecycle automation, attestation, governance.</p></div>
+      <div class="step"><div class="num">02 · SCORE</div><h4>Six dimensions</h4><p>State is assessed across coverage, enforcement, exception, cadence, depth and governance — never a single number.</p></div>
+      <div class="step"><div class="num">03 · QUALIFY</div><h4>Confidence axis</h4><p>Every verdict carries an evidence grade — independent of state — so weak claims can't masquerade as strong ones.</p></div>
+      <div class="step"><div class="num">04 · ACT</div><h4>Roadmap</h4><p>Gaps become a prioritised remediation plan — risk × effort, with regulatory drivers as the tie-breaker.</p></div>
+    </div>
+    <div class="two reveal" style="margin-top:2rem;align-items:start">
+      <div>
+        <div style="font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:.7rem">State</div>
+        <div class="chips" style="margin-top:0">
+          <span class="chip c-met">MET</span><span class="chip c-part">PARTIAL</span><span class="chip c-gap">GAP</span><span class="chip c-na">N/A</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:.7rem">Confidence</div>
+        <div class="chips" style="margin-top:0">
+          <span class="chip c-met">HIGH</span><span class="chip c-part">MEDIUM</span><span class="chip c-gap">LOW</span><span class="chip c-pend">PENDING</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · DIFFERENTIATOR -->
+  <section class="slide">
+    <div class="col-head" style="margin-bottom:.6rem">
+      <div class="eyebrow reveal">The Differentiator · Why It's Trusted</div>
+      <h2 class="slide-title reveal" style="font-size:clamp(1.8rem,3.6vw,2.9rem)">It assesses the assessment.</h2>
+    </div>
+    <div class="diffs reveal">
+      <div class="diff"><div class="mk">i</div><div><h4>Honesty by design</h4><p>Capability existence is vendor-doc-cited; maturity scores are marked plainly as analyst judgment — not dressed up as verified fact.</p></div></div>
+      <div class="diff"><div class="mk">§</div><div><h4>Regulatory traceability</h4><p>Control-level mapping to __STAT_FRAMEWORKS_CONTROL_LEVEL__ frameworks — Essential 8, APRA CPS 234/230, ASD ISM, CISA ZTMM v2, MITRE ATT&amp;CK — each with source &amp; verbatim quote.</p></div></div>
+      <div class="diff"><div class="mk">∴</div><div><h4>2026-forward taxonomy</h4><p>__STAT_IDENTITY_CLASSES__ identity classes including agentic-AI agents, OAuth consent-grant principals and SPIFFE/SPIRE workload federation.</p></div></div>
+      <div class="diff"><div class="mk">◇</div><div><h4>Buyer-grade defensibility</h4><p>A 4-lens, 20-dimension methodology scores the engine itself — rigor, completeness, regulatory defensibility and operational fit.</p></div></div>
+      <div class="diff"><div class="mk">⛓</div><div><h4>Provenance gating</h4><p>No fabricated control IDs, every claim resolves to a citation, and facts fail the build once they exceed their currency window.</p></div></div>
+      <div class="diff"><div class="mk">=</div><div><h4>Byte-deterministic</h4><p>Frozen snapshot tests prove the same inputs always produce the same report — reproducible, audit-ready, CI-gated.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 7 · VALUE / ROI -->
+  <section class="slide">
+    <div class="two" style="align-items:start">
+      <div>
+        <div class="eyebrow reveal">The Value Proposition</div>
+        <h2 class="slide-title reveal" style="font-size:clamp(1.9rem,3.8vw,3rem)">A verdict you can defend —<br>to the board and the regulator.</h2>
+        <p class="lede reveal" style="margin-top:1.1rem">Built for the Head of IAM, CISO and Head of Platform Security at regulated institutions. ROI lands as <em class="gold">cost avoided</em> — never invented numbers.</p>
+      </div>
+      <div class="roi reveal" style="margin-top:.3rem">
+        <div class="item"><b>Don't mis-buy</b><span>Stop paying for tools that don't close your actual gaps.</span></div>
+        <div class="item"><b>Don't over-build</b><span>See where in-house controls can replace licensing spend.</span></div>
+        <div class="item"><b>Don't fail audit</b><span>Defensible control mappings cut audit friction and fines.</span></div>
+        <div class="item"><b>Don't re-assess</b><span>One re-runnable source of truth replaces three RFP cycles.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · CLOSING -->
+  <section class="slide">
+    <div style="max-width:1180px;margin:0 auto;width:100%">
+      <div class="eyebrow reveal">In One Line</div>
+      <p class="quote reveal" style="margin-top:1.6rem">A reusable, <span class="gold">auditable</span> identity-security posture instrument you can <span class="gold">defend</span>.</p>
+      <div class="stats reveal" style="margin-top:2.6rem">
+        <div class="stat"><div class="n">__STAT_DOMAINS__</div><div class="l">Domains</div><div class="s">Secrets · PAM · IGA</div></div>
+        <div class="stat"><div class="n">__STAT_UC_TOTAL__</div><div class="l">Use cases</div><div class="s">__STAT_ARCHETYPES__ reusable archetypes</div></div>
+        <div class="stat"><div class="n">__STAT_IDENTITY_CLASSES__</div><div class="l">Identity classes</div><div class="s">Human · machine · agentic</div></div>
+        <div class="stat"><div class="n">__STAT_FRAMEWORKS_CONTROL_LEVEL__</div><div class="l">Frameworks</div><div class="s">Mapped at control level</div></div>
+      </div>
+      <div class="closing-foot reveal">Brass Editorial · Self-Hosted · Evidence-Gated · Board-Defensible</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="dots" id="dots"></div>
+<div class="nav">
+  <button id="prev" aria-label="Previous">‹</button>
+  <button id="next" aria-label="Next">›</button>
+</div>
+<div class="hint" id="hint">← → or Space to navigate</div>
+
+<script>
+  // emblem ticks
+  (function(){
+    const g=document.getElementById('ticks');if(!g)return;
+    let s='';for(let i=0;i<60;i++){const a=i*6*Math.PI/180;const r1=i%5===0?84:88,r2=92;
+      const x1=100+r1*Math.cos(a),y1=100+r1*Math.sin(a),x2=100+r2*Math.cos(a),y2=100+r2*Math.sin(a);
+      s+=`<line class="tick" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke-opacity="${i%5===0?.7:.3}"/>`;}
+    g.innerHTML=s;
+  })();
+
+  const slides=[...document.querySelectorAll('.slide')];
+  const total=slides.length;
+  let i=0;
+  const bar=document.getElementById('bar');
+  const cur=document.getElementById('cur');
+  const dotsWrap=document.getElementById('dots');
+  document.getElementById('tot').textContent=String(total).padStart(2,'0');
+
+  slides.forEach((_,n)=>{const d=document.createElement('i');d.onclick=()=>go(n);dotsWrap.appendChild(d);});
+  const dots=[...dotsWrap.children];
+
+  function go(n){
+    i=Math.max(0,Math.min(total-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+    bar.style.width=((i+1)/total*100)+'%';
+    cur.textContent=String(i+1).padStart(2,'0');
+  }
+  function next(){go(i+1)} function prev(){go(i-1)}
+
+  document.getElementById('next').onclick=next;
+  document.getElementById('prev').onclick=prev;
+  addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();next();hide();}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();prev();hide();}
+    else if(e.key==='Home')go(0); else if(e.key==='End')go(total-1);
+  });
+  // click-zones (ignore controls)
+  addEventListener('click',e=>{
+    if(e.target.closest('.nav,.dots,a,button'))return;
+    if(e.clientX>innerWidth*0.66){next();hide();}
+    else if(e.clientX<innerWidth*0.34){prev();hide();}
+  });
+  // touch
+  let tx=0;addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+  addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){dx<0?next():prev();hide();}});
+
+  const hintEl=document.getElementById('hint');
+  function hide(){hintEl.classList.add('gone')}
+  setTimeout(hide,5000);
+
+  go(0);
+</script>
+</body>
+</html>

@@ -202,3 +202,40 @@ cisa-ztmm-v2:
   ZT-Pillar-Automation-Orchestration: "rotation, revocation, and lifecycle orchestration without human transcription"
   ZT-Pillar-Governance: "policy-as-code, exception register, and supply-chain attestation for nhis"
   ZT-Pillar-Governance-PQC: "crypto-agility and pqc readiness reporting to executive forums"
+
+# ---------------------------------------------------------------------------
+# NEW-01 scope gate (2026-07-02 review): relationship-scoped controls.
+# check_control_semantics freezes what a control SAYS; this block freezes WHO a
+# control is ABOUT. A control listed under a scope may only bind use-cases whose
+# own text (short_title + story + acceptance_criteria) evidences that scope —
+# the machine check for the right-ID-wrong-SCOPE class (the original REG-F1:
+# CPS234-§22 third-party obligation bound to purely-internal PAM UCs) that the
+# backmap↔trace consistency gate is structurally blind to, because there the
+# defect can be symmetric across both files. Keyword lists are data, not code:
+# auditable, refinable, never weaken below the third-party discriminator.
+# CPS230-§25/§42 are deliberately NOT listed (internal-ops paragraphs).
+scope_restrictions:
+  third-party:
+    controls:
+      - CPS234-§22
+      - CPS234-§28
+      - CPS234-§34
+      - CPS230-§15
+      - CPS230-§47
+      - CPS230-§54
+      - CPS230-§59(b)
+    keyword_any:
+      - third-party
+      - third party
+      - vendor
+      - saas
+      - service provider
+      - service-provider
+      - supply-chain
+      - supply chain
+      - supplier
+      - offshor
+      - residency
+      - sovereignty
+      - outsourc
+      - partner
