@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Instrument — A4 One-Pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#f4f1ea; --ink-2:#c8cdd6; --muted:#8a93a4; --hint:#6b7484;
+    --emerald:#1fb287; --cyan:#19d7c6; --gold:#e8b04b; --indigo:#6172ff;
+    --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.18);
+    --display:'Instrument Serif',Georgia,serif;
+    --sans:'Hanken Grotesk',system-ui,sans-serif;
+    --mono:'Geist Mono',ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  /* exact A4 + print rules */
+  @page{ size:A4 portrait; margin:0; }
+  html,body{background:#3a3f47}
+  body{ font-family:var(--sans); display:flex; justify-content:center;
+        padding:18px; -webkit-font-smoothing:antialiased; }
+
+  .sheet{
+    width:210mm; height:297mm; position:relative; overflow:hidden;
+    background:
+      radial-gradient(60% 45% at 18% 8%, rgba(31,178,135,.20), transparent 60%),
+      radial-gradient(55% 40% at 92% 6%, rgba(97,114,255,.20), transparent 60%),
+      radial-gradient(70% 50% at 88% 100%, rgba(232,176,75,.16), transparent 60%),
+      radial-gradient(60% 45% at 6% 100%, rgba(25,215,198,.14), transparent 60%),
+      linear-gradient(160deg,#0b121f 0%, #070a10 55%, #090d15 100%);
+    color:var(--ink);
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  /* grain */
+  .sheet::after{content:"";position:absolute;inset:0;opacity:.045;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* decorative double border frame */
+  .frame{position:absolute;inset:9mm;border:1px solid var(--line-2);border-radius:3px;pointer-events:none}
+  .frame::before{content:"";position:absolute;inset:2.4mm;border:1px solid rgba(232,176,75,.35);border-radius:2px}
+  /* corner ticks */
+  .corner{position:absolute;width:7mm;height:7mm;border:1.4px solid var(--gold);pointer-events:none;z-index:3}
+  .corner.tl{top:7mm;left:7mm;border-right:0;border-bottom:0}
+  .corner.tr{top:7mm;right:7mm;border-left:0;border-bottom:0}
+  .corner.bl{bottom:7mm;left:7mm;border-right:0;border-top:0}
+  .corner.br{bottom:7mm;right:7mm;border-left:0;border-top:0}
+
+  .content{position:absolute;inset:15mm;display:flex;flex-direction:column;z-index:2}
+
+  /* header */
+  .top{display:flex;justify-content:space-between;align-items:center;
+       padding-bottom:5mm;border-bottom:1px solid var(--line)}
+  .wordmark{display:flex;align-items:center;gap:8px;font-family:var(--mono);
+    font-size:9.5pt;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-2)}
+  .wordmark .gem{width:9px;height:9px;border-radius:2px;transform:rotate(45deg);
+    background:linear-gradient(135deg,var(--gold),var(--emerald))}
+  .wordmark b{color:var(--ink);font-weight:700}
+  .top .meta{font-family:var(--mono);font-size:7pt;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-align:right}
+
+  /* hero */
+  .hero{padding-top:8mm}
+  .eyebrow{font-family:var(--mono);font-size:8pt;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:5mm}
+  .eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+  h1{font-family:var(--display);font-weight:400;font-size:34pt;line-height:1.0;letter-spacing:-.01em}
+  h1 .it{font-style:italic;
+    background:linear-gradient(100deg,var(--gold),var(--emerald) 70%,var(--cyan));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:11.5pt;line-height:1.55;color:var(--ink-2);max-width:62ch;margin-top:6mm;font-weight:300}
+  .lede b{color:var(--ink);font-weight:600}
+
+  .pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:7mm}
+  .pill{font-family:var(--mono);font-size:7.5pt;letter-spacing:.1em;text-transform:uppercase;
+    padding:5px 11px;border-radius:100px;border:1px solid var(--line-2);background:var(--card);
+    color:var(--ink-2);display:flex;align-items:center;gap:7px}
+  .pill .d{width:5px;height:5px;border-radius:50%}
+  .d.e{background:var(--emerald)} .d.g{background:var(--gold)} .d.c{background:var(--cyan)} .d.i{background:var(--indigo)}
+
+  /* domain strip */
+  .domains{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:11mm}
+  .dom{border:1px solid var(--line);border-radius:8px;padding:5mm;background:var(--card);position:relative;overflow:hidden}
+  .dom::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .dom.e::before{background:var(--emerald)} .dom.i::before{background:var(--indigo)} .dom.g::before{background:var(--gold)}
+  .dom .tag{font-family:var(--mono);font-size:6.5pt;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .dom h3{font-family:var(--display);font-weight:400;font-size:17pt;margin:3px 0 4px}
+  .dom p{font-size:8pt;line-height:1.45;color:var(--muted);min-height:3.6em}
+  .dom .fig{font-family:var(--mono);font-size:7pt;letter-spacing:.06em;color:var(--ink-2);margin-top:5px;
+    padding-top:5px;border-top:1px solid var(--line)}
+  .dom .fig b{font-family:var(--display);font-size:13pt;color:var(--ink);margin-right:4px}
+
+  /* value ledger */
+  .ledger-h{font-family:var(--mono);font-size:7.5pt;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--muted);margin:11mm 0 4mm;display:flex;align-items:center;gap:10px}
+  .ledger-h::after{content:"";flex:1;height:1px;background:var(--line)}
+  .ledger{display:grid;grid-template-columns:repeat(2,1fr);gap:4mm}
+  .cell{border:1px solid var(--line);border-radius:8px;padding:4.5mm 5mm;background:var(--card);
+    display:flex;gap:5mm;align-items:flex-start;position:relative;overflow:hidden}
+  .cell::before{content:"";position:absolute;left:0;top:0;height:2px;width:60%}
+  .cell.e::before{background:linear-gradient(90deg,var(--emerald),transparent)}
+  .cell.c::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+  .cell.g::before{background:linear-gradient(90deg,var(--gold),transparent)}
+  .cell.i::before{background:linear-gradient(90deg,var(--indigo),transparent)}
+  .cell .num{font-family:var(--display);font-size:26pt;line-height:.85;color:var(--ink);flex:none;min-width:1.6em}
+  .cell .num small{display:block;font-family:var(--mono);font-size:5.6pt;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-top:4px;line-height:1.3}
+  .cell h4{font-size:11pt;font-weight:700;color:var(--ink)}
+  .cell p{font-size:8.2pt;line-height:1.45;color:var(--muted);margin-top:3px}
+
+  /* footer */
+  .foot{margin-top:auto;padding-top:5mm;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--mono);font-size:6.8pt;letter-spacing:.16em;text-transform:uppercase;color:var(--hint)}
+  .foot .r{color:var(--muted);text-align:right}
+
+  @media print{ body{padding:0;background:#fff} }
+  /* on-screen niceties only */
+  @media screen{ .sheet{box-shadow:0 20px 60px rgba(0,0,0,.5);margin:0 auto} }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="frame"></div>
+  <span class="corner tl"></span><span class="corner tr"></span>
+  <span class="corner bl"></span><span class="corner br"></span>
+
+  <div class="content">
+
+    <div class="top">
+      <div class="wordmark"><span class="gem"></span> The&nbsp;<b>Instrument</b></div>
+      <div class="meta">Identity-Security Posture<br>&amp; Vendor Selection · One-Pager</div>
+    </div>
+
+    <div class="hero">
+      <div class="eyebrow">One instrument · One posture</div>
+      <h1>One verdict you can <span class="it">defend</span><br>across the whole identity estate.</h1>
+      <p class="lede">An <b>offline, evidence-gated</b> assessment engine that scores Secrets,
+        Privileged Access &amp; Identity Governance as a single posture — and proves every verdict,
+        with a cited source, to your <b>board and your regulator</b>.</p>
+      <div class="pills">
+        <span class="pill"><span class="d e"></span>Self-hosted</span>
+        <span class="pill"><span class="d g"></span>Evidence-gated</span>
+        <span class="pill"><span class="d c"></span>Board-defensible</span>
+        <span class="pill"><span class="d i"></span>2026-forward taxonomy</span>
+      </div>
+    </div>
+
+    <div class="domains">
+      <div class="dom e"><div class="tag">Domain 01</div><h3>Secrets</h3>
+        <p>Machine &amp; non-human secrets across their lifecycle — vaulting, rotation, governance.</p>
+        <div class="fig"><b>__STAT_UC_SECRETS__</b>use cases &nbsp;·&nbsp; <b>__STAT_VENDORS_SECRETS__</b>vendors</div></div>
+      <div class="dom i"><div class="tag">Domain 02</div><h3>Privileged Access</h3>
+        <p>PAM — session isolation, JIT/ZSP, discovery, CIEM and tier-0 isolation.</p>
+        <div class="fig"><b>__STAT_UC_PAM__</b>use cases &nbsp;·&nbsp; <b>__STAT_VENDORS_PAM__</b>vendors</div></div>
+      <div class="dom g"><div class="tag">Domain 03</div><h3>Identity Governance</h3>
+        <p>IGA — discovery, certification, access reviews and lifecycle as a governed process.</p>
+        <div class="fig"><b>__STAT_UC_IGA__</b>use cases &nbsp;·&nbsp; <b>__STAT_VENDORS_IGA__</b>vendors</div></div>
+    </div>
+
+    <div class="ledger-h">The business value · ROI as cost avoided</div>
+    <div class="ledger">
+      <div class="cell e"><div class="num">__STAT_UC_TOTAL__<small>Use cases<br>__STAT_ARCHETYPES__ archetypes</small></div>
+        <div><h4>Don't mis-buy</h4><p>Stop paying for tools that don't close your actual gaps.</p></div></div>
+      <div class="cell c"><div class="num">__STAT_IDENTITY_CLASSES__<small>Identity<br>classes</small></div>
+        <div><h4>Don't over-build</h4><p>See where in-house controls can replace licence spend.</p></div></div>
+      <div class="cell g"><div class="num">__STAT_FRAMEWORKS_CONTROL_LEVEL__<small>Frameworks<br>control-level</small></div>
+        <div><h4>Don't fail audit</h4><p>Cited control mappings cut audit friction and fines.</p></div></div>
+      <div class="cell i"><div class="num">1<small>Source of<br>truth</small></div>
+        <div><h4>Don't re-assess</h4><p>One re-runnable instrument replaces three RFP cycles.</p></div></div>
+    </div>
+
+    <div class="foot">
+      <span>Human · Machine · Agentic identities</span>
+      <span class="r">Essential 8 · APRA CPS 234/230 · ASD ISM · CISA ZTMM · MITRE ATT&amp;CK</span>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
