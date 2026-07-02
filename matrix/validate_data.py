@@ -11,6 +11,7 @@ import argparse
 import csv
 import datetime
 import glob
+import json
 import os
 import re
 import sys
@@ -524,6 +525,93 @@ def check_ownership_sources(ownership):
     return errs
 
 
+def _load_verify_quotes(root):
+    """Load scripts/verify_quotes.py as a module. The gate MUST use the tool's own
+    normalisation/hashing (match_normalize + quote_sha256) — a reimplementation
+    here would drift and silently un-pin the ledger."""
+    import importlib.util
+    path = os.path.join(root, "scripts", "verify_quotes.py")
+    if not os.path.exists(path):
+        return None
+    spec = importlib.util.spec_from_file_location("_verify_quotes_gate", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def check_quote_ledger(root, domain_slug, trace, today=None):
+    """F-04 offline verbatim-fidelity gate (H1d's build-gate half). Every
+    verbatim / verbatim-elided trace row must have a meta/quote-ledger.json entry
+    keyed (domain|framework|control|citation_keys|sha256 of the normalised quote):
+
+    - a silently edited quote changes the sha and therefore reads as MISSING;
+    - status "mismatch" (ledger-recorded as not matching its source) fails —
+      relabel the quote_type or fix the quote, never ship a false "verbatim";
+    - "verified" entries go stale after 365 days (re-run scripts/verify_quotes.py);
+    - "pending-manual" passes — outstanding verification is honest and visible in
+      the ledger, and the hash pin still detects edits.
+
+    Zero network; verification itself happens in scripts/verify_quotes.py (online,
+    on demand). Fail-closed on missing tool/ledger. An EMPTY domain_slug means the
+    data dir has no registered descriptor (an external/engagement copy, not the
+    repo's shipped trace data) — the ledger is keyed to registered domains only,
+    so the gate deliberately does not apply there (registered domains are always
+    gated; this cannot exempt shipped data)."""
+    if not (domain_slug or "").strip():
+        return []
+    vq = _load_verify_quotes(root)
+    if vq is None:
+        return ["scripts/verify_quotes.py: missing — F-04 quote-ledger gate cannot run"]
+    ledger_path = os.path.join(root, "meta", "quote-ledger.json")
+    if not os.path.exists(ledger_path):
+        return ["meta/quote-ledger.json: missing — F-04 quote-ledger gate cannot run "
+                "(run scripts/verify_quotes.py --refresh)"]
+    with open(ledger_path, encoding="utf-8") as fh:
+        ledger = json.load(fh)
+    entries = {}
+    for e in ledger.get("entries", []):
+        entries[(e.get("domain"), e.get("framework_slug"), e.get("control_code"),
+                 e.get("citation_key"), e.get("quote_sha256"))] = e
+    try:
+        ref = _reference_today(today)
+    except ValueError as exc:
+        return [f"quote-ledger gate: {exc}"]
+    errs = []
+    for r in trace:
+        qtype = (r.get("quote_type") or "").strip().lower()
+        if qtype not in vq.IN_SCOPE_TYPES:
+            continue
+        fw = (r.get("framework_slug") or "").strip()
+        cc = (r.get("control_code") or "").strip()
+        key = (domain_slug, fw, cc, (r.get("citation_keys") or "").strip(),
+               vq.quote_sha256((r.get("evidence_quote") or "").strip()))
+        e = entries.get(key)
+        if e is None:
+            errs.append(f"regulatory-trace.csv: {qtype} quote for {cc} ({fw}) has no "
+                        f"quote-ledger entry — new or silently edited quote; run "
+                        f"scripts/verify_quotes.py --refresh")
+            continue
+        status = (e.get("status") or "").strip()
+        if status == "mismatch":
+            note = (e.get("note") or "").strip()
+            errs.append(f"regulatory-trace.csv: {cc} ({fw}) quote is ledger-recorded as "
+                        f"MISMATCH against its source — relabel quote_type or fix the "
+                        f"quote ({note[:100]})")
+        elif status == "verified":
+            raw = (e.get("verified_on") or "").strip()
+            try:
+                vdate = datetime.date.fromisoformat(raw)
+            except ValueError:
+                errs.append(f"quote-ledger: {cc} ({fw}) has invalid verified_on {raw!r}")
+                continue
+            if (ref - vdate).days > 365:
+                errs.append(f"quote-ledger: {cc} ({fw}) verified {raw} — stale "
+                            f"(>365 days); re-run scripts/verify_quotes.py")
+        elif status != "pending-manual":
+            errs.append(f"quote-ledger: {cc} ({fw}) unknown ledger status {status!r}")
+    return errs
+
+
 def check_data_provenance(trace, provenance):
     """F1/F4 gate: every framework in the trace and each non-framework data source must
     have a provenance entry with a non-empty as_of and a valid source_tier."""
@@ -824,6 +912,7 @@ def validate_all(root=".", data_dir=None):
     errs += check_aggregate_vendor_consistency(agg_rows, per_vendor)
     errs += check_data_provenance(trace, provenance)
     errs += check_data_currency(provenance)
+    errs += check_quote_ledger(root, (descriptor.get("slug") or "").strip(), trace)
 
     # evidence-pack gate: only runs when the domain ships an evidence catalog.
     catalog_path = os.path.join(m, "evidence-catalog.csv")
