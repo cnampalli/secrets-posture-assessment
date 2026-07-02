@@ -18,9 +18,7 @@ validate-data:
   extends: .python
   stage: validate
   script:
-    - python3 matrix/validate_data.py
-    - python3 matrix/validate_data.py --data-dir matrix/domains/iga
-    - python3 matrix/validate_data.py --data-dir matrix/domains/pam
+    - python3 matrix/validate_data.py  # all registered domains by default (W0.1)
 
 pytest:
   extends: .python

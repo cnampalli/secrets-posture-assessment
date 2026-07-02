@@ -48,6 +48,9 @@ VALID_STATES = {"MET", "PARTIAL", "GAP", "PENDING", "NA"}
 # bind evidence packs — EVIDENCE_COMPLIANCE_ROLES below stays compliance-only.
 VALID_ROLES = {"PRIMARY-LENS", "BACK-MAP", "ADVERSARY-LENS", "INFORMATIVE", "THREAT-CONTEXT"}
 SENTINELS = {"MISSING-UC", "MISSING-NHI"}
+# H4: closed confidence vocabulary for vendor-ownership acquisition edges
+# (matches the header contract in config/vendor-ownership.yaml).
+VALID_OWNERSHIP_CONFIDENCE = {"HIGH", "MEDIUM", "LOW"}
 
 # --- evidence-pack gate (regulatory-driven evidence packs) ---
 # Evidence packs are a compliance-evidence concept, so refs are collected only
@@ -180,12 +183,27 @@ def resolve_domain_descriptor(root, data_dir):
 
 
 def default_data_dir(root):
-    """Resolve the no-arg default data dir VIA THE secrets descriptor, so a bare
-    `python3 matrix/validate_data.py` keeps meaning "validate the secrets domain"
-    after its CSVs moved to matrix/domains/secrets/. The descriptor's `data_dir`
-    is relative to <root>/matrix; fall back to <root>/matrix if it's unreadable."""
+    """Resolve the secrets domain's data dir via its descriptor. Retained for
+    validate_all's single-domain default; the CLI default is iter_domain_data_dirs
+    (every registered domain), so PAM/IGA can never silently escape the gate."""
     d = load_yaml(os.path.join(root, "matrix", "config", "domains", "secrets.yaml"))
     return os.path.join(root, "matrix", d.get("data_dir") or ".")
+
+
+def iter_domain_data_dirs(root):
+    """Yield (slug, data_dir) for every registered domain descriptor in
+    <root>/matrix/config/domains/*.yaml, sorted by filename. The descriptor
+    registry is THE definition of what must be validated — a 4th domain YAML
+    auto-joins the default CLI run."""
+    cfg_dir = os.path.join(root, "matrix", "config", "domains")
+    if not os.path.isdir(cfg_dir):
+        return
+    for fn in sorted(os.listdir(cfg_dir)):
+        if not fn.endswith((".yaml", ".yml")):
+            continue
+        d = load_yaml(os.path.join(cfg_dir, fn))
+        slug = (d.get("slug") or os.path.splitext(fn)[0]).strip()
+        yield slug, os.path.join(root, "matrix", d.get("data_dir") or ".")
 
 
 def check_aggregate_vendor_capabilities(rows, vendor_fit=None):
@@ -439,10 +457,12 @@ def check_provider_claims_cited(name, rows):
 
 def check_ownership_sources(ownership):
     """H4 gate: every ACQUISITION edge in vendor-ownership.yaml (one carrying an
-    `as_of` date) MUST cite a primary-source `source_url` (http/https). First-party
-    'own product' edges (no as_of) are exempt. Ownership config is optional, so an
-    empty map is not itself a violation — but a dated edge without a source is, the
-    rule that keeps an unsourced M&A claim (the Entro error) out of the report."""
+    `as_of` date) MUST cite a primary-source `source_url` (http/https) AND declare a
+    `confidence` from the closed HIGH/MEDIUM/LOW vocabulary (only HIGH edges collapse
+    siblings downstream). First-party 'own product' edges (no as_of) are exempt.
+    Ownership config is optional, so an empty map is not itself a violation — but a
+    dated edge without a source or confidence is, the rule that keeps an unsourced
+    M&A claim (the Entro error) out of the report."""
     if not ownership:
         return []
     errs = []
@@ -454,6 +474,11 @@ def check_ownership_sources(ownership):
             errs.append(f"vendor-ownership.yaml: edge '{slug}' -> '{edge.get('parent', '?')}' "
                         f"is a dated acquisition (as_of {edge.get('as_of')}) with no primary-source "
                         f"source_url — every acquisition edge must cite one")
+        conf = str(edge.get("confidence") or "").strip()
+        if conf not in VALID_OWNERSHIP_CONFIDENCE:
+            errs.append(f"vendor-ownership.yaml: edge '{slug}' -> '{edge.get('parent', '?')}' "
+                        f"is a dated acquisition (as_of {edge.get('as_of')}) with invalid/missing "
+                        f"confidence '{conf}' (expected one of {sorted(VALID_OWNERSHIP_CONFIDENCE)})")
     return errs
 
 
@@ -786,10 +811,22 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Validate the matrix CSV data contracts.")
     ap.add_argument("--root", default=".", help="repo root (default: cwd)")
     ap.add_argument("--data-dir", default=None,
-                    help="domain data dir holding the five CSVs (default: the secrets "
-                         "domain, resolved via its descriptor → matrix/domains/secrets)")
+                    help="narrow the run to one domain data dir holding the five CSVs "
+                         "(default: EVERY domain registered in matrix/config/domains/)")
     args = ap.parse_args(argv)
-    violations = validate_all(args.root, data_dir=args.data_dir)
+    if args.data_dir:
+        violations = validate_all(args.root, data_dir=args.data_dir)
+    else:
+        # Default = every registered domain, violations prefixed with the domain
+        # slug, aggregated across ALL domains (never short-circuit): the historical
+        # secrets-only default let PAM/IGA defects pass a "clean" run.
+        violations = []
+        domains = list(iter_domain_data_dirs(args.root))
+        if not domains:
+            violations.append("config/domains: no domain descriptors found — "
+                              "multi-domain gate cannot run")
+        for slug, data_dir in domains:
+            violations += [f"[{slug}] {v}" for v in validate_all(args.root, data_dir=data_dir)]
     for v in violations:
         print(v)
     if violations:

@@ -696,9 +696,25 @@ def test_ownership_sources_dated_edge_requires_url():
 
 
 def test_ownership_sources_dated_edge_with_url_is_clean():
-    own = {"venafi": {"parent": "cyberark", "as_of": "2024-10-01",
+    own = {"venafi": {"parent": "cyberark", "as_of": "2024-10-01", "confidence": "HIGH",
                       "source_url": "https://www.cyberark.com/press/venafi"}}
     assert vd.check_ownership_sources(own) == []
+
+
+def test_ownership_sources_dated_edge_requires_confidence():
+    # H4 completion: the YAML contract says confidence is REQUIRED for acquisitions;
+    # the gate must enforce it, not just document it
+    own = {"venafi": {"parent": "cyberark", "as_of": "2024-10-01",
+                      "source_url": "https://www.cyberark.com/press/venafi"}}
+    errs = vd.check_ownership_sources(own)
+    assert any("venafi" in e and "confidence" in e for e in errs)
+
+
+def test_ownership_sources_rejects_off_vocab_confidence():
+    own = {"venafi": {"parent": "cyberark", "as_of": "2024-10-01", "confidence": "CERTAIN",
+                      "source_url": "https://www.cyberark.com/press/venafi"}}
+    errs = vd.check_ownership_sources(own)
+    assert any("CERTAIN" in e for e in errs)
 
 
 def test_ownership_sources_own_product_edge_exempt():
